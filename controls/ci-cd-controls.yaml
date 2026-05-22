@@ -1,0 +1,20 @@
+cicd_controls:
+  - id: CICDCTL-001
+    name: Secret Scanning Gate
+    description: PRs are blocked if gitleaks detects secrets.
+    mapped_risks: [RISK-005]
+
+  - id: CICDCTL-002
+    name: Dependency Scan Gate
+    description: Builds are blocked on critical dependency vulnerabilities.
+    mapped_risks: [RISK-005]
+
+  - id: CICDCTL-003
+    name: Image Scan Gate
+    description: Container images are scanned before push to registry.
+    mapped_risks: [RISK-006]
+
+  - id: CICDCTL-004
+    name: Approval Gate for Production
+    description: Production deployments require human approval.
+    mapped_risks: [RISK-006]

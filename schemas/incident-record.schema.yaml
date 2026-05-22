@@ -1,0 +1,34 @@
+type: object
+required: [incident_id, timestamp, severity, title, status]
+properties:
+  incident_id:
+    type: string
+  timestamp:
+    type: string
+    format: date-time
+  severity:
+    type: string
+    enum: [SEV-1, SEV-2, SEV-3]
+  title:
+    type: string
+  description:
+    type: string
+  affected_components:
+    type: array
+    items:
+      type: string
+  status:
+    type: string
+    enum: [open, contained, eradicated, recovered, closed]
+  root_cause:
+    type: string
+  corrective_actions:
+    type: array
+    items:
+      type: string
+  evidence:
+    type: array
+    items:
+      type: string
+  postmortem_id:
+    type: string

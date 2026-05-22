@@ -1,0 +1,15 @@
+ai_safety_controls:
+  - id: AICTL-001
+    name: Evidence Required for Critical Recommendations
+    description: AI must not generate critical recommendations without supporting evidence.
+    mapped_risks: [RISK-004]
+
+  - id: AICTL-002
+    name: Uncertainty Disclosure
+    description: AI agents must disclose confidence level and data limitations.
+    mapped_risks: [RISK-004]
+
+  - id: AICTL-003
+    name: No Autonomous Irreversible Actions
+    description: AI agents must not take irreversible actions without human approval.
+    mapped_risks: [RISK-004]

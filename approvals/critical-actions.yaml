@@ -1,0 +1,17 @@
+critical_actions:
+  - kubernetes.apply_manifest
+  - kubernetes.delete_resource
+  - github.delete_repository
+  - github.modify_branch_protection
+  - security.update_policy
+  - skills.promote_autoskill
+  - data.export_sensitive_dataset
+  - evidence.delete_record
+  - race.apply_setup_change
+  - race.approve_strategy_change
+  - release.publish_production
+  - infra.modify_rbac
+  - infra.modify_network_policy
+  - infra.rotate_secret
+  - mcp.register_new_tool
+  - mcp.remove_tool_from_registry

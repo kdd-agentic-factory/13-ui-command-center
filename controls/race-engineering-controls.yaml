@@ -1,0 +1,15 @@
+race_engineering_controls:
+  - id: RECTL-001
+    name: Recommendation Labeling Required
+    description: All AI recommendations must be labeled with confidence, evidence and risk.
+    mapped_risks: [RISK-004]
+
+  - id: RECTL-002
+    name: Crew Chief Approval for Setup Changes
+    description: Setup changes require crew chief approval regardless of source.
+    mapped_risks: [RISK-004]
+
+  - id: RECTL-003
+    name: Simulation Results Labeled
+    description: Digital twin simulation outputs must be clearly labeled as simulations.
+    mapped_risks: [RISK-008]

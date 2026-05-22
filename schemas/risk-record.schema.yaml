@@ -1,0 +1,32 @@
+type: object
+required: [id, title, domain, likelihood, impact, inherent_risk, mitigation, residual_risk, owner, status]
+properties:
+  id:
+    type: string
+    pattern: "^RISK-\\d{3}$"
+  title:
+    type: string
+  domain:
+    type: string
+  likelihood:
+    type: string
+    enum: [low, medium, high]
+  impact:
+    type: string
+    enum: [low, medium, high, critical]
+  inherent_risk:
+    type: string
+    enum: [low, medium, high, critical]
+  mitigation:
+    type: array
+    items:
+      type: string
+    minItems: 1
+  residual_risk:
+    type: string
+    enum: [low, medium, high, critical]
+  owner:
+    type: string
+  status:
+    type: string
+    enum: [open, mitigated, accepted, closed]

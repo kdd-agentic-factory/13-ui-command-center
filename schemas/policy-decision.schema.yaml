@@ -1,0 +1,23 @@
+type: object
+required: [decision_id, timestamp, policy, input_action, decision]
+properties:
+  decision_id:
+    type: string
+  timestamp:
+    type: string
+    format: date-time
+  policy:
+    type: string
+  input_action:
+    type: string
+  input_actor:
+    type: string
+  input_risk_level:
+    type: string
+  approval_id:
+    type: string
+  decision:
+    type: string
+    enum: [allow, deny]
+  reason:
+    type: string

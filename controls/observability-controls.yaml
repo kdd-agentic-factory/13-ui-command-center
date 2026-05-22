@@ -1,0 +1,10 @@
+observability_controls:
+  - id: OBSCTL-001
+    name: Audit Events Forwarded to Observability
+    description: All critical audit events must be forwarded to the observability platform.
+    mapped_risks: [RISK-001]
+
+  - id: OBSCTL-002
+    name: Anomaly Alerting
+    description: Unusual approval rejection rates or tool block rates trigger alerts.
+    mapped_risks: [RISK-001]

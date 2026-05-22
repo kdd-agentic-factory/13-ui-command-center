@@ -1,0 +1,18 @@
+rules:
+  - id: no-privileged-container
+    patterns:
+      - pattern: |
+          privileged: true
+    message: Containers must not run in privileged mode.
+    languages: [yaml]
+    severity: ERROR
+
+  - id: require-resource-limits
+    patterns:
+      - pattern-not: |
+          resources:
+            limits:
+              ...
+    message: All containers must define resource limits.
+    languages: [yaml]
+    severity: WARNING

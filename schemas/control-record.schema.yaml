@@ -1,0 +1,21 @@
+type: object
+required: [id, name, domain, description, evidence, mapped_risks]
+properties:
+  id:
+    type: string
+    pattern: "^CTRL-\\d{3}$"
+  name:
+    type: string
+  domain:
+    type: string
+  description:
+    type: string
+  evidence:
+    type: array
+    items:
+      type: string
+    minItems: 1
+  mapped_risks:
+    type: array
+    items:
+      type: string

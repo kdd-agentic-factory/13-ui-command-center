@@ -1,0 +1,32 @@
+retention_schedule:
+  - data_type: telemetry_session_data
+    retention: 12_months
+    justification: Race analysis window
+
+  - data_type: audit_logs
+    retention: 36_months
+    justification: Compliance and incident response
+
+  - data_type: approval_records
+    retention: 36_months
+    justification: Audit and compliance
+
+  - data_type: paper_evidence_artifacts
+    retention: 36_months
+    justification: Reproducibility
+
+  - data_type: security_scan_reports
+    retention: 36_months
+    justification: Compliance evidence
+
+  - data_type: incident_reports
+    retention: 36_months
+    justification: Post-incident analysis
+
+  - data_type: application_logs
+    retention: 12_months
+    justification: Operational debugging
+
+  - data_type: ci_cd_build_logs
+    retention: 12_months
+    justification: Release traceability

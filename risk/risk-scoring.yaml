@@ -1,0 +1,25 @@
+scoring:
+  likelihood:
+    low: 1
+    medium: 2
+    high: 3
+
+  impact:
+    low: 1
+    medium: 2
+    high: 3
+    critical: 4
+
+  inherent_risk_matrix:
+    "1x1": low
+    "1x2": low
+    "1x3": medium
+    "1x4": high
+    "2x1": low
+    "2x2": medium
+    "2x3": high
+    "2x4": critical
+    "3x1": medium
+    "3x2": high
+    "3x3": high
+    "3x4": critical

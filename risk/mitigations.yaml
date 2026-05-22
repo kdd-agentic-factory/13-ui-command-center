@@ -1,0 +1,40 @@
+mitigations:
+  - id: MIT-001
+    name: MCP Tool Registry
+    description: Register all tools with schemas and risk levels to prevent unauthorized execution.
+    addresses_risks: [RISK-001]
+
+  - id: MIT-002
+    name: Human Approval Gate
+    description: Require human approval for all critical actions.
+    addresses_risks: [RISK-001, RISK-004, RISK-006]
+
+  - id: MIT-003
+    name: Source Metadata Requirement
+    description: Require source metadata on all knowledge chunks to prevent untraceable retrieval.
+    addresses_risks: [RISK-002]
+
+  - id: MIT-004
+    name: AutoSkill Validation Gate
+    description: Require tests, documentation and approval before AutoSkill promotion.
+    addresses_risks: [RISK-003]
+
+  - id: MIT-005
+    name: Secret Scanning in CI
+    description: Run gitleaks on every commit to detect secrets before merge.
+    addresses_risks: [RISK-005]
+
+  - id: MIT-006
+    name: Recommendation Labeling
+    description: Label all AI recommendations explicitly with confidence and evidence.
+    addresses_risks: [RISK-004]
+
+  - id: MIT-007
+    name: Data Classification and Export Approval
+    description: Classify all datasets and require approval for restricted/sensitive exports.
+    addresses_risks: [RISK-007]
+
+  - id: MIT-008
+    name: Simulation Labeling
+    description: Label all digital twin outputs as simulations with disclaimer.
+    addresses_risks: [RISK-008]

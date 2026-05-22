@@ -1,0 +1,24 @@
+type: object
+required: [dataset_id, owner, classification, purpose, retention, allowed_consumers]
+properties:
+  dataset_id:
+    type: string
+  name:
+    type: string
+  owner:
+    type: string
+  classification:
+    type: string
+    enum: [public, internal, restricted, sensitive]
+  purpose:
+    type: string
+  retention:
+    type: string
+  allowed_consumers:
+    type: array
+    items:
+      type: string
+  export_policy:
+    type: string
+  export_requires_approval:
+    type: boolean

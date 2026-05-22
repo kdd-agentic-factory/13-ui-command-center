@@ -1,0 +1,17 @@
+rules:
+  - id: fastapi-no-auth-skip
+    pattern: |
+      @app.get(...)
+      async def $FUNC():
+        ...
+    message: Verify that this endpoint has authentication if it handles sensitive data.
+    languages: [python]
+    severity: WARNING
+
+  - id: fastapi-validate-input
+    pattern: |
+      def $FUNC($PARAM: str):
+        ...
+    message: Ensure string parameters are validated before use.
+    languages: [python]
+    severity: INFO

@@ -1,0 +1,45 @@
+evidence_requirements:
+  - control_id: CTRL-001
+    required_evidence:
+      - tool_registry_export
+      - tool_schema_files
+      - audit_log_sample
+
+  - control_id: CTRL-002
+    required_evidence:
+      - approval_records
+      - workflow_traces
+      - policy_decision_logs
+
+  - control_id: CTRL-003
+    required_evidence:
+      - knowledge_chunk_metadata_sample
+      - source_validation_logs
+
+  - control_id: CTRL-004
+    required_evidence:
+      - autoskill_validation_reports
+      - test_results
+      - approval_records
+
+  - control_id: CTRL-005
+    required_evidence:
+      - gitleaks_reports
+      - ci_status_logs
+
+  - control_id: CTRL-006
+    required_evidence:
+      - audit_log_sample
+      - event_completeness_report
+
+  - control_id: CTRL-007
+    required_evidence:
+      - data_inventory
+      - classification_records
+      - export_approval_records
+
+  - control_id: CTRL-008
+    required_evidence:
+      - rbac_manifests
+      - network_policy_manifests
+      - kubernetes_audit_logs

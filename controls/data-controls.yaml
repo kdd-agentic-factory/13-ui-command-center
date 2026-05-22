@@ -1,0 +1,15 @@
+data_controls:
+  - id: DATCTL-001
+    name: Data Classification Required
+    description: All datasets must be classified before use.
+    mapped_risks: [RISK-007]
+
+  - id: DATCTL-002
+    name: Export Approval Gate
+    description: Restricted and sensitive data exports require approval.
+    mapped_risks: [RISK-007]
+
+  - id: DATCTL-003
+    name: Data Inventory Maintained
+    description: All data assets must be registered in privacy/data-inventory.yaml.
+    mapped_risks: [RISK-007]

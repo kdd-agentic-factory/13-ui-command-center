@@ -1,0 +1,15 @@
+agent_controls:
+  - id: AGCTL-001
+    name: Agent Role Definition Required
+    description: Every agent must have a defined role, scope and allowed actions.
+    mapped_risks: [RISK-001]
+
+  - id: AGCTL-002
+    name: Inter-agent Calls via MCP Gateway
+    description: Agents cannot call each other directly; all calls pass through MCP gateway.
+    mapped_risks: [RISK-001]
+
+  - id: AGCTL-003
+    name: No Self-Approval of Critical Actions
+    description: Agents cannot approve their own critical action requests.
+    mapped_risks: [RISK-004]

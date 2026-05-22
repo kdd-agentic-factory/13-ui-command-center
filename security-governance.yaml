@@ -1,0 +1,75 @@
+governance:
+  version: 0.1.0
+  owner: security-governance
+  scope:
+    - agentic-workflows
+    - mcp-tools
+    - rag-cag-knowledge
+    - skills-autoskills
+    - kdd-data-pipelines
+    - race-command-center
+    - race-ai-copilot
+    - digital-twin
+    - docker-infrastructure
+    - kubernetes-infrastructure
+    - ci-cd-release-engineering
+
+principles:
+  - security_by_design
+  - least_privilege
+  - human_in_the_loop_for_critical_actions
+  - auditability
+  - data_minimization
+  - reproducibility
+  - defense_in_depth
+  - zero_trust_between_domains
+
+critical_controls:
+  - approval_required_for_critical_tools
+  - no_direct_tool_execution_without_mcp
+  - no_autoskill_promotion_without_review
+  - no_production_deployment_without_approval
+  - no_setup_change_without_crew_chief_approval
+  - no_sensitive_data_export_without_policy_check
+  - no_untracked_recommendations
+
+agent_security:
+  model: least_privilege
+  every_agent_must_define:
+    - role
+    - allowed_actions
+    - forbidden_actions
+    - scope
+  ai_agents_cannot:
+    - approve_their_own_critical_actions
+    - bypass_mcp_gateway
+    - delete_audit_records
+    - apply_setup_changes_without_approval
+
+audit:
+  required_fields:
+    - audit_id
+    - timestamp
+    - actor
+    - action
+    - workflow_id
+    - decision
+  retention_months: 36
+  evidence_required_for_critical_actions: true
+
+data_classification:
+  levels:
+    - public
+    - internal
+    - restricted
+    - sensitive
+  sensitive_requires_approval: true
+  restricted_requires_approval_for_export: true
+
+compliance_frameworks:
+  - iso27001
+  - nist_csf
+  - owasp_asvs
+  - owasp_llm_top10
+  - gdpr_rgpd
+  - ens

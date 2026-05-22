@@ -1,0 +1,30 @@
+name: validate-security-governance
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pyyaml pytest
+
+      - name: Validate risk register
+        run: python tooling/scripts/validate-risk-register.py
+
+      - name: Validate approval matrix
+        run: python tooling/scripts/validate-approval-matrix.py
+
+      - name: Validate control catalog
+        run: python tooling/scripts/validate-controls.py

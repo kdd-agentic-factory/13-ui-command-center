@@ -1,0 +1,70 @@
+controls:
+  - id: CTRL-001
+    name: MCP Tool Registry
+    domain: mcp
+    description: All executable tools must be registered with schemas, risk level and allowed agents.
+    evidence: [tool_registry, tool_schema, audit_logs]
+    mapped_risks: [RISK-001]
+
+  - id: CTRL-002
+    name: Human Approval for Critical Actions
+    domain: governance
+    description: Critical actions require explicit human approval before execution.
+    evidence: [approval_record, workflow_trace, policy_decision]
+    mapped_risks: [RISK-001, RISK-004, RISK-006]
+
+  - id: CTRL-003
+    name: Source Metadata Required for Knowledge Chunks
+    domain: rag-cag
+    description: Every knowledge chunk must include source metadata and content hash.
+    evidence: [source_id, file_path, content_hash]
+    mapped_risks: [RISK-002]
+
+  - id: CTRL-004
+    name: AutoSkill Validation Gate
+    domain: skills
+    description: AutoSkills cannot be promoted without tests, documentation and human approval.
+    evidence: [validation_report, test_results, approval_record]
+    mapped_risks: [RISK-003]
+
+  - id: CTRL-005
+    name: Secret Scanning in CI
+    domain: ci-cd
+    description: Repositories must run secret scanning before merge to main.
+    evidence: [gitleaks_report, ci_status]
+    mapped_risks: [RISK-005]
+
+  - id: CTRL-006
+    name: Audit Logging for Critical Actions
+    domain: governance
+    description: All critical actions must emit structured audit events.
+    evidence: [audit_record, event_log]
+    mapped_risks: [RISK-001, RISK-004]
+
+  - id: CTRL-007
+    name: Data Classification and Export Control
+    domain: data
+    description: All data assets must be classified; restricted/sensitive exports require approval.
+    evidence: [data_inventory, classification_record, export_approval]
+    mapped_risks: [RISK-007]
+
+  - id: CTRL-008
+    name: Kubernetes RBAC and NetworkPolicy
+    domain: infrastructure
+    description: All Kubernetes workloads must have RBAC roles and NetworkPolicies defined.
+    evidence: [rbac_manifest, network_policy_manifest, audit_log]
+    mapped_risks: [RISK-006]
+
+  - id: CTRL-009
+    name: Recommendation Labeling
+    domain: race-engineering
+    description: All AI-generated recommendations must be labeled with confidence and evidence.
+    evidence: [recommendation_record, evidence_packet]
+    mapped_risks: [RISK-004]
+
+  - id: CTRL-010
+    name: Container Image Scanning
+    domain: ci-cd
+    description: All container images must be scanned for vulnerabilities before deployment.
+    evidence: [trivy_report, sbom]
+    mapped_risks: [RISK-006]

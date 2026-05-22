@@ -1,0 +1,32 @@
+type: object
+required: [audit_id, timestamp, actor, action, workflow_id, decision]
+properties:
+  audit_id:
+    type: string
+  timestamp:
+    type: string
+    format: date-time
+  actor:
+    type: string
+  actor_type:
+    type: string
+    enum: [human, agent, service]
+  action:
+    type: string
+  workflow_id:
+    type: string
+  tool_call_id:
+    type: string
+  skill_call_id:
+    type: string
+  approval_id:
+    type: string
+  decision:
+    type: string
+    enum: [allowed, blocked, approved, rejected, failed]
+  reason:
+    type: string
+  evidence:
+    type: array
+    items:
+      type: string

@@ -1,0 +1,22 @@
+rules:
+  - id: no-hardcoded-secrets
+    patterns:
+      - pattern: $X = "sk-..."
+      - pattern: $X = "ghp_..."
+      - pattern: password = "..."
+      - pattern: api_key = "..."
+    message: Potential hardcoded secret detected.
+    languages: [python]
+    severity: ERROR
+
+  - id: no-shell-injection
+    pattern: subprocess.call($CMD, shell=True)
+    message: Avoid shell=True with untrusted input.
+    languages: [python]
+    severity: WARNING
+
+  - id: no-pickle-deserialization
+    pattern: pickle.loads(...)
+    message: Avoid pickle deserialization of untrusted data.
+    languages: [python]
+    severity: WARNING

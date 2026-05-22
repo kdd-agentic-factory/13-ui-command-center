@@ -1,0 +1,20 @@
+mcp_controls:
+  - id: MCPCTL-001
+    name: Tool Registry Enforcement
+    description: Unregistered tools are blocked at the gateway.
+    mapped_risks: [RISK-001]
+
+  - id: MCPCTL-002
+    name: Input Schema Validation
+    description: All tool inputs must be validated against the registered schema.
+    mapped_risks: [RISK-001]
+
+  - id: MCPCTL-003
+    name: Caller Identity Validation
+    description: Tool calls must include valid caller agent identity.
+    mapped_risks: [RISK-001]
+
+  - id: MCPCTL-004
+    name: Workflow Context Required
+    description: Every tool call must include a valid workflow_id.
+    mapped_risks: [RISK-001]

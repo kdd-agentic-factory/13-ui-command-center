@@ -1,0 +1,28 @@
+severity_levels:
+  - level: SEV-1
+    name: Critical
+    description: Production-impacting security incident or unsafe critical action.
+    examples:
+      - unauthorized production deployment
+      - secret exposure
+      - critical tool executed without approval
+      - race setup applied without approval
+    response_time: immediate
+
+  - level: SEV-2
+    name: High
+    description: Security control failure without confirmed critical impact.
+    examples:
+      - repeated MCP policy bypass attempts
+      - sensitive export blocked
+      - high-risk vulnerability in runtime image
+    response_time: 4_hours
+
+  - level: SEV-3
+    name: Medium
+    description: Control weakness or non-critical incident.
+    examples:
+      - missing evidence in workflow
+      - incomplete audit record
+      - non-critical dependency vulnerability
+    response_time: 2_business_days

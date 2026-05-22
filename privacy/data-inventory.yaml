@@ -1,0 +1,57 @@
+data_assets:
+  - id: telemetry-session-data
+    name: Telemetry Session Data
+    classification: restricted
+    owner: race-engineering
+    purpose: analysis, simulation, evidence
+    allowed_consumers:
+      - kdd-data-pipelines
+      - race-command-center
+      - digital-twin
+    retention: 12_months
+    export_requires_approval: true
+
+  - id: paper-evidence
+    name: Paper Evidence Artifacts
+    classification: internal
+    owner: research
+    purpose: reproducibility
+    allowed_consumers:
+      - experimentation-lab
+      - paper-reproducibility-kit
+    retention: 36_months
+    export_requires_approval: false
+
+  - id: approval-records
+    name: Approval Records
+    classification: restricted
+    owner: security-governance
+    purpose: audit
+    allowed_consumers:
+      - observability-platform
+      - security-governance
+    retention: 36_months
+    export_requires_approval: true
+
+  - id: audit-logs
+    name: Audit Logs
+    classification: restricted
+    owner: security-governance
+    purpose: audit, compliance
+    allowed_consumers:
+      - observability-platform
+      - security-governance
+    retention: 36_months
+    export_requires_approval: true
+
+  - id: race-setup-data
+    name: Race Setup Data
+    classification: restricted
+    owner: race-engineering
+    purpose: analysis, simulation
+    allowed_consumers:
+      - race-command-center
+      - race-ai-copilot
+      - digital-twin
+    retention: 12_months
+    export_requires_approval: true

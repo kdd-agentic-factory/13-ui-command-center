@@ -1,0 +1,120 @@
+risks:
+  - id: RISK-001
+    title: Agent executes unauthorized tool
+    domain: mcp
+    likelihood: medium
+    impact: high
+    inherent_risk: high
+    mitigation:
+      - mcp_tool_registry
+      - input_validation
+      - approval_required_for_critical_tools
+      - audit_logging
+    residual_risk: medium
+    owner: security-governance
+    status: open
+
+  - id: RISK-002
+    title: RAG retrieves sensitive or incorrect context
+    domain: rag-cag
+    likelihood: medium
+    impact: high
+    inherent_risk: high
+    mitigation:
+      - data_classification
+      - collection_separation
+      - source_metadata_required
+      - evidence_required
+    residual_risk: medium
+    owner: knowledge-layer
+    status: open
+
+  - id: RISK-003
+    title: AutoSkill is promoted without sufficient validation
+    domain: skills
+    likelihood: medium
+    impact: high
+    inherent_risk: high
+    mitigation:
+      - autoskill_review_workflow
+      - human_approval
+      - tests_required
+      - contract_required
+    residual_risk: low
+    owner: architecture-owner
+    status: mitigated
+
+  - id: RISK-004
+    title: AI recommendation is mistaken for approved race decision
+    domain: race-engineering
+    likelihood: medium
+    impact: critical
+    inherent_risk: critical
+    mitigation:
+      - decision_policy
+      - crew_chief_approval
+      - recommendation_labeling
+      - simulation_validation
+      - audit_trail
+    residual_risk: medium
+    owner: crew-chief
+    status: open
+
+  - id: RISK-005
+    title: Secrets are committed to repositories
+    domain: ci-cd
+    likelihood: medium
+    impact: high
+    inherent_risk: high
+    mitigation:
+      - gitleaks_scan
+      - secret_templates
+      - branch_protection
+      - security_ci_gate
+    residual_risk: low
+    owner: platform-owner
+    status: mitigated
+
+  - id: RISK-006
+    title: Unapproved production deployment
+    domain: ci-cd
+    likelihood: low
+    impact: critical
+    inherent_risk: high
+    mitigation:
+      - approval_matrix
+      - deployment_gates
+      - human_in_the_loop
+      - rollback_plan_required
+    residual_risk: low
+    owner: platform-owner
+    status: mitigated
+
+  - id: RISK-007
+    title: Sensitive telemetry data exported without policy check
+    domain: data
+    likelihood: medium
+    impact: high
+    inherent_risk: high
+    mitigation:
+      - data_classification
+      - export_approval_gate
+      - data_inventory
+      - minimization_policy
+    residual_risk: medium
+    owner: data-owner
+    status: open
+
+  - id: RISK-008
+    title: Digital Twin simulation mistaken for real-world validation
+    domain: digital-twin
+    likelihood: medium
+    impact: high
+    inherent_risk: high
+    mitigation:
+      - simulation_labeling_policy
+      - crew_chief_decision_gate
+      - digital_twin_safety_policy
+    residual_risk: medium
+    owner: crew-chief
+    status: open

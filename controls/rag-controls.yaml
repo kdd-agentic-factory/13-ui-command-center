@@ -1,0 +1,15 @@
+rag_controls:
+  - id: RAGCTL-001
+    name: Source Metadata Required
+    description: Every ingested chunk must have source_id, file_path and content_hash.
+    mapped_risks: [RISK-002]
+
+  - id: RAGCTL-002
+    name: Collection Separation
+    description: Sensitive and public knowledge must be in separate collections.
+    mapped_risks: [RISK-002]
+
+  - id: RAGCTL-003
+    name: Evidence Packet Required
+    description: All retrieval results for evidence-required tasks must include source evidence.
+    mapped_risks: [RISK-002]

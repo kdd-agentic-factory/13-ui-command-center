@@ -1,0 +1,98 @@
+approval_matrix:
+  - action: production_deployment
+    risk_level: critical
+    approval_required: true
+    approver_role: platform_owner
+    evidence_required:
+      - ci_report
+      - security_scan
+      - rollback_plan
+      - deployment_plan
+
+  - action: autoskill_promotion
+    risk_level: high
+    approval_required: true
+    approver_role: architecture_owner
+    evidence_required:
+      - autoskill_validation_report
+      - tests
+      - contract
+      - policy_check
+
+  - action: critical_mcp_tool_execution
+    risk_level: high
+    approval_required: true
+    approver_role: service_owner
+    evidence_required:
+      - tool_call_request
+      - risk_assessment
+      - workflow_context
+
+  - action: race_setup_change
+    risk_level: critical
+    approval_required: true
+    approver_role: crew_chief
+    evidence_required:
+      - telemetry_evidence
+      - simulation_result
+      - risk_classification
+      - recommendation_report
+
+  - action: sensitive_data_export
+    risk_level: high
+    approval_required: true
+    approver_role: data_owner
+    evidence_required:
+      - data_classification
+      - export_purpose
+      - minimization_check
+      - retention_plan
+
+  - action: security_policy_update
+    risk_level: high
+    approval_required: true
+    approver_role: platform_owner
+    evidence_required:
+      - policy_diff
+      - justification
+      - risk_assessment
+
+  - action: release_publication
+    risk_level: critical
+    approval_required: true
+    approver_role: platform_owner
+    evidence_required:
+      - ci_report
+      - security_scan
+      - sbom
+      - release_notes
+
+  - action: evidence_deletion
+    risk_level: critical
+    approval_required: true
+    approver_role: platform_owner
+    evidence_required:
+      - deletion_justification
+      - retention_check
+
+  - action: permission_model_change
+    risk_level: high
+    approval_required: true
+    approver_role: platform_owner
+    evidence_required:
+      - change_description
+      - impact_assessment
+
+  - action: paper_evidence_export
+    risk_level: medium
+    approval_required: false
+    approver_role: researcher
+    evidence_required:
+      - experiment_result
+      - reproducibility_metadata
+
+  - action: read_only_tool_execution
+    risk_level: low
+    approval_required: false
+    approver_role: none
+    evidence_required: []

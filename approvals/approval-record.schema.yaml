@@ -1,0 +1,39 @@
+type: object
+required:
+  - approval_id
+  - workflow_id
+  - requester
+  - approver
+  - approver_role
+  - action
+  - risk_level
+  - timestamp
+  - decision
+properties:
+  approval_id:
+    type: string
+  workflow_id:
+    type: string
+  requester:
+    type: string
+  approver:
+    type: string
+  approver_role:
+    type: string
+  action:
+    type: string
+  risk_level:
+    type: string
+    enum: [low, medium, high, critical]
+  evidence:
+    type: array
+    items:
+      type: string
+  timestamp:
+    type: string
+    format: date-time
+  decision:
+    type: string
+    enum: [approved, rejected]
+  justification:
+    type: string

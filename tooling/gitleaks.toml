@@ -1,0 +1,33 @@
+[gitleaks]
+title = "kdd-agentic-factory gitleaks configuration"
+
+[[rules]]
+id = "generic-api-key"
+description = "Generic API Key"
+regex = '''(?i)(api[_-]?key|apikey|secret[_-]?key|access[_-]?token)['":\s=]+['"]*([a-zA-Z0-9_\-]{20,})'''
+tags = ["key", "API", "generic"]
+
+[[rules]]
+id = "github-token"
+description = "GitHub Personal Access Token"
+regex = '''ghp_[a-zA-Z0-9]{36}'''
+tags = ["github", "token"]
+
+[[rules]]
+id = "private-key"
+description = "Private Key"
+regex = '''-----BEGIN (RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----'''
+tags = ["key", "private"]
+
+[[rules]]
+id = "anthropic-key"
+description = "Anthropic API Key"
+regex = '''sk-ant-[a-zA-Z0-9_\-]{32,}'''
+tags = ["anthropic", "api"]
+
+[allowlist]
+description = "Global allowlist"
+paths = [
+  "tests/test_no_real_secrets.py",
+  "tooling/gitleaks.toml"
+]

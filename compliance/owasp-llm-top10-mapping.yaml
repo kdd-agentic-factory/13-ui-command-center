@@ -1,0 +1,36 @@
+owasp_llm_top10:
+  - risk: LLM01
+    name: Prompt Injection
+    controls: [CTRL-001]
+    mitigations:
+      - Input validation at MCP gateway
+      - Context isolation between agent sessions
+
+  - risk: LLM02
+    name: Insecure Output Handling
+    controls: [CTRL-003]
+    mitigations:
+      - Output schema validation
+      - No direct execution of LLM output
+
+  - risk: LLM06
+    name: Sensitive Information Disclosure
+    controls: [CTRL-007]
+    mitigations:
+      - No secrets in prompts
+      - No sensitive data in RAG without classification
+
+  - risk: LLM08
+    name: Excessive Agency
+    controls: [CTRL-002]
+    mitigations:
+      - Human approval for critical actions
+      - Least privilege agent roles
+
+  - risk: LLM09
+    name: Overreliance
+    controls: [CTRL-009]
+    mitigations:
+      - Evidence requirement for recommendations
+      - Uncertainty disclosure mandatory
+      - Human review gate for critical decisions

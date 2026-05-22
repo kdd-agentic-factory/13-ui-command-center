@@ -1,0 +1,53 @@
+mappings:
+  - control_id: CTRL-001
+    name: MCP Tool Registry
+    iso27001: [A.8.2, A.8.3]
+    nist_csf: [PR.AC, DE.CM]
+    owasp_asvs: [V1, V4]
+    owasp_llm_top10: [LLM06]
+
+  - control_id: CTRL-002
+    name: Human Approval for Critical Actions
+    iso27001: [A.5.3, A.8.18]
+    nist_csf: [PR.AC, PR.PT]
+    owasp_asvs: [V1]
+    owasp_llm_top10: [LLM08]
+
+  - control_id: CTRL-003
+    name: Source Metadata Required for Knowledge Chunks
+    iso27001: [A.8.2]
+    nist_csf: [PR.DS]
+    owasp_asvs: [V8]
+    owasp_llm_top10: [LLM02]
+
+  - control_id: CTRL-004
+    name: AutoSkill Validation Gate
+    iso27001: [A.8.8, A.8.19]
+    nist_csf: [PR.IP, DE.CM]
+    owasp_asvs: [V14]
+
+  - control_id: CTRL-005
+    name: Secret Scanning in CI
+    iso27001: [A.8.8]
+    nist_csf: [DE.CM, PR.IP]
+    owasp_asvs: [V14]
+    owasp_llm_top10: [LLM06]
+
+  - control_id: CTRL-006
+    name: Audit Logging for Critical Actions
+    iso27001: [A.8.15, A.8.17]
+    nist_csf: [DE.CM, RS.AN]
+    owasp_asvs: [V7]
+
+  - control_id: CTRL-007
+    name: Data Classification and Export Control
+    iso27001: [A.5.12, A.5.13]
+    nist_csf: [PR.DS, PR.AC]
+    owasp_asvs: [V8]
+    gdpr: [Article5, Article25]
+
+  - control_id: CTRL-008
+    name: Kubernetes RBAC and NetworkPolicy
+    iso27001: [A.8.3]
+    nist_csf: [PR.AC, PR.PT]
+    owasp_asvs: [V1]

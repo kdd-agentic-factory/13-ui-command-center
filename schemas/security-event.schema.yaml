@@ -1,0 +1,26 @@
+type: object
+required: [event_id, event_type, timestamp, source, severity]
+properties:
+  event_id:
+    type: string
+  event_type:
+    type: string
+  timestamp:
+    type: string
+    format: date-time
+  source:
+    type: string
+  severity:
+    type: string
+    enum: [info, warning, error, critical]
+  workflow_id:
+    type: string
+  actor:
+    type: string
+  action:
+    type: string
+  decision:
+    type: string
+    enum: [allowed, blocked, approved, rejected, failed]
+  metadata:
+    type: object

@@ -1,0 +1,20 @@
+infrastructure_controls:
+  - id: INFCTL-001
+    name: Kubernetes RBAC Required
+    description: All workloads must have least-privilege RBAC roles.
+    mapped_risks: [RISK-006]
+
+  - id: INFCTL-002
+    name: NetworkPolicy Required
+    description: All namespaces must have default-deny NetworkPolicy.
+    mapped_risks: [RISK-006]
+
+  - id: INFCTL-003
+    name: No Root Containers
+    description: Containers must not run as root.
+    mapped_risks: [RISK-006]
+
+  - id: INFCTL-004
+    name: Resource Limits Required
+    description: All containers must define CPU and memory limits.
+    mapped_risks: [RISK-006]

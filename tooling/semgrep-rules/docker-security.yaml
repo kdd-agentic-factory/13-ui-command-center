@@ -1,0 +1,21 @@
+rules:
+  - id: no-root-user
+    patterns:
+      - pattern: USER root
+    message: Do not run as root in containers.
+    languages: [dockerfile]
+    severity: ERROR
+
+  - id: no-latest-tag
+    patterns:
+      - pattern: FROM ...:latest
+    message: Pin base image versions, do not use :latest.
+    languages: [dockerfile]
+    severity: WARNING
+
+  - id: no-add-instead-of-copy
+    patterns:
+      - pattern: ADD ...
+    message: Prefer COPY over ADD for local files.
+    languages: [dockerfile]
+    severity: INFO
