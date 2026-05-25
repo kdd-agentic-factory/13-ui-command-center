@@ -1,7 +1,22 @@
-import { Activity, RefreshCcw, Settings } from 'lucide-react';
+import { Activity, RefreshCcw, Settings, Wifi, WifiOff } from 'lucide-react';
 import { CommandCenterPage } from '../pages/CommandCenterPage';
+import { useServiceData } from '../hooks/useServiceData';
 
 export function App() {
+  const { servicesUp, servicesTotal, loading, lastUpdated, refresh } = useServiceData();
+
+  const allUp = servicesUp === servicesTotal;
+  const anyUp = servicesUp > 0;
+  const pillState = loading ? 'idle' : allUp ? 'healthy' : anyUp ? 'warning' : 'critical';
+
+  const pillLabel = loading
+    ? 'conectando…'
+    : `${servicesUp}/${servicesTotal} servicios activos`;
+
+  const lastSync = lastUpdated
+    ? lastUpdated.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+    : null;
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -10,11 +25,26 @@ export function App() {
           <h1 className="brand__title">KDD Agentic Factory Command Center</h1>
         </div>
         <div className="topbar__actions" aria-label="Acciones globales">
-          <span className="status-pill state-warning">
+          <span className={`status-pill state-${pillState}`} role="status" aria-live="polite">
             <span className="dot" aria-hidden="true" />
-            1 bloqueo operativo
+            {pillState === 'healthy' ? (
+              <Wifi size={13} aria-hidden="true" />
+            ) : (
+              <WifiOff size={13} aria-hidden="true" />
+            )}
+            {pillLabel}
           </span>
-          <button className="text-button" type="button">
+          {lastSync && (
+            <span className="topbar__timestamp" aria-label={`Última sincronización: ${lastSync}`}>
+              {lastSync}
+            </span>
+          )}
+          <button
+            className="text-button"
+            type="button"
+            onClick={refresh}
+            aria-label="Sincronizar estado de servicios"
+          >
             <RefreshCcw size={16} aria-hidden="true" />
             Sincronizar
           </button>
