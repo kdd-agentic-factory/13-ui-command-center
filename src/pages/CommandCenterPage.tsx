@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import type { LiveData } from '../hooks/useServiceData';
 import { useInsForgeData } from '../hooks/useInsForgeData';
+import { AICopilot } from '../components/AICopilot';
 import { AgentStatusCard } from '../components/AgentStatusCard';
 import { ExperimentDashboard } from '../components/ExperimentDashboard';
 import { KDDPipelineView } from '../components/KDDPipelineView';
@@ -318,6 +319,8 @@ export function CommandCenterPage({ liveData }: CommandCenterPageProps) {
 
   // ── Render ────────────────────────────────────────────────────────────────
 
+  const { servicesUp, servicesTotal } = liveData;
+
   return (
     <main className="dashboard">
       <section className="capability-grid" aria-label="Resumen del sistema">
@@ -346,6 +349,14 @@ export function CommandCenterPage({ liveData }: CommandCenterPageProps) {
         <MCPToolMonitor tools={tools} />
         <SkillsRegistryView skills={skills} />
         <ExperimentDashboard experiments={experiments} />
+
+        {/* ── AI Copilot — full-width row at the bottom ─────────────── */}
+        <AICopilot
+          health={health}
+          servicesUp={servicesUp}
+          servicesTotal={servicesTotal}
+          experimentsCount={insforge.experiments.length || experimentsCount}
+        />
       </section>
     </main>
   );
