@@ -1,9 +1,11 @@
 import { Activity, RefreshCcw, Settings, Wifi, WifiOff } from 'lucide-react';
 import { CommandCenterPage } from '../pages/CommandCenterPage';
-import { useServiceData } from '../hooks/useServiceData';
+import { useServiceData, type LiveData } from '../hooks/useServiceData';
+import { trackRefreshClicked } from '../lib/analytics';
 
 export function App() {
-  const { servicesUp, servicesTotal, loading, lastUpdated, refresh } = useServiceData();
+  const liveData = useServiceData();
+  const { servicesUp, servicesTotal, loading, lastUpdated, refresh } = liveData;
 
   const allUp = servicesUp === servicesTotal;
   const anyUp = servicesUp > 0;
@@ -42,7 +44,10 @@ export function App() {
           <button
             className="text-button"
             type="button"
-            onClick={refresh}
+            onClick={() => {
+              trackRefreshClicked({ servicesUp, servicesTotal });
+              refresh();
+            }}
             aria-label="Sincronizar estado de servicios"
           >
             <RefreshCcw size={16} aria-hidden="true" />
@@ -56,7 +61,7 @@ export function App() {
           </button>
         </div>
       </header>
-      <CommandCenterPage />
+      <CommandCenterPage liveData={liveData} />
     </div>
   );
 }
