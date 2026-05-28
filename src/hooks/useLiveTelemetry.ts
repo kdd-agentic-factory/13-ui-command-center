@@ -37,7 +37,7 @@ export interface TelemetryFrame {
 
 // Simulated track speed profile (speeds normalized 0–1 over track position 0–1)
 // Models: long straight → braking → hairpin → acceleration → fast corner → ...
-function trackSpeed(pos: number): number {
+export function trackSpeed(pos: number): number {
   // Simple sinusoidal model with multiple harmonics
   const s =
     0.5 +

@@ -1,8 +1,22 @@
+/**
+ * CircuitIntelligencePage — AiM Track Manager-style circuit intelligence.
+ *
+ * Features:
+ *  - 3D Babylon track map (existing)
+ *  - 2D SVG circuit with real-time Speed / Throttle / Brake heatmap overlay
+ *    using getPointAtLength + getTotalLength browser APIs to color-code 80
+ *    path segments according to the simulated track profile.
+ *  - Channel selector with color legend
+ *  - Rider position dot tracking live trackPos
+ *  - Sector analysis, speed traps, DRS zones, track conditions
+ */
+import { useEffect, useRef, useState } from 'react';
 import { CloudSun, Thermometer, Wind } from 'lucide-react';
-import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
+import { useLiveTelemetry, trackSpeed } from '../hooks/useLiveTelemetry';
 import { TrackMap3D } from '../components/babylon/TrackMap3D';
 
-// Mugello-like circuit SVG path (simplified)
+// ── Circuit path (Mugello-like simplified) ─────────────────────────────────
+
 const CIRCUIT_PATH = `
   M 250 80 C 320 80 380 100 400 140
   C 420 175 400 210 370 240
@@ -43,6 +57,8 @@ const CIRCUIT_PATH = `
   L 250 80
 `;
 
+// ── Static data ───────────────────────────────────────────────────────────────
+
 const SECTORS = [
   { id: 'S1', name: 'Sector 1', time: '29.842', best: '29.612', delta: '+0.230', color: 'var(--green)' },
   { id: 'S2', name: 'Sector 2', time: '31.156', best: '30.984', delta: '+0.172', color: 'var(--yellow)' },
@@ -60,13 +76,123 @@ const DRS_ZONES = [
   { name: 'DRS Zone 2', start: 'T14', end: 'T15', active: false },
 ];
 
+// ── Heatmap types ─────────────────────────────────────────────────────────────
+
+type HeatChannel = 'speed' | 'throttle' | 'brake';
+const HEAT_N = 80; // number of path segments
+
+const CHANNEL_LABELS: Record<HeatChannel, string> = {
+  speed:    'Speed',
+  throttle: 'Throttle',
+  brake:    'Brake',
+};
+
+const CHANNEL_COLORS: Record<HeatChannel, [string, string, string]> = {
+  speed:    ['#22C55E', '#FBBF24', '#E03737'],
+  throttle: ['#0B0D12',  '#16A34A', '#22C55E'],
+  brake:    ['#0B0D12',  '#B91C1C', '#E03737'],
+};
+
+// Maps a 0-1 normalized value to an RGB string for the given channel
+function heatColor(value: number, channel: HeatChannel): string {
+  const v = Math.max(0, Math.min(1, value));
+  if (channel === 'speed') {
+    // green → yellow → red (AiM RaceStudio3 convention)
+    const hue = Math.round(120 - v * 120);
+    return `hsl(${hue},100%,50%)`;
+  }
+  if (channel === 'throttle') {
+    const l = Math.round(15 + v * 40);
+    return `hsl(140,80%,${l}%)`;
+  }
+  // brake
+  const l = Math.round(12 + v * 42);
+  return `hsl(0,88%,${l}%)`;
+}
+
+// Returns the channel value 0-1 at track position pos ∈ [0,1]
+function channelValue(pos: number, channel: HeatChannel): number {
+  const spd = trackSpeed(pos);
+  if (channel === 'speed')    return spd;
+  if (channel === 'throttle') return spd > 0.65 ? spd : Math.max(0, spd - 0.1);
+  // brake: high when speed drops fast (i.e., low speed at corner entry)
+  return spd < 0.35 ? (1 - spd / 0.35) : 0;
+}
+
+// ── Heatmap segment type ──────────────────────────────────────────────────────
+
+interface Segment {
+  x1: number; y1: number;
+  x2: number; y2: number;
+  pos: number; // track position 0-1
+}
+
+// ── Color scale legend ────────────────────────────────────────────────────────
+
+function ColorLegend({ channel }: { channel: HeatChannel }) {
+  const [lo, mid, hi] = CHANNEL_COLORS[channel];
+  const labels: Record<HeatChannel, [string, string, string]> = {
+    speed:    ['LOW', 'MED', 'HIGH'],
+    throttle: ['0%', '50%', '100%'],
+    brake:    ['0%', '50%', '100%'],
+  };
+  const [lLo, lMid, lHi] = labels[channel];
+  const gradId = `heat-legend-${channel}`;
+  return (
+    <div className="flex items-center gap-3" style={{ fontSize: 10, fontFamily: 'JetBrains Mono,monospace' }}>
+      <svg width="120" height="12">
+        <defs>
+          <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%"   stopColor={lo} />
+            <stop offset="50%"  stopColor={mid} />
+            <stop offset="100%" stopColor={hi} />
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="120" height="12" rx="3" fill={`url(#${gradId})`} />
+      </svg>
+      <span style={{ color: 'var(--text-muted)' }}>{lLo}</span>
+      <span style={{ color: 'var(--text-muted)' }}>→</span>
+      <span style={{ color: 'var(--text-muted)' }}>{lHi}</span>
+    </div>
+  );
+}
+
+// ── Component ─────────────────────────────────────────────────────────────────
+
 export function CircuitIntelligencePage() {
   const t = useLiveTelemetry();
+  const [heatChannel, setHeatChannel] = useState<HeatChannel>('speed');
+  const [segments, setSegments] = useState<Segment[]>([]);
+  const pathRef = useRef<SVGPathElement>(null);
+
+  // Compute heatmap segments once the SVG path is in the DOM
+  useEffect(() => {
+    const path = pathRef.current;
+    if (!path) return;
+    const totalLen = path.getTotalLength();
+    const segs: Segment[] = [];
+    for (let i = 0; i < HEAT_N; i++) {
+      const p0 = path.getPointAtLength((i / HEAT_N) * totalLen);
+      const p1 = path.getPointAtLength(((i + 1) / HEAT_N) * totalLen);
+      segs.push({ x1: p0.x, y1: p0.y, x2: p1.x, y2: p1.y, pos: i / HEAT_N });
+    }
+    setSegments(segs);
+  }, []);
+
+  // Rider position dot — approximate using path geometry when segments available
   const trackPctX = 200 + Math.cos(t.trackPos * 2 * Math.PI) * 140;
   const trackPctY = 280 + Math.sin(t.trackPos * 2 * Math.PI) * 140;
 
+  // Interpolate rider dot along actual path when segments are available
+  const riderSegIdx = segments.length > 0
+    ? Math.min(segments.length - 1, Math.round(t.trackPos * (segments.length - 1)))
+    : -1;
+  const riderX = riderSegIdx >= 0 ? segments[riderSegIdx].x1 : trackPctX;
+  const riderY = riderSegIdx >= 0 ? segments[riderSegIdx].y1 : trackPctY;
+
   return (
     <div className="page">
+      {/* 3D Track Map */}
       <div className="card mb-4">
         <div className="card-header">
           <span className="card-title">3D Track Map — Mugello</span>
@@ -98,56 +224,124 @@ export function CircuitIntelligencePage() {
 
       <div className="grid-2-1 mb-4">
 
-        {/* Circuit map */}
+        {/* ── Circuit map with heatmap ────────────────────────────────────── */}
         <div className="card">
           <div className="card-header">
-            <span className="card-title">Track Map</span>
-            <div className="flex items-center gap-2">
+            <span className="card-title">Track Map · Heatmap</span>
+            <div className="flex items-center gap-3">
+              {/* Channel selector */}
+              <div style={{
+                display: 'flex',
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: 6,
+                padding: 2,
+              }}>
+                {(['speed', 'throttle', 'brake'] as HeatChannel[]).map(ch => (
+                  <button
+                    key={ch}
+                    onClick={() => setHeatChannel(ch)}
+                    style={{
+                      padding: '4px 10px',
+                      background: heatChannel === ch ? 'rgba(255,255,255,0.09)' : 'transparent',
+                      border: 'none', borderRadius: 4, cursor: 'pointer',
+                      color: heatChannel === ch ? 'var(--text)' : 'var(--text-muted)',
+                      fontSize: 10, fontFamily: 'JetBrains Mono,monospace',
+                      letterSpacing: '0.07em', textTransform: 'uppercase',
+                      transition: 'background 0.12s, color 0.12s',
+                    }}
+                  >
+                    {CHANNEL_LABELS[ch]}
+                  </button>
+                ))}
+              </div>
               <span className="badge badge-red">P3 · Lap {t.lapCount}</span>
             </div>
           </div>
-          <div className="card-body" style={{ display: 'flex', justifyContent: 'center', padding: '24px 16px' }}>
+
+          {/* Color legend */}
+          <div style={{ padding: '8px 16px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+            <ColorLegend channel={heatChannel} />
+          </div>
+
+          <div className="card-body" style={{ display: 'flex', justifyContent: 'center', padding: '16px' }}>
             <svg width="100%" viewBox="0 0 800 560" style={{ maxHeight: 380 }}>
-              {/* Circuit outline */}
+
+              {/* ── Background circuit (thick, dim) ──────────────────────── */}
               <path
                 d={CIRCUIT_PATH}
                 fill="none"
-                stroke="rgba(255,255,255,0.08)"
+                stroke="rgba(255,255,255,0.05)"
                 strokeWidth="20"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
+
+              {/* ── Heatmap segments ──────────────────────────────────────── */}
+              {/* Hidden path used only to compute segment coords */}
+              <path
+                ref={pathRef}
+                d={CIRCUIT_PATH}
+                fill="none"
+                stroke="none"
+                strokeWidth="0"
+              />
+
+              {/* Heatmap color lines */}
+              {segments.map((seg, i) => (
+                <line
+                  key={i}
+                  x1={seg.x1} y1={seg.y1}
+                  x2={seg.x2} y2={seg.y2}
+                  stroke={heatColor(channelValue(seg.pos, heatChannel), heatChannel)}
+                  strokeWidth="18"
+                  strokeLinecap="round"
+                  opacity="0.88"
+                />
+              ))}
+
+              {/* ── Center line (thin, white) ─────────────────────────────── */}
               <path
                 d={CIRCUIT_PATH}
                 fill="none"
-                stroke="rgba(255,255,255,0.25)"
-                strokeWidth="3"
+                stroke="rgba(255,255,255,0.35)"
+                strokeWidth="1.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
-              {/* DRS Zone highlight */}
-              <line x1="250" y1="80" x2="400" y2="140" stroke="var(--green)" strokeWidth="8" strokeOpacity="0.6" />
-              {/* Sector markers */}
-              <circle cx="250" cy="80" r="8" fill="var(--green)" opacity="0.9" />
-              <text x="260" y="75" fill="var(--text)" fontSize="12" fontFamily="JetBrains Mono,monospace" fontWeight="700">S1</text>
-              <circle cx="480" cy="200" r="8" fill="var(--yellow)" opacity="0.9" />
-              <text x="490" y="195" fill="var(--text)" fontSize="12" fontFamily="JetBrains Mono,monospace" fontWeight="700">S2</text>
-              <circle cx="400" cy="378" r="8" fill="var(--blue)" opacity="0.9" />
-              <text x="410" y="373" fill="var(--text)" fontSize="12" fontFamily="JetBrains Mono,monospace" fontWeight="700">S3</text>
-              {/* Rider position */}
+
+              {/* ── DRS Zone highlight ────────────────────────────────────── */}
+              <line x1="250" y1="80" x2="400" y2="140"
+                    stroke="var(--green)" strokeWidth="6" strokeOpacity="0.55" />
+
+              {/* ── Sector markers ────────────────────────────────────────── */}
+              <circle cx="250" cy="80" r="7" fill="var(--green)" opacity="0.9" />
+              <text x="262" y="76" fill="var(--text)" fontSize="11"
+                    fontFamily="JetBrains Mono,monospace" fontWeight="700">S1</text>
+              <circle cx="480" cy="200" r="7" fill="var(--yellow)" opacity="0.9" />
+              <text x="492" y="196" fill="var(--text)" fontSize="11"
+                    fontFamily="JetBrains Mono,monospace" fontWeight="700">S2</text>
+              <circle cx="400" cy="378" r="7" fill="var(--blue)" opacity="0.9" />
+              <text x="412" y="374" fill="var(--text)" fontSize="11"
+                    fontFamily="JetBrains Mono,monospace" fontWeight="700">S3</text>
+
+              {/* ── Rider position ────────────────────────────────────────── */}
               <circle
-                cx={trackPctX}
-                cy={trackPctY}
+                cx={riderX}
+                cy={riderY}
                 r="10"
                 fill="var(--accent)"
                 style={{ filter: 'drop-shadow(0 0 8px var(--accent))' }}
               />
-              <text x={trackPctX - 4} y={trackPctY + 4} fill="white" fontSize="9" fontFamily="JetBrains Mono,monospace" fontWeight="700">47</text>
+              <text x={riderX - 4} y={riderY + 4} fill="white"
+                    fontSize="9" fontFamily="JetBrains Mono,monospace" fontWeight="700">
+                47
+              </text>
             </svg>
           </div>
         </div>
 
-        {/* Right column */}
+        {/* ── Right column ────────────────────────────────────────────────── */}
         <div className="flex-col gap-3">
 
           {/* Sector times */}
@@ -181,7 +375,7 @@ export function CircuitIntelligencePage() {
                       <div style={{ fontWeight: 600, fontSize: 13 }}>{st.name}</div>
                       <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{st.pos}</div>
                     </div>
-                    <span className="text-mono" style={{ fontWeight: 700, fontSize: 18, color: st.speed === t.speed ? 'var(--accent)' : 'var(--text)' }}>
+                    <span className="text-mono" style={{ fontWeight: 700, fontSize: 18 }}>
                       {st.speed} <span style={{ color: 'var(--text-muted)', fontSize: 11 }}>km/h</span>
                     </span>
                   </div>
@@ -220,10 +414,10 @@ export function CircuitIntelligencePage() {
         <div className="card-body">
           <div className="grid-4">
             {[
-              { label: 'Track Rubber',  value: '74%', color: 'var(--green)', note: 'High grip zone' },
-              { label: 'Track Temp',    value: '48°C', color: 'var(--orange)', note: '+3°C vs FP3' },
-              { label: 'Wind Effect',   value: '0.4s', color: 'var(--blue)', note: 'Sector 2 headwind' },
-              { label: 'Grip Level',    value: 'HIGH', color: 'var(--green)', note: 'Tyre limit: rear' },
+              { label: 'Track Rubber', value: '74%',  color: 'var(--green)',  note: 'High grip zone' },
+              { label: 'Track Temp',   value: '48°C', color: 'var(--orange)', note: '+3°C vs FP3' },
+              { label: 'Wind Effect',  value: '0.4s', color: 'var(--blue)',   note: 'Sector 2 headwind' },
+              { label: 'Grip Level',   value: 'HIGH', color: 'var(--green)',  note: 'Tyre limit: rear' },
             ].map(c => (
               <div key={c.label} className="stat-tile">
                 <div className="stat-tile__label">{c.label}</div>
