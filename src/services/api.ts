@@ -42,9 +42,11 @@ export async function fetchAllServiceHealth(): Promise<HealthMap> {
 // ── Governance ──────────────────────────────────────────────────────────────
 
 export interface KddStage {
-  stage: string;
+  /** Canonical stage ID (e.g. "selection", "preprocessing") */
+  stage_id: string;
+  name: string;
+  order: number;
   description: string;
-  phase?: string;
 }
 export interface KddStagesResponse {
   stages: KddStage[];
@@ -97,6 +99,17 @@ export async function fetchExperiments(): Promise<ExperimentEntry[] | null> {
   );
   if (!data) return null;
   return Array.isArray(data) ? data : data.experiments;
+}
+
+// ── Agents ──────────────────────────────────────────────────────────────────
+
+export interface AgentEntry {
+  name: string;
+}
+export async function fetchAgents(): Promise<AgentEntry[] | null> {
+  const data = await safeFetch<{ agents: string[] }>(`${PROXY.orchestrator}/agents`);
+  if (!data) return null;
+  return (data.agents ?? []).map((name) => ({ name }));
 }
 
 // ── MCP tools ───────────────────────────────────────────────────────────────

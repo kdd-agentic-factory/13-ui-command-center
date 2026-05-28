@@ -1,3 +1,9 @@
+node_modules/
+.git/
+.gitignore
+.env*
+dist/
+build/
 **/*.md
 **/*.rst
 tests/
@@ -6,11 +12,8 @@ tests/
 .mypy_cache/
 __pycache__/
 *.pyc
-.env*
-.git/
 .venv/
 venv/
 *.egg-info/
-dist/
-build/
+tsconfig.node.tsbuildinfo
 

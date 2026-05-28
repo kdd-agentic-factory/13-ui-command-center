@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es" class="overflow-hidden">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pit-Wall OS — KDD Race Engineering</title>
+
+  <!-- Typefaces -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <!-- TailwindCSS (utility layer) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Three.js r128 — stable build with global THREE object -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- Anime.js 3.2.1 — animation engine -->
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+
+  <!-- Chart.js 4 — 2D reactive charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- Parallax.js 3.1.0 — depth-layer parallax -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/parallax/3.1.0/parallax.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="bg-[#0A0A0C] text-white overflow-hidden select-none">
+
+  <!-- ═══════════════════════════════════════════════════════
+       LAYER 0  |  z-index: 0
+       Three.js WebGL canvas — 3D persistent scene
+       Never touched by UI events (pointer-events: none)
+  ═══════════════════════════════════════════════════════ -->
+  <canvas id="bg-3d-scene"></canvas>
+
+  <!-- ═══════════════════════════════════════════════════════
+       LAYER 10  |  z-index: 10
+       2D interactive charts — Chart.js panels
+  ═══════════════════════════════════════════════════════ -->
+  <div id="data-layer-2d">
+    <div id="pareto-panel" class="glass-panel pareto-panel">
+      <div class="panel-header">
+        <span class="panel-label">PARETO FRONTIER</span>
+        <span class="panel-sublabel">VRAM (GB) vs Throughput (tok/s)</span>
+      </div>
+      <canvas id="pareto-chart"></canvas>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       LAYER 20  |  z-index: 20
+       HUD shell — all UI controls and text panels
+  ═══════════════════════════════════════════════════════ -->
+  <main id="ui-hud">
+
+    <!-- ╔══ TOP-LEFT ══╗  System identity -->
+    <div id="hud-identity" class="hud-corner hud-tl">
+      <div class="identity-logo">PIT-WALL OS</div>
+      <div class="identity-sub">KDD Race Engineering · v2.1.0</div>
+      <div class="status-row">
+        <span class="status-dot" id="sys-dot"></span>
+        <span class="mono-text text-xs" id="sys-status-text">INICIALIZANDO…</span>
+      </div>
+    </div>
+
+    <!-- ╔══ TOP-RIGHT ══╗  Session & clock -->
+    <div id="hud-session" class="hud-corner hud-tr">
+      <div class="mono-text text-[10px] text-gray-500 tracking-widest">SESSION ID</div>
+      <div class="mono-text text-base font-semibold text-[#0A84FF]" id="session-id">KDD-2026-05-26</div>
+      <div class="mono-text text-xs text-gray-400 mt-0.5" id="hud-clock">--:--:--</div>
+    </div>
+
+    <!-- ╔══ LEFT PANEL ══╗  Digital Lightweighting metrics -->
+    <aside id="hud-digital" class="hud-panel hud-left glass-panel">
+      <div class="panel-title cyan">DIGITAL LIGHTWEIGHTING</div>
+      <div class="panel-subtitle">GPTQ-INT4 Quantization · Edge AI</div>
+
+      <div class="metric-stack">
+
+        <div class="metric-item">
+          <div class="metric-label">VRAM USAGE</div>
+          <div class="metric-value-row">
+            <span class="mono-text metric-number" id="val-vram">61.0</span>
+            <span class="metric-unit">GB</span>
+            <span class="metric-delta" id="delta-vram">—</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill bar-vram" id="bar-vram" style="width: 100%"></div>
+          </div>
+        </div>
+
+        <div class="metric-item">
+          <div class="metric-label">THROUGHPUT</div>
+          <div class="metric-value-row">
+            <span class="mono-text metric-number" id="val-throughput">26.0</span>
+            <span class="metric-unit">tok/s</span>
+            <span class="metric-delta" id="delta-throughput">—</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill bar-throughput" id="bar-throughput" style="width: 37%"></div>
+          </div>
+        </div>
+
+        <div class="metric-item">
+          <div class="metric-label">POWER DRAW</div>
+          <div class="metric-value-row">
+            <span class="mono-text metric-number" id="val-power">295</span>
+            <span class="metric-unit">W</span>
+            <span class="metric-delta" id="delta-power">—</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill bar-power" id="bar-power" style="width: 100%"></div>
+          </div>
+        </div>
+
+        <div class="metric-item">
+          <div class="metric-label">QUANTIZATION BITS</div>
+          <div class="metric-value-row">
+            <span class="mono-text metric-number" id="val-bits">32</span>
+            <span class="metric-unit">bit</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill bar-bits" id="bar-bits" style="width: 100%"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="state-badge" id="model-state-badge">
+        <span class="state-dot red" id="model-state-dot"></span>
+        <span class="mono-text text-xs" id="model-state-text">FP32 BASELINE</span>
+      </div>
+    </aside>
+
+    <!-- ╔══ RIGHT PANEL ══╗  Physical Lightweighting metrics -->
+    <aside id="hud-physical" class="hud-panel hud-right glass-panel">
+      <div class="panel-title green">PHYSICAL LIGHTWEIGHTING</div>
+      <div class="panel-subtitle">SIMP Topology Optimization · FEA</div>
+
+      <div class="metric-stack">
+
+        <div class="metric-item">
+          <div class="metric-label">COMPONENT MASS</div>
+          <div class="metric-value-row">
+            <span class="mono-text metric-number" id="val-mass">2.45</span>
+            <span class="metric-unit">kg</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill bar-mass" id="bar-mass" style="width: 100%"></div>
+          </div>
+        </div>
+
+        <div class="metric-item">
+          <div class="metric-label">VON MISES STRESS</div>
+          <div class="metric-value-row">
+            <span class="mono-text metric-number stress-val" id="val-stress">107.52</span>
+            <span class="metric-unit">MPa</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill bar-stress" id="bar-stress" style="width: 43%"></div>
+          </div>
+        </div>
+
+        <div class="metric-item">
+          <div class="metric-label">SAFETY FACTOR</div>
+          <div class="metric-value-row">
+            <span class="mono-text metric-number green-val" id="val-sf">2.32</span>
+            <span class="metric-unit">—</span>
+          </div>
+        </div>
+
+        <div class="metric-item">
+          <div class="metric-label">MASS REDUCTION</div>
+          <div class="metric-value-row">
+            <span class="mono-text metric-number" id="val-reduction">0.0</span>
+            <span class="metric-unit">%</span>
+            <span class="metric-delta green" id="delta-mass">—</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill bar-reduction" id="bar-reduction" style="width: 0%"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="topology-label">
+        <span class="mono-text text-[10px] text-gray-500">COMPONENT: Formula Student Upright · Al 6061-T6</span>
+      </div>
+    </aside>
+
+    <!-- ╔══ BOTTOM-CENTER ══╗  Math + Control -->
+    <div id="hud-bottom-center">
+
+      <!-- Parallax Mathematical Panel -->
+      <div id="math-wrapper" class="glass-panel math-panel">
+        <ul id="parallax-scene">
+          <!-- Background glow layer -->
+          <li data-depth="0.05" class="parallax-layer parallax-bg">
+            <div class="math-glow-bg"></div>
+          </li>
+          <!-- Physical formula — Stiffness matrix -->
+          <li data-depth="0.3" class="parallax-layer formula-layer formula-physical">
+            <div class="formula-block">
+              <div class="formula-tag physical">PHYSICAL · SIMP</div>
+              <div class="formula-eq mono-text">[<span class="formula-K">K</span>]{u} = {F}</div>
+              <div class="formula-note mono-text">ρ<sub>e</sub> = (V<sub>e</sub>/V<sub>0</sub>) · ρ<sub>min</sub>..1</div>
+            </div>
+          </li>
+          <!-- Digital formula — Hessian matrix -->
+          <li data-depth="0.65" class="parallax-layer formula-layer formula-digital">
+            <div class="formula-block">
+              <div class="formula-tag digital">DIGITAL · GPTQ</div>
+              <div class="formula-eq mono-text"><span class="formula-H">H</span>(θ) = ∇²ℒ(θ)</div>
+              <div class="formula-note mono-text">λ<sub>i</sub>(H) → quant. error bound</div>
+            </div>
+          </li>
+          <!-- Convergence axiom — deepest layer -->
+          <li data-depth="0.9" class="parallax-layer formula-layer formula-convergence">
+            <div class="convergence-badge">
+              <span class="mono-text convergence-eq">K ≡ H</span>
+              <span class="convergence-label">CONVERGENCE PRINCIPLE</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Master engage control -->
+      <div class="control-row">
+        <button id="btn-engage" class="engage-btn" onclick="PitWallOS.engage()">
+          <svg class="engage-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+          <span>ENGAGE INT4 QUANTIZATION</span>
+        </button>
+        <button id="btn-reset" class="reset-btn" onclick="PitWallOS.reset()" style="display:none">
+          <span>↺ RESET TO BASELINE</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ╔══ BOTTOM-LEFT ══╗  Module navigation -->
+    <nav id="hud-nav" class="hud-corner hud-bl">
+      <div class="mono-text text-[10px] text-gray-500 tracking-widest mb-2">MÓDULOS ACTIVOS</div>
+      <div class="nav-links">
+        <a href="http://localhost:8150" target="_blank" class="nav-link">
+          <span class="nav-dot cyan"></span><span>Race Command Center</span>
+        </a>
+        <a href="http://localhost:8160" target="_blank" class="nav-link">
+          <span class="nav-dot green"></span><span>AI Copilot</span>
+        </a>
+        <a href="http://localhost:8180" target="_blank" class="nav-link">
+          <span class="nav-dot orange"></span><span>Telemetría Dataset</span>
+        </a>
+        <a href="http://localhost:3000" target="_blank" class="nav-link">
+          <span class="nav-dot purple"></span><span>Command Center UI</span>
+        </a>
+        <a href="http://localhost:8010" target="_blank" class="nav-link">
+          <span class="nav-dot blue"></span><span>MCP Gateway</span>
+        </a>
+      </div>
+    </nav>
+
+    <!-- ╔══ BOTTOM-RIGHT ══╗  Paper reference -->
+    <div id="hud-paper" class="hud-corner hud-br">
+      <div class="mono-text text-[10px] text-gray-500 tracking-widest">RESEARCH PAPER</div>
+      <div class="paper-title">Physical & Digital Lightweighting</div>
+      <div class="mono-text text-[10px] text-[#0A84FF] mt-0.5">Convergencia SIMP × GPTQ-INT4</div>
+      <div class="mono-text text-[10px] text-gray-500 mt-0.5">KDD Agentic Race Engineering · 2026</div>
+      <div class="paper-links mt-2">
+        <span class="paper-tag">Formula Student</span>
+        <span class="paper-tag">Edge AI</span>
+        <span class="paper-tag">FEA</span>
+      </div>
+    </div>
+
+  </main><!-- #ui-hud -->
+
+  <!-- ═══════════════════════════════════════════ MODULES ═══ -->
+  <script src="js/state.js"></script>
+  <script src="js/scene.js"></script>
+  <script src="js/metrics.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/parallax-panel.js"></script>
+  <script src="main.js"></script>
+
+</body>
+</html>
