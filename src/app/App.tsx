@@ -1,5 +1,5 @@
 import '../i18n'; // must be first — initialises i18next before any component renders
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard, Activity, Map, Circle, Sliders, Wrench,
@@ -9,6 +9,7 @@ import {
 import { AuthProvider, useProfile, TabId } from '../context/AuthContext';
 import { LandingPage } from '../pages/LandingPage';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
+import { ToastProvider } from '../components/ToastProvider';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 
 import { OverviewPage }            from '../pages/OverviewPage';
@@ -60,6 +61,9 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
   ]},
 ];
 
+// Flat ordered list of all tab IDs (for keyboard navigation)
+const ALL_TAB_IDS: TabId[] = ALL_NAV_SECTIONS.flatMap(s => s.items.map(i => i.id));
+
 // ─── Clock hook ───────────────────────────────────────────────────────────────
 
 function useClock(): string {
@@ -96,6 +100,8 @@ function AppShell() {
   const { profile, logout } = useProfile();
   const { t } = useTranslation();
   const [tab, setTab] = useState<TabId>(profile?.defaultTab ?? 'overview');
+  const [transitioning, setTransitioning] = useState(false);
+  const prevTabRef = useRef<TabId>(tab);
   const telem = useLiveTelemetry();
   const clock = useClock();
 
@@ -109,10 +115,49 @@ function AppShell() {
     }))
     .filter(sec => sec.items.length > 0);
 
+  // Flat list of tabs this profile can access (for keyboard nav)
+  const allowedTabIds = filteredSections.flatMap(s => s.items.map(i => i.id));
+
   // If current tab not in allowed set, fall back to profile default
   const activeTab: TabId = profile.allowedTabs.includes(tab) ? tab : profile.defaultTab;
 
   const isFullBleed = activeTab === 'copilot';
+
+  // ── Tab navigation with animation ─────────────────────────────────────────
+  function navigateTo(newTab: TabId) {
+    if (newTab === activeTab) return;
+    setTransitioning(true);
+    setTimeout(() => {
+      prevTabRef.current = newTab;
+      setTab(newTab);
+      setTransitioning(false);
+    }, 100); // matches CSS --dur-fast (120ms)
+  }
+
+  // ── Keyboard shortcuts ─────────────────────────────────────────────────────
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      // Don't intercept when typing in an input / textarea
+      const tag = (e.target as HTMLElement).tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+
+      const tabOrderAll = ALL_TAB_IDS.filter(id => allowedTabIds.includes(id));
+      const idx = tabOrderAll.indexOf(activeTab);
+
+      if (e.key === 'ArrowRight' || (e.altKey && e.key === ']')) {
+        e.preventDefault();
+        const next = tabOrderAll[(idx + 1) % tabOrderAll.length];
+        navigateTo(next);
+      } else if (e.key === 'ArrowLeft' || (e.altKey && e.key === '[')) {
+        e.preventDefault();
+        const prev = tabOrderAll[(idx - 1 + tabOrderAll.length) % tabOrderAll.length];
+        navigateTo(prev);
+      }
+    }
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [activeTab, allowedTabIds, navigateTo]);
 
   return (
     <div className="app-shell">
@@ -142,7 +187,7 @@ function AppShell() {
                   <button
                     key={item.id}
                     className={`sidebar-item${activeTab === item.id ? ' sidebar-item-active' : ''}`}
-                    onClick={() => setTab(item.id)}
+                    onClick={() => navigateTo(item.id)}
                   >
                     <span className="sidebar-item-icon"><Icon size={15} /></span>
                     <span className="sidebar-item-label">{t(item.labelKey)}</span>
@@ -162,6 +207,9 @@ function AppShell() {
           <button className="btn btn-ghost btn-sm sidebar-logout" onClick={logout} title="Switch Profile">
             <LogOut size={12} /> {t('common.switchProfile', 'Switch Profile')}
           </button>
+          <div className="sidebar-footer-line" style={{ color: 'var(--text-muted)', fontSize: 9, letterSpacing: '0.06em' }}>
+            ← → arrows to navigate tabs
+          </div>
           <div className="sidebar-footer-line" style={{ color: 'var(--green)', fontWeight: 700 }}>
             InsForge · Online
           </div>
@@ -199,7 +247,10 @@ function AppShell() {
             <div className="header-stat-sep" />
             <div className="header-stat">
               <span className="header-stat-label">{t('common.fuel', 'FUEL').toUpperCase()}</span>
-              <span className="header-stat-val" style={{ color: telem.fuelLoad < 5 ? 'var(--accent)' : 'var(--text)' }}>
+              <span
+                className="header-stat-val"
+                style={{ color: telem.fuelLoad < 5 ? 'var(--accent)' : 'var(--text)' }}
+              >
                 {telem.fuelLoad.toFixed(1)}<span style={{ fontSize: 11, color: 'var(--text-muted)' }}>kg</span>
               </span>
             </div>
@@ -221,7 +272,14 @@ function AppShell() {
         </header>
 
         <main className={`app-main${isFullBleed ? ' app-main-fullbleed' : ''}`}>
-          <PageContent tab={activeTab} />
+          {/* Page transition wrapper — re-mounts on tab change */}
+          <div
+            key={activeTab}
+            className={`page-transition${transitioning ? ' page-transition-out' : ' page-transition-in'}`}
+            style={{ height: '100%' }}
+          >
+            <PageContent tab={activeTab} />
+          </div>
         </main>
       </div>
     </div>
@@ -241,7 +299,9 @@ function AppWithAuth() {
 export function App() {
   return (
     <AuthProvider>
-      <AppWithAuth />
+      <ToastProvider>
+        <AppWithAuth />
+      </ToastProvider>
     </AuthProvider>
   );
 }

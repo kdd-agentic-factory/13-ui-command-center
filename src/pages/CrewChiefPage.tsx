@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Radio, Flag, AlertOctagon, MessageSquare } from 'lucide-react';
+import { Radio, Flag, AlertOctagon, MessageSquare, Zap } from 'lucide-react';
+import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 
 interface RaceEvent {
   id: number;
@@ -24,6 +25,15 @@ const INITIAL_EVENTS: RaceEvent[] = [
   { id: 10, time: '14:17:15', lap: 4, type: 'info',     priority: 'low',    source: 'Digital Twin', message: 'Lap 4 simulation delta: –0.08s vs predicted. Sector 2 gain confirmed.' },
 ];
 
+// Live feed message pool
+const LIVE_MESSAGES = [
+  { type: 'info' as const, source: 'Gap Monitor',  message: (gap: string) => `P2 gap: ${gap} — monitoring.` },
+  { type: 'info' as const, source: 'KDD Agent',    message: (_gap: string) => 'Fuel consumption nominal — 2.18 kg / lap.' },
+  { type: 'info' as const, source: 'Tyre Agent',   message: (_gap: string) => 'Rear temp stabilizing at 98°C. Degradation nominal.' },
+  { type: 'info' as const, source: 'KDD Pipeline', message: (_gap: string, lap: number) => `Lap ${lap} telemetry ingested — 12,400 samples.` },
+  { type: 'info' as const, source: 'Digital Twin', message: (_gap: string) => 'Sim delta: –0.04s vs predicted. Within model bounds.' },
+];
+
 const PIT_CREW_TIMING = [
   { role: 'Front Tyre Change', avg: '2.3s', best: '2.1s', status: 'ready' },
   { role: 'Rear Tyre Change',  avg: '2.5s', best: '2.2s', status: 'ready' },
@@ -39,50 +49,49 @@ const FLAG_STATUS = [
   { sector: 'S5', flag: 'YELLOW', lap: 6 },
 ];
 
-function EventDot({ type, priority }: { type: string; priority: string }) {
+function EventDot({ type }: { type: string }) {
   const color =
-    type === 'alert' ? 'var(--accent)' :
+    type === 'alert'    ? 'var(--accent)' :
     type === 'decision' ? 'var(--green)' :
-    type === 'radio' ? 'var(--blue)' :
-    type === 'flag' ? 'var(--yellow)' :
+    type === 'radio'    ? 'var(--blue)' :
+    type === 'flag'     ? 'var(--yellow)' :
     'var(--text-muted)';
   return <div className="event-dot" style={{ background: color }} />;
 }
 
 export function CrewChiefPage() {
+  const t = useLiveTelemetry();
   const [events, setEvents] = useState<RaceEvent[]>(INITIAL_EVENTS);
   const [radioInput, setRadioInput] = useState('');
+  const [msgIdx, setMsgIdx] = useState(0);
 
-  // Simulate new events arriving
+  // Simulate new events arriving every 8s, referencing live telemetry
   useEffect(() => {
-    const messages = [
-      { type: 'info' as const, source: 'Gap Monitor', message: 'P2 gap: +0.842s — stable.' },
-      { type: 'info' as const, source: 'KDD Agent', message: 'Fuel consumption nominal — 2.18 kg / lap.' },
-      { type: 'info' as const, source: 'Tyre Agent', message: 'Rear temp stabilizing at 98°C. Degradation nominal.' },
-    ];
-    let idx = 0;
     const interval = setInterval(() => {
-      const msg = messages[idx % messages.length];
-      setEvents(prev => [{
-        id: Date.now(),
-        time: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-        lap: 7,
-        type: msg.type,
-        priority: 'low',
-        source: msg.source,
-        message: msg.message,
-      }, ...prev.slice(0, 19)]);
-      idx++;
+      setMsgIdx(prev => {
+        const next = (prev + 1) % LIVE_MESSAGES.length;
+        const template = LIVE_MESSAGES[next];
+        setEvents(prevEvents => [{
+          id: Date.now(),
+          time: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+          lap: t.lapCount,
+          type: template.type,
+          priority: 'low',
+          source: template.source,
+          message: template.message(t.gap, t.lapCount),
+        }, ...prevEvents.slice(0, 19)]);
+        return next;
+      });
     }, 8000);
     return () => clearInterval(interval);
-  }, []);
+  }, [t.gap, t.lapCount]);
 
   function sendRadio() {
     if (!radioInput.trim()) return;
     setEvents(prev => [{
       id: Date.now(),
       time: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-      lap: 7,
+      lap: t.lapCount,
       type: 'decision',
       priority: 'high',
       source: 'Crew Chief',
@@ -90,6 +99,15 @@ export function CrewChiefPage() {
     }, ...prev]);
     setRadioInput('');
   }
+
+  // Compute optimal pit window from live tyre data
+  const rearAge = t.rearTyreAge;
+  const optimalPit = Math.max(t.lapCount + 1, t.lapCount + Math.round((18 - rearAge) / 1.5));
+  const pitWindowOpen = t.lapCount >= 9;
+
+  // Parse gap for pit board display
+  const gapDisplay = t.gap === 'leader' ? 'LEAD' : t.gap;
+  const isNegGap = t.gap.startsWith('–');
 
   return (
     <div className="page">
@@ -101,6 +119,11 @@ export function CrewChiefPage() {
         <div className="flex items-center gap-2">
           <Radio size={14} style={{ color: 'var(--green)' }} />
           <span className="badge badge-green">RADIO ACTIVE</span>
+          {pitWindowOpen && (
+            <span className="badge badge-yellow" style={{ animation: 'pulse 2s infinite' }}>
+              PIT WINDOW OPEN
+            </span>
+          )}
         </div>
       </div>
 
@@ -130,7 +153,7 @@ export function CrewChiefPage() {
 
       <div className="grid-2">
         {/* ── Event log ──────────────────────────────────────────────────────── */}
-        <div className="card" style={{ maxHeight: 560, display: 'flex', flexDirection: 'column' }}>
+        <div className="card" style={{ maxHeight: 580, display: 'flex', flexDirection: 'column' }}>
           <div className="card-header">
             <span className="card-title">Race Event Log</span>
             <span className="badge badge-green" style={{ animation: 'pulse 2s infinite' }}>LIVE</span>
@@ -168,14 +191,17 @@ export function CrewChiefPage() {
           <div className="event-feed" style={{ flex: 1, overflowY: 'auto' }}>
             {events.map(ev => (
               <div className="event-item" key={ev.id}>
-                <EventDot type={ev.type} priority={ev.priority} />
+                <EventDot type={ev.type} />
                 <span className="event-time">{ev.time}</span>
                 <div style={{ flex: 1 }}>
                   <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginRight: 8 }}>
                     {ev.source}
                   </span>
-                  <span className="event-text"
-                    dangerouslySetInnerHTML={{ __html: ev.message.replace(/(P\d+|STAY OUT|PIT|Yellow|GREEN|TC\d+)/g, '<strong>$1</strong>') }}
+                  <span
+                    className="event-text"
+                    dangerouslySetInnerHTML={{
+                      __html: ev.message.replace(/(P\d+|STAY OUT|PIT|Yellow|GREEN|TC\d+|OPEN)/g, '<strong>$1</strong>'),
+                    }}
                   />
                 </div>
               </div>
@@ -215,7 +241,7 @@ export function CrewChiefPage() {
             </div>
             <div className="event-feed">
               {[
-                { q: 'Pit at L9 or L11?', ans: 'L11 optimal — monitor rear deg', color: 'var(--yellow)' },
+                { q: `Pit at L${optimalPit - 2} or L${optimalPit}?`, ans: `L${optimalPit} optimal — monitor rear deg`, color: 'var(--yellow)' },
                 { q: 'TC level after restart?', ans: 'Hold TC3 until rear temp normalises', color: 'var(--blue)' },
                 { q: 'Rain tyres on standby?', ans: 'Wets ready, 35% chance after L18', color: 'var(--text-muted)' },
               ].map((d, i) => (
@@ -230,29 +256,84 @@ export function CrewChiefPage() {
             </div>
           </div>
 
+          {/* ── Live Pit Board — feeds from useLiveTelemetry ─────────────── */}
           <div className="card">
-            <div className="card-header"><span className="card-title">Pit Board</span></div>
+            <div className="card-header">
+              <span className="card-title flex items-center gap-2">
+                <Zap size={14} style={{ color: 'var(--yellow)' }} />
+                Pit Board
+              </span>
+              <span className="badge badge-green" style={{ animation: 'pulse 2s infinite' }}>LIVE</span>
+            </div>
             <div className="card-body" style={{
-              background: '#0A0A0A',
-              border: '2px solid #222',
+              background: '#080A0E',
+              border: '2px solid #1A1E2A',
               borderRadius: 8,
               padding: '20px',
               textAlign: 'center',
               fontFamily: 'JetBrains Mono, monospace',
             }}>
-              <div style={{ fontSize: 12, color: '#555', letterSpacing: '0.15em', marginBottom: 8 }}>PIT BOARD</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
+              {/* Row 1: LAP / POS */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
                 <div>
-                  <div style={{ fontSize: 10, color: '#444' }}>LAP</div>
-                  <div style={{ fontSize: 48, fontWeight: 800, color: '#FFFF00', lineHeight: 1 }}>7</div>
+                  <div style={{ fontSize: 9, color: '#444', letterSpacing: '0.15em', marginBottom: 4 }}>LAP</div>
+                  <div style={{
+                    fontSize: 52,
+                    fontWeight: 800,
+                    color: '#FFFF00',
+                    lineHeight: 1,
+                    fontVariantNumeric: 'tabular-nums',
+                    textShadow: '0 0 20px rgba(255,255,0,0.3)',
+                  }}>
+                    {t.lapCount}
+                  </div>
+                  <div style={{ fontSize: 9, color: '#555', marginTop: 4 }}>of 23</div>
                 </div>
                 <div>
-                  <div style={{ fontSize: 10, color: '#444' }}>P</div>
-                  <div style={{ fontSize: 48, fontWeight: 800, color: 'white', lineHeight: 1 }}>3</div>
+                  <div style={{ fontSize: 9, color: '#444', letterSpacing: '0.15em', marginBottom: 4 }}>POS</div>
+                  <div style={{
+                    fontSize: 52,
+                    fontWeight: 800,
+                    color: t.position <= 3 ? '#FFFFFF' : '#FF8844',
+                    lineHeight: 1,
+                    fontVariantNumeric: 'tabular-nums',
+                    textShadow: t.position <= 3 ? '0 0 20px rgba(255,255,255,0.2)' : '0 0 20px rgba(255,136,68,0.3)',
+                  }}>
+                    P{t.position}
+                  </div>
+                  <div style={{ fontSize: 9, color: '#555', marginTop: 4 }}>position</div>
                 </div>
               </div>
-              <div style={{ fontSize: 28, fontWeight: 800, color: '#FF4444', letterSpacing: '0.05em' }}>+0.842</div>
-              <div style={{ fontSize: 11, color: '#555', marginTop: 4 }}>GAP TO P2</div>
+
+              {/* Divider */}
+              <div style={{ height: 1, background: '#1A1E2A', margin: '0 0 16px' }} />
+
+              {/* Row 2: Gap */}
+              <div style={{ marginBottom: 12 }}>
+                <div style={{ fontSize: 9, color: '#444', letterSpacing: '0.15em', marginBottom: 4 }}>GAP TO P2</div>
+                <div style={{
+                  fontSize: 32,
+                  fontWeight: 800,
+                  color: isNegGap ? '#FF4444' : '#44FF88',
+                  letterSpacing: '0.05em',
+                  fontVariantNumeric: 'tabular-nums',
+                  textShadow: isNegGap ? '0 0 12px rgba(255,68,68,0.4)' : '0 0 12px rgba(68,255,136,0.4)',
+                }}>
+                  {gapDisplay}
+                </div>
+              </div>
+
+              {/* Row 3: Optimal pit */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderTop: '1px solid #1A1E2A' }}>
+                <div style={{ textAlign: 'left' }}>
+                  <div style={{ fontSize: 9, color: '#444', letterSpacing: '0.1em' }}>OPT PIT</div>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: '#F59E0B' }}>L{optimalPit}</div>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: 9, color: '#444', letterSpacing: '0.1em' }}>SPEED</div>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: '#3B82F6' }}>{t.speed}<span style={{ fontSize: 11, color: '#555' }}> km/h</span></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

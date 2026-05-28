@@ -1,15 +1,30 @@
-import { CheckCircle, AlertTriangle, XCircle, Wrench } from 'lucide-react';
+import { useState } from 'react';
+import { CheckCircle, AlertTriangle, XCircle, Wrench, CalendarCheck } from 'lucide-react';
+import { useToast } from '../components/ToastProvider';
 
-const PARTS = [
-  { name: 'Front Fork Assembly',     component: 'Öhlins TTX25',     km: 1240, maxKm: 2000, status: 'ok',    mass: 4.2,  fea: null,       note: '62% life remaining' },
-  { name: 'Rear Shock',              component: 'Öhlins TTX36',     km: 1240, maxKm: 1800, status: 'warn',  mass: 2.8,  fea: null,       note: 'Schedule service next round' },
-  { name: 'Carbon Front Rim',        component: 'Marchesini Ultra', km: 580,  maxKm: 3000, status: 'ok',    mass: 1.4,  fea: 107,        note: 'SIMP-optimized · –18% mass' },
-  { name: 'Carbon Rear Rim',         component: 'Marchesini Ultra', km: 580,  maxKm: 3000, status: 'ok',    mass: 2.1,  fea: 142,        note: 'SIMP-optimized · –15% mass' },
-  { name: 'Brake Discs (Front)',     component: 'Brembo GP-Style',  km: 980,  maxKm: 1200, status: 'warn',  mass: 0.9,  fea: null,       note: 'High wear — monitor' },
-  { name: 'Brake Pads (Front)',      component: 'Brembo RC19',      km: 980,  maxKm: 1000, status: 'crit',  mass: 0.15, fea: null,       note: 'Replace before next session' },
-  { name: 'Swingarm',                component: 'Alu-Ti Hybrid',    km: 8400, maxKm: 20000,status: 'ok',    mass: 3.8,  fea: 89,         note: 'Topology optimized · -22% mass' },
-  { name: 'Front Upper Fairing',     component: 'Carbon Prototype', km: 2100, maxKm: 10000,status: 'ok',    mass: 1.2,  fea: 62,         note: 'Aero variant B3 active' },
-  { name: 'Engine #4',               component: 'Prototype V4',     km: 2580, maxKm: 3500, status: 'ok',    mass: 62.0, fea: null,       note: 'Within rev limit · Map 6' },
+// ── Part definitions ──────────────────────────────────────────────────────────
+
+interface Part {
+  name: string;
+  component: string;
+  km: number;
+  maxKm: number;
+  status: 'ok' | 'warn' | 'crit';
+  mass: number;
+  fea: number | null;
+  note: string;
+}
+
+const INITIAL_PARTS: Part[] = [
+  { name: 'Front Fork Assembly',     component: 'Öhlins TTX25',     km: 1240, maxKm: 2000, status: 'ok',   mass: 4.2,  fea: null, note: '62% life remaining' },
+  { name: 'Rear Shock',              component: 'Öhlins TTX36',     km: 1240, maxKm: 1800, status: 'warn', mass: 2.8,  fea: null, note: 'Schedule service next round' },
+  { name: 'Carbon Front Rim',        component: 'Marchesini Ultra', km: 580,  maxKm: 3000, status: 'ok',   mass: 1.4,  fea: 107,  note: 'SIMP-optimized · –18% mass' },
+  { name: 'Carbon Rear Rim',         component: 'Marchesini Ultra', km: 580,  maxKm: 3000, status: 'ok',   mass: 2.1,  fea: 142,  note: 'SIMP-optimized · –15% mass' },
+  { name: 'Brake Discs (Front)',     component: 'Brembo GP-Style',  km: 980,  maxKm: 1200, status: 'warn', mass: 0.9,  fea: null, note: 'High wear — monitor' },
+  { name: 'Brake Pads (Front)',      component: 'Brembo RC19',      km: 980,  maxKm: 1000, status: 'crit', mass: 0.15, fea: null, note: 'Replace before next session' },
+  { name: 'Swingarm',                component: 'Alu-Ti Hybrid',    km: 8400, maxKm: 20000,status: 'ok',   mass: 3.8,  fea: 89,   note: 'Topology optimized · –22% mass' },
+  { name: 'Front Upper Fairing',     component: 'Carbon Prototype', km: 2100, maxKm: 10000,status: 'ok',   mass: 1.2,  fea: 62,   note: 'Aero variant B3 active' },
+  { name: 'Engine #4',               component: 'Prototype V4',     km: 2580, maxKm: 3500, status: 'ok',   mass: 62.0, fea: null, note: 'Within rev limit · Map 6' },
 ];
 
 const DESIGN_VARIANTS = [
@@ -21,17 +36,51 @@ const DESIGN_VARIANTS = [
   { part: 'Swingarm',         variant: 'Al-Ti V3+SIMP',mass: 3.80, stress: 89,  status: 'Active' },
 ];
 
+// ── Status icon ───────────────────────────────────────────────────────────────
+
 function StatusIcon({ status }: { status: string }) {
-  if (status === 'ok')   return <CheckCircle   size={16} style={{ color: 'var(--green)' }} />;
-  if (status === 'warn') return <AlertTriangle size={16} style={{ color: 'var(--yellow)' }} />;
+  if (status === 'ok')       return <CheckCircle   size={16} style={{ color: 'var(--green)' }} />;
+  if (status === 'warn')     return <AlertTriangle size={16} style={{ color: 'var(--yellow)' }} />;
+  if (status === 'scheduled')return <CalendarCheck size={16} style={{ color: 'var(--blue)' }} />;
   return <XCircle size={16} style={{ color: 'var(--accent)' }} />;
 }
 
+// ── Page ───────────────────────────────────────────────────────────────────────
+
 export function PartDesignPage() {
-  const critParts  = PARTS.filter(p => p.status === 'crit').length;
-  const warnParts  = PARTS.filter(p => p.status === 'warn').length;
-  const okParts    = PARTS.filter(p => p.status === 'ok').length;
-  const totalMass  = PARTS.reduce((a, p) => a + p.mass, 0).toFixed(1);
+  const { toast } = useToast();
+  const [parts, setParts] = useState<Part[]>(INITIAL_PARTS);
+  const [scheduledServices, setScheduledServices] = useState<Set<string>>(new Set());
+
+  // Derived stats
+  const critParts  = parts.filter(p => p.status === 'crit' && !scheduledServices.has(p.name)).length;
+  const warnParts  = parts.filter(p => p.status === 'warn' && !scheduledServices.has(p.name)).length;
+  const okParts    = parts.filter(p => p.status === 'ok').length + scheduledServices.size;
+  const totalMass  = parts.reduce((a, p) => a + p.mass, 0).toFixed(1);
+
+  function scheduleService(part: Part) {
+    setScheduledServices(prev => {
+      const next = new Set(prev);
+      next.add(part.name);
+      return next;
+    });
+    // Update part status to 'warn' (from 'crit') to reflect it's been acknowledged
+    setParts(prev => prev.map(p =>
+      p.name === part.name && p.status === 'crit'
+        ? { ...p, status: 'warn', note: `Service scheduled · ${new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}` }
+        : p
+    ));
+    toast({
+      type: 'success',
+      title: `Service scheduled: ${part.name}`,
+      message: `${part.component} — replacement before next session confirmed.`,
+    });
+  }
+
+  function getDisplayStatus(part: Part): string {
+    if (scheduledServices.has(part.name)) return 'scheduled';
+    return part.status;
+  }
 
   return (
     <div className="page">
@@ -43,6 +92,7 @@ export function PartDesignPage() {
         <div className="flex items-center gap-2">
           {critParts > 0 && <span className="badge badge-red">{critParts} Critical</span>}
           {warnParts > 0 && <span className="badge badge-yellow">{warnParts} Warning</span>}
+          {scheduledServices.size > 0 && <span className="badge badge-blue">{scheduledServices.size} Scheduled</span>}
           <span className="badge badge-green">{okParts} Nominal</span>
         </div>
       </div>
@@ -51,8 +101,12 @@ export function PartDesignPage() {
       <div className="grid-4 mb-4">
         <div className="stat-tile accent-border">
           <div className="stat-tile__label">Critical Parts</div>
-          <div className="stat-tile__value" style={{ color: 'var(--accent)' }}>{critParts}</div>
-          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>Requires attention</div>
+          <div className="stat-tile__value" style={{ color: critParts > 0 ? 'var(--accent)' : 'var(--text-muted)' }}>
+            {critParts}
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>
+            {critParts === 0 ? 'All acknowledged' : 'Requires attention'}
+          </div>
         </div>
         <div className="stat-tile yellow-border">
           <div className="stat-tile__label">Warning Parts</div>
@@ -61,7 +115,10 @@ export function PartDesignPage() {
         </div>
         <div className="stat-tile blue-border">
           <div className="stat-tile__label">Monitored Components</div>
-          <div className="stat-tile__value">{PARTS.length}</div>
+          <div className="stat-tile__value">{parts.length}</div>
+          {scheduledServices.size > 0 && (
+            <div style={{ fontSize: 12, color: 'var(--blue)', marginTop: 4 }}>{scheduledServices.size} services queued</div>
+          )}
         </div>
         <div className="stat-tile green-border">
           <div className="stat-tile__label">Total Component Mass</div>
@@ -86,14 +143,27 @@ export function PartDesignPage() {
               <th>Mass (kg)</th>
               <th>FEA MPa</th>
               <th>Notes</th>
+              <th style={{ width: 120 }}>Action</th>
             </tr>
           </thead>
           <tbody>
-            {PARTS.map(p => {
+            {parts.map(p => {
               const lifePct = Math.round((p.km / p.maxKm) * 100);
+              const displayStatus = getDisplayStatus(p);
+              const isScheduled = scheduledServices.has(p.name);
+
               return (
-                <tr key={p.name} style={p.status === 'crit' ? { background: 'rgba(224,55,55,0.06)' } : {}}>
-                  <td><StatusIcon status={p.status} /></td>
+                <tr
+                  key={p.name}
+                  style={
+                    p.status === 'crit' && !isScheduled
+                      ? { background: 'rgba(224,55,55,0.06)' }
+                      : isScheduled
+                      ? { background: 'rgba(59,130,246,0.06)' }
+                      : {}
+                  }
+                >
+                  <td><StatusIcon status={displayStatus} /></td>
                   <td style={{ fontWeight: 600 }}>{p.name}</td>
                   <td className="text-dim" style={{ fontSize: 12 }}>{p.component}</td>
                   <td className="mono">{p.km.toLocaleString()}</td>
@@ -104,7 +174,10 @@ export function PartDesignPage() {
                           className="bar-fill"
                           style={{
                             width: `${lifePct}%`,
-                            background: lifePct > 85 ? 'var(--accent)' : lifePct > 65 ? 'var(--yellow)' : 'var(--green)',
+                            background:
+                              isScheduled ? 'var(--blue)' :
+                              lifePct > 85 ? 'var(--accent)' :
+                              lifePct > 65 ? 'var(--yellow)' : 'var(--green)',
                           }}
                         />
                       </div>
@@ -113,8 +186,32 @@ export function PartDesignPage() {
                   </td>
                   <td className="mono">{p.mass}</td>
                   <td className="mono">{p.fea ?? '—'}</td>
-                  <td style={{ fontSize: 12, color: p.status === 'crit' ? 'var(--accent)' : p.status === 'warn' ? 'var(--yellow)' : 'var(--text-dim)' }}>
+                  <td style={{
+                    fontSize: 12,
+                    color: isScheduled ? 'var(--blue)' : p.status === 'crit' ? 'var(--accent)' : p.status === 'warn' ? 'var(--yellow)' : 'var(--text-dim)',
+                  }}>
                     {p.note}
+                  </td>
+                  <td>
+                    {(p.status === 'crit' || p.status === 'warn') && !isScheduled ? (
+                      <button
+                        className="btn btn-ghost btn-sm flex items-center gap-1"
+                        style={{
+                          fontSize: 11,
+                          padding: '4px 8px',
+                          color: p.status === 'crit' ? 'var(--accent)' : 'var(--yellow)',
+                          borderColor: p.status === 'crit' ? 'rgba(224,55,55,0.3)' : 'rgba(245,158,11,0.3)',
+                        }}
+                        onClick={() => scheduleService(p)}
+                      >
+                        <CalendarCheck size={12} />
+                        Schedule
+                      </button>
+                    ) : isScheduled ? (
+                      <span style={{ fontSize: 11, color: 'var(--blue)', fontWeight: 600 }}>✓ Scheduled</span>
+                    ) : (
+                      <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>—</span>
+                    )}
                   </td>
                 </tr>
               );
@@ -125,7 +222,9 @@ export function PartDesignPage() {
 
       {/* ── Design variants comparison ───────────────────────────────────── */}
       <div className="card">
-        <div className="card-header"><span className="card-title">Design Variant Comparison — SIMP Optimization Results</span></div>
+        <div className="card-header">
+          <span className="card-title">Design Variant Comparison — SIMP Optimization Results</span>
+        </div>
         <table className="data-table">
           <thead>
             <tr><th>Part</th><th>Variant</th><th>Mass (kg)</th><th>Peak Stress (MPa)</th><th>Safety Factor</th><th>Status</th></tr>

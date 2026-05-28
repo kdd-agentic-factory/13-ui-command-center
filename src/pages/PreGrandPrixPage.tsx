@@ -1,12 +1,14 @@
 import { Calendar, CloudRain, Sun, Wind } from 'lucide-react';
+import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 
-const SCHEDULE = [
+// Weekend schedule — race result shows live lap count
+const BASE_SCHEDULE = [
   { session: 'FP1', day: 'Fri', time: '09:00', done: true,  result: '3rd — 1:34.102' },
   { session: 'FP2', day: 'Fri', time: '14:00', done: true,  result: '5th — 1:33.847' },
   { session: 'FP3', day: 'Sat', time: '09:30', done: true,  result: '4th — 1:33.612' },
   { session: 'Q1',  day: 'Sat', time: '14:30', done: true,  result: 'Q2 direct · P6' },
   { session: 'Q2',  day: 'Sat', time: '15:00', done: true,  result: 'P3 — 1:33.201' },
-  { session: 'RACE',day: 'Sun', time: '14:00', done: false, result: 'Lap 7 of 23' },
+  { session: 'RACE', day: 'Sun', time: '14:00', done: false, result: '' }, // filled with live data
 ];
 
 const WEATHER_FORECAST = [
@@ -31,6 +33,28 @@ function WeatherIcon({ icon }: { icon: string }) {
 }
 
 export function PreGrandPrixPage() {
+  const t = useLiveTelemetry();
+  const lapCount  = t.lapCount;
+  const position  = t.position;
+  const lastLapSec = t.lastLap;
+
+  // Format last lap as mm:ss.xxx
+  const m = Math.floor(lastLapSec / 60);
+  const s = lastLapSec % 60;
+  const lastLapFormatted = `${m}:${s.toFixed(3).padStart(6, '0')}`;
+
+  // Live race row status
+  const raceStatus = lapCount < 23
+    ? `Lap ${lapCount} / 23 · P${position} · ${lastLapFormatted}`
+    : 'Race Complete';
+
+  const schedule = BASE_SCHEDULE.map(s =>
+    s.session === 'RACE' ? { ...s, result: raceStatus } : s
+  );
+
+  // Progress percentage for race
+  const racePct = Math.round((lapCount / 23) * 100);
+
   return (
     <div className="page">
       <div className="flex items-center justify-between mb-6">
@@ -39,8 +63,37 @@ export function PreGrandPrixPage() {
           <p className="page-subtitle">GP Mugello · Italy · Round 7 of 20 · 2026 Season</p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="badge badge-red">RACE ACTIVE</span>
+          <span className="badge badge-red" style={{ animation: 'pulse 2s infinite' }}>RACE ACTIVE</span>
           <Calendar size={16} style={{ color: 'var(--text-dim)' }} />
+        </div>
+      </div>
+
+      {/* ── Live race progress bar ─────────────────────────────────────────── */}
+      <div className="card mb-4">
+        <div className="card-body" style={{ padding: '12px 16px' }}>
+          <div className="flex items-center justify-between mb-3" style={{ marginBottom: 8 }}>
+            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>
+              Race Progress — Lap {lapCount} of 23
+            </span>
+            <span style={{ fontSize: 12, fontFamily: 'JetBrains Mono,monospace', color: 'var(--accent)' }}>
+              {racePct}%
+            </span>
+          </div>
+          <div className="bar-track" style={{ height: 8 }}>
+            <div className="bar-fill" style={{ width: `${racePct}%`, background: 'var(--accent)', transition: 'width 1s ease' }} />
+          </div>
+          <div className="flex items-center justify-between mt-2" style={{ marginTop: 6 }}>
+            <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Start</span>
+            <div className="flex items-center gap-4" style={{ gap: 16 }}>
+              <span style={{ fontSize: 11, color: 'var(--yellow)' }}>
+                P{position} · {t.gap}
+              </span>
+              <span style={{ fontSize: 11, color: 'var(--green)' }}>
+                Last: {lastLapFormatted}
+              </span>
+            </div>
+            <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Finish</span>
+          </div>
         </div>
       </div>
 
@@ -52,7 +105,7 @@ export function PreGrandPrixPage() {
           <table className="data-table">
             <thead><tr><th>Session</th><th>Day / Time</th><th>Result</th></tr></thead>
             <tbody>
-              {SCHEDULE.map(s => (
+              {schedule.map(s => (
                 <tr key={s.session} style={s.session === 'RACE' ? { background: 'var(--accent-dim)' } : {}}>
                   <td>
                     <span className={`badge ${s.session === 'RACE' ? 'badge-red' : s.done ? 'badge-muted' : 'badge-green'}`}>
@@ -60,7 +113,9 @@ export function PreGrandPrixPage() {
                     </span>
                   </td>
                   <td className="mono text-dim">{s.day} {s.time}</td>
-                  <td style={{ fontSize: 13, color: s.done ? 'var(--text)' : 'var(--text-dim)' }}>{s.result}</td>
+                  <td style={{ fontSize: 13, color: s.session === 'RACE' ? 'var(--accent)' : s.done ? 'var(--text)' : 'var(--text-dim)', fontWeight: s.session === 'RACE' ? 700 : 400 }}>
+                    {s.result}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -105,7 +160,10 @@ export function PreGrandPrixPage() {
           <tbody>
             {RIVALS_ANALYSIS.map(r => (
               <tr key={r.rider} style={r.self ? { background: 'var(--accent-dim)' } : {}}>
-                <td style={{ fontWeight: r.self ? 700 : 400, color: r.self ? 'var(--accent)' : 'var(--text)' }}>{r.rider}</td>
+                <td style={{ fontWeight: r.self ? 700 : 400, color: r.self ? 'var(--accent)' : 'var(--text)' }}>
+                  {r.rider}
+                  {r.self && <span className="badge badge-red" style={{ marginLeft: 6, fontSize: 9 }}>YOU</span>}
+                </td>
                 <td className="text-dim">{r.team}</td>
                 <td className="mono">{r.avg}</td>
                 <td className="mono text-dim">{r.tyreChoice}</td>

@@ -1450,3 +1450,72 @@ textarea:focus-visible {
   width: 100% !important;
   height: 100% !important;
 }
+
+/* ── Page transitions ─────────────────────────────────────────────────────────
+   When the user navigates to a new tab the wrapper gets key={tab} so React
+   unmounts + remounts it. The animation plays on every mount = every nav.
+   Emil: keep the motion subtle — translateY(4px) not 20px.
+   ──────────────────────────────────────────────────────────────────────────── */
+.page-transition-in {
+  animation: pageEnter var(--dur-base) var(--ease-out) both;
+}
+.page-transition-out {
+  animation: pageLeave var(--dur-fast) var(--ease-in-out) both;
+  pointer-events: none;
+}
+
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pageLeave {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* ── Toast slide-in animation ─────────────────────────────────────────────────
+   Bottom-right slide-up from 8px below. Keep it fast (120ms) so it doesn't
+   compete with the content. The toast-item class is applied by ToastProvider.
+   ──────────────────────────────────────────────────────────────────────────── */
+.toast-item {
+  animation: toastIn var(--dur-fast) var(--ease-out) both;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── Spinner — used by Loader2 in loading states ─────────────────────────────── */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ── Additional utility classes ───────────────────────────────────────────────── */
+.mt-2 { margin-top: 8px; }
+
+/* ── Pit board glow effect ─────────────────────────────────────────────────────
+   The live pit board uses large monospace numbers with text-shadow.
+   This keyframe makes the yellow LAP number pulse gently.
+   ──────────────────────────────────────────────────────────────────────────── */
+@keyframes pitGlow {
+  0%, 100% { text-shadow: 0 0 20px rgba(255,255,0,0.3); }
+  50%       { text-shadow: 0 0 32px rgba(255,255,0,0.6); }
+}
+
+/* ── Setup change badge animation ─────────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.badge {
+  /* badges that appear dynamically also get the animation */
+  animation: fadeIn var(--dur-fast) var(--ease-out) both;
+}
