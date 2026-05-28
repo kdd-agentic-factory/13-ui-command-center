@@ -1,7 +1,14 @@
 import { useState } from 'react';
-import { CheckCircle, AlertTriangle, XCircle, Wrench, CalendarCheck } from 'lucide-react';
+import { CheckCircle, AlertTriangle, XCircle, Wrench, CalendarCheck, Cloud, CloudOff, Trash2, RefreshCw } from 'lucide-react';
 import { useToast } from '../components/ToastProvider';
 import { PartGeneratorPanel } from '../components/PartGeneratorPanel';
+import { usePartStorage } from '../hooks/usePartStorage';
+
+const MAT_COLOR: Record<string, string> = {
+  carbon:    '#38BDF8',
+  aluminium: '#93C5FD',
+  titanium:  '#A78BFA',
+};
 
 // ── Part definitions ──────────────────────────────────────────────────────────
 
@@ -52,6 +59,7 @@ export function PartDesignPage() {
   const { toast } = useToast();
   const [parts, setParts] = useState<Part[]>(INITIAL_PARTS);
   const [scheduledServices, setScheduledServices] = useState<Set<string>>(new Set());
+  const { savedParts, loading: cloudLoading, refresh: cloudRefresh, remove: cloudRemove } = usePartStorage();
 
   // Derived stats
   const critParts  = parts.filter(p => p.status === 'crit' && !scheduledServices.has(p.name)).length;
@@ -240,6 +248,124 @@ export function PartDesignPage() {
             })}
           </tbody>
         </table>
+      </div>
+
+      {/* ── Cloud Inventory (InsForge) ───────────────────────────────────── */}
+      <div className="card mb-4">
+        <div className="card-header">
+          <div className="flex items-center gap-2">
+            <Cloud size={14} style={{ color: '#38BDF8' }} />
+            <span className="card-title">Cloud Inventory</span>
+            <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>
+              InsForge · PostgreSQL + Storage
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>
+              {savedParts.length} part{savedParts.length !== 1 ? 's' : ''}
+            </span>
+            <button
+              onClick={() => cloudRefresh()}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 5,
+                padding: '4px 10px',
+                background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: 5, cursor: 'pointer', color: 'var(--text-muted)',
+                fontSize: 11, fontFamily: 'JetBrains Mono,monospace',
+              }}
+            >
+              <RefreshCw size={11} style={{ animation: cloudLoading ? 'spin 1s linear infinite' : 'none' }} />
+              Sync
+            </button>
+          </div>
+        </div>
+
+        {cloudLoading && savedParts.length === 0 ? (
+          <div style={{ padding: '24px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 12, fontFamily: 'JetBrains Mono,monospace' }}>
+            <Wrench size={14} style={{ marginRight: 6, opacity: 0.4 }} />
+            Syncing with InsForge...
+          </div>
+        ) : savedParts.length === 0 ? (
+          <div style={{ padding: '24px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 12, fontFamily: 'JetBrains Mono,monospace' }}>
+            <CloudOff size={14} style={{ marginRight: 6, opacity: 0.4 }} />
+            No AI-generated parts saved yet. Use the generator above and click "Save to InsForge".
+          </div>
+        ) : (
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Part ID</th>
+                <th>Material</th>
+                <th>Dimensions</th>
+                <th>Mass</th>
+                <th>Peak σ</th>
+                <th>SF</th>
+                <th>Drag Cd</th>
+                <th>Prompt</th>
+                <th>Saved</th>
+                <th>Sync</th>
+                <th style={{ width: 40 }}></th>
+              </tr>
+            </thead>
+            <tbody>
+              {savedParts.map(p => (
+                <tr key={p.part_id}>
+                  <td className="mono" style={{ fontSize: 10, color: 'var(--text-muted)' }}>
+                    {p.part_id.slice(-10)}
+                  </td>
+                  <td>
+                    <span style={{
+                      fontSize: 11, fontWeight: 700,
+                      color: MAT_COLOR[p.material] ?? 'var(--text)',
+                      fontFamily: 'JetBrains Mono,monospace',
+                    }}>
+                      {p.material.charAt(0).toUpperCase() + p.material.slice(1)}
+                    </span>
+                  </td>
+                  <td className="mono" style={{ fontSize: 11 }}>
+                    {p.dim_x}×{p.dim_y}×{p.dim_z}mm
+                  </td>
+                  <td className="mono" style={{ color: MAT_COLOR[p.material] }}>{p.mass_kg} kg</td>
+                  <td className="mono"
+                    style={{ color: p.peak_stress > 250 ? 'var(--yellow)' : 'var(--text)' }}>
+                    {p.peak_stress} MPa
+                  </td>
+                  <td className="mono"
+                    style={{ color: p.safety_factor >= 2.0 ? 'var(--green)' : 'var(--yellow)', fontWeight: 700 }}>
+                    {p.safety_factor.toFixed(2)}
+                  </td>
+                  <td className="mono" style={{ fontSize: 11 }}>{p.drag_coeff}</td>
+                  <td style={{ fontSize: 11, color: 'var(--text-muted)', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {p.prompt || '—'}
+                  </td>
+                  <td style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>
+                    {p.created_at ? new Date(p.created_at).toLocaleString('en-GB', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) : '—'}
+                  </td>
+                  <td>
+                    {p.synced_to_cloud
+                      ? <span style={{ fontSize: 10, color: '#22C55E', fontFamily: 'JetBrains Mono,monospace' }}>☁ Cloud</span>
+                      : <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>💾 Local</span>
+                    }
+                  </td>
+                  <td>
+                    <button
+                      onClick={() => {
+                        cloudRemove(p.part_id);
+                        toast({ type: 'info', title: 'Removed from local list', message: p.name });
+                      }}
+                      style={{
+                        background: 'none', border: 'none', cursor: 'pointer',
+                        color: 'var(--text-muted)', padding: 4,
+                      }}
+                    >
+                      <Trash2 size={12} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       {/* ── Design variants comparison ───────────────────────────────────── */}

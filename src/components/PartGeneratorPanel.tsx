@@ -15,11 +15,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { animate } from 'animejs';
 import {
-  Bot, Cpu, CheckCircle, AlertTriangle, XCircle,
+  Bot, CheckCircle, AlertTriangle, XCircle,
   Loader2, Download, Plus, Zap, ChevronRight,
-  FlaskConical, Printer,
+  FlaskConical, Printer, CloudUpload, CloudOff,
 } from 'lucide-react';
 import { useToast } from './ToastProvider';
+import { usePartStorage } from '../hooks/usePartStorage';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -278,11 +279,13 @@ export function PartGeneratorPanel({
   onAddPart?: (name: string, material: string, mass: number, stress: number) => void;
 }) {
   const { toast } = useToast();
+  const { save: saveToCloud, saving: cloudSaving } = usePartStorage();
 
   const [phase,    setPhase]    = useState<GenPhase>('idle');
   const [log,      setLog]      = useState<LogEntry[]>([]);
   const [result,   setResult]   = useState<GenResult | null>(null);
   const [showGCode, setShowGCode] = useState(false);
+  const [cloudStatus, setCloudStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
 
   const [params, setParams] = useState({
     prompt:   '',
@@ -769,23 +772,63 @@ M30 ; End program` : '';
               </button>
 
               <button
-                onClick={() => {
-                  onAddPart?.(
-                    `AI-Generated ${MAT[result.material].label} Part`,
-                    result.material,
-                    result.mass,
-                    result.peakStress,
-                  );
-                  toast({ type: 'success', title: 'Part added to inventory', message: `${result.mass} kg · SF ${fmt(result.safetyFactor)} · σ ${result.peakStress} MPa` });
+                onClick={async () => {
+                  // Add to local page list
+                  const partName = `AI-Gen ${MAT[result.material].label} Part`;
+                  onAddPart?.(partName, result.material, result.mass, result.peakStress);
+
+                  // Save to InsForge (localStorage + cloud)
+                  setCloudStatus('saving');
+                  try {
+                    const id = `part-ai-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+                    await saveToCloud({
+                      partId:        id,
+                      prompt:        params.prompt,
+                      dimX:          params.dimX,
+                      dimY:          params.dimY,
+                      dimZ:          params.dimZ,
+                      load:          params.load,
+                      material:      params.material,
+                      mass:          result.mass,
+                      peakStress:    result.peakStress,
+                      safetyFactor:  result.safetyFactor,
+                      dragCoeff:     result.dragCoeff,
+                      meshNodes:     result.meshNodes,
+                      meshElements:  result.meshElements,
+                      rounds:        result.rounds,
+                      gcode,
+                    });
+                    setCloudStatus('saved');
+                    toast({
+                      type: 'success',
+                      title: 'Saved to InsForge',
+                      message: `${result.mass} kg · SF ${fmt(result.safetyFactor)} · synced to cloud ☁`,
+                    });
+                  } catch {
+                    setCloudStatus('error');
+                    toast({ type: 'warning', title: 'Part added locally', message: 'Cloud sync failed — saved to localStorage.' });
+                  }
                 }}
+                disabled={cloudSaving}
                 style={{
                   display: 'flex', alignItems: 'center', gap: 6,
                   padding: '7px 16px',
-                  background: 'rgba(56,189,248,0.1)', border: '1px solid rgba(56,189,248,0.3)',
-                  borderRadius: 6, cursor: 'pointer', color: '#38BDF8',
+                  background: cloudStatus === 'saved' ? 'rgba(34,197,94,0.1)' : 'rgba(56,189,248,0.1)',
+                  border: `1px solid ${cloudStatus === 'saved' ? 'rgba(34,197,94,0.3)' : 'rgba(56,189,248,0.3)'}`,
+                  borderRadius: 6, cursor: cloudSaving ? 'not-allowed' : 'pointer',
+                  color: cloudStatus === 'saved' ? '#22C55E' : '#38BDF8',
                   fontSize: 12, fontFamily: 'JetBrains Mono,monospace',
+                  transition: 'all 0.15s',
                 }}>
-                <Plus size={12} /> Add to Inventory
+                {cloudSaving
+                  ? <Loader2 size={12} style={{ animation: 'spin 1s linear infinite' }} />
+                  : cloudStatus === 'saved'
+                    ? <CheckCircle size={12} />
+                    : cloudStatus === 'error'
+                      ? <CloudOff size={12} />
+                      : <CloudUpload size={12} />
+                }
+                {cloudStatus === 'saved' ? 'Saved to InsForge ✓' : cloudStatus === 'error' ? 'Saved locally' : cloudSaving ? 'Saving...' : 'Save to InsForge'}
               </button>
 
               <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
