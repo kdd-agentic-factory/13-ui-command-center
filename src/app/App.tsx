@@ -1,20 +1,14 @@
+import '../i18n'; // must be first — initialises i18next before any component renders
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
-  LayoutDashboard,
-  Activity,
-  Map,
-  Circle,
-  Sliders,
-  Wrench,
-  CalendarDays,
-  Radio,
-  Bot,
-  GitBranch,
-  Settings,
-  Zap,
-  ChevronRight,
+  LayoutDashboard, Activity, Map, Circle, Sliders, Wrench,
+  CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
 } from 'lucide-react';
 
+import { AuthProvider, useProfile, TabId } from '../context/AuthContext';
+import { LandingPage } from '../pages/LandingPage';
+import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 
 import { OverviewPage }            from '../pages/OverviewPage';
@@ -29,190 +23,52 @@ import { AICopilotPage }           from '../pages/AICopilotPage';
 import { DigitalTwinReportPage }   from '../pages/DigitalTwinReportPage';
 import { SettingsPage }            from '../pages/SettingsPage';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// ─── Nav definition ───────────────────────────────────────────────────────────
 
-type TabId =
-  | 'overview'
-  | 'telemetry'
-  | 'circuit'
-  | 'tires'
-  | 'setup'
-  | 'parts'
-  | 'pre-gp'
-  | 'crew'
-  | 'copilot'
-  | 'twin'
-  | 'settings';
-
-interface NavItem {
+interface NavItemDef {
   id: TabId;
-  label: string;
-  icon: React.ReactNode;
+  labelKey: string;
+  icon: React.ElementType;
   badge?: string;
   badgeColor?: string;
 }
 
-// ─── Navigation definition ────────────────────────────────────────────────────
+interface NavSectionDef {
+  section: string;
+  items: NavItemDef[];
+}
 
-const NAV_SECTIONS: { section: string; items: NavItem[] }[] = [
-  {
-    section: 'RACE',
-    items: [
-      { id: 'overview',  label: 'Overview',           icon: <LayoutDashboard size={15} />,  badge: 'LIVE', badgeColor: 'red' },
-      { id: 'telemetry', label: 'Live Telemetry',     icon: <Activity size={15} />,         badge: '10Hz', badgeColor: 'green' },
-      { id: 'circuit',   label: 'Circuit Intelligence', icon: <Map size={15} /> },
-      { id: 'tires',     label: 'Tyre Degradation',   icon: <Circle size={15} /> },
-    ],
-  },
-  {
-    section: 'ENGINEERING',
-    items: [
-      { id: 'setup',     label: 'Setup Management',   icon: <Sliders size={15} /> },
-      { id: 'parts',     label: 'Part Design',        icon: <Wrench size={15} /> },
-      { id: 'twin',      label: 'Digital Twin',       icon: <GitBranch size={15} /> },
-    ],
-  },
-  {
-    section: 'COMMAND',
-    items: [
-      { id: 'pre-gp',    label: 'Pre Grand Prix',     icon: <CalendarDays size={15} /> },
-      { id: 'crew',      label: 'Crew Chief',         icon: <Radio size={15} /> },
-      { id: 'copilot',   label: 'AI Copilot',         icon: <Bot size={15} />,            badge: 'AI', badgeColor: 'blue' },
-    ],
-  },
-  {
-    section: 'SYSTEM',
-    items: [
-      { id: 'settings',  label: 'Settings',           icon: <Settings size={15} /> },
-    ],
-  },
+const ALL_NAV_SECTIONS: NavSectionDef[] = [
+  { section: 'nav.sections.race', items: [
+    { id: 'overview',  labelKey: 'nav.overview',  icon: LayoutDashboard, badge: 'LIVE', badgeColor: 'red' },
+    { id: 'telemetry', labelKey: 'nav.telemetry', icon: Activity,         badge: '10Hz', badgeColor: 'green' },
+    { id: 'circuit',   labelKey: 'nav.circuit',   icon: Map },
+    { id: 'tires',     labelKey: 'nav.tires',     icon: Circle },
+  ]},
+  { section: 'nav.sections.engineering', items: [
+    { id: 'setup',  labelKey: 'nav.setup',  icon: Sliders },
+    { id: 'parts',  labelKey: 'nav.parts',  icon: Wrench },
+    { id: 'twin',   labelKey: 'nav.twin',   icon: GitBranch },
+  ]},
+  { section: 'nav.sections.command', items: [
+    { id: 'pre-gp',  labelKey: 'nav.preGp',   icon: CalendarDays },
+    { id: 'crew',    labelKey: 'nav.crew',     icon: Radio },
+    { id: 'copilot', labelKey: 'nav.copilot',  icon: Bot, badge: 'AI', badgeColor: 'blue' },
+  ]},
+  { section: 'nav.sections.system', items: [
+    { id: 'settings', labelKey: 'nav.settings', icon: Settings },
+  ]},
 ];
 
-// ─── Helper: live clock ───────────────────────────────────────────────────────
+// ─── Clock hook ───────────────────────────────────────────────────────────────
 
-function useClock() {
+function useClock(): string {
   const [time, setTime] = useState(() => new Date());
   useEffect(() => {
     const id = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(id);
   }, []);
   return time.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-}
-
-// ─── Sidebar ──────────────────────────────────────────────────────────────────
-
-function Sidebar({ active, onNav }: { active: TabId; onNav: (id: TabId) => void }) {
-  return (
-    <aside className="sidebar">
-      {/* Brand */}
-      <div className="sidebar-brand">
-        <div className="sidebar-brand-icon">
-          <Zap size={16} />
-        </div>
-        <div>
-          <div className="sidebar-brand-name">KDD RACE</div>
-          <div className="sidebar-brand-sub">Engineering Platform</div>
-        </div>
-      </div>
-
-      {/* Nav */}
-      <nav className="sidebar-nav">
-        {NAV_SECTIONS.map(({ section, items }) => (
-          <div key={section} className="sidebar-section">
-            <div className="sidebar-section-title">{section}</div>
-            {items.map(item => (
-              <button
-                key={item.id}
-                className={`sidebar-item${active === item.id ? ' sidebar-item-active' : ''}`}
-                onClick={() => onNav(item.id)}
-              >
-                <span className="sidebar-item-icon">{item.icon}</span>
-                <span className="sidebar-item-label">{item.label}</span>
-                {item.badge && (
-                  <span className={`sidebar-badge sidebar-badge-${item.badgeColor ?? 'muted'}`}>
-                    {item.badge}
-                  </span>
-                )}
-                {active === item.id && <ChevronRight size={12} className="sidebar-item-arrow" />}
-              </button>
-            ))}
-          </div>
-        ))}
-      </nav>
-
-      {/* Footer */}
-      <div className="sidebar-footer">
-        <div className="sidebar-footer-line">v3.0.0 · Race Edition</div>
-        <div className="sidebar-footer-line" style={{ color: 'var(--green)', fontWeight: 700 }}>
-          InsForge · Online
-        </div>
-      </div>
-    </aside>
-  );
-}
-
-// ─── Header ───────────────────────────────────────────────────────────────────
-
-function Header({ tab }: { tab: TabId }) {
-  const t = useLiveTelemetry();
-  const clock = useClock();
-
-  return (
-    <header className="app-header">
-      {/* Left: GP info */}
-      <div className="header-gp">
-        <span className="badge badge-red" style={{ fontSize: 10, letterSpacing: '0.1em' }}>RACE</span>
-        <span className="header-gp-name">GP Mugello · Italy</span>
-        <span className="header-gp-round" style={{ color: 'var(--text-muted)', fontSize: 12 }}>
-          Round 7 / 20 · 2026
-        </span>
-      </div>
-
-      {/* Centre: live stats */}
-      <div className="header-stats">
-        <div className="header-stat">
-          <span className="header-stat-label">LAP</span>
-          <span className="header-stat-val">{t.lapCount}<span style={{ fontSize: 12, color: 'var(--text-muted)' }}>/23</span></span>
-        </div>
-        <div className="header-stat-sep" />
-        <div className="header-stat">
-          <span className="header-stat-label">POS</span>
-          <span className="header-stat-val" style={{ color: 'var(--accent)' }}>P{t.position}</span>
-        </div>
-        <div className="header-stat-sep" />
-        <div className="header-stat">
-          <span className="header-stat-label">GAP</span>
-          <span className="header-stat-val" style={{ color: 'var(--yellow)' }}>{t.gap}</span>
-        </div>
-        <div className="header-stat-sep" />
-        <div className="header-stat">
-          <span className="header-stat-label">SPD</span>
-          <span className="header-stat-val">{t.speed}<span style={{ fontSize: 11, color: 'var(--text-muted)' }}>km/h</span></span>
-        </div>
-        <div className="header-stat-sep" />
-        <div className="header-stat">
-          <span className="header-stat-label">FUEL</span>
-          <span className="header-stat-val" style={{ color: t.fuelLoad < 5 ? 'var(--accent)' : 'var(--text)' }}>
-            {t.fuelLoad.toFixed(1)}<span style={{ fontSize: 11, color: 'var(--text-muted)' }}>kg</span>
-          </span>
-        </div>
-      </div>
-
-      {/* Right: clock + flag */}
-      <div className="header-right">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <div style={{
-            width: 8, height: 8, borderRadius: '50%',
-            background: 'var(--green)',
-            boxShadow: '0 0 6px var(--green)',
-            animation: 'pulse 2s infinite',
-          }} />
-          <span style={{ fontSize: 11, color: 'var(--green)', fontWeight: 700, letterSpacing: '0.08em' }}>GREEN FLAG</span>
-        </div>
-        <span className="header-clock">{clock}</span>
-      </div>
-    </header>
-  );
 }
 
 // ─── Page router ─────────────────────────────────────────────────────────────
@@ -236,21 +92,156 @@ function PageContent({ tab }: { tab: TabId }) {
 
 // ─── App shell ────────────────────────────────────────────────────────────────
 
-export function App() {
-  const [tab, setTab] = useState<TabId>('overview');
+function AppShell() {
+  const { profile, logout } = useProfile();
+  const { t } = useTranslation();
+  const [tab, setTab] = useState<TabId>(profile?.defaultTab ?? 'overview');
+  const telem = useLiveTelemetry();
+  const clock = useClock();
 
-  // Copilot page is full-bleed (no padding) — detect it
-  const isFullBleed = tab === 'copilot';
+  if (!profile) return null;
+
+  // Filter nav sections to only show allowed tabs
+  const filteredSections = ALL_NAV_SECTIONS
+    .map(sec => ({
+      ...sec,
+      items: sec.items.filter(item => profile.allowedTabs.includes(item.id)),
+    }))
+    .filter(sec => sec.items.length > 0);
+
+  // If current tab not in allowed set, fall back to profile default
+  const activeTab: TabId = profile.allowedTabs.includes(tab) ? tab : profile.defaultTab;
+
+  const isFullBleed = activeTab === 'copilot';
 
   return (
     <div className="app-shell">
-      <Sidebar active={tab} onNav={setTab} />
+      {/* SIDEBAR */}
+      <aside className="sidebar">
+        <div className="sidebar-brand">
+          <div className="sidebar-brand-icon"><Zap size={16} /></div>
+          <div>
+            <div className="sidebar-brand-name">KDD RACE</div>
+            <div className="sidebar-brand-sub">Engineering Platform</div>
+          </div>
+        </div>
+
+        {/* Profile chip */}
+        <div className="sidebar-profile-chip" style={{ '--chip-color': profile.color } as React.CSSProperties}>
+          <span>{profile.icon}</span>
+          <span style={{ fontSize: 12, fontWeight: 600 }}>{t(profile.nameKey)}</span>
+        </div>
+
+        <nav className="sidebar-nav">
+          {filteredSections.map(({ section, items }) => (
+            <div key={section} className="sidebar-section">
+              <div className="sidebar-section-title">{t(section)}</div>
+              {items.map(item => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.id}
+                    className={`sidebar-item${activeTab === item.id ? ' sidebar-item-active' : ''}`}
+                    onClick={() => setTab(item.id)}
+                  >
+                    <span className="sidebar-item-icon"><Icon size={15} /></span>
+                    <span className="sidebar-item-label">{t(item.labelKey)}</span>
+                    {item.badge && (
+                      <span className={`sidebar-badge sidebar-badge-${item.badgeColor ?? 'muted'}`}>{item.badge}</span>
+                    )}
+                    {activeTab === item.id && <ChevronRight size={12} className="sidebar-item-arrow" />}
+                  </button>
+                );
+              })}
+            </div>
+          ))}
+        </nav>
+
+        <div className="sidebar-footer">
+          <LanguageSwitcher />
+          <button className="btn btn-ghost btn-sm sidebar-logout" onClick={logout} title="Switch Profile">
+            <LogOut size={12} /> {t('common.switchProfile', 'Switch Profile')}
+          </button>
+          <div className="sidebar-footer-line" style={{ color: 'var(--green)', fontWeight: 700 }}>
+            InsForge · Online
+          </div>
+        </div>
+      </aside>
+
       <div className="app-body">
-        <Header tab={tab} />
+        {/* HEADER */}
+        <header className="app-header">
+          <div className="header-gp">
+            <span className="badge badge-red" style={{ fontSize: 10, letterSpacing: '0.1em' }}>{t('header.race', 'RACE')}</span>
+            <span className="header-gp-name">GP Mugello · Italy</span>
+            <span className="header-gp-round" style={{ color: 'var(--text-muted)', fontSize: 12 }}>Round 7 / 20 · 2026</span>
+          </div>
+          <div className="header-stats">
+            <div className="header-stat">
+              <span className="header-stat-label">{t('common.lap', 'LAP').toUpperCase()}</span>
+              <span className="header-stat-val">{telem.lapCount}<span style={{ fontSize: 12, color: 'var(--text-muted)' }}>/23</span></span>
+            </div>
+            <div className="header-stat-sep" />
+            <div className="header-stat">
+              <span className="header-stat-label">{t('common.position', 'POS').toUpperCase()}</span>
+              <span className="header-stat-val" style={{ color: 'var(--accent)' }}>P{telem.position}</span>
+            </div>
+            <div className="header-stat-sep" />
+            <div className="header-stat">
+              <span className="header-stat-label">{t('common.gap', 'GAP').toUpperCase()}</span>
+              <span className="header-stat-val" style={{ color: 'var(--yellow)' }}>{telem.gap}</span>
+            </div>
+            <div className="header-stat-sep" />
+            <div className="header-stat">
+              <span className="header-stat-label">{t('common.speed', 'SPD').toUpperCase()}</span>
+              <span className="header-stat-val">{telem.speed}<span style={{ fontSize: 11, color: 'var(--text-muted)' }}>km/h</span></span>
+            </div>
+            <div className="header-stat-sep" />
+            <div className="header-stat">
+              <span className="header-stat-label">{t('common.fuel', 'FUEL').toUpperCase()}</span>
+              <span className="header-stat-val" style={{ color: telem.fuelLoad < 5 ? 'var(--accent)' : 'var(--text)' }}>
+                {telem.fuelLoad.toFixed(1)}<span style={{ fontSize: 11, color: 'var(--text-muted)' }}>kg</span>
+              </span>
+            </div>
+          </div>
+          <div className="header-right">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div style={{
+                width: 8, height: 8, borderRadius: '50%',
+                background: 'var(--green)',
+                boxShadow: '0 0 6px var(--green)',
+                animation: 'pulse 2s infinite',
+              }} />
+              <span style={{ fontSize: 11, color: 'var(--green)', fontWeight: 700, letterSpacing: '0.08em' }}>
+                {t('header.greenFlag', 'GREEN FLAG')}
+              </span>
+            </div>
+            <span className="header-clock">{clock}</span>
+          </div>
+        </header>
+
         <main className={`app-main${isFullBleed ? ' app-main-fullbleed' : ''}`}>
-          <PageContent tab={tab} />
+          <PageContent tab={activeTab} />
         </main>
       </div>
     </div>
+  );
+}
+
+// ─── Auth gate ────────────────────────────────────────────────────────────────
+
+function AppWithAuth() {
+  const { profile, login } = useProfile();
+  if (!profile) return <LandingPage onEnter={login} />;
+  return <AppShell />;
+}
+
+// ─── Root export ──────────────────────────────────────────────────────────────
+
+export function App() {
+  return (
+    <AuthProvider>
+      <AppWithAuth />
+    </AuthProvider>
   );
 }

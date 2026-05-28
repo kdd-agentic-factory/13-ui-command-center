@@ -1,4 +1,5 @@
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
+import { TireModel3D } from '../components/babylon/TireModel3D';
 
 const COMPOUNDS = [
   {
@@ -43,6 +44,19 @@ export function TireDegradationPage() {
 
   return (
     <div className="page">
+      <div className="card mb-4">
+        <div className="card-header">
+          <span className="card-title">3D Tyre Visualization</span>
+          <span className="badge badge-orange">{t.rearCompound} rear · {t.frontCompound} front</span>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, padding: '12px 16px' }}>
+          <TireModel3D temperature={t.tireFrontLeft}  compound={t.frontCompound} label="FL" height={160} />
+          <TireModel3D temperature={t.tireFrontRight} compound={t.frontCompound} label="FR" height={160} />
+          <TireModel3D temperature={t.tireRearLeft}   compound={t.rearCompound}  label="RL" height={160} />
+          <TireModel3D temperature={t.tireRearRight}  compound={t.rearCompound}  label="RR" height={160} />
+        </div>
+      </div>
+
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">Tire Degradation</h1>

@@ -1,5 +1,6 @@
 import { CloudSun, Thermometer, Wind } from 'lucide-react';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
+import { TrackMap3D } from '../components/babylon/TrackMap3D';
 
 // Mugello-like circuit SVG path (simplified)
 const CIRCUIT_PATH = `
@@ -66,6 +67,14 @@ export function CircuitIntelligencePage() {
 
   return (
     <div className="page">
+      <div className="card mb-4">
+        <div className="card-header">
+          <span className="card-title">3D Track Map — Mugello</span>
+          <span className="badge badge-red">LIVE</span>
+        </div>
+        <TrackMap3D trackPos={t.trackPos} height={340} />
+      </div>
+
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">Circuit Intelligence</h1>
