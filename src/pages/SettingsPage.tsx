@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   CheckCircle, XCircle, Eye, EyeOff, ExternalLink,
-  Loader, RefreshCw,
+  Loader, RefreshCw, Server, ShieldCheck, Database,
 } from 'lucide-react';
 
-// ── Project constants ──────────────────────────────────────────────────────────
+// ── Project constants ─────────────────────────────────────────────────────────
 const PROJECT_ID = '03aba6c5-1146-4dde-848e-528daa1bab11';
 const fly = (name: string) => `https://${name}-${PROJECT_ID}.fly.dev`;
 
@@ -16,156 +16,63 @@ interface ServiceStatus {
   url: string;
   status: SvcStatus;
   latency?: string;
+  latencyMs?: number;
   description: string;
 }
 
-// ── Service registry ───────────────────────────────────────────────────────────
-// Status reflects what we know at deploy time.
-// Live health-check poll updates it at runtime.
 const SERVICES: ServiceStatus[] = [
-  // ── Core platform
-  {
-    group: 'Core',
-    name: 'InsForge API',
-    url:  'https://vdf553wq.eu-central.insforge.app',
-    status: 'up', latency: '42ms',
-    description: 'Database · Auth · AI Gateway',
-  },
-
-  // ── Race operations (already running — iad region)
-  {
-    group: 'Race',
-    name: 'Race AI Copilot',
-    url:  fly('race-ai-copilot'),
-    status: 'up', latency: '180ms',
-    description: 'Strategy · Chat · Analysis',
-  },
-  {
-    group: 'Race',
-    name: 'Race Command Center',
-    url:  fly('race-command-center'),
-    status: 'up', latency: '150ms',
-    description: 'Race ops · Flag management',
-  },
-  {
-    group: 'Race',
-    name: 'Digital Twin Lab',
-    url:  fly('kdd-digital-twin'),
-    status: 'deploying',
-    description: 'Simulation · Scenario runs',
-  },
-  {
-    group: 'Race',
-    name: 'Telemetry Dataset',
-    url:  fly('kdd-telemetry'),
-    status: 'deploying',
-    description: 'Historical data · KDD pipeline',
-  },
-
-  // ── Agentic infrastructure (already running — iad)
-  {
-    group: 'Agents',
-    name: 'Agent Orchestrator',
-    url:  fly('agent-orchestrator'),
-    status: 'up', latency: '140ms',
-    description: 'Multi-agent coordination · Task routing',
-  },
-  {
-    group: 'Agents',
-    name: 'MCP Gateway',
-    url:  fly('mcp-gateway'),
-    status: 'up', latency: '120ms',
-    description: 'Tool access · External APIs',
-  },
-  {
-    group: 'Agents',
-    name: 'Skills Registry',
-    url:  fly('kdd-skills'),
-    status: 'deploying',
-    description: 'AutoSkills · Tool registry',
-  },
-  {
-    group: 'Agents',
-    name: 'RAG Knowledge Layer',
-    url:  fly('kdd-rag'),
-    status: 'deploying',
-    description: 'Embeddings · Vector search · CAG',
-  },
-  {
-    group: 'Agents',
-    name: 'Documentation Agent',
-    url:  fly('kdd-docs'),
-    status: 'deploying',
-    description: 'Auto-docs · KB generation',
-  },
-
-  // ── Governance & Security (fra region)
-  {
-    group: 'Governance',
-    name: 'KDD Governance',
-    url:  fly('kdd-governance'),
-    status: 'up', latency: '—',
-    description: 'Policy · Guardrails · Actor roles',
-  },
-  {
-    group: 'Governance',
-    name: 'Security & Compliance',
-    url:  fly('kdd-security'),
-    status: 'deploying',
-    description: 'RBAC · Audit · Policy enforcement',
-  },
-  {
-    group: 'Governance',
-    name: 'Agentic Workflows',
-    url:  fly('kdd-workflows'),
-    status: 'deploying',
-    description: 'Workflow registry · DAG execution',
-  },
-  {
-    group: 'Governance',
-    name: 'Experimentation Lab',
-    url:  fly('kdd-experiments'),
-    status: 'deploying',
-    description: 'A/B tests · Hypothesis tracking',
-  },
-
-  // ── Data (fra region)
-  {
-    group: 'Data',
-    name: 'KDD Pipelines',
-    url:  fly('kdd-pipelines'),
-    status: 'deploying',
-    description: 'Feature extraction · Mining · Preprocessing',
-  },
-  {
-    group: 'Data',
-    name: 'Paper Reproducibility Kit',
-    url:  fly('kdd-paper-kit'),
-    status: 'deploying',
-    description: 'Experiment reproducibility · Paper evidence',
-  },
+  // Core
+  { group: 'Core',       name: 'InsForge API',         url: 'https://vdf553wq.eu-central.insforge.app',  status: 'up',        latency: '42ms',  latencyMs: 42,  description: 'Database · Auth · AI Gateway' },
+  // Race
+  { group: 'Race',       name: 'Race AI Copilot',      url: fly('race-ai-copilot'),    status: 'up',        latency: '180ms', latencyMs: 180, description: 'Strategy · Chat · Analysis' },
+  { group: 'Race',       name: 'Race Command Center',  url: fly('race-command-center'), status: 'up',       latency: '150ms', latencyMs: 150, description: 'Race ops · Flag management' },
+  { group: 'Race',       name: 'Digital Twin Lab',     url: fly('kdd-digital-twin'),   status: 'deploying', latency: '—',     description: 'Simulation · Scenario runs' },
+  { group: 'Race',       name: 'Telemetry Dataset',    url: fly('kdd-telemetry'),      status: 'deploying', latency: '—',     description: 'Historical data · KDD pipeline' },
+  // Agents
+  { group: 'Agents',     name: 'Agent Orchestrator',   url: fly('agent-orchestrator'), status: 'up',        latency: '140ms', latencyMs: 140, description: 'Multi-agent coordination · Task routing' },
+  { group: 'Agents',     name: 'MCP Gateway',          url: fly('mcp-gateway'),        status: 'up',        latency: '120ms', latencyMs: 120, description: 'Tool access · External APIs' },
+  { group: 'Agents',     name: 'Skills Registry',      url: fly('kdd-skills'),         status: 'deploying', latency: '—',     description: 'AutoSkills · Tool registry' },
+  { group: 'Agents',     name: 'RAG Knowledge Layer',  url: fly('kdd-rag'),            status: 'deploying', latency: '—',     description: 'Embeddings · Vector search · CAG' },
+  { group: 'Agents',     name: 'Documentation Agent',  url: fly('kdd-docs'),           status: 'deploying', latency: '—',     description: 'Auto-docs · KB generation' },
+  // Governance
+  { group: 'Governance', name: 'KDD Governance',       url: fly('kdd-governance'),     status: 'up',        latency: '—',     description: 'Policy · Guardrails · Actor roles' },
+  { group: 'Governance', name: 'Security & Compliance',url: fly('kdd-security'),       status: 'deploying', latency: '—',     description: 'RBAC · Audit · Policy enforcement' },
+  { group: 'Governance', name: 'Agentic Workflows',    url: fly('kdd-workflows'),      status: 'deploying', latency: '—',     description: 'Workflow registry · DAG execution' },
+  { group: 'Governance', name: 'Experimentation Lab',  url: fly('kdd-experiments'),    status: 'deploying', latency: '—',     description: 'A/B tests · Hypothesis tracking' },
+  // Data
+  { group: 'Data',       name: 'KDD Pipelines',        url: fly('kdd-pipelines'),      status: 'deploying', latency: '—',     description: 'Feature extraction · Mining · Preprocessing' },
+  { group: 'Data',       name: 'Paper Reproducibility',url: fly('kdd-paper-kit'),      status: 'deploying', latency: '—',     description: 'Experiment reproducibility · Paper evidence' },
 ];
 
-// ── API keys ───────────────────────────────────────────────────────────────────
 const API_KEYS = [
-  { name: 'InsForge API Key',      envKey: 'VITE_INSFORGE_ANON_KEY',  value: 'ik_f3c8...94c7', status: 'set' },
-  { name: 'OpenRouter API Key',    envKey: 'VITE_OPENROUTER_KEY',     value: 'sk-or-v1-efc4...', status: 'set' },
-  { name: 'KDD Internal API Key',  envKey: 'VITE_KDD_INTERNAL_KEY',  value: '4e8c...92e', status: 'set' },
-  { name: 'PostHog API Key',       envKey: 'VITE_POSTHOG_KEY',        value: 'phc_abc...xyz', status: 'set' },
+  { name: 'InsForge API Key',     envKey: 'VITE_INSFORGE_ANON_KEY', value: 'ik_f3c8...94c7',  status: 'set' },
+  { name: 'OpenRouter API Key',   envKey: 'VITE_OPENROUTER_KEY',    value: 'sk-or-v1-efc4...', status: 'set' },
+  { name: 'KDD Internal API Key', envKey: 'VITE_KDD_INTERNAL_KEY', value: '4e8c...92e',       status: 'set' },
+  { name: 'PostHog API Key',      envKey: 'VITE_POSTHOG_KEY',       value: 'phc_abc...xyz',   status: 'set' },
 ];
 
-// ── Data configuration ─────────────────────────────────────────────────────────
 const DATA_CONFIG = [
-  { name: 'Telemetry refresh rate', value: '100ms',     note: '10 Hz live data' },
-  { name: 'Service health poll',    value: '30s',       note: 'Background polling' },
-  { name: 'InsForge DB sync',       value: '5s',        note: 'Experiment data' },
-  { name: 'AI model',               value: 'gpt-4o-mini', note: 'via InsForge Gateway' },
-  { name: 'Max tokens (chat)',       value: '1024',      note: 'Per response' },
-  { name: 'Fly.io — Race region',   value: 'iad',       note: 'US East · existing services' },
-  { name: 'Fly.io — New region',    value: 'fra',       note: 'EU Central · new services' },
+  { name: 'Telemetry refresh rate', value: '100ms',      note: '10 Hz live data' },
+  { name: 'Service health poll',    value: '30s',        note: 'Background polling' },
+  { name: 'InsForge DB sync',       value: '5s',         note: 'Experiment data' },
+  { name: 'AI model',               value: 'gpt-4o-mini',note: 'via InsForge Gateway' },
+  { name: 'Max tokens (chat)',       value: '1024',       note: 'Per response' },
+  { name: 'Fly.io — Race region',   value: 'iad',        note: 'US East · existing services' },
+  { name: 'Fly.io — New region',    value: 'fra',        note: 'EU Central · new services' },
 ];
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
+const GROUPS = ['Core', 'Race', 'Agents', 'Governance', 'Data'];
+
+const GROUP_ICONS: Record<string, React.ReactNode> = {
+  Core:       <Database size={12} />,
+  Race:       <Server   size={12} />,
+  Agents:     <Server   size={12} />,
+  Governance: <ShieldCheck size={12} />,
+  Data:       <Database size={12} />,
+};
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
 function statusColor(s: SvcStatus) {
   if (s === 'up')        return 'var(--green)';
   if (s === 'down')      return 'var(--accent)';
@@ -175,52 +82,202 @@ function statusColor(s: SvcStatus) {
 
 function StatusCell({ svc, live }: { svc: ServiceStatus; live?: SvcStatus }) {
   const status = live ?? svc.status;
-  if (status === 'up') return (
-    <span className="flex items-center gap-2" style={{ color: 'var(--green)' }}>
-      <CheckCircle size={13} />
-      <span style={{ fontSize: 11, fontWeight: 700 }}>Online</span>
-    </span>
-  );
-  if (status === 'down') return (
-    <span className="flex items-center gap-2" style={{ color: 'var(--accent)' }}>
-      <XCircle size={13} />
-      <span style={{ fontSize: 11, fontWeight: 700 }}>Offline</span>
-    </span>
-  );
-  if (status === 'deploying') return (
-    <span className="flex items-center gap-2" style={{ color: 'var(--yellow)' }}>
-      <Loader size={13} style={{ animation: 'spin 1.4s linear infinite' }} />
-      <span style={{ fontSize: 11, fontWeight: 700 }}>Deploying</span>
-    </span>
-  );
+  if (status === 'up')        return <span style={{ display: 'flex', alignItems: 'center', gap: 5, color: 'var(--green)' }}><CheckCircle size={13} /><span style={{ fontSize: 11, fontWeight: 700 }}>Online</span></span>;
+  if (status === 'down')      return <span style={{ display: 'flex', alignItems: 'center', gap: 5, color: 'var(--accent)' }}><XCircle size={13} /><span style={{ fontSize: 11, fontWeight: 700 }}>Offline</span></span>;
+  if (status === 'deploying') return <span style={{ display: 'flex', alignItems: 'center', gap: 5, color: 'var(--yellow)' }}><Loader size={13} style={{ animation: 'spin 1.4s linear infinite' }} /><span style={{ fontSize: 11, fontWeight: 700 }}>Deploying</span></span>;
   return <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Unknown</span>;
 }
 
-const GROUPS = ['Core', 'Race', 'Agents', 'Governance', 'Data'];
+// ── Health Ring (SVG donut) ───────────────────────────────────────────────────
 
-// ── Component ─────────────────────────────────────────────────────────────────
+function HealthRing({ up, deploying, total }: { up: number; deploying: number; total: number }) {
+  const down = total - up - deploying;
+  const r = 44; const cx = 56; const cy = 56;
+  const circ = 2 * Math.PI * r;
+
+  const segments = [
+    { value: up,        color: '#22C55E', label: 'Online'    },
+    { value: deploying, color: '#F59E0B', label: 'Deploying' },
+    { value: down,      color: '#E03737', label: 'Offline'   },
+  ];
+
+  let offset = circ * 0.25; // start from top
+  const arcs = segments.map(s => {
+    const dash   = (s.value / total) * circ;
+    const gap    = circ - dash;
+    const result = { ...s, dash, gap, offset };
+    offset += dash;
+    if (offset > circ) offset -= circ;
+    return result;
+  });
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+      <svg width="112" height="112" viewBox="0 0 112 112">
+        {/* Background ring */}
+        <circle cx={cx} cy={cy} r={r} fill="none"
+          stroke="rgba(255,255,255,0.06)" strokeWidth="10" />
+        {arcs.map((arc, i) => arc.value > 0 && (
+          <circle key={i} cx={cx} cy={cy} r={r} fill="none"
+            stroke={arc.color} strokeWidth="10"
+            strokeLinecap="butt"
+            strokeDasharray={`${arc.dash} ${arc.gap}`}
+            strokeDashoffset={-arc.offset}
+            transform={`rotate(-90 ${cx} ${cy})`}
+            opacity="0.9"
+          />
+        ))}
+        {/* Center text */}
+        <text x={cx} y={cy - 4} textAnchor="middle" fill="white"
+          fontSize="18" fontFamily="JetBrains Mono,monospace" fontWeight="700">
+          {up}
+        </text>
+        <text x={cx} y={cy + 12} textAnchor="middle" fill="#535A6E"
+          fontSize="9" fontFamily="JetBrains Mono,monospace">
+          / {total}
+        </text>
+      </svg>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {segments.map(s => (
+          <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{
+              width: 8, height: 8, borderRadius: 2,
+              background: s.color,
+              opacity: s.value === 0 ? 0.25 : 1,
+            }} />
+            <span style={{
+              fontSize: 11, fontFamily: 'JetBrains Mono,monospace',
+              color: s.value > 0 ? s.color : 'var(--text-muted)',
+              fontWeight: s.value > 0 ? 700 : 400,
+            }}>
+              {s.value} {s.label}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Latency bar chart ─────────────────────────────────────────────────────────
+
+function LatencyChart({ services }: { services: ServiceStatus[] }) {
+  const online = services.filter(s => s.latencyMs != null);
+  if (online.length === 0) return (
+    <div style={{ fontSize: 11, color: 'var(--text-muted)', padding: 16 }}>
+      No latency data — services pending
+    </div>
+  );
+  const maxMs = Math.max(...online.map(s => s.latencyMs!));
+
+  return (
+    <div>
+      {online.map(s => {
+        const pct   = (s.latencyMs! / maxMs) * 100;
+        const color = s.latencyMs! < 100 ? 'var(--green)'
+          : s.latencyMs! < 300 ? 'var(--yellow)'
+          : 'var(--accent)';
+        return (
+          <div key={s.name} style={{ marginBottom: 8 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
+              <span style={{ fontSize: 11, color: 'var(--text)' }}>{s.name}</span>
+              <span style={{
+                fontSize: 10, fontFamily: 'JetBrains Mono,monospace',
+                color, fontWeight: 700,
+              }}>
+                {s.latencyMs}ms
+              </span>
+            </div>
+            <div style={{ height: 5, background: 'rgba(255,255,255,0.04)', borderRadius: 3, overflow: 'hidden' }}>
+              <div style={{
+                width: `${pct}%`, height: '100%',
+                background: color, borderRadius: 3,
+                transition: 'width 0.5s',
+              }} />
+            </div>
+          </div>
+        );
+      })}
+      <div style={{
+        marginTop: 10, fontSize: 10, color: 'var(--text-muted)',
+        fontFamily: 'JetBrains Mono,monospace',
+      }}>
+        p95 latency · green &lt; 100ms · yellow &lt; 300ms · red ≥ 300ms
+      </div>
+    </div>
+  );
+}
+
+// ── Group health summary cards ────────────────────────────────────────────────
+
+function GroupHealthCards({
+  services, liveStatus,
+}: {
+  services: ServiceStatus[];
+  liveStatus: Record<string, SvcStatus>;
+}) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8, marginBottom: 20 }}>
+      {GROUPS.map(group => {
+        const svcs   = services.filter(s => s.group === group);
+        const up     = svcs.filter(s => (liveStatus[s.name] ?? s.status) === 'up').length;
+        const deploy = svcs.filter(s => s.status === 'deploying').length;
+        const total  = svcs.length;
+        const allUp  = up === total;
+        const hasDown = svcs.some(s => (liveStatus[s.name] ?? s.status) === 'down');
+        const color  = hasDown ? 'var(--accent)' : allUp ? 'var(--green)' : 'var(--yellow)';
+
+        return (
+          <div key={group} style={{
+            padding: '12px 14px',
+            background: `${color === 'var(--green)' ? 'rgba(34,197,94' : color === 'var(--yellow)' ? 'rgba(245,158,11' : 'rgba(224,55,55'},0.07)`,
+            border: `1px solid ${color === 'var(--green)' ? 'rgba(34,197,94' : color === 'var(--yellow)' ? 'rgba(245,158,11' : 'rgba(224,55,55'},0.25)`,
+            borderRadius: 8,
+          }}>
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8,
+              color, fontSize: 10,
+              fontWeight: 700, fontFamily: 'JetBrains Mono,monospace',
+              letterSpacing: '0.05em',
+            }}>
+              {GROUP_ICONS[group]}
+              {group.toUpperCase()}
+            </div>
+            <div style={{
+              fontSize: 20, fontWeight: 700, fontFamily: 'JetBrains Mono,monospace',
+              color,
+            }}>
+              {up}<span style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 400 }}>/{total}</span>
+            </div>
+            <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 2 }}>
+              {deploy > 0 ? `${deploy} deploying` : allUp ? 'all online' : hasDown ? 'service down' : 'degraded'}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ── Main component ────────────────────────────────────────────────────────────
+
 export function SettingsPage() {
   const [showKeys, setShowKeys]   = useState<Record<string, boolean>>({});
   const [liveStatus, setLive]     = useState<Record<string, SvcStatus>>({});
   const [checking, setChecking]   = useState(false);
   const [lastChecked, setChecked] = useState<Date | null>(null);
 
-  // Health-check all services
   async function checkHealth() {
     setChecking(true);
     const results: Record<string, SvcStatus> = {};
     await Promise.all(
       SERVICES.map(async svc => {
-        if (svc.status === 'deploying') return; // skip — not live yet
+        if (svc.status === 'deploying') return;
         try {
           const controller = new AbortController();
           const timer = setTimeout(() => controller.abort(), 6000);
-          const r = await fetch(`${svc.url}/health`, {
-            signal: controller.signal,
-            mode: 'no-cors',  // avoids CORS errors on cross-origin health checks
-          });
+          await fetch(`${svc.url}/health`, { signal: controller.signal, mode: 'no-cors' });
           clearTimeout(timer);
-          // no-cors gives opaque response — treat as up if fetch didn't throw
           results[svc.name] = 'up';
         } catch {
           results[svc.name] = 'down';
@@ -232,11 +289,14 @@ export function SettingsPage() {
     setChecking(false);
   }
 
-  // Auto-check on mount
   useEffect(() => { checkHealth(); }, []);
 
-  const upCount      = SERVICES.filter(s => (liveStatus[s.name] ?? s.status) === 'up').length;
-  const deployCount  = SERVICES.filter(s => s.status === 'deploying').length;
+  const upCount     = SERVICES.filter(s => (liveStatus[s.name] ?? s.status) === 'up').length;
+  const deployCount = SERVICES.filter(s => s.status === 'deploying').length;
+  const downCount   = SERVICES.filter(s => (liveStatus[s.name] ?? s.status) === 'down').length;
+
+  const onlineServices = useMemo(() =>
+    SERVICES.filter(s => s.latencyMs != null), []);
 
   return (
     <div className="page">
@@ -244,18 +304,16 @@ export function SettingsPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">Settings</h1>
-          <p className="page-subtitle">Service connections · API keys · Data configuration</p>
+          <p className="page-subtitle">Service connections · API keys · Data configuration · Infrastructure health</p>
         </div>
         <div className="flex items-center gap-2">
           <span className="badge badge-green">{upCount} online</span>
-          {deployCount > 0 && (
-            <span className="badge badge-yellow">{deployCount} deploying</span>
-          )}
+          {deployCount > 0 && <span className="badge badge-yellow">{deployCount} deploying</span>}
+          {downCount > 0   && <span className="badge badge-red">{downCount} offline</span>}
           <button
             className="btn btn-ghost btn-sm flex items-center gap-2"
             onClick={checkHealth}
             disabled={checking}
-            title="Re-check service health"
           >
             <RefreshCw size={13} style={checking ? { animation: 'spin 1s linear infinite' } : undefined} />
             {checking ? 'Checking…' : 'Refresh'}
@@ -263,33 +321,60 @@ export function SettingsPage() {
         </div>
       </div>
 
-      {/* ── Service health ───────────────────────────────────────────────────── */}
+      {/* ── Health overview row: ring + latency chart ────────────────────── */}
+      <div className="grid-2 mb-4">
+        <div className="card">
+          <div className="card-header">
+            <span className="card-title">Infrastructure Health</span>
+            {lastChecked && (
+              <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>
+                {lastChecked.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+              </span>
+            )}
+          </div>
+          <div className="card-body">
+            <HealthRing up={upCount} deploying={deployCount} total={SERVICES.length} />
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="card-header">
+            <span className="card-title">Service Latency</span>
+            <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>
+              online services only
+            </span>
+          </div>
+          <div className="card-body">
+            <LatencyChart services={onlineServices} />
+          </div>
+        </div>
+      </div>
+
+      {/* ── Group health cards ───────────────────────────────────────────── */}
+      <GroupHealthCards services={SERVICES} liveStatus={liveStatus} />
+
+      {/* ── Service health table ─────────────────────────────────────────── */}
       <div className="card mb-4">
         <div className="card-header">
-          <span className="card-title">Service Health</span>
-          {lastChecked && (
-            <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-              checked {lastChecked.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-            </span>
-          )}
+          <span className="card-title">Service Registry</span>
+          <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>
+            {SERVICES.length} microservices
+          </span>
         </div>
 
         {GROUPS.map(group => {
           const svcs = SERVICES.filter(s => s.group === group);
           return (
             <div key={group}>
-              {/* Group header */}
               <div style={{
-                padding: '8px 16px 4px',
-                fontSize: 10,
-                fontWeight: 700,
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-                color: 'var(--text-muted)',
+                padding: '7px 16px 4px',
+                fontSize: 10, fontWeight: 700, letterSpacing: '0.1em',
+                textTransform: 'uppercase', color: 'var(--text-muted)',
                 background: 'var(--bg-surface)',
                 borderBottom: '1px solid var(--border)',
+                display: 'flex', alignItems: 'center', gap: 6,
               }}>
-                {group}
+                {GROUP_ICONS[group]}{group}
               </div>
               <table className="data-table" style={{ marginBottom: 0 }}>
                 <tbody>
@@ -299,24 +384,21 @@ export function SettingsPage() {
                     return (
                       <tr key={svc.name}>
                         <td style={{ fontWeight: 600, width: 200 }}>{svc.name}</td>
-                        <td style={{ width: 120 }}>
-                          <StatusCell svc={svc} live={live} />
+                        <td style={{ width: 130 }}><StatusCell svc={svc} live={live} /></td>
+                        <td className="mono" style={{ width: 64, color: statusColor(effectiveStatus) }}>
+                          {svc.latency ?? '—'}
                         </td>
-                        <td className="mono" style={{ width: 60, color: 'var(--text-muted)' }}>
-                          {svc.latency ?? (effectiveStatus === 'deploying' ? '—' : '—')}
-                        </td>
-                        <td style={{ fontSize: 12, color: 'var(--text-dim)', width: 220 }}>
+                        <td style={{ fontSize: 12, color: 'var(--text-muted)', width: 240 }}>
                           {svc.description}
                         </td>
                         <td>
-                          <a
-                            href={svc.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-1"
-                            style={{ fontSize: 11, color: 'var(--blue)', textDecoration: 'none', fontFamily: 'var(--font-mono)' }}
-                          >
-                            {svc.url.replace('https://', '').slice(0, 46)}
+                          <a href={svc.url} target="_blank" rel="noopener noreferrer"
+                            style={{
+                              display: 'flex', alignItems: 'center', gap: 4,
+                              fontSize: 11, color: 'var(--blue)', textDecoration: 'none',
+                              fontFamily: 'JetBrains Mono,monospace',
+                            }}>
+                            {svc.url.replace('https://', '').slice(0, 44)}
                             <ExternalLink size={10} />
                           </a>
                         </td>
@@ -337,25 +419,21 @@ export function SettingsPage() {
           <div>
             {API_KEYS.map(key => (
               <div key={key.name} style={{ padding: '12px 16px', borderBottom: '1px solid var(--border)' }}>
-                <div className="flex items-center justify-between" style={{ marginBottom: 8 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                   <div>
                     <div style={{ fontWeight: 600, fontSize: 13 }}>{key.name}</div>
-                    <div style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                    <div style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>
                       {key.envKey}
                     </div>
                   </div>
                   <span className="badge badge-green">SET</span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <code style={{
-                    flex: 1,
-                    padding: '6px 10px',
-                    background: 'var(--bg-surface)',
-                    borderRadius: 5,
-                    fontSize: 12,
-                    fontFamily: 'var(--font-mono)',
-                    color: 'var(--text-dim)',
-                    border: '1px solid var(--border)',
+                    flex: 1, padding: '6px 10px',
+                    background: 'var(--bg-surface)', borderRadius: 5,
+                    fontSize: 12, fontFamily: 'JetBrains Mono,monospace',
+                    color: 'var(--text-muted)', border: '1px solid var(--border)',
                   }}>
                     {showKeys[key.name] ? key.value : '•'.repeat(22)}
                   </code>
@@ -363,7 +441,6 @@ export function SettingsPage() {
                     className="btn btn-ghost btn-sm"
                     onClick={() => setShowKeys(p => ({ ...p, [key.name]: !p[key.name] }))}
                     style={{ padding: '5px 8px' }}
-                    title={showKeys[key.name] ? 'Hide key' : 'Show key'}
                   >
                     {showKeys[key.name] ? <EyeOff size={14} /> : <Eye size={14} />}
                   </button>
@@ -374,7 +451,7 @@ export function SettingsPage() {
         </div>
 
         {/* ── Right column ──────────────────────────────────────────────────── */}
-        <div className="flex-col gap-3">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {/* Data config */}
           <div className="card">
             <div className="card-header"><span className="card-title">Data Configuration</span></div>
@@ -392,7 +469,7 @@ export function SettingsPage() {
           {/* Platform info */}
           <div className="card">
             <div className="card-header"><span className="card-title">Platform Information</span></div>
-            <div className="card-body flex-col gap-3" style={{ gap: 10 }}>
+            <div className="card-body" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {[
                 { k: 'Platform',        v: 'KDD Race Engineering Platform' },
                 { k: 'Version',         v: 'v3.0.0 — Race Edition' },
@@ -402,7 +479,7 @@ export function SettingsPage() {
                 { k: 'Frontend',        v: 'vdf553wq.insforge.site (Vercel)' },
                 { k: 'KDD Repos',       v: '26 sub-repositories' },
               ].map(item => (
-                <div key={item.k} className="flex items-center justify-between">
+                <div key={item.k} style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{item.k}</span>
                   <span className="text-mono" style={{ fontSize: 12, color: 'var(--text)' }}>{item.v}</span>
                 </div>
@@ -417,40 +494,33 @@ export function SettingsPage() {
                 {deployCount > 0 ? `${deployCount} Services Pending` : 'All Services Deployed'}
               </span>
             </div>
-            <div className="card-body flex-col gap-3" style={{ gap: 10 }}>
+            <div className="card-body" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {deployCount > 0 ? (
                 <>
-                  <p style={{ fontSize: 13, color: 'var(--text-dim)', lineHeight: 1.6 }}>
-                    5 services running · {deployCount} pending deployment.
+                  <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>
+                    {upCount} services running · {deployCount} pending deployment.
                     Pro plan is active — re-run the deploy script once InsForge quota propagates.
                   </p>
                   <div className="insight-panel" style={{ ['--dot-color' as string]: 'var(--yellow)' }}>
                     <div className="insight-panel__title" style={{ color: 'var(--yellow)' }}>Awaiting Quota Propagation</div>
                     <p className="insight-panel__body">
                       Pro plan upgraded. InsForge API still reports 5-service limit —
-                      this typically resolves within a few minutes. Verify the plan
-                      is linked to project&nbsp;{PROJECT_ID.slice(0, 8)}… in the InsForge
-                      dashboard, then re-run <code>deploy_compute.py</code>.
+                      this typically resolves within a few minutes. Verify the plan is linked
+                      to project {PROJECT_ID.slice(0, 8)}… then re-run{' '}
+                      <code>deploy_compute.py</code>.
                     </p>
                   </div>
                   <code style={{
-                    display: 'block',
-                    padding: '10px 14px',
-                    background: 'var(--bg-surface)',
-                    borderRadius: 6,
-                    fontSize: 12,
-                    fontFamily: 'var(--font-mono)',
-                    color: 'var(--yellow)',
-                    border: '1px solid var(--border)',
+                    display: 'block', padding: '10px 14px',
+                    background: 'var(--bg-surface)', borderRadius: 6,
+                    fontSize: 12, fontFamily: 'JetBrains Mono,monospace',
+                    color: 'var(--yellow)', border: '1px solid var(--border)',
                   }}>
                     python -X utf8 deploy_compute.py
                   </code>
-                  <p style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-                    Deploy is idempotent — re-runs safely after quota is freed
-                  </p>
                 </>
               ) : (
-                <p style={{ fontSize: 13, color: 'var(--text-dim)', lineHeight: 1.6 }}>
+                <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>
                   All {SERVICES.length} services are deployed and running.
                   Use the Refresh button above to re-check live health status.
                 </p>
@@ -463,7 +533,7 @@ export function SettingsPage() {
   );
 }
 
-/* Spin keyframe for Loader/RefreshCw icons */
+/* Spin keyframe */
 const spinStyle = document.createElement('style');
 spinStyle.textContent = `@keyframes spin { to { transform: rotate(360deg); } }`;
 document.head.appendChild(spinStyle);
