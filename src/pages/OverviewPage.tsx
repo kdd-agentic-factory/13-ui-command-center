@@ -100,6 +100,186 @@ function SectorBar({ sector, delta, base }: { sector: string; delta: number; bas
   );
 }
 
+// ── Mugello mini track map ────────────────────────────────────────────────────
+
+const MUGELLO_PTS: [number, number][] = [
+  [30,148],[70,152],[110,153],[150,152],[182,146],
+  [205,132],[214,116],[216,98],[210,82],[198,68],
+  [182,56],[164,49],[144,46],[124,48],[106,53],
+  [88,62],[74,74],[66,90],[62,108],[64,126],
+  [70,140],[88,148],[30,148],
+];
+
+function interpolateTrackPos(pts: [number, number][], frac: number): [number, number] {
+  const norm = ((frac % 1) + 1) % 1;
+  const dists: number[] = [0];
+  for (let i = 1; i < pts.length; i++) {
+    const dx = pts[i][0] - pts[i - 1][0];
+    const dy = pts[i][1] - pts[i - 1][1];
+    dists.push(dists[i - 1] + Math.sqrt(dx * dx + dy * dy));
+  }
+  const total = dists[dists.length - 1];
+  const target = norm * total;
+  let seg = 0;
+  while (seg < dists.length - 2 && dists[seg + 1] < target) seg++;
+  const t0 = dists[seg + 1] === dists[seg] ? 0 : (target - dists[seg]) / (dists[seg + 1] - dists[seg]);
+  const [x0, y0] = pts[seg];
+  const [x1, y1] = pts[seg + 1];
+  return [x0 + t0 * (x1 - x0), y0 + t0 * (y1 - y0)];
+}
+
+const TRACK_RIVALS: { num: number; color: string; offset: number }[] = [
+  { num: 93, color: '#E03737', offset: -0.06 },
+  { num: 41, color: '#F59E0B', offset: -0.12 },
+  { num: 89, color: '#3B82F6', offset: +0.05 },
+  { num: 23, color: '#22C55E', offset: +0.10 },
+];
+
+function MiniTrackMap({ trackPos }: { trackPos: number }) {
+  const polyStr = MUGELLO_PTS.map(p => `${p[0]},${p[1]}`).join(' ');
+  const [kx, ky] = interpolateTrackPos(MUGELLO_PTS, trackPos);
+  return (
+    <div>
+      <svg width="100%" height="170" viewBox="0 0 250 170" preserveAspectRatio="xMidYMid meet">
+        {/* shadow */}
+        <polyline points={polyStr} fill="none" stroke="rgba(255,255,255,0.04)"
+          strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
+        {/* base track */}
+        <polyline points={polyStr} fill="none" stroke="rgba(255,255,255,0.10)"
+          strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+        {/* sector colour overlays */}
+        <polyline
+          points={MUGELLO_PTS.slice(0, 8).map(p => `${p[0]},${p[1]}`).join(' ')}
+          fill="none" stroke="var(--blue)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" opacity="0.55"
+        />
+        <polyline
+          points={MUGELLO_PTS.slice(7, 15).map(p => `${p[0]},${p[1]}`).join(' ')}
+          fill="none" stroke="var(--yellow)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" opacity="0.55"
+        />
+        <polyline
+          points={MUGELLO_PTS.slice(14).map(p => `${p[0]},${p[1]}`).join(' ')}
+          fill="none" stroke="var(--green)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" opacity="0.55"
+        />
+        {/* rival dots */}
+        {TRACK_RIVALS.map(r => {
+          const [rx, ry] = interpolateTrackPos(MUGELLO_PTS, (trackPos + r.offset + 1) % 1);
+          return <circle key={r.num} cx={rx} cy={ry} r="4" fill={r.color} opacity="0.82" />;
+        })}
+        {/* KDD #47 */}
+        <circle cx={kx} cy={ky} r="5.5" fill="var(--accent)" stroke="white" strokeWidth="1.5"
+          style={{ filter: 'drop-shadow(0 0 5px var(--accent))' }} />
+        <text x={kx + 8} y={ky + 4} fill="white" fontSize="8" fontWeight="700"
+          fontFamily="JetBrains Mono,monospace">#47</text>
+        {/* S/F marker */}
+        <rect x="26" y="142" width="6" height="12" rx="1" fill="rgba(255,255,255,0.22)" />
+        <text x="35" y="151" fill="#535A6E" fontSize="7" fontFamily="JetBrains Mono,monospace">S/F</text>
+        <text x="125" y="11" textAnchor="middle" fill="rgba(255,255,255,0.15)"
+          fontSize="8" fontFamily="JetBrains Mono,monospace" letterSpacing="0.12em">MUGELLO</text>
+      </svg>
+      <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap', marginTop: 2 }}>
+        {([['S1','var(--blue)'],['S2','var(--yellow)'],['S3','var(--green)']] as [string,string][]).map(([s,c]) => (
+          <span key={s} style={{ display:'flex', alignItems:'center', gap:3, fontSize:9, color:'var(--text-muted)' }}>
+            <span style={{ width:12, height:3, background:c, borderRadius:1, display:'inline-block' }} />{s}
+          </span>
+        ))}
+        <span style={{ display:'flex', alignItems:'center', gap:3, fontSize:9, color:'var(--accent)' }}>
+          <span style={{ width:7, height:7, background:'var(--accent)', borderRadius:'50%', display:'inline-block' }} />KDD #47
+        </span>
+        {TRACK_RIVALS.map(r => (
+          <span key={r.num} style={{ display:'flex', alignItems:'center', gap:3, fontSize:9, color:r.color }}>
+            <span style={{ width:5, height:5, background:r.color, borderRadius:'50%', display:'inline-block' }} />#{r.num}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Championship standings ────────────────────────────────────────────────────
+
+const CHAMPIONSHIP_DATA: { rider: string; num: number; pts: number; self: boolean }[] = [
+  { rider: 'J. Martin',    num: 89, pts: 142, self: false },
+  { rider: 'M. Marquez',   num: 93, pts: 138, self: false },
+  { rider: '#47 KDD',      num: 47, pts: 115, self: true  },
+  { rider: 'P. Espargaro', num: 41, pts: 109, self: false },
+  { rider: 'F. Bagnaia',   num: 1,  pts:  96, self: false },
+];
+
+function ChampionshipBars() {
+  const maxPts = CHAMPIONSHIP_DATA[0].pts;
+  const selfPts = CHAMPIONSHIP_DATA.find(r => r.self)?.pts ?? 0;
+  const gap = maxPts - selfPts;
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+      {CHAMPIONSHIP_DATA.map((r, i) => {
+        const podCol = i === 0 ? '#F59E0B' : i === 1 ? '#C0C0C0' : i === 2 ? '#CD7F32' : 'var(--text-muted)';
+        return (
+          <div key={r.num} style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+            <span style={{ width:22, fontFamily:'JetBrains Mono,monospace', fontWeight:800, fontSize:11, color:podCol, textAlign:'right', flexShrink:0 }}>
+              P{i + 1}
+            </span>
+            <div style={{ flex: 1 }}>
+              <div style={{ display:'flex', justifyContent:'space-between', marginBottom:2 }}>
+                <span style={{ fontSize:11, fontWeight:r.self ? 700 : 400, color:r.self ? 'var(--accent)' : 'var(--text)' }}>
+                  {r.rider}
+                  {r.self && <span className="badge badge-red" style={{ marginLeft:4, fontSize:8 }}>YOU</span>}
+                </span>
+                <span style={{ fontSize:11, fontFamily:'JetBrains Mono,monospace', color:'var(--text-muted)' }}>{r.pts}</span>
+              </div>
+              <div className="bar-track">
+                <div className="bar-fill" style={{ width:`${(r.pts / maxPts) * 100}%`, background:r.self ? 'var(--accent)' : 'rgba(255,255,255,0.15)' }} />
+              </div>
+            </div>
+          </div>
+        );
+      })}
+      <div style={{ fontSize:10, color:'var(--text-muted)', textAlign:'right', marginTop:2 }}>
+        {gap > 0 ? `–${gap} pts from lead · After R6` : 'CHAMPIONSHIP LEADER'}
+      </div>
+    </div>
+  );
+}
+
+// ── Stint progress ────────────────────────────────────────────────────────────
+
+function StintProgress({ tyreAge, lapCount }: { tyreAge: number; lapCount: number }) {
+  const optPit   = Math.max(lapCount + 1, lapCount + Math.round((18 - tyreAge) / 1.5));
+  const lapsLeft = Math.max(0, optPit - lapCount);
+  const stintPct = Math.min(100, (tyreAge / 18) * 100);
+  const urgency  = lapsLeft <= 2 ? 'var(--accent)' : lapsLeft <= 5 ? 'var(--yellow)' : 'var(--green)';
+  const barCol   = stintPct > 85 ? 'var(--accent)' : stintPct > 65 ? 'var(--yellow)' : 'var(--blue)';
+  return (
+    <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
+      <div>
+        <div style={{ display:'flex', justifyContent:'space-between', marginBottom:3 }}>
+          <span style={{ fontSize:11, color:'var(--text-muted)' }}>Stint age</span>
+          <span style={{ fontSize:11, fontFamily:'JetBrains Mono,monospace' }}>{tyreAge} / 18 laps</span>
+        </div>
+        <div className="bar-track" style={{ height:8, borderRadius:3 }}>
+          <div style={{ width:`${stintPct}%`, height:8, background:barCol, borderRadius:3, transition:'width 0.4s' }} />
+        </div>
+      </div>
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:6 }}>
+        {([
+          { label:'Stint Laps',     value:`${tyreAge}L`,       color:'var(--text)' },
+          { label:'Laps to Pit',    value:`${lapsLeft}`,        color:urgency },
+          { label:'Pit Window',     value:`L${optPit}`,         color:'var(--green)' },
+          { label:'Race Laps Left', value:`${23 - lapCount}`,   color:'var(--text-muted)' },
+        ] as { label:string; value:string; color:string }[]).map(item => (
+          <div key={item.label} style={{ background:'var(--bg-surface)', border:'1px solid var(--border)', borderRadius:6, padding:'7px 9px' }}>
+            <div style={{ fontSize:8, color:'var(--text-muted)', textTransform:'uppercase', marginBottom:3, letterSpacing:'0.07em' }}>
+              {item.label}
+            </div>
+            <div style={{ fontFamily:'JetBrains Mono,monospace', fontWeight:800, fontSize:15, color:item.color }}>
+              {item.value}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export function OverviewPage() {
@@ -432,6 +612,42 @@ export function OverviewPage() {
             </svg>
             <div style={{ fontSize: 11, color: 'var(--text-muted)', textAlign: 'center', marginTop: 4 }}>
               Green = faster than model · Red = slower
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Track map + Championship + Stint ──────────────────────────────────── */}
+      <div className="grid-2 mb-4">
+        <div className="card">
+          <div className="card-header">
+            <span className="card-title">Live Track Position — Mugello</span>
+            <span className="badge badge-muted" style={{ fontFamily:'JetBrains Mono,monospace' }}>
+              {Math.round(t.trackPos * 100)}% lap
+            </span>
+          </div>
+          <div className="card-body" style={{ flexDirection:'column' }}>
+            <MiniTrackMap trackPos={t.trackPos} />
+          </div>
+        </div>
+
+        <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
+          <div className="card" style={{ flex:1 }}>
+            <div className="card-header">
+              <span className="card-title">Championship Standings</span>
+              <span className="badge badge-yellow">After R6</span>
+            </div>
+            <div className="card-body" style={{ flexDirection:'column' }}>
+              <ChampionshipBars />
+            </div>
+          </div>
+          <div className="card">
+            <div className="card-header">
+              <span className="card-title">Stint Progress</span>
+              <span className="badge badge-blue">Pit Window</span>
+            </div>
+            <div className="card-body" style={{ flexDirection:'column' }}>
+              <StintProgress tyreAge={t.rearTyreAge} lapCount={t.lapCount} />
             </div>
           </div>
         </div>

@@ -85,6 +85,202 @@ function cliffLapFor(compound: CompoundId): number {
   return 24;
 }
 
+// ── Compound radar chart (5-axis) ─────────────────────────────────────────────
+
+const RADAR_AXES = ['Grip Peak', 'Durability', 'Heat Speed', 'Cliff Safety', 'Temp Range'];
+
+function compoundRadarValues(id: CompoundId): number[] {
+  const c = COMPOUNDS[id];
+  const gripPeak   = c.grip0;
+  const durability = Math.round(Math.max(0, 100 - c.gripLossPerLap * 20));
+  const heatSpeed  = Math.round(Math.max(0, 100 - c.heatUpLaps * 12));
+  const cliffSafe  = Math.round(Math.max(0, 100 - (c.cliffMult - 1.8) * 40));
+  const tempRange  = Math.round((c.optTempHigh - c.optTempLow) / 0.6);
+  return [gripPeak, durability, heatSpeed, cliffSafe, tempRange];
+}
+
+function CompoundRadarChart() {
+  const W = 200; const H = 200;
+  const cx = 100; const cy = 100; const R = 72;
+  const N = RADAR_AXES.length;
+  const angleOf = (i: number) => (i * 2 * Math.PI) / N - Math.PI / 2;
+  const polarXY = (val: number, idx: number): [number, number] => {
+    const r = (val / 100) * R;
+    return [cx + r * Math.cos(angleOf(idx)), cy + r * Math.sin(angleOf(idx))];
+  };
+  const gridPoly = (pct: number) =>
+    Array.from({ length: N }, (_, i) => {
+      const r = (pct / 100) * R;
+      return `${cx + r * Math.cos(angleOf(i))},${cy + r * Math.sin(angleOf(i))}`;
+    }).join(' ');
+
+  return (
+    <svg width="100%" height="240" viewBox="0 0 200 240" preserveAspectRatio="xMidYMid meet">
+      {/* grid */}
+      {[25, 50, 75, 100].map(pct => (
+        <polygon key={pct} points={gridPoly(pct)}
+          fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+      ))}
+      {/* axis spokes */}
+      {Array.from({ length: N }, (_, i) => {
+        const [x, y] = polarXY(100, i);
+        return <line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="rgba(255,255,255,0.07)" strokeWidth="1" />;
+      })}
+      {/* compound polygons */}
+      {(Object.keys(COMPOUNDS) as CompoundId[]).map(id => {
+        const vals = compoundRadarValues(id);
+        const pts = vals.map((v, i) => polarXY(v, i).join(',')).join(' ');
+        return (
+          <polygon key={id} points={pts}
+            fill={COMPOUNDS[id].color} fillOpacity="0.12"
+            stroke={COMPOUNDS[id].color} strokeWidth="2" strokeOpacity="0.85" />
+        );
+      })}
+      {/* value dots */}
+      {(Object.keys(COMPOUNDS) as CompoundId[]).map(id =>
+        compoundRadarValues(id).map((v, i) => {
+          const [dx, dy] = polarXY(v, i);
+          return <circle key={`${id}-${i}`} cx={dx} cy={dy} r="2.5" fill={COMPOUNDS[id].color} />;
+        })
+      )}
+      {/* axis labels */}
+      {RADAR_AXES.map((label, i) => {
+        const [lx, ly] = polarXY(115, i);
+        return (
+          <text key={label} x={lx} y={ly} textAnchor="middle" dominantBaseline="central"
+            fill="#8B929F" fontSize="7.5" fontFamily="JetBrains Mono,monospace" fontWeight="600">
+            {label}
+          </text>
+        );
+      })}
+      {/* legend */}
+      {(Object.keys(COMPOUNDS) as CompoundId[]).map((id, i) => (
+        <g key={id} transform={`translate(${8 + i * 62}, 226)`}>
+          <rect x="0" y="0" width="10" height="3" rx="1" fill={COMPOUNDS[id].color} />
+          <text x="13" y="4" fill="#8B929F" fontSize="8" fontFamily="JetBrains Mono,monospace">
+            {COMPOUNDS[id].name}
+          </text>
+        </g>
+      ))}
+    </svg>
+  );
+}
+
+// ── Grip budget meter ─────────────────────────────────────────────────────────
+
+function GripBudgetMeter({ compound, lapAge }: { compound: CompoundId; lapAge: number }) {
+  const c = COMPOUNDS[compound];
+  const currentGrip = gripAt(compound, lapAge);
+  const cliffLap    = cliffLapFor(compound);
+  const safeMargin  = Math.max(0, currentGrip - c.cliffAt);
+  const usedPct     = ((c.grip0 - currentGrip) / c.grip0) * 100;
+  const color       = currentGrip <= c.cliffAt ? 'var(--accent)' : safeMargin < 10 ? 'var(--yellow)' : 'var(--green)';
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontSize: 13, fontWeight: 700 }}>{c.name} — Grip Budget</span>
+        <span style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 14, fontWeight: 800, color }}>
+          {currentGrip.toFixed(1)}%
+        </span>
+      </div>
+      {/* Zoned bar */}
+      <div style={{ position: 'relative', height: 18, background: 'rgba(255,255,255,0.05)', borderRadius: 5 }}>
+        {/* cliff zone (red bg) */}
+        <div style={{ position:'absolute', left:0, top:0, bottom:0, width:`${c.cliffAt}%`, background:'rgba(224,55,55,0.18)', borderRadius:'5px 0 0 5px' }} />
+        {/* safe zone (green bg) */}
+        <div style={{ position:'absolute', left:`${c.cliffAt}%`, top:0, bottom:0, width:`${100 - c.cliffAt}%`, background:'rgba(34,197,94,0.08)', borderRadius:'0 5px 5px 0' }} />
+        {/* current grip fill */}
+        <div style={{ position:'absolute', left:0, top:0, bottom:0, width:`${currentGrip}%`, background:color, borderRadius:5, opacity:0.65, transition:'width 0.5s' }} />
+        {/* cliff divider */}
+        <div style={{ position:'absolute', left:`${c.cliffAt}%`, top:0, bottom:0, width:2, background:'rgba(224,55,55,0.7)' }} />
+        {/* overlay text */}
+        <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', fontSize:10, fontWeight:700, fontFamily:'JetBrains Mono,monospace', color:'white', textShadow:'0 1px 3px rgba(0,0,0,0.8)' }}>
+          {currentGrip.toFixed(0)}% GRIP
+        </div>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 9, fontFamily: 'JetBrains Mono,monospace' }}>
+        <span style={{ color: 'rgba(224,55,55,0.55)' }}>CLIFF: {c.cliffAt}%</span>
+        <span style={{ color: 'rgba(34,197,94,0.55)' }}>SAFE +{safeMargin.toFixed(1)}%</span>
+      </div>
+      {/* KPIs */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6 }}>
+        {([
+          { label: 'Grip Now',    value: `${currentGrip.toFixed(0)}%`, color },
+          { label: 'Used',        value: `${usedPct.toFixed(0)}%`,     color: 'var(--accent)' },
+          { label: 'Safe Margin', value: `+${safeMargin.toFixed(1)}%`, color: 'var(--green)' },
+          { label: 'Cliff Lap',   value: `L${cliffLap}`,               color: cliffLap <= lapAge + 3 ? 'var(--yellow)' : 'var(--text-muted)' },
+        ] as { label:string; value:string; color:string }[]).map(s => (
+          <div key={s.label} style={{ textAlign:'center' }}>
+            <div style={{ fontSize:8, color:'var(--text-muted)', textTransform:'uppercase', marginBottom:2, letterSpacing:'0.06em' }}>{s.label}</div>
+            <div style={{ fontFamily:'JetBrains Mono,monospace', fontWeight:800, fontSize:12, color:s.color }}>{s.value}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Temperature history heatmap ───────────────────────────────────────────────
+
+function buildTempHistory(fl: number, fr: number, rl: number, rr: number, lapAge: number): { fl:number; fr:number; rl:number; rr:number }[] {
+  return Array.from({ length: 8 }, (_, j) => {
+    const age = Math.max(0, lapAge - (7 - j));
+    const wave = (base: number, phase: number) => Math.round(base + Math.sin(age * 0.75 + phase) * 3.5 - (7 - j) * 0.6);
+    return { fl: wave(fl, 0), fr: wave(fr, 0.5), rl: wave(rl, 1.0), rr: wave(rr, 1.5) };
+  });
+}
+
+function TempHistoryHeatmap({ fl, fr, rl, rr, lapAge, currentLap }: {
+  fl: number; fr: number; rl: number; rr: number; lapAge: number; currentLap: number;
+}) {
+  const history = buildTempHistory(fl, fr, rl, rr, lapAge);
+  const cornerKeys: ('fl'|'fr'|'rl'|'rr')[] = ['fl','fr','rl','rr'];
+  const cornerLabels = ['FL','FR','RL','RR'];
+
+  return (
+    <div>
+      {/* header row */}
+      <div style={{ display:'grid', gridTemplateColumns:'36px repeat(4, 1fr)', gap:3, marginBottom:4 }}>
+        <span />
+        {cornerLabels.map(c => (
+          <span key={c} style={{ textAlign:'center', fontSize:10, color:'var(--text-muted)', fontFamily:'JetBrains Mono,monospace', fontWeight:700 }}>{c}</span>
+        ))}
+      </div>
+      {/* data rows */}
+      {history.map((row, i) => {
+        const lap = Math.max(1, currentLap - 7 + i);
+        const isLatest = i === 7;
+        const alpha = 0.55 + i * 0.06;
+        return (
+          <div key={i} style={{ display:'grid', gridTemplateColumns:'36px repeat(4, 1fr)', gap:3, marginBottom:3 }}>
+            <span style={{ fontSize:9, color:isLatest ? 'var(--text)' : 'var(--text-muted)', fontFamily:'JetBrains Mono,monospace', lineHeight:'26px', fontWeight:isLatest ? 700 : 400 }}>
+              L{lap}
+            </span>
+            {cornerKeys.map(k => {
+              const temp = row[k];
+              return (
+                <div key={k} style={{ height:26, borderRadius:4, display:'flex', alignItems:'center', justifyContent:'center', background:tempColor(temp), border:isLatest ? '1px solid rgba(255,255,255,0.3)' : '1px solid transparent', opacity:alpha }}>
+                  <span style={{ fontSize:10, fontWeight:700, color:'#111', fontFamily:'JetBrains Mono,monospace' }}>{temp}°</span>
+                </div>
+              );
+            })}
+          </div>
+        );
+      })}
+      {/* legend */}
+      <div style={{ display:'flex', gap:8, justifyContent:'center', marginTop:8, flexWrap:'wrap' }}>
+        {([['<56°','#60A5FA','Cold'],['56–72°','#34D399','Warm'],['72–93°','#FCD34D','Opt.'],['93–109°','#F97316','Hot'],['>109°','#EF4444','Crit.']] as [string,string,string][]).map(([range, col, label]) => (
+          <span key={label} style={{ display:'flex', alignItems:'center', gap:3, fontSize:9, color:'var(--text-muted)' }}>
+            <span style={{ width:8, height:8, borderRadius:2, background:col, display:'inline-block' }} />
+            {label} ({range})
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 // Per-corner thermal card: shows 3 temperature zones (Inner · Mid · Outer)
@@ -459,6 +655,24 @@ export function TireDegradationPage() {
         </div>
       </div>
 
+      {/* ── Temperature history heatmap ─────────────────────────────────────── */}
+      <div className="card mb-4">
+        <div className="card-header">
+          <span className="card-title flex items-center gap-2">
+            <Thermometer size={14} style={{ color: 'var(--orange)' }} />
+            Temperature History — Last 8 Laps × 4 Corners
+          </span>
+          <span style={{ fontSize:11, color:'var(--text-muted)' }}>Darker rows = older laps</span>
+        </div>
+        <div className="card-body" style={{ flexDirection:'column', paddingTop:8 }}>
+          <TempHistoryHeatmap
+            fl={t.tireFrontLeft} fr={t.tireFrontRight}
+            rl={t.tireRearLeft}  rr={t.tireRearRight}
+            lapAge={lapAge} currentLap={t.lapCount}
+          />
+        </div>
+      </div>
+
       {/* ── KPI tiles ───────────────────────────────────────────────────────── */}
       <div className="grid-4 mb-4">
         <div className="stat-tile" style={{ border: `1px solid ${rearGrip < 62 ? 'var(--accent)' : rearGrip < 78 ? 'rgba(245,158,11,0.5)' : 'rgba(34,197,94,0.4)'}` }}>
@@ -562,6 +776,30 @@ export function TireDegradationPage() {
                 fontFamily="JetBrains Mono,monospace">NOW</text>
             </g>
           </svg>
+        </div>
+      </div>
+
+      {/* ── Compound radar + Grip budget ────────────────────────────────────── */}
+      <div className="grid-2 mb-4">
+        <div className="card">
+          <div className="card-header">
+            <span className="card-title">Compound Radar — 5-Axis Performance</span>
+            <span style={{ fontSize:11, color:'var(--text-muted)' }}>Grip · Durability · Heat · Safety · Range</span>
+          </div>
+          <div className="card-body" style={{ justifyContent:'center' }}>
+            <CompoundRadarChart />
+          </div>
+        </div>
+        <div className="card">
+          <div className="card-header">
+            <span className="card-title">Grip Budget Meter</span>
+            <span className="badge badge-orange">Current: {t.rearCompound}</span>
+          </div>
+          <div className="card-body" style={{ flexDirection:'column', gap:20 }}>
+            {(Object.keys(COMPOUNDS) as CompoundId[]).map(id => (
+              <GripBudgetMeter key={id} compound={id} lapAge={lapAge} />
+            ))}
+          </div>
         </div>
       </div>
 

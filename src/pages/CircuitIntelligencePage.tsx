@@ -198,6 +198,92 @@ function SectorSparkline({ deltas }: { deltas: number[] }) {
   );
 }
 
+// ── Per-sector speed / throttle / brake trace ─────────────────────────────────
+
+function SectorTracePanel({ sectorId, start, end }: { sectorId: string; start: number; end: number }) {
+  const N = 44; const W = 200; const H = 60;
+  const sColor = sectorId === 'S1' ? 'var(--blue)' : sectorId === 'S2' ? 'var(--yellow)' : 'var(--green)';
+
+  const pts = Array.from({ length: N }, (_, i) => {
+    const pos = start + (i / (N - 1)) * (end - start);
+    return {
+      spd: trackSpeed(pos),
+      thr: channelValue(pos, 'throttle'),
+      brk: channelValue(pos, 'brake'),
+    };
+  });
+
+  const spdLine = pts.map((p, i) => `${(i / (N - 1)) * W},${H - p.spd * H}`).join(' ');
+  const thrLine = pts.map((p, i) => `${(i / (N - 1)) * W},${H - p.thr * H}`).join(' ');
+
+  return (
+    <div>
+      <div style={{ display:'flex', justifyContent:'space-between', marginBottom:6 }}>
+        <span style={{ fontFamily:'JetBrains Mono,monospace', fontWeight:800, fontSize:13, color:sColor }}>{sectorId}</span>
+        <div style={{ display:'flex', gap:8, fontSize:9, color:'var(--text-muted)' }}>
+          {[['Speed',sColor],['Throttle','rgba(34,197,94,0.7)'],['Brake','var(--accent)']].map(([l,c]) => (
+            <span key={l} style={{ display:'flex', alignItems:'center', gap:3 }}>
+              <span style={{ width:10, height:2, background:c, display:'inline-block', borderRadius:1 }} />{l}
+            </span>
+          ))}
+        </div>
+      </div>
+      <svg width="100%" height={H + 10} viewBox={`0 0 ${W} ${H + 10}`} preserveAspectRatio="none">
+        {/* grid */}
+        {[0.25, 0.5, 0.75].map(pct => (
+          <line key={pct} x1="0" y1={H - pct * H} x2={W} y2={H - pct * H}
+            stroke="rgba(255,255,255,0.04)" strokeWidth="1" />
+        ))}
+        {/* brake fills */}
+        {pts.map((p, i) => p.brk > 0.03 ? (
+          <rect key={i} x={(i / (N - 1)) * W - 2} y={H - p.brk * H}
+            width="5" height={p.brk * H} fill="var(--accent)" opacity="0.35" />
+        ) : null)}
+        {/* throttle */}
+        <polyline points={thrLine} fill="none" stroke="rgba(34,197,94,0.6)" strokeWidth="1.5" />
+        {/* speed */}
+        <polyline points={spdLine} fill="none" stroke={sColor} strokeWidth="2.5" />
+        {/* baseline */}
+        <line x1="0" y1={H} x2={W} y2={H} stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+        {/* axis labels */}
+        <text x="2" y={H - 1} fill="#535A6E" fontSize="7" fontFamily="JetBrains Mono,monospace">0</text>
+        <text x="2" y="9"     fill="#535A6E" fontSize="7" fontFamily="JetBrains Mono,monospace">MAX</text>
+      </svg>
+    </div>
+  );
+}
+
+// ── Braking zone intensity chart ──────────────────────────────────────────────
+
+function BrakingIntensityChart() {
+  const maxBrake = Math.max(...CORNERS.map(c => c.brakePoint));
+  return (
+    <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
+      {CORNERS.map(c => (
+        <div key={c.num} style={{ display:'flex', alignItems:'center', gap:8 }}>
+          <span style={{ width:28, fontFamily:'JetBrains Mono,monospace', fontWeight:700, fontSize:11, color:c.critical ? 'var(--accent)' : 'var(--text-muted)', flexShrink:0 }}>
+            T{c.num}
+          </span>
+          <div style={{ flex:1 }}>
+            <div className="bar-track" style={{ height:8 }}>
+              <div style={{ width:`${(c.brakePoint / maxBrake) * 100}%`, height:8, background:c.critical ? 'var(--accent)' : 'rgba(255,255,255,0.18)', borderRadius:2 }} />
+            </div>
+          </div>
+          <span style={{ width:36, fontSize:10, fontFamily:'JetBrains Mono,monospace', color:'var(--accent)', textAlign:'right', flexShrink:0 }}>
+            {c.brakePoint}m
+          </span>
+          <span style={{ width:70, fontSize:9, fontFamily:'JetBrains Mono,monospace', color:'var(--text-muted)', flexShrink:0 }}>
+            {c.minSpeed}→{c.exitSpeed} km/h
+          </span>
+        </div>
+      ))}
+      <div style={{ fontSize:10, color:'var(--text-muted)', marginTop:4 }}>
+        Red = critical overtaking corners · Bar = brake distance
+      </div>
+    </div>
+  );
+}
+
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export function CircuitIntelligencePage() {
@@ -568,6 +654,30 @@ export function CircuitIntelligencePage() {
           </table>
         </div>
       )}
+
+      {/* ── Sector speed profiles + Braking zones ────────────────────────────── */}
+      <div className="grid-2 mb-4">
+        <div className="card">
+          <div className="card-header">
+            <span className="card-title">Sector Speed / Throttle / Brake Trace</span>
+            <span style={{ fontSize:11, color:'var(--text-muted)' }}>Normalised 0–MAX per channel</span>
+          </div>
+          <div className="card-body" style={{ flexDirection:'column', gap:20 }}>
+            <SectorTracePanel sectorId="S1" start={0}    end={0.33} />
+            <SectorTracePanel sectorId="S2" start={0.33} end={0.66} />
+            <SectorTracePanel sectorId="S3" start={0.66} end={1.0}  />
+          </div>
+        </div>
+        <div className="card">
+          <div className="card-header">
+            <span className="card-title">Braking Zone Intensity</span>
+            <span style={{ fontSize:11, color:'var(--text-muted)' }}>Distance · Entry/exit speed</span>
+          </div>
+          <div className="card-body" style={{ flexDirection:'column' }}>
+            <BrakingIntensityChart />
+          </div>
+        </div>
+      </div>
 
       {/* ── Track evolution ───────────────────────────────────────────────────── */}
       <div className="card">

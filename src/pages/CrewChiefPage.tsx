@@ -98,6 +98,143 @@ const RIVAL_NAMES = [
   { name: 'Quartararo', team: 'Monster Yam.', num: 20 },
 ];
 
+// ── Pit window timeline ───────────────────────────────────────────────────────
+
+function PitWindowTimeline({ lapCount, tyreAge }: { lapCount: number; tyreAge: number }) {
+  const optPit   = Math.max(lapCount + 1, lapCount + Math.round((18 - tyreAge) / 1.5));
+  const winOpen  = Math.max(lapCount + 1, optPit - 3);
+  const winClose = Math.min(23, optPit + 3);
+  const TOTAL    = 23; const W = 560;
+  const lapX     = (lap: number) => (Math.min(TOTAL, Math.max(0, lap)) / TOTAL) * W;
+  const isInWin  = lapCount >= winOpen && lapCount <= winClose;
+  const lapsToOpt = Math.max(0, optPit - lapCount);
+  const urgency  = lapsToOpt <= 1 ? 'var(--accent)' : lapsToOpt <= 3 ? 'var(--yellow)' : 'var(--green)';
+
+  return (
+    <div>
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8 }}>
+        <div style={{ display:'flex', gap:10, alignItems:'center' }}>
+          <span style={{ fontSize:13, fontWeight:700 }}>Pit Window Countdown</span>
+          {isInWin
+            ? <span className="badge badge-green" style={{ animation:'pulse 1.5s infinite' }}>WINDOW OPEN</span>
+            : <span className="badge badge-muted">Opens in {Math.max(0, winOpen - lapCount)} laps</span>}
+        </div>
+        <span style={{ fontFamily:'JetBrains Mono,monospace', fontWeight:800, fontSize:18, color:urgency }}>
+          {lapsToOpt > 0 ? `${lapsToOpt} laps to opt.` : '⚡ BOX NOW'}
+        </span>
+      </div>
+
+      <svg width="100%" height="52" viewBox={`0 0 ${W} 52`} preserveAspectRatio="none">
+        {/* background track */}
+        <rect x="0" y="16" width={W} height="10" rx="2" fill="rgba(255,255,255,0.05)" />
+        {/* completed laps */}
+        <rect x="0" y="16" width={lapX(lapCount)} height="10" rx="2" fill="rgba(255,255,255,0.13)" />
+        {/* window zone */}
+        <rect x={lapX(winOpen)} y="11" width={lapX(winClose) - lapX(winOpen)} height="20" rx="3"
+          fill="rgba(34,197,94,0.15)" stroke="rgba(34,197,94,0.4)" strokeWidth="1" />
+        {/* optimal pit marker */}
+        <line x1={lapX(optPit)} y1="5" x2={lapX(optPit)} y2="42" stroke="var(--green)" strokeWidth="2" />
+        <text x={lapX(optPit)} y="4" textAnchor="middle" fill="var(--green)"
+          fontSize="8" fontFamily="JetBrains Mono,monospace" fontWeight="700">OPT</text>
+        {/* current lap */}
+        <line x1={lapX(lapCount)} y1="5" x2={lapX(lapCount)} y2="42"
+          stroke="white" strokeWidth="2" strokeDasharray="2,2" />
+        <text x={lapX(lapCount) + 4} y="50" fill="rgba(255,255,255,0.45)"
+          fontSize="7" fontFamily="JetBrains Mono,monospace">NOW</text>
+        {/* lap labels */}
+        {[0, 5, 10, 15, 20, 23].map(lap => (
+          <text key={lap} x={lapX(lap)} y="52" textAnchor="middle"
+            fill="#535A6E" fontSize="7" fontFamily="JetBrains Mono,monospace">{lap}</text>
+        ))}
+      </svg>
+
+      <div style={{ display:'flex', gap:24, marginTop:6 }}>
+        {([
+          { label:'Window opens',  value:`L${winOpen}`,   color:'var(--text-muted)' },
+          { label:'Optimal pit',   value:`L${optPit}`,    color:'var(--green)' },
+          { label:'Window closes', value:`L${winClose}`,  color:'var(--text-muted)' },
+          { label:'Tyre age',      value:`${tyreAge}L`,   color:tyreAge > 14 ? 'var(--yellow)' : 'var(--text-muted)' },
+        ] as { label:string; value:string; color:string }[]).map(s => (
+          <div key={s.label} style={{ textAlign:'center' }}>
+            <div style={{ fontSize:9, color:'var(--text-muted)', textTransform:'uppercase', marginBottom:2, letterSpacing:'0.07em' }}>{s.label}</div>
+            <div style={{ fontFamily:'JetBrains Mono,monospace', fontWeight:700, fontSize:13, color:s.color }}>{s.value}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Active strategy board ─────────────────────────────────────────────────────
+
+const STRAT_DATA = {
+  name: '1-Stop Baseline', projectedPos: 'P2–P3', confidence: 87,
+  note: 'DT model confidence 87% — Execute clean in-lap when window opens.',
+  stints: [
+    { num: 1, compound:'SOFT',  lapRange:'L1–', status:'IN PROGRESS' },
+    { num: 2, compound:'HARD',  lapRange:'–L23', status:'PENDING' },
+  ],
+};
+
+function ActiveStrategyBoard({ lapCount, optPit }: { lapCount: number; optPit: number }) {
+  const lapsToBox = Math.max(0, optPit - lapCount);
+  const stintPct  = Math.min(100, (lapCount / optPit) * 100);
+  const confColor = STRAT_DATA.confidence >= 80 ? 'var(--green)' : 'var(--yellow)';
+  const barColor  = lapsToBox <= 3 ? 'var(--accent)' : 'var(--blue)';
+
+  return (
+    <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+        <div style={{ display:'flex', gap:8, alignItems:'center' }}>
+          <span style={{ fontWeight:700, fontSize:13 }}>{STRAT_DATA.name}</span>
+          <span className="badge badge-green">ACTIVE</span>
+        </div>
+        <span style={{ fontFamily:'JetBrains Mono,monospace', fontWeight:800, fontSize:16, color:'var(--green)' }}>
+          {STRAT_DATA.projectedPos}
+        </span>
+      </div>
+
+      {/* stint 1 progress */}
+      <div>
+        <div style={{ display:'flex', justifyContent:'space-between', marginBottom:3 }}>
+          <span style={{ fontSize:11, color:'var(--text-muted)' }}>Stint 1 progress</span>
+          <span style={{ fontSize:11, fontFamily:'JetBrains Mono,monospace' }}>L{lapCount} → pit L{optPit}</span>
+        </div>
+        <div className="bar-track" style={{ height:8 }}>
+          <div style={{ width:`${stintPct}%`, height:8, background:barColor, borderRadius:4, transition:'width 0.4s' }} />
+        </div>
+      </div>
+
+      {/* stint tiles */}
+      <div style={{ display:'flex', gap:8 }}>
+        {STRAT_DATA.stints.map((st, i) => (
+          <div key={i} style={{ flex:1, padding:'8px 10px', borderRadius:6, background:i===0 ? 'rgba(59,130,246,0.1)' : 'rgba(255,255,255,0.04)', border:`1px solid ${i===0 ? 'rgba(59,130,246,0.4)' : 'var(--border)'}` }}>
+            <div style={{ fontSize:9, color:'var(--text-muted)', marginBottom:3 }}>STINT {st.num}</div>
+            <div style={{ fontSize:12, fontWeight:700, color:st.compound==='SOFT' ? '#E03737' : '#D1D5DB' }}>{st.compound}</div>
+            <div style={{ fontSize:11, color:'var(--text-dim)', marginTop:2 }}>{st.num===1 ? `L1–${optPit}` : `L${optPit}–23`}</div>
+            <span style={{ fontSize:8, fontWeight:700, padding:'1px 5px', borderRadius:3, marginTop:4, display:'inline-block', background:i===0 ? 'rgba(59,130,246,0.2)' : 'rgba(255,255,255,0.06)', color:i===0 ? 'var(--blue)' : 'var(--text-muted)', textTransform:'uppercase', letterSpacing:'0.05em' }}>
+              {st.status}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* confidence */}
+      <div>
+        <div style={{ display:'flex', justifyContent:'space-between', marginBottom:3 }}>
+          <span style={{ fontSize:11, color:'var(--text-muted)' }}>DT Model Confidence</span>
+          <span style={{ fontSize:11, fontFamily:'JetBrains Mono,monospace', color:confColor }}>{STRAT_DATA.confidence}%</span>
+        </div>
+        <div className="bar-track">
+          <div className="bar-fill" style={{ width:`${STRAT_DATA.confidence}%`, background:confColor }} />
+        </div>
+      </div>
+
+      <div style={{ fontSize:11, color:'var(--text-muted)', fontStyle:'italic' }}>{STRAT_DATA.note}</div>
+    </div>
+  );
+}
+
 // ── Helper: event dot colour ─────────────────────────────────────────────────
 
 function dotColor(type: EventType) {
@@ -272,6 +409,20 @@ export function CrewChiefPage() {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* ── Pit window countdown ────────────────────────────────────────────── */}
+      <div className="card mb-4">
+        <div className="card-header">
+          <span className="card-title flex items-center gap-2">
+            <Flag size={14} style={{ color: 'var(--green)' }} />
+            Pit Window Countdown
+          </span>
+          <span className="badge badge-orange">Rear {t.rearCompound} · L{rearAge}</span>
+        </div>
+        <div className="card-body" style={{ flexDirection:'column', paddingTop:8 }}>
+          <PitWindowTimeline lapCount={t.lapCount} tyreAge={rearAge} />
         </div>
       </div>
 
@@ -456,6 +607,20 @@ export function CrewChiefPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* Active strategy board */}
+          <div className="card">
+            <div className="card-header">
+              <span className="card-title flex items-center gap-2">
+                <Zap size={14} style={{ color: 'var(--blue)' }} />
+                Active Strategy
+              </span>
+              <span className="badge badge-blue">KDD Recommended</span>
+            </div>
+            <div className="card-body" style={{ flexDirection:'column' }}>
+              <ActiveStrategyBoard lapCount={t.lapCount} optPit={optPit} />
+            </div>
           </div>
 
           {/* Pit crew status */}
