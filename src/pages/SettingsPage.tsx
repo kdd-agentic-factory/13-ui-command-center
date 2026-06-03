@@ -44,11 +44,12 @@ const SERVICES: ServiceStatus[] = [
   { group: 'Data',       name: 'Paper Reproducibility',url: fly('kdd-paper-kit'),      status: 'deploying', latency: '—',     description: 'Experiment reproducibility · Paper evidence' },
 ];
 
+// Values are fully masked on purpose — never echo real key fragments in the UI.
 const API_KEYS = [
-  { name: 'InsForge API Key',     envKey: 'VITE_INSFORGE_ANON_KEY', value: 'ik_f3c8...94c7',  status: 'set' },
-  { name: 'OpenRouter API Key',   envKey: 'VITE_OPENROUTER_KEY',    value: 'sk-or-v1-efc4...', status: 'set' },
-  { name: 'KDD Internal API Key', envKey: 'VITE_KDD_INTERNAL_KEY', value: '4e8c...92e',       status: 'set' },
-  { name: 'PostHog API Key',      envKey: 'VITE_POSTHOG_KEY',       value: 'phc_abc...xyz',   status: 'set' },
+  { name: 'InsForge API Key',     envKey: 'VITE_INSFORGE_ANON_KEY', value: '••••••••', status: 'set' },
+  { name: 'OpenRouter API Key',   envKey: 'VITE_OPENROUTER_KEY',    value: '••••••••', status: 'set' },
+  { name: 'KDD Internal API Key', envKey: 'VITE_KDD_INTERNAL_KEY',  value: '••••••••', status: 'set' },
+  { name: 'PostHog API Key',      envKey: 'VITE_POSTHOG_KEY',       value: '••••••••', status: 'set' },
 ];
 
 const DATA_CONFIG = [
