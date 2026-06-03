@@ -5,8 +5,10 @@
  *   1. localStorage  — immediate, offline-capable (key: kdd-parts-v1)
  *   2. InsForge      — cloud sync: PostgREST /rest/v1/parts + Storage bucket
  *
- * The service_role key (ik_...) bypasses RLS → INSERT works without
- * extra policies (see migration 008 comment: "service_role always bypasses RLS").
+ * Credentials come from VITE_INSFORGE_URL / VITE_INSFORGE_ANON_KEY (.env.local) —
+ * never hardcode a key here: this bundle ships to every browser visitor, so an
+ * embedded service_role key would hand anyone RLS-bypassing admin access. Use
+ * the anon (publishable) key and rely on RLS policies for write access.
  *
  * Callers never crash: every cloud call is wrapped in try/catch and
  * degrades gracefully to localStorage only.
@@ -14,8 +16,8 @@
 
 // ── Config ─────────────────────────────────────────────────────────────────────
 
-const BASE = 'https://vdf553wq.eu-central.insforge.app';
-const KEY  = 'ik_f3c822ce0b7e51364a7e5799528294c7';
+const BASE = import.meta.env.VITE_INSFORGE_URL ?? '';
+const KEY  = import.meta.env.VITE_INSFORGE_ANON_KEY ?? '';
 const LS_KEY = 'kdd-parts-v1';
 
 const HEADERS = {
