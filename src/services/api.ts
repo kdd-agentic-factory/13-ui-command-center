@@ -7,13 +7,16 @@
 
 const env = import.meta.env as Record<string, string | undefined>;
 
+// Same-origin proxy prefixes — the UI's own nginx (BFF) proxies these to the Fly
+// services and injects the internal API key server-side (no CORS, no key in the
+// browser). Overridable via VITE_<SVC>_URL for direct-call setups.
 const BASE = {
-  governance:   env.VITE_GOVERNANCE_URL   ?? 'https://kdd-rjz-governance.fly.dev',
-  orchestrator: env.VITE_ORCHESTRATOR_URL ?? 'https://kdd-rjz-orchestrator.fly.dev',
-  skills:       env.VITE_SKILLS_URL       ?? 'https://kdd-rjz-skills.fly.dev',
-  workflows:    env.VITE_WORKFLOWS_URL    ?? 'https://kdd-rjz-workflows.fly.dev',
-  experiments:  env.VITE_EXPERIMENTS_URL  ?? 'https://kdd-rjz-experiments.fly.dev',
-  mcp:          env.VITE_MCP_URL          ?? 'https://kdd-rjz-mcp-gateway.fly.dev',
+  governance:   env.VITE_GOVERNANCE_URL   ?? '/api/governance',
+  orchestrator: env.VITE_ORCHESTRATOR_URL ?? '/api/orchestrator',
+  skills:       env.VITE_SKILLS_URL       ?? '/api/skills',
+  workflows:    env.VITE_WORKFLOWS_URL    ?? '/api/workflows',
+  experiments:  env.VITE_EXPERIMENTS_URL  ?? '/api/experiments',
+  mcp:          env.VITE_MCP_URL          ?? '/api/mcp',
 } as const;
 
 const V1 = '/api/v1';

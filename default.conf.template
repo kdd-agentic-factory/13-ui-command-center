@@ -1,0 +1,81 @@
+# nginx BFF for the KDD UI on Fly.io.
+# Proxies /api/<service>/ to each Fly service over HTTPS and injects the internal
+# API key server-side (X-API-Key), so the browser never sees it and there is no
+# cross-origin CORS. ${KDD_INTERNAL_API_KEY} is filled by envsubst at container
+# start (NGINX_ENVSUBST_FILTER restricts substitution to KDD_* — nginx $vars are
+# left intact).
+
+server {
+    listen 3000;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    location = /health {
+        default_type application/json;
+        return 200 '{"status":"ok","service":"ui-command-center","version":"0.1.0"}';
+    }
+
+    # ── Backend proxies → Fly services (key injected server-side) ─────────────
+    location /api/governance/ {
+        proxy_pass https://kdd-rjz-governance.fly.dev/;
+        proxy_ssl_server_name on;
+        proxy_set_header Host kdd-rjz-governance.fly.dev;
+        proxy_set_header X-API-Key "${KDD_INTERNAL_API_KEY}";
+        proxy_connect_timeout 15s;
+        proxy_read_timeout 60s;
+    }
+    location /api/orchestrator/ {
+        proxy_pass https://kdd-rjz-orchestrator.fly.dev/;
+        proxy_ssl_server_name on;
+        proxy_set_header Host kdd-rjz-orchestrator.fly.dev;
+        proxy_set_header X-API-Key "${KDD_INTERNAL_API_KEY}";
+        proxy_connect_timeout 15s;
+        proxy_read_timeout 60s;
+    }
+    location /api/skills/ {
+        proxy_pass https://kdd-rjz-skills.fly.dev/;
+        proxy_ssl_server_name on;
+        proxy_set_header Host kdd-rjz-skills.fly.dev;
+        proxy_set_header X-API-Key "${KDD_INTERNAL_API_KEY}";
+        proxy_connect_timeout 15s;
+        proxy_read_timeout 60s;
+    }
+    location /api/workflows/ {
+        proxy_pass https://kdd-rjz-workflows.fly.dev/;
+        proxy_ssl_server_name on;
+        proxy_set_header Host kdd-rjz-workflows.fly.dev;
+        proxy_set_header X-API-Key "${KDD_INTERNAL_API_KEY}";
+        proxy_connect_timeout 15s;
+        proxy_read_timeout 60s;
+    }
+    location /api/experiments/ {
+        proxy_pass https://kdd-rjz-experiments.fly.dev/;
+        proxy_ssl_server_name on;
+        proxy_set_header Host kdd-rjz-experiments.fly.dev;
+        proxy_set_header X-API-Key "${KDD_INTERNAL_API_KEY}";
+        proxy_connect_timeout 15s;
+        proxy_read_timeout 60s;
+    }
+    location /api/mcp/ {
+        proxy_pass https://kdd-rjz-mcp-gateway.fly.dev/;
+        proxy_ssl_server_name on;
+        proxy_set_header Host kdd-rjz-mcp-gateway.fly.dev;
+        proxy_set_header X-API-Key "${KDD_INTERNAL_API_KEY}";
+        proxy_connect_timeout 15s;
+        proxy_read_timeout 60s;
+    }
+
+    location /pit-wall-os/ {
+        alias /usr/share/nginx/html/pit-wall-os/;
+        index index.html;
+        try_files $uri $uri/ /pit-wall-os/index.html;
+    }
+
+    location = / {
+        return 302 /pit-wall-os/;
+    }
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}

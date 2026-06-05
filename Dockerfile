@@ -13,7 +13,10 @@ RUN npm run build
 FROM nginx:1.27.3-alpine
 
 COPY --from=build /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Template is envsubst'd → /etc/nginx/conf.d/default.conf at container start.
+# Filter to KDD_* only so nginx's own $vars (e.g. $uri) are left untouched.
+COPY default.conf.template /etc/nginx/templates/default.conf.template
+ENV NGINX_ENVSUBST_FILTER=KDD_
 
 EXPOSE 3000
 
