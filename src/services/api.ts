@@ -1,19 +1,24 @@
 /**
- * HTTP client for KDD backend services.
- * All requests route through nginx reverse-proxy prefixes (/api/<service>/).
+ * HTTP client for KDD backend services (deployed on Fly.io).
+ * Each service has its own base URL (overridable via VITE_<SVC>_URL); data
+ * endpoints live under /api/v1 and the health probe at /health.
  * Falls back gracefully — callers receive null on any network error.
  */
 
-const PROXY = {
-  governance:  '/api/governance',
-  orchestrator: '/api/orchestrator',
-  skills:       '/api/skills',
-  workflows:    '/api/workflows',
-  experiments:  '/api/experiments',
-  mcp:          '/api/mcp',
+const env = import.meta.env as Record<string, string | undefined>;
+
+const BASE = {
+  governance:   env.VITE_GOVERNANCE_URL   ?? 'https://kdd-rjz-governance.fly.dev',
+  orchestrator: env.VITE_ORCHESTRATOR_URL ?? 'https://kdd-rjz-orchestrator.fly.dev',
+  skills:       env.VITE_SKILLS_URL       ?? 'https://kdd-rjz-skills.fly.dev',
+  workflows:    env.VITE_WORKFLOWS_URL    ?? 'https://kdd-rjz-workflows.fly.dev',
+  experiments:  env.VITE_EXPERIMENTS_URL  ?? 'https://kdd-rjz-experiments.fly.dev',
+  mcp:          env.VITE_MCP_URL          ?? 'https://kdd-rjz-mcp-gateway.fly.dev',
 } as const;
 
-type ServiceKey = keyof typeof PROXY;
+const V1 = '/api/v1';
+
+type ServiceKey = keyof typeof BASE;
 
 async function safeFetch<T>(url: string): Promise<T | null> {
   try {
@@ -30,9 +35,9 @@ async function safeFetch<T>(url: string): Promise<T | null> {
 export type HealthMap = Record<ServiceKey, boolean>;
 
 export async function fetchAllServiceHealth(): Promise<HealthMap> {
-  const keys = Object.keys(PROXY) as ServiceKey[];
+  const keys = Object.keys(BASE) as ServiceKey[];
   const results = await Promise.allSettled(
-    keys.map((k) => safeFetch<object>(`${PROXY[k]}/health`))
+    keys.map((k) => safeFetch<object>(`${BASE[k]}/health`))
   );
   return Object.fromEntries(
     keys.map((k, i) => [k, results[i].status === 'fulfilled' && results[i].value !== null])
@@ -52,7 +57,7 @@ export interface KddStagesResponse {
   stages: KddStage[];
 }
 export async function fetchKddStages(): Promise<KddStagesResponse | null> {
-  return safeFetch(`${PROXY.governance}/kdd/stages`);
+  return safeFetch(`${BASE.governance}${V1}/kdd/stages`);
 }
 
 // ── Workflows ───────────────────────────────────────────────────────────────
@@ -64,7 +69,7 @@ export interface WorkflowEntry {
 }
 export async function fetchWorkflows(): Promise<WorkflowEntry[] | null> {
   const data = await safeFetch<WorkflowEntry[] | { workflows: WorkflowEntry[] }>(
-    `${PROXY.workflows}/workflows`
+    `${BASE.workflows}${V1}/workflows`
   );
   if (!data) return null;
   return Array.isArray(data) ? data : data.workflows;
@@ -79,7 +84,7 @@ export interface SkillEntry {
 }
 export async function fetchSkills(): Promise<SkillEntry[] | null> {
   const data = await safeFetch<SkillEntry[] | { skills: SkillEntry[] }>(
-    `${PROXY.skills}/skills`
+    `${BASE.skills}${V1}/skills`
   );
   if (!data) return null;
   return Array.isArray(data) ? data : data.skills;
@@ -95,7 +100,7 @@ export interface ExperimentEntry {
 }
 export async function fetchExperiments(): Promise<ExperimentEntry[] | null> {
   const data = await safeFetch<ExperimentEntry[] | { experiments: ExperimentEntry[] }>(
-    `${PROXY.experiments}/experiments`
+    `${BASE.experiments}${V1}/experiments`
   );
   if (!data) return null;
   return Array.isArray(data) ? data : data.experiments;
@@ -107,7 +112,7 @@ export interface AgentEntry {
   name: string;
 }
 export async function fetchAgents(): Promise<AgentEntry[] | null> {
-  const data = await safeFetch<{ agents: string[] }>(`${PROXY.orchestrator}/agents`);
+  const data = await safeFetch<{ agents: string[] }>(`${BASE.orchestrator}${V1}/agents`);
   if (!data) return null;
   return (data.agents ?? []).map((name) => ({ name }));
 }
@@ -121,7 +126,7 @@ export interface McpTool {
 }
 export async function fetchMcpTools(): Promise<McpTool[] | null> {
   const data = await safeFetch<McpTool[] | { tools: McpTool[] }>(
-    `${PROXY.mcp}/tools`
+    `${BASE.mcp}${V1}/tools`
   );
   if (!data) return null;
   return Array.isArray(data) ? data : data.tools;
