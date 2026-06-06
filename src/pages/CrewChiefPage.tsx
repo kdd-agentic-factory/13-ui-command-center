@@ -252,6 +252,20 @@ function now() {
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
+// Discord-style per-source colour for the event log avatars/names.
+function sourceColor(source: string): string {
+  const map: Record<string, string> = {
+    'Crew Chief': '#38BDF8', 'Tyre Agent': '#f2cc1a', 'Race Control': '#f2260d',
+    'Gap Monitor': '#a78bfa', 'KDD Pipeline': '#34d399', 'Digital Twin': '#60a5fa',
+    'Quick Action': '#fb923c', 'KDD Agent': '#34d399', 'Fuel Model': '#fbbf24',
+  };
+  if (map[source]) return map[source];
+  if (source.startsWith('#')) return '#ef4444';   // rider radio
+  let h = 0;
+  for (let i = 0; i < source.length; i++) h = (h * 31 + source.charCodeAt(i)) % 360;
+  return `hsl(${h}, 60%, 62%)`;
+}
+
 function StrategyRow({ label, value, max, onPick }: { label: string; value: number; max: number; onPick: (n: number) => void }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -633,29 +647,40 @@ export function CrewChiefPage() {
                 No events matching this filter
               </div>
             ) : (
-              filteredEvents.map(ev => (
-                <div className="event-item" key={ev.id} style={{
-                  borderLeft: `2px solid ${ev.priority === 'high' ? dotColor(ev.type) : 'transparent'}`,
-                  paddingLeft: ev.priority === 'high' ? 10 : 12,
-                }}>
-                  <div className="event-dot" style={{ background: dotColor(ev.type) }} />
-                  <span className="event-time">{ev.time}</span>
-                  <div style={{ flex: 1 }}>
-                    <span style={{
-                      fontSize: 11, fontWeight: 700, color: 'var(--text-muted)',
-                      textTransform: 'uppercase', letterSpacing: '0.05em', marginRight: 8,
-                    }}>
-                      {ev.source}
-                    </span>
-                    <span
-                      className="event-text"
-                      dangerouslySetInnerHTML={{
-                        __html: ev.message.replace(/(P\d+|STAY OUT|PIT|BOX|PUSH|LEAD|Yellow|GREEN|TC\d+|OPEN|CONFIRMED|OVERRIDDEN|FUEL)/g, '<strong>$1</strong>'),
-                      }}
-                    />
+              filteredEvents.map(ev => {
+                const col = sourceColor(ev.source);
+                return (
+                  <div
+                    key={ev.id}
+                    style={{
+                      display: 'flex', gap: 10, padding: '8px 14px', alignItems: 'flex-start',
+                      borderLeft: ev.priority === 'high' ? `2px solid ${dotColor(ev.type)}` : '2px solid transparent',
+                    }}
+                  >
+                    {/* Discord-style avatar with the source initials */}
+                    <div style={{ width: 32, height: 32, borderRadius: '50%', flexShrink: 0, background: col,
+                                  display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#04141f',
+                                  fontWeight: 800, fontSize: 12, fontFamily: 'JetBrains Mono,monospace' }}>
+                      {ev.source.replace('#', '').slice(0, 2).toUpperCase()}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
+                        <span style={{ fontWeight: 700, fontSize: 13, color: col }}>{ev.source}</span>
+                        <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>L{ev.lap} · {ev.time}</span>
+                        {ev.type === 'radio' && <span className="badge badge-muted" style={{ fontSize: 9 }}>RADIO</span>}
+                        {ev.type === 'alert' && <span className="badge badge-red" style={{ fontSize: 9 }}>ALERT</span>}
+                      </div>
+                      <span
+                        className="event-text"
+                        style={{ fontSize: 13 }}
+                        dangerouslySetInnerHTML={{
+                          __html: ev.message.replace(/(P\d+|STAY OUT|PIT|BOX|PUSH|LEAD|Yellow|GREEN|TC\d+|OPEN|CONFIRMED|OVERRIDDEN|FUEL)/g, '<strong>$1</strong>'),
+                        }}
+                      />
+                    </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </div>
