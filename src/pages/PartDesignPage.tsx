@@ -9,6 +9,14 @@ import { usePartStorage } from '../hooks/usePartStorage';
 // FEA peak stress (MPa) → fraction of a representative yield for the overlay.
 const FEA_YIELD_REF = 200;
 
+// Real CAD parts. SolidWorks .SLDPRT has no headless converter — export to STL
+// and drop it under public/models/; the viewer falls back to reference geometry
+// (with an export hint) until the STL is present.
+const CAD_MODELS: { name: string; url: string; stress: number; color: string }[] = [
+  { name: 'CHASIS (CAD)',     url: '/models/chasis.stl',     stress: 0.55, color: '#A78BFA' },
+  { name: 'BASCULANTE (CAD)', url: '/models/basculante.stl', stress: 0.60, color: '#93C5FD' },
+];
+
 function partMaterialColor(component: string): string {
   const c = component.toLowerCase();
   if (c.includes('carbon') || c.includes('cfrp')) return '#38BDF8';
@@ -424,9 +432,11 @@ export function PartDesignPage() {
 
       {/* ── 3D Pre-Fabrication Preview (Spec §8.3) ────────────────────────── */}
       {(() => {
-        const preview = parts.find(p => p.name === previewPartName) ?? parts[0];
-        if (!preview) return null;
-        const stressLevel = Math.min(1, (preview.fea ?? 90) / FEA_YIELD_REF);
+        const cad = CAD_MODELS.find(m => m.name === previewPartName);
+        const preview = parts.find(p => p.name === previewPartName);
+        const name = cad?.name ?? preview?.name ?? parts[0]?.name ?? 'Part';
+        const stressLevel = cad ? cad.stress : Math.min(1, ((preview?.fea ?? 90)) / FEA_YIELD_REF);
+        const color = cad ? cad.color : partMaterialColor(preview?.component ?? '');
         return (
           <div className="panel mb-6">
             <div className="flex items-center justify-between mb-3">
@@ -439,14 +449,20 @@ export function PartDesignPage() {
                 onChange={e => setPreviewPartName(e.target.value)}
                 aria-label="Select part to preview"
               >
-                {parts.map(p => <option key={p.name} value={p.name}>{p.name}</option>)}
+                <optgroup label="CAD parts (STL)">
+                  {CAD_MODELS.map(m => <option key={m.name} value={m.name}>{m.name}</option>)}
+                </optgroup>
+                <optgroup label="Components">
+                  {parts.map(p => <option key={p.name} value={p.name}>{p.name}</option>)}
+                </optgroup>
               </select>
             </div>
             <PartViewer3D
-              partName={preview.name}
-              materialColor={partMaterialColor(preview.component)}
+              partName={name}
+              materialColor={color}
               stressLevel={stressLevel}
               toleranceMm={0.05}
+              meshUrl={cad?.url}
               height={300}
             />
           </div>
