@@ -288,6 +288,7 @@ export function CrewChiefPage() {
   const [tcLevel,     setTcLevel]     = useState(5);   // traction control 1..10
   const [engineBrake, setEngineBrake] = useState(2);   // engine brake 1..3
   const [directive,   setDirective]   = useState(''); // free-text race directive
+  const [popupDismissed, setPopupDismissed] = useState(false); // pending-decision popup
   const [decisions,  setDecisions]  = useState([
     { id: 1, q: 'Pit at L{optPit-2} or L{optPit}?', ans: 'L{optPit} optimal — monitor rear deg', status: 'pending' as 'pending' | 'confirmed' | 'overridden' },
     { id: 2, q: 'TC level after restart?',            ans: 'Hold TC3 until rear temp normalises',  status: 'pending' as 'pending' | 'confirmed' | 'overridden' },
@@ -370,6 +371,13 @@ export function CrewChiefPage() {
 
   // Derived values
   const rearAge    = t.rearTyreAge;
+  // Per-lap track conditions (crew-chief: temp/humidity/wind/track-state/clean-dirty air)
+  const trackTemp  = 42 + (t.lapCount % 3);
+  const humidity   = 48 - (t.lapCount % 5);
+  const wind       = 'NE 14 km/h';
+  const trackState = 'Dry';
+  const gapSec     = Math.abs(parseFloat(String(t.gap).replace(/[^0-9.\-]/g, '')) || 2);
+  const cleanAir   = gapSec > 1.0;  // within ~1s of the rider ahead → dirty air
   const optPit     = Math.max(t.lapCount + 1, t.lapCount + Math.round((18 - rearAge) / 1.5));
   const pitOpen    = t.lapCount >= 9;
   const gapDisplay = t.gap === 'leader' ? 'LEAD' : t.gap;
@@ -453,6 +461,23 @@ export function CrewChiefPage() {
               }}>
                 {f.flag === 'YELLOW' ? '⚠ YEL' : '✓ GRN'}
               </div>
+            </div>
+          ))}
+        </div>
+        {/* Per-lap conditions */}
+        <div style={{ display: 'flex', gap: 8, padding: '0 16px 12px', flexWrap: 'wrap' }}>
+          {[
+            { l: 'Track Temp', v: `${trackTemp}°C` },
+            { l: 'Air Humidity', v: `${humidity}%` },
+            { l: 'Wind', v: wind },
+            { l: 'Track', v: trackState },
+            { l: 'Air', v: cleanAir ? 'CLEAN' : 'DIRTY', warn: !cleanAir },
+          ].map(c => (
+            <div key={c.l} style={{ flex: 1, minWidth: 92, textAlign: 'center', padding: '6px 8px',
+                                    borderRadius: 6, background: 'var(--bg-2, #0e1726)' }}>
+              <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{c.l}</div>
+              <div style={{ fontFamily: 'JetBrains Mono,monospace', fontWeight: 700, fontSize: 13,
+                            color: c.warn ? 'var(--accent)' : 'var(--text)' }}>{c.v}</div>
             </div>
           ))}
         </div>
@@ -865,6 +890,51 @@ export function CrewChiefPage() {
 
         </div>
       </div>
+
+      {/* ── Invasive pending-decision popup (crew-chief notes) ─────────────────── */}
+      {(() => {
+        const open = decisions.find(d => d.status === 'pending');
+        if (!open || popupDismissed) return null;
+        return (
+          <div
+            onClick={() => setPopupDismissed(true)}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex',
+                     alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}
+          >
+            <div
+              onClick={e => e.stopPropagation()}
+              style={{ width: 460, maxWidth: '90vw', background: 'var(--bg-1, #0b1320)', borderRadius: 12,
+                       border: '1px solid var(--accent, #38BDF8)', padding: 20, boxShadow: '0 10px 40px rgba(0,0,0,0.5)' }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                <AlertOctagon size={18} style={{ color: 'var(--accent)' }} />
+                <span style={{ fontWeight: 800, fontSize: 15 }}>Pending Decision — Action Required</span>
+              </div>
+              <div style={{ fontSize: 14, marginBottom: 6 }}>{open.q}</div>
+              <div style={{ fontSize: 13, color: 'var(--text-dim)', marginBottom: 16, fontFamily: 'JetBrains Mono,monospace' }}>
+                AI: {open.ans}
+              </div>
+              <div style={{ display: 'flex', gap: 10 }}>
+                <button onClick={() => resolveDecision(open.id, 'confirmed')}
+                  style={{ flex: 1, padding: 10, borderRadius: 8, border: '1px solid var(--green)',
+                           background: 'rgba(34,197,94,0.15)', color: 'var(--green)', fontWeight: 800, cursor: 'pointer' }}>
+                  ✓ Confirm
+                </button>
+                <button onClick={() => resolveDecision(open.id, 'overridden')}
+                  style={{ flex: 1, padding: 10, borderRadius: 8, border: '1px solid var(--accent)',
+                           background: 'rgba(242,38,13,0.12)', color: 'var(--accent)', fontWeight: 800, cursor: 'pointer' }}>
+                  ✗ Override
+                </button>
+                <button onClick={() => setPopupDismissed(true)}
+                  style={{ padding: '10px 14px', borderRadius: 8, border: '1px solid var(--border)',
+                           background: 'transparent', color: 'var(--text-dim)', cursor: 'pointer' }}>
+                  Later
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
