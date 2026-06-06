@@ -3,7 +3,19 @@ import { CheckCircle, AlertTriangle, XCircle, Wrench, CalendarCheck,
          Cloud, CloudOff, Trash2, RefreshCw, BarChart2, Layers } from 'lucide-react';
 import { useToast } from '../components/ToastProvider';
 import { PartGeneratorPanel } from '../components/PartGeneratorPanel';
+import { PartViewer3D } from '../components/babylon/PartViewer3D';
 import { usePartStorage } from '../hooks/usePartStorage';
+
+// FEA peak stress (MPa) → fraction of a representative yield for the overlay.
+const FEA_YIELD_REF = 200;
+
+function partMaterialColor(component: string): string {
+  const c = component.toLowerCase();
+  if (c.includes('carbon') || c.includes('cfrp')) return '#38BDF8';
+  if (c.includes('ti') || c.includes('titan')) return '#A78BFA';
+  if (c.includes('alu') || c.includes('al-')) return '#93C5FD';
+  return '#38BDF8';
+}
 
 // ── Material colours ──────────────────────────────────────────────────────────
 
@@ -357,6 +369,7 @@ export function PartDesignPage() {
   const { toast } = useToast();
   const [parts, setParts]                       = useState<Part[]>(INITIAL_PARTS);
   const [scheduledServices, setScheduledServices] = useState<Set<string>>(new Set());
+  const [previewPartName, setPreviewPartName]   = useState<string>('Carbon Front Rim');
   const { savedParts, loading: cloudLoading, refresh: cloudRefresh, remove: cloudRemove } = usePartStorage();
 
   const critParts  = useMemo(() => parts.filter(p => p.status === 'crit' && !scheduledServices.has(p.name)).length, [parts, scheduledServices]);
@@ -408,6 +421,37 @@ export function PartDesignPage() {
 
       {/* ── AI Part Generator ─────────────────────────────────────────────── */}
       <PartGeneratorPanel onAddPart={addGeneratedPart} />
+
+      {/* ── 3D Pre-Fabrication Preview (Spec §8.3) ────────────────────────── */}
+      {(() => {
+        const preview = parts.find(p => p.name === previewPartName) ?? parts[0];
+        if (!preview) return null;
+        const stressLevel = Math.min(1, (preview.fea ?? 90) / FEA_YIELD_REF);
+        return (
+          <div className="panel mb-6">
+            <div className="flex items-center justify-between mb-3">
+              <div className="panel__title">
+                <Layers size={15} /> 3D Pre-Fabrication Preview
+              </div>
+              <select
+                className="chip-btn"
+                value={previewPartName}
+                onChange={e => setPreviewPartName(e.target.value)}
+                aria-label="Select part to preview"
+              >
+                {parts.map(p => <option key={p.name} value={p.name}>{p.name}</option>)}
+              </select>
+            </div>
+            <PartViewer3D
+              partName={preview.name}
+              materialColor={partMaterialColor(preview.component)}
+              stressLevel={stressLevel}
+              toleranceMm={0.05}
+              height={300}
+            />
+          </div>
+        );
+      })()}
 
       {/* ── Header ──────────────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between mb-6">
