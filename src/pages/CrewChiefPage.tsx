@@ -252,6 +252,30 @@ function now() {
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
+function StrategyRow({ label, value, max, onPick }: { label: string; value: number; max: number; onPick: (n: number) => void }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <span style={{ fontSize: 11, color: 'var(--text-dim)', width: 150, fontFamily: 'JetBrains Mono, monospace' }}>{label}</span>
+      <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
+        {Array.from({ length: max }, (_, i) => i + 1).map(n => (
+          <button
+            key={n}
+            onClick={() => onPick(n)}
+            style={{
+              width: 26, height: 26, borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: 'pointer',
+              border: n === value ? '1px solid var(--accent)' : '1px solid var(--border)',
+              background: n === value ? 'var(--accent)' : 'transparent',
+              color: n === value ? '#04141f' : 'var(--text-dim)',
+            }}
+          >
+            {n}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function CrewChiefPage() {
   const t = useLiveTelemetry();
 
@@ -259,6 +283,11 @@ export function CrewChiefPage() {
   const [radioInput, setRadio]      = useState('');
   const [msgIdx,     setMsgIdx]     = useState(0);
   const [filter,     setFilter]     = useState<FilterTab>('all');
+  // In-race strategy (replaces the Pit Window Countdown — no pit stops in this class)
+  const [engineMap,   setEngineMap]   = useState(6);   // PWR map 1..8
+  const [tcLevel,     setTcLevel]     = useState(5);   // traction control 1..10
+  const [engineBrake, setEngineBrake] = useState(2);   // engine brake 1..3
+  const [directive,   setDirective]   = useState(''); // free-text race directive
   const [decisions,  setDecisions]  = useState([
     { id: 1, q: 'Pit at L{optPit-2} or L{optPit}?', ans: 'L{optPit} optimal — monitor rear deg', status: 'pending' as 'pending' | 'confirmed' | 'overridden' },
     { id: 2, q: 'TC level after restart?',            ans: 'Hold TC3 until rear temp normalises',  status: 'pending' as 'pending' | 'confirmed' | 'overridden' },
@@ -308,6 +337,23 @@ export function CrewChiefPage() {
       type: 'action', priority: action.priority,
       source: 'Quick Action', message: action.message,
     }, ...prev.slice(0, 24)]);
+  }
+
+  function broadcast(message: string, priority: 'high' | 'medium' | 'low' = 'high') {
+    setEvents(prev => [{
+      id: Date.now(), time: now(), lap: t.lapCount,
+      type: 'decision', priority, source: 'Crew Chief', message,
+    }, ...prev.slice(0, 24)]);
+  }
+
+  function applyStrategy() {
+    broadcast(`STRATEGY → Engine Map PWR${engineMap} · TC${tcLevel} · EB${engineBrake} (sent to dash)`);
+  }
+
+  function sendDirective() {
+    if (!directive.trim()) return;
+    broadcast(`DIRECTIVE: ${directive.trim()}`);
+    setDirective('');
   }
 
   function resolveDecision(id: number, result: 'confirmed' | 'overridden') {
@@ -413,16 +459,27 @@ export function CrewChiefPage() {
       </div>
 
       {/* ── Pit window countdown ────────────────────────────────────────────── */}
+      {/* ── In-Race Strategy (replaces Pit Window — no pit stops / tyre changes) ── */}
       <div className="card mb-4">
         <div className="card-header">
           <span className="card-title flex items-center gap-2">
             <Flag size={14} style={{ color: 'var(--green)' }} />
-            Pit Window Countdown
+            In-Race Strategy
           </span>
           <span className="badge badge-orange">Rear {t.rearCompound} · L{rearAge}</span>
         </div>
-        <div className="card-body" style={{ flexDirection:'column', paddingTop:8 }}>
-          <PitWindowTimeline lapCount={t.lapCount} tyreAge={rearAge} />
+        <div className="card-body" style={{ flexDirection: 'column', gap: 10, paddingTop: 10 }}>
+          <StrategyRow label="Engine Map (PWR)" value={engineMap} max={8} onPick={setEngineMap} />
+          <StrategyRow label="Traction Control (TC)" value={tcLevel} max={10} onPick={setTcLevel} />
+          <StrategyRow label="Engine Brake (EB)" value={engineBrake} max={3} onPick={setEngineBrake} />
+          <button
+            onClick={applyStrategy}
+            style={{ marginTop: 4, padding: '8px 14px', borderRadius: 8, border: '1px solid var(--green)',
+                     background: 'rgba(34,197,94,0.15)', color: 'var(--green)', fontWeight: 800,
+                     fontFamily: 'JetBrains Mono, monospace', fontSize: 12, cursor: 'pointer' }}
+          >
+            ⮕ Broadcast strategy to dash
+          </button>
         </div>
       </div>
 
@@ -460,6 +517,26 @@ export function CrewChiefPage() {
               {action.shortLabel}
             </button>
           ))}
+        </div>
+        {/* Free-text directive mode — type any custom instruction to the rider's dash */}
+        <div style={{ display: 'flex', gap: 8, padding: '0 16px 12px' }}>
+          <input
+            value={directive}
+            onChange={e => setDirective(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') sendDirective(); }}
+            placeholder="Free-text directive to dash (e.g. PUSH NOW · BOX-BOX · SAVE FUEL)…"
+            style={{ flex: 1, padding: '8px 10px', borderRadius: 8, border: '1px solid var(--border)',
+                     background: 'var(--bg-2, #0e1726)', color: 'var(--text)', fontSize: 12,
+                     fontFamily: 'JetBrains Mono, monospace' }}
+          />
+          <button
+            onClick={sendDirective}
+            style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid var(--yellow)',
+                     background: 'rgba(234,179,8,0.15)', color: 'var(--yellow)', fontWeight: 800,
+                     fontSize: 12, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace' }}
+          >
+            Send ⮕
+          </button>
         </div>
       </div>
 
