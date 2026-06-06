@@ -9,7 +9,7 @@
  *   - Rival comparison table in sector analysis
  */
 import { useEffect, useRef, useState, useMemo } from 'react';
-import { CloudSun, Thermometer, Wind, TrendingDown } from 'lucide-react';
+import { CloudSun, Thermometer, Wind, TrendingDown, Droplets } from 'lucide-react';
 import { useLiveTelemetry, trackSpeed } from '../hooks/useLiveTelemetry';
 import { TrackMap3D } from '../components/babylon/TrackMap3D';
 
@@ -69,11 +69,6 @@ const SPEED_TRAPS = [
   { name: 'Speed Trap 3', pos: 'Straight 2', speed: 309, max: 311, rivalry: 308 },
 ];
 
-const DRS_ZONES = [
-  { name: 'DRS Zone 1', start: 'T9',  end: 'T10', active: true,  gap: '0.842s' },
-  { name: 'DRS Zone 2', start: 'T14', end: 'T15', active: false, gap: '—' },
-];
-
 // ── Corner analysis data ──────────────────────────────────────────────────────
 
 interface CornerData {
@@ -91,7 +86,7 @@ const CORNERS: CornerData[] = [
   { num: 3,  name: 'Luco',             brakePoint: 80,  minSpeed: 95,  exitSpeed: 148, characteristic: 'Blind entry, commit early',      critical: false },
   { num: 4,  name: 'Poggio Secco',     brakePoint: 110, minSpeed: 108, exitSpeed: 178, characteristic: 'Chicane, momentum critical',      critical: true  },
   { num: 7,  name: 'Arrabbiata 1',     brakePoint: 55,  minSpeed: 88,  exitSpeed: 152, characteristic: 'Downhill right, tyre load peak', critical: true  },
-  { num: 9,  name: 'Palagio',          brakePoint: 90,  minSpeed: 102, exitSpeed: 186, characteristic: 'DRS detection, corner exit key', critical: true  },
+  { num: 9,  name: 'Palagio',          brakePoint: 90,  minSpeed: 102, exitSpeed: 186, characteristic: 'Corner exit key, long straight', critical: true  },
   { num: 10, name: 'Biondetti',        brakePoint: 30,  minSpeed: 134, exitSpeed: 195, characteristic: 'Fast sweeper, minimum apex',     critical: false },
   { num: 14, name: 'Casanova-Savelli', brakePoint: 150, minSpeed: 72,  exitSpeed: 168, characteristic: 'Complex chicane, WC active',     critical: true  },
   { num: 15, name: 'Arrabbiata 2',     brakePoint: 85,  minSpeed: 91,  exitSpeed: 159, characteristic: 'Uphill, rear slides on exit',    critical: true  },
@@ -352,7 +347,10 @@ export function CircuitIntelligencePage() {
       <div className="card mb-4">
         <div className="card-header">
           <span className="card-title">3D Track Map — Mugello</span>
-          <span className="badge badge-red">LIVE</span>
+          <div className="flex items-center gap-2">
+            <span className="badge badge-blue">● Live GPS · {(t.trackPos * 5.245).toFixed(3)} km</span>
+            <span className="badge badge-red">LIVE</span>
+          </div>
         </div>
         <TrackMap3D trackPos={t.trackPos} height={340} />
       </div>
@@ -375,6 +373,10 @@ export function CircuitIntelligencePage() {
           <div className="flex items-center gap-2">
             <Wind size={14} style={{ color: 'var(--blue)' }} />
             <span style={{ fontSize: 13 }}>Wind <strong>12 km/h SW</strong></span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Droplets size={14} style={{ color: 'var(--blue)' }} />
+            <span style={{ fontSize: 13 }}>Humidity <strong>52%</strong></span>
           </div>
           <button
             className="btn btn-ghost btn-sm flex items-center gap-1"
@@ -459,12 +461,6 @@ export function CircuitIntelligencePage() {
               {/* Center line */}
               <path d={CIRCUIT_PATH} fill="none" stroke="rgba(255,255,255,0.3)"
                 strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-
-              {/* DRS zone highlight */}
-              <line x1="250" y1="80" x2="400" y2="140"
-                stroke="var(--green)" strokeWidth="6" strokeOpacity="0.55" />
-              <text x="270" y="72" fill="var(--green)" fontSize="9"
-                fontFamily="JetBrains Mono,monospace" opacity="0.8">DRS</text>
 
               {/* Sector markers */}
               {SECTORS.map((s, i) => {
@@ -584,26 +580,19 @@ export function CircuitIntelligencePage() {
             </div>
           </div>
 
-          {/* DRS zones */}
+          {/* Track surface state (replaces DRS — no DRS zones in motorcycle racing) */}
           <div className="card">
-            <div className="card-header"><span className="card-title">DRS Zones</span></div>
+            <div className="card-header"><span className="card-title">Track Surface</span></div>
             <div className="card-body" style={{ flexDirection: 'column', gap: 10 }}>
-              {DRS_ZONES.map(drs => (
-                <div key={drs.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div>
-                    <div style={{ fontWeight: 600, fontSize: 13 }}>{drs.name}</div>
-                    <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{drs.start} → {drs.end}</div>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <span className={`badge ${drs.active ? 'badge-green' : 'badge-muted'}`}>
-                      {drs.active ? 'ENABLED' : 'DISABLED'}
-                    </span>
-                    {drs.gap !== '—' && (
-                      <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 3 }}>
-                        Gap required: {drs.gap}
-                      </div>
-                    )}
-                  </div>
+              {[
+                { label: 'Grip', value: 'High · rubbered-in', color: 'var(--green)' },
+                { label: 'Bumps', value: 'T6 entry · T12 apex', color: 'var(--yellow)' },
+                { label: 'Wet patches', value: 'None', color: 'var(--green)' },
+                { label: 'Debris / oil', value: 'Clean', color: 'var(--green)' },
+              ].map(s => (
+                <div key={s.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ fontSize: 13, color: 'var(--text-dim)' }}>{s.label}</div>
+                  <div style={{ fontWeight: 600, fontSize: 13, color: s.color, fontFamily: 'JetBrains Mono,monospace' }}>{s.value}</div>
                 </div>
               ))}
             </div>
