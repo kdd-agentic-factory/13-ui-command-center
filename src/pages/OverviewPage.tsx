@@ -11,6 +11,8 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { Flag, Zap, TrendingUp, Activity } from 'lucide-react';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
+import { Tabs } from '../components/Tabs';
+import { MotorbikeDiagnostics, type BikeTelemetry } from '../components/MotorbikeDiagnostics';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -285,6 +287,7 @@ function StintProgress({ tyreAge, lapCount }: { tyreAge: number; lapCount: numbe
 export function OverviewPage() {
   const t = useLiveTelemetry();
   const [feedEvents, setFeedEvents] = useState<FeedEvent[]>(INITIAL_EVENTS);
+  const [activeTab, setActiveTab] = useState<'live' | 'telemetry'>('live');
   const templateIdx  = useRef(0);
   const lastLapRef   = useRef(t.lapCount);
 
@@ -365,6 +368,18 @@ export function OverviewPage() {
         </div>
       </div>
 
+      <Tabs
+        tabs={[
+          { id: 'live', label: 'Live Track & AI Predictions' },
+          { id: 'telemetry', label: 'Motorbike Telemetry & Diagnostics' },
+        ]}
+        active={activeTab}
+        onChange={(id) => setActiveTab(id as 'live' | 'telemetry')}
+      />
+
+      {activeTab === 'telemetry' && <MotorbikeDiagnostics t={t as unknown as BikeTelemetry} />}
+
+      {activeTab === 'live' && (<>
       {/* ── KPI row ─────────────────────────────────────────────────────────── */}
       <div className="grid-4 mb-4">
         <div className="stat-tile accent-border">
@@ -708,6 +723,7 @@ export function OverviewPage() {
           </tbody>
         </table>
       </div>
+      </>)}
 
     </div>
   );
