@@ -201,6 +201,125 @@ function SetupSlider({ param, value, onChange }: SliderProps) {
   );
 }
 
+// ── Session comparison chart ──────────────────────────────────────────────────
+
+function SessionComparisonChart() {
+  const parseLap = (s: string) => {
+    const [m, sec] = s.split(':');
+    return parseInt(m, 10) * 60 + parseFloat(sec);
+  };
+  const times = SETUP_VARIANTS.map(v => parseLap(v.lapTime));
+  const fastest = Math.min(...times);
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      {SETUP_VARIANTS.map((v, i) => {
+        const delta = times[i] - fastest;
+        const barPct = Math.max(35, 100 - (delta / 1.0) * 65);
+        const isActive = v.notes === 'Active';
+        const isFastest = delta < 0.001;
+        return (
+          <div key={v.name}>
+            <div style={{ display:'flex', justifyContent:'space-between', marginBottom:2 }}>
+              <span style={{ fontSize:11, fontWeight:isActive ? 700 : 400, color:isActive ? 'var(--accent)' : 'var(--text)' }}>
+                {v.name.replace(/\s*\(.*\)/, '')}
+                {isActive && <span className="badge badge-red" style={{ marginLeft:4, fontSize:8 }}>ACTIVE</span>}
+              </span>
+              <div style={{ display:'flex', gap:8, alignItems:'center' }}>
+                <span style={{ fontSize:11, fontFamily:'JetBrains Mono,monospace', color: isActive ? 'var(--accent)' : 'var(--text-muted)' }}>
+                  {v.lapTime}
+                </span>
+                {isFastest
+                  ? <span style={{ fontSize:9, fontWeight:700, color:'var(--green)', letterSpacing:'0.05em' }}>FASTEST</span>
+                  : <span style={{ fontSize:11, fontFamily:'JetBrains Mono,monospace', color:'var(--accent)' }}>+{delta.toFixed(3)}s</span>
+                }
+              </div>
+            </div>
+            <div className="bar-track" style={{ height:8, borderRadius:3 }}>
+              <div style={{ width:`${barPct}%`, height:8, borderRadius:3, background:isActive ? 'var(--accent)' : isFastest ? 'var(--green)' : 'rgba(255,255,255,0.14)' }} />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ── Group deviation heatmap ───────────────────────────────────────────────────
+
+function GroupDeviationGrid({ values }: { values: Record<string, number> }) {
+  const groups = [...new Set(SETUP_PARAMS.map(p => p.group))];
+  const cellBg = (pct: number) => {
+    const abs = Math.abs(pct);
+    if (abs < 4)  return 'rgba(255,255,255,0.05)';
+    if (abs < 12) return 'rgba(245,158,11,0.25)';
+    if (abs < 25) return 'rgba(245,158,11,0.50)';
+    return 'rgba(224,55,55,0.55)';
+  };
+
+  return (
+    <div style={{ display:'flex', flexDirection:'column', gap:5 }}>
+      {groups.map(group => {
+        const params = SETUP_PARAMS.filter(p => p.group === group);
+        return (
+          <div key={group} style={{ display:'flex', gap:4, alignItems:'center' }}>
+            <span style={{ width:76, fontSize:9, color:'var(--text-muted)', textTransform:'uppercase', letterSpacing:'0.05em', flexShrink:0 }}>
+              {group.slice(0, 9)}
+            </span>
+            {params.map(p => {
+              const range = p.max - p.min;
+              const pct   = range > 0 ? ((values[p.name] - p.baseline) / range) * 100 : 0;
+              const changed = Math.abs(values[p.name] - p.baseline) >= 0.01;
+              return (
+                <div key={p.name} title={`${p.name}: ${values[p.name].toFixed(1)} ${p.unit} (${pct > 0 ? '+' : ''}${pct.toFixed(0)}%)`}
+                  style={{ flex:1, height:20, borderRadius:3, background:cellBg(pct), border:changed ? '1px solid rgba(255,255,255,0.18)' : '1px solid transparent', cursor:'default' }} />
+              );
+            })}
+          </div>
+        );
+      })}
+      <div style={{ fontSize:9, color:'var(--text-muted)', marginTop:2 }}>
+        Cells: grey=baseline · amber=minor change · red=large change · hover for detail
+      </div>
+    </div>
+  );
+}
+
+// ── Top-impact parameters ─────────────────────────────────────────────────────
+
+function TopImpactParams({ values }: { values: Record<string, number> }) {
+  const candidates = SETUP_PARAMS.map(p => {
+    const bestVal      = p.lapTimeImpactPerUnit < 0 ? p.max : p.min;
+    const potentialGain = Math.abs((bestVal - values[p.name]) * p.lapTimeImpactPerUnit);
+    const currentImpact = (values[p.name] - p.baseline) * p.lapTimeImpactPerUnit;
+    return { ...p, potentialGain, currentImpact };
+  }).sort((a, b) => b.potentialGain - a.potentialGain).slice(0, 6);
+
+  const maxGain = candidates[0]?.potentialGain ?? 0.1;
+
+  return (
+    <div style={{ display:'flex', flexDirection:'column', gap:7 }}>
+      {candidates.map(p => {
+        const isBeneficial = p.currentImpact < 0;
+        return (
+          <div key={p.name}>
+            <div style={{ display:'flex', justifyContent:'space-between', marginBottom:2 }}>
+              <span style={{ fontSize:11, color:'var(--text-dim)' }}>{p.name}</span>
+              <span style={{ fontSize:11, fontFamily:'JetBrains Mono,monospace', color:'var(--green)', fontWeight:700 }}>
+                –{p.potentialGain.toFixed(3)}s
+              </span>
+            </div>
+            <div className="bar-track" style={{ height:6, borderRadius:3 }}>
+              <div style={{ width:`${(p.potentialGain / maxGain) * 100}%`, height:6, borderRadius:3, background:isBeneficial ? 'var(--blue)' : 'var(--green)' }} />
+            </div>
+          </div>
+        );
+      })}
+      <div style={{ fontSize:9, color:'var(--text-muted)' }}>Max gain if each param is set to optimal value</div>
+    </div>
+  );
+}
+
 // ── Page ───────────────────────────────────────────────────────────────────────
 
 export function SetupManagementPage() {
@@ -307,6 +426,17 @@ export function SetupManagementPage() {
           </div>
         </div>
       )}
+
+      {/* ── Group deviation overview ────────────────────────────────────────── */}
+      <div className="card mb-4">
+        <div className="card-header">
+          <span className="card-title">Parameter Deviation Map — All Groups</span>
+          <span style={{ fontSize:11, color:'var(--text-muted)' }}>Current vs Race Baseline</span>
+        </div>
+        <div className="card-body" style={{ flexDirection:'column', paddingTop:8 }}>
+          <GroupDeviationGrid values={values} />
+        </div>
+      </div>
 
       <div className="grid-2-1">
 
@@ -418,6 +548,28 @@ export function SetupManagementPage() {
               </div>
             </div>
           )}
+
+          {/* Session comparison chart */}
+          <div className="card">
+            <div className="card-header">
+              <span className="card-title">Session Comparison</span>
+              <span style={{ fontSize:11, color:'var(--text-muted)' }}>Lap time · delta</span>
+            </div>
+            <div className="card-body" style={{ flexDirection:'column' }}>
+              <SessionComparisonChart />
+            </div>
+          </div>
+
+          {/* Top-impact parameters */}
+          <div className="card">
+            <div className="card-header">
+              <span className="card-title">Top Gain Opportunities</span>
+              <span className="badge badge-green">Δ vs Optimal</span>
+            </div>
+            <div className="card-body" style={{ flexDirection:'column' }}>
+              <TopImpactParams values={values} />
+            </div>
+          </div>
 
           {/* Variants */}
           <div className="card">

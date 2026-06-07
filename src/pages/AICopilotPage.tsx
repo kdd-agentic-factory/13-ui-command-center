@@ -44,6 +44,31 @@ function HighlightedMessage({ text }: { text: string }) {
   );
 }
 
+// ── Auto-briefing templates ───────────────────────────────────────────────────
+
+interface BriefingTpl {
+  label: string; icon: string; color: string;
+  build: (lap: number, pos: number, grip: number, fuel: number, lastLap: string) => string;
+}
+
+const BRIEFINGS: BriefingTpl[] = [
+  {
+    label: 'Race Start Brief', icon: '🚦', color: 'var(--green)',
+    build: (lap, pos, grip, fuel) =>
+      `Provide a complete race start briefing for Lap ${lap}: Position P${pos}, rear SOFT tyre (~${grip.toFixed(0)}% grip), ${fuel.toFixed(1)} kg fuel. Cover: (1) tyre management plan for the first stint, (2) gap management vs rivals, (3) pit window recommendation, (4) key corners to protect rear grip at Mugello.`,
+  },
+  {
+    label: 'Mid-Race Analysis', icon: '📊', color: 'var(--blue)',
+    build: (lap, pos, grip, fuel, lastLap) =>
+      `Mid-race analysis at Lap ${lap}: P${pos}, rear grip ~${grip.toFixed(0)}%, fuel ${fuel.toFixed(1)} kg, last lap ${lastLap}. Analyze: (1) pace vs Digital Twin model delta, (2) best remaining stint options, (3) undercut vs overcut timing, (4) championship points impact of current trajectory.`,
+  },
+  {
+    label: 'Final Stint Plan', icon: '🏁', color: 'var(--accent)',
+    build: (lap, pos, grip, fuel) =>
+      `Final stint plan from Lap ${lap}: P${pos}, ~${grip.toFixed(0)}% rear grip, ${fuel.toFixed(1)} kg fuel. Give: (1) lap-by-lap fuel and tyre management, (2) attack or defend position decision, (3) exact engine map recommendation, (4) championship risk assessment and any safety margins.`,
+  },
+];
+
 // ── Quick prompt categories ───────────────────────────────────────────────────
 
 type PromptCategory = 'strategy' | 'tyres' | 'rivals' | 'setup';
@@ -81,6 +106,64 @@ const CATEGORY_LABELS: Record<PromptCategory, string> = {
   rivals:   '👥 Rivals',
   setup:    '⚙️ Setup',
 };
+
+// ── Live metric bar ───────────────────────────────────────────────────────────
+
+function LiveMetricBar({ lap, pos, gap, speed, gear, grip, fuel, lastLap }: {
+  lap: number; pos: number; gap: string; speed: number;
+  gear: number; grip: number; fuel: number; lastLap: string;
+}) {
+  const items = [
+    { k: 'LAP',  v: `${lap}/23`,    c: 'var(--text-muted)' },
+    { k: 'POS',  v: `P${pos}`,      c: 'var(--accent)' },
+    { k: 'GAP',  v: gap,            c: 'var(--yellow)' },
+    { k: 'SPD',  v: `${speed}`,     c: 'var(--blue)' },
+    { k: 'GEAR', v: `G${gear}`,     c: 'var(--text)' },
+    { k: 'GRIP', v: `${grip.toFixed(0)}%`, c: grip < 62 ? 'var(--accent)' : 'var(--green)' },
+    { k: 'FUEL', v: `${fuel.toFixed(1)} kg`, c: fuel < 4 ? 'var(--accent)' : 'var(--text-muted)' },
+    { k: 'LAST', v: lastLap,        c: 'var(--text-muted)' },
+  ];
+  return (
+    <div style={{
+      display:'flex', alignItems:'center', gap:12, padding:'5px 14px',
+      background:'rgba(255,255,255,0.025)', borderTop:'1px solid var(--border)',
+      fontSize:10, fontFamily:'JetBrains Mono,monospace', flexWrap:'wrap',
+    }}>
+      {items.map(item => (
+        <div key={item.k} style={{ display:'flex', alignItems:'center', gap:3 }}>
+          <span style={{ color:'rgba(255,255,255,0.2)', fontSize:8 }}>{item.k}</span>
+          <span style={{ fontWeight:700, color:item.c }}>{item.v}</span>
+        </div>
+      ))}
+      <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:4 }}>
+        <span style={{ width:5, height:5, background:'var(--green)', borderRadius:'50%', display:'inline-block', animation:'pulse 1.5s infinite' }} />
+        <span style={{ color:'var(--green)', fontSize:9 }}>10 Hz context</span>
+      </div>
+    </div>
+  );
+}
+
+// ── Tyre thermal mini sidebar ─────────────────────────────────────────────────
+
+function TyreThermalMini({ fl, fr, rl, rr }: { fl: number; fr: number; rl: number; rr: number }) {
+  const bg = (t: number) => {
+    if (t < 56) return '#60A5FA';
+    if (t < 72) return '#34D399';
+    if (t < 93) return '#FCD34D';
+    if (t < 109) return '#F97316';
+    return '#EF4444';
+  };
+  return (
+    <div style={{ padding:'8px 10px', display:'grid', gridTemplateColumns:'1fr 1fr', gap:4 }}>
+      {([['FL',fl],['FR',fr],['RL',rl],['RR',rr]] as [string, number][]).map(([label, temp]) => (
+        <div key={label} style={{ background:bg(temp), borderRadius:4, padding:'5px 0', textAlign:'center' }}>
+          <div style={{ fontSize:10, fontWeight:800, color:'#111', fontFamily:'JetBrains Mono,monospace' }}>{Math.round(temp)}°</div>
+          <div style={{ fontSize:8, color:'rgba(0,0,0,0.55)', fontFamily:'JetBrains Mono,monospace' }}>{label}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 // ── Context sidebar tile ──────────────────────────────────────────────────────
 
@@ -254,6 +337,22 @@ export function AICopilotPage() {
                   Select a category and pick a question, or type your own.
                 </p>
 
+                {/* Auto-briefing quick-fire buttons */}
+                <div style={{ display:'flex', gap:8, justifyContent:'center', marginBottom:20, flexWrap:'wrap' }}>
+                  {BRIEFINGS.map(b => (
+                    <button
+                      key={b.label}
+                      onClick={() => sendMessage(b.build(t.lapCount, t.position, rearGrip, t.fuelLoad, formatLap(t.lastLap)))}
+                      style={{
+                        padding:'8px 14px', borderRadius:8, fontSize:12, fontWeight:600, cursor:'pointer',
+                        border:`1px solid ${b.color}44`, background:`${b.color}12`, color:b.color,
+                      }}
+                    >
+                      {b.icon} {b.label}
+                    </button>
+                  ))}
+                </div>
+
                 {/* Category selector */}
                 <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginBottom: 16 }}>
                   {(Object.keys(QUICK_PROMPTS) as PromptCategory[]).map(cat => (
@@ -305,6 +404,9 @@ export function AICopilotPage() {
               </ul>
             )}
           </div>
+
+          {/* Persistent live telemetry strip above the composer */}
+          <LiveMetricBar lap={t.lapCount} pos={t.position} gap={t.gap} speed={t.speed} gear={t.gear} grip={rearGrip} fuel={t.fuelLoad} lastLap={formatLap(t.lastLap)} />
 
           {/* ── Input bar ───────────────────────────────────────────────────── */}
           <form className="copilot-input-bar" onSubmit={handleSubmit} style={{ flexShrink: 0 }}>
@@ -401,6 +503,8 @@ export function AICopilotPage() {
             }}>
               Tyres
             </div>
+
+            <TyreThermalMini fl={t.tireFrontLeft} fr={t.tireFrontRight} rl={t.tireRearLeft} rr={t.tireRearRight} />
 
             <CtxTile label="Rear" value={t.rearCompound} color="#E03737" />
             <CtxTile label="Age" value={`${t.rearTyreAge} laps`} />
