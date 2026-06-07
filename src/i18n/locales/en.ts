@@ -13,6 +13,7 @@ const en = {
     preGp: 'Pre Grand Prix',
     crew: 'Crew Chief',
     copilot: 'AI Copilot',
+    report: 'Session Report',
     settings: 'Settings',
     sections: {
       race: 'RACE',

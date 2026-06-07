@@ -13,6 +13,7 @@ const es = {
     preGp: 'Pre Gran Premio',
     crew: 'Jefe de Mecánicos',
     copilot: 'Copiloto IA',
+    report: 'Informe de Sesión',
     settings: 'Configuración',
     sections: {
       race: 'CARRERA',

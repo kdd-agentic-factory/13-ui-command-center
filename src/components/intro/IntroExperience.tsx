@@ -70,7 +70,7 @@ const ADVANTAGES: Advantage[] = [
 // Module access per real ProfileId (fixes the old mismatched-keys bug).
 const PROFILE_MODULES: Record<ProfileId, string[]> = {
   'race-engineer': ['Overview', 'Telemetry', 'Corner Intel', 'Lap Replay', 'Setup', 'Parts', 'Crew'],
-  'team-principal': ['Overview', 'Corner Intel', 'Pre-GP', 'Circuit', 'Copilot'],
+  'team-principal': ['Overview', 'Corner Intel', 'Session Report', 'Pre-GP', 'Copilot'],
   'data-analyst': ['Telemetry', 'Corner Intel', 'Lap Replay', 'Tyres', 'Digital Twin'],
   'mechanic': ['Setup', 'Advisor', 'Parts', 'Tyres'],
   'spectator': ['Overview'],
