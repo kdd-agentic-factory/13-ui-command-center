@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard, Activity, Map, Circle, Sliders, Wrench,
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
-  Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay,
+  Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, TabId } from '../context/AuthContext';
@@ -30,6 +30,7 @@ import { SessionReportPage }       from '../pages/SessionReportPage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
+import { RiderComparisonPage }      from '../pages/RiderComparisonPage';
 import { SettingsPage }            from '../pages/SettingsPage';
 
 // ─── Nav definition ───────────────────────────────────────────────────────────
@@ -55,6 +56,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'circuit',   labelKey: 'nav.circuit',   icon: Map },
     { id: 'corners',   labelKey: 'nav.corners',   icon: Route, badge: 'AI', badgeColor: 'blue' },
     { id: 'replay',    labelKey: 'nav.replay',    icon: Film },
+    { id: 'compare',   labelKey: 'nav.compare',   icon: GitCompare },
     { id: 'tires',     labelKey: 'nav.tires',     icon: Circle },
   ]},
   { section: 'nav.sections.engineering', items: [
@@ -100,6 +102,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'circuit':   return <CircuitIntelligencePage />;
     case 'corners':   return <CornerIntelligencePage />;
     case 'replay':    return <LapReplayPage />;
+    case 'compare':   return <RiderComparisonPage />;
     case 'tires':     return <TireDegradationPage />;
     case 'setup':     return <SetupManagementPage />;
     case 'advisor':   return <GarageSetupAdvisorPage />;

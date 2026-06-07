@@ -71,7 +71,7 @@ const ADVANTAGES: Advantage[] = [
 const PROFILE_MODULES: Record<ProfileId, string[]> = {
   'race-engineer': ['Overview', 'Telemetry', 'Corner Intel', 'Lap Replay', 'Setup', 'AI Crew', 'Report'],
   'team-principal': ['Overview', 'Corner Intel', 'Session Report', 'Pre-GP', 'Copilot'],
-  'data-analyst': ['Telemetry', 'Corner Intel', 'Lap Replay', 'Tyres', 'Digital Twin'],
+  'data-analyst': ['Telemetry', 'Corner Intel', 'Rider Comparison', 'Lap Replay', 'Digital Twin'],
   'mechanic': ['Setup', 'Advisor', 'Parts', 'Tyres'],
   'spectator': ['Overview', 'Track-Live'],
 };

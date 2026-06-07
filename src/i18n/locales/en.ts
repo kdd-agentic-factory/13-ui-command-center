@@ -6,6 +6,7 @@ const en = {
     circuit: 'Circuit Intelligence',
     corners: 'Corner Intelligence',
     replay: 'Lap Replay',
+    compare: 'Rider Comparison',
     tires: 'Tyre Degradation',
     setup: 'Setup Management',
     advisor: 'Garage Setup Advisor',

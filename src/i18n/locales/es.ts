@@ -6,6 +6,7 @@ const es = {
     circuit: 'Inteligencia de Circuito',
     corners: 'Inteligencia de Curva',
     replay: 'Repetición de Vuelta',
+    compare: 'Comparativa de Pilotos',
     tires: 'Degradación de Neumáticos',
     setup: 'Gestión de Setup',
     advisor: 'Asesor de Reglajes',
