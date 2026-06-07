@@ -8,6 +8,7 @@ const en = {
     replay: 'Lap Replay',
     compare: 'Rider Comparison',
     risk: 'Crash-Risk Index',
+    predict: 'Improvement Model',
     tires: 'Tyre Degradation',
     setup: 'Setup Management',
     advisor: 'Garage Setup Advisor',
@@ -19,6 +20,7 @@ const en = {
     copilot: 'AI Copilot',
     report: 'Session Report',
     aiCrew: 'AI Crew',
+    style: 'Riding Style',
     data: 'Connect Data',
     settings: 'Settings',
     sections: {

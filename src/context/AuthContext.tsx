@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 
-export type TabId = 'overview' | 'live' | 'telemetry' | 'circuit' | 'corners' | 'replay' | 'compare' | 'risk' | 'tires' | 'setup' | 'advisor' | 'parts' | 'twin' | 'history' | 'pre-gp' | 'crew' | 'copilot' | 'report' | 'ai-crew' | 'data' | 'settings';
+export type TabId = 'overview' | 'live' | 'telemetry' | 'circuit' | 'corners' | 'replay' | 'compare' | 'risk' | 'predict' | 'tires' | 'setup' | 'advisor' | 'parts' | 'twin' | 'history' | 'pre-gp' | 'crew' | 'copilot' | 'report' | 'ai-crew' | 'style' | 'data' | 'settings';
 export type ProfileId = 'race-engineer' | 'team-principal' | 'data-analyst' | 'mechanic' | 'spectator';
 
 export interface Profile {
@@ -21,8 +21,8 @@ export const PROFILES: Profile[] = [
     descKey: 'profiles.raceEngineer.desc',
     color: '#E03737',
     icon: '⚙️',
-    accessCount: '21',
-    allowedTabs: ['overview','live','telemetry','circuit','corners','replay','compare','risk','tires','setup','advisor','parts','twin','history','pre-gp','crew','copilot','report','ai-crew','data','settings'],
+    accessCount: '23',
+    allowedTabs: ['overview','live','telemetry','circuit','corners','replay','compare','risk','predict','tires','setup','advisor','parts','twin','history','pre-gp','crew','copilot','report','ai-crew','style','data','settings'],
     defaultTab: 'overview',
   },
   {
@@ -31,8 +31,8 @@ export const PROFILES: Profile[] = [
     descKey: 'profiles.teamPrincipal.desc',
     color: '#F59E0B',
     icon: '👔',
-    accessCount: '13',
-    allowedTabs: ['overview','live','corners','compare','risk','report','history','pre-gp','copilot','ai-crew','circuit','tires','settings'],
+    accessCount: '14',
+    allowedTabs: ['overview','live','corners','compare','risk','predict','report','history','pre-gp','copilot','ai-crew','circuit','tires','settings'],
     defaultTab: 'overview',
   },
   {
@@ -41,8 +41,8 @@ export const PROFILES: Profile[] = [
     descKey: 'profiles.dataAnalyst.desc',
     color: '#3B82F6',
     icon: '📊',
-    accessCount: '12',
-    allowedTabs: ['telemetry','corners','replay','compare','tires','circuit','twin','history','report','ai-crew','data','settings'],
+    accessCount: '14',
+    allowedTabs: ['telemetry','corners','replay','compare','predict','tires','circuit','twin','history','report','ai-crew','style','data','settings'],
     defaultTab: 'telemetry',
   },
   {

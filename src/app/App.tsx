@@ -5,6 +5,7 @@ import {
   LayoutDashboard, Activity, Map, Circle, Sliders, Wrench,
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
+  Sparkles, Fingerprint,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, TabId } from '../context/AuthContext';
@@ -33,6 +34,8 @@ import { TrackLivePage }            from '../pages/TrackLivePage';
 import { RiderComparisonPage }      from '../pages/RiderComparisonPage';
 import { CrashRiskPage }            from '../pages/CrashRiskPage';
 import { CircuitHistoryPage }       from '../pages/CircuitHistoryPage';
+import { PredictiveModelPage }      from '../pages/PredictiveModelPage';
+import { RidingStylePage }          from '../pages/RidingStylePage';
 import { SettingsPage }            from '../pages/SettingsPage';
 
 // ─── Nav definition ───────────────────────────────────────────────────────────
@@ -60,6 +63,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'replay',    labelKey: 'nav.replay',    icon: Film },
     { id: 'compare',   labelKey: 'nav.compare',   icon: GitCompare },
     { id: 'risk',      labelKey: 'nav.risk',      icon: ShieldAlert },
+    { id: 'predict',   labelKey: 'nav.predict',   icon: Sparkles, badge: 'AI', badgeColor: 'blue' },
     { id: 'tires',     labelKey: 'nav.tires',     icon: Circle },
   ]},
   { section: 'nav.sections.engineering', items: [
@@ -75,6 +79,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'copilot', labelKey: 'nav.copilot',  icon: Bot, badge: 'AI', badgeColor: 'blue' },
     { id: 'report',  labelKey: 'nav.report',   icon: FileText, badge: 'PDF', badgeColor: 'muted' },
     { id: 'ai-crew', labelKey: 'nav.aiCrew',   icon: Users, badge: 'AI', badgeColor: 'blue' },
+    { id: 'style',   labelKey: 'nav.style',    icon: Fingerprint },
   ]},
   { section: 'nav.sections.system', items: [
     { id: 'data',     labelKey: 'nav.data',     icon: Database },
@@ -108,6 +113,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'replay':    return <LapReplayPage />;
     case 'compare':   return <RiderComparisonPage />;
     case 'risk':      return <CrashRiskPage />;
+    case 'predict':   return <PredictiveModelPage />;
     case 'tires':     return <TireDegradationPage />;
     case 'setup':     return <SetupManagementPage />;
     case 'advisor':   return <GarageSetupAdvisorPage />;
@@ -117,6 +123,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'copilot':   return <AICopilotPage />;
     case 'report':    return <SessionReportPage />;
     case 'ai-crew':   return <AICrewPage />;
+    case 'style':     return <RidingStylePage />;
     case 'data':      return <ConnectDataPage />;
     case 'twin':      return <DigitalTwinReportPage />;
     case 'history':   return <CircuitHistoryPage />;

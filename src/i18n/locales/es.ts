@@ -8,6 +8,7 @@ const es = {
     replay: 'Repetición de Vuelta',
     compare: 'Comparativa de Pilotos',
     risk: 'Índice de Riesgo',
+    predict: 'Modelo de Mejora',
     tires: 'Degradación de Neumáticos',
     setup: 'Gestión de Setup',
     advisor: 'Asesor de Reglajes',
@@ -19,6 +20,7 @@ const es = {
     copilot: 'Copiloto IA',
     report: 'Informe de Sesión',
     aiCrew: 'Equipo IA',
+    style: 'Estilo de Pilotaje',
     data: 'Conectar Datos',
     settings: 'Configuración',
     sections: {
