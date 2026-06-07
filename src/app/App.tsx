@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard, Activity, Map, Circle, Sliders, Wrench,
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
-  Route, Film,
+  Route, Film, Lightbulb,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, TabId } from '../context/AuthContext';
@@ -20,6 +20,7 @@ import { CornerIntelligencePage }  from '../pages/CornerIntelligencePage';
 import { LapReplayPage }           from '../pages/LapReplayPage';
 import { TireDegradationPage }     from '../pages/TireDegradationPage';
 import { SetupManagementPage }     from '../pages/SetupManagementPage';
+import { GarageSetupAdvisorPage }  from '../pages/GarageSetupAdvisorPage';
 import { PartDesignPage }          from '../pages/PartDesignPage';
 import { PreGrandPrixPage }        from '../pages/PreGrandPrixPage';
 import { CrewChiefPage }           from '../pages/CrewChiefPage';
@@ -52,9 +53,10 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'tires',     labelKey: 'nav.tires',     icon: Circle },
   ]},
   { section: 'nav.sections.engineering', items: [
-    { id: 'setup',  labelKey: 'nav.setup',  icon: Sliders },
-    { id: 'parts',  labelKey: 'nav.parts',  icon: Wrench },
-    { id: 'twin',   labelKey: 'nav.twin',   icon: GitBranch },
+    { id: 'setup',   labelKey: 'nav.setup',   icon: Sliders },
+    { id: 'advisor', labelKey: 'nav.advisor', icon: Lightbulb, badge: 'AI', badgeColor: 'blue' },
+    { id: 'parts',   labelKey: 'nav.parts',   icon: Wrench },
+    { id: 'twin',    labelKey: 'nav.twin',    icon: GitBranch },
   ]},
   { section: 'nav.sections.command', items: [
     { id: 'pre-gp',  labelKey: 'nav.preGp',   icon: CalendarDays },
@@ -91,6 +93,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'replay':    return <LapReplayPage />;
     case 'tires':     return <TireDegradationPage />;
     case 'setup':     return <SetupManagementPage />;
+    case 'advisor':   return <GarageSetupAdvisorPage />;
     case 'parts':     return <PartDesignPage />;
     case 'pre-gp':    return <PreGrandPrixPage />;
     case 'crew':      return <CrewChiefPage />;

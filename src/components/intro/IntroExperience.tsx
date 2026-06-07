@@ -72,7 +72,7 @@ const PROFILE_MODULES: Record<ProfileId, string[]> = {
   'race-engineer': ['Overview', 'Telemetry', 'Corner Intel', 'Lap Replay', 'Setup', 'Parts', 'Crew'],
   'team-principal': ['Overview', 'Corner Intel', 'Pre-GP', 'Circuit', 'Copilot'],
   'data-analyst': ['Telemetry', 'Corner Intel', 'Lap Replay', 'Tyres', 'Digital Twin'],
-  'mechanic': ['Setup', 'Parts', 'Pre-GP', 'Tyres'],
+  'mechanic': ['Setup', 'Advisor', 'Parts', 'Tyres'],
   'spectator': ['Overview'],
 };
 

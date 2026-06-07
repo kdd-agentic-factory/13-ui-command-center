@@ -7,6 +7,7 @@ const es = {
     replay: 'Repetición de Vuelta',
     tires: 'Degradación de Neumáticos',
     setup: 'Gestión de Setup',
+    advisor: 'Asesor de Reglajes',
     parts: 'Diseño de Piezas',
     twin: 'Gemelo Digital',
     preGp: 'Pre Gran Premio',

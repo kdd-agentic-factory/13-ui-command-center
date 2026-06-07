@@ -7,6 +7,7 @@ const en = {
     replay: 'Lap Replay',
     tires: 'Tyre Degradation',
     setup: 'Setup Management',
+    advisor: 'Garage Setup Advisor',
     parts: 'Part Design',
     twin: 'Digital Twin',
     preGp: 'Pre Grand Prix',
