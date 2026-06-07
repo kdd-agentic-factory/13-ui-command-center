@@ -1,17 +1,21 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+// The 3D viewers need a real WebGL context — stub them for jsdom.
+vi.mock('../src/components/babylon/DigitalTwinViewer3D', () => ({
+  DigitalTwinViewer3D: () => null,
+}));
+
 import { App } from '../src/app/App';
 
-describe('Command center', () => {
-  it('renders the operational dashboard panels', () => {
+describe('Moto Intelligence positioning', () => {
+  it('positions the product for motorcycles, not as a generic agent console', () => {
     render(<App />);
-
-    expect(screen.getByText('KDD Agentic Factory Command Center')).toBeInTheDocument();
-    expect(screen.getByText('Estado de ejecucion')).toBeInTheDocument();
-    expect(screen.getByText('Pipeline de conocimiento')).toBeInTheDocument();
-    expect(screen.getByText('Memoria, retrieval y cache')).toBeInTheDocument();
-    expect(screen.getByText('Monitor de herramientas')).toBeInTheDocument();
-    expect(screen.getByText('Registro operativo')).toBeInTheDocument();
-    expect(screen.getByText('Comparativas en curso')).toBeInTheDocument();
+    // Engineer feedback #1/#2: first impact must read as motorcycle telemetry.
+    expect(screen.getByText('Motorcycle telemetry intelligence')).toBeInTheDocument();
+    // Engineer feedback #5: the headline metric is rider value, not "active agents".
+    expect(screen.getByText('Potential gain')).toBeInTheDocument();
+    // Role-based entry is preserved.
+    expect(screen.getByText('Race Engineer')).toBeInTheDocument();
   });
 });

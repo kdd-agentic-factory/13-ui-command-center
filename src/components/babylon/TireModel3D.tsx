@@ -11,14 +11,20 @@ interface TireModel3DProps {
   height?: number;
 }
 
+// MotoGP slicks work in a ~90–115 °C window: below that there's no grip (cold,
+// blue), above ~120 °C they overheat and grain (red). Green = the working window.
 function tempToColor(temp: number, compound: 'SOFT' | 'MEDIUM' | 'HARD'): Color3 {
-  const base = compound === 'SOFT' ? new Color3(0.6, 0.1, 0.1)
-             : compound === 'HARD' ? new Color3(0.7, 0.7, 0.7)
-             : new Color3(0.6, 0.5, 0.1);
-  if (temp < 75)  return Color3.Lerp(new Color3(0.1, 0.3, 0.8), base, 0.3);
-  if (temp < 90)  return Color3.Lerp(base, new Color3(0.2, 0.7, 0.2), 0.5);
-  if (temp < 105) return Color3.Lerp(new Color3(0.8, 0.6, 0.1), new Color3(0.9, 0.3, 0.0), (temp - 90) / 15);
-  return new Color3(0.95, 0.15, 0.05);
+  const cold   = new Color3(0.10, 0.30, 0.80);
+  const optimal = new Color3(0.18, 0.72, 0.25);
+  const hot    = new Color3(0.92, 0.55, 0.08);
+  const overheat = new Color3(0.95, 0.15, 0.05);
+  const clamp01 = (x: number) => Math.max(0, Math.min(1, x));
+  // Softer compounds switch on (reach the working window) at a lower temperature.
+  const warmEnd = compound === 'SOFT' ? 85 : compound === 'HARD' ? 95 : 90;
+  if (temp < warmEnd) return Color3.Lerp(cold, optimal, clamp01((temp - 60) / (warmEnd - 60))); // warming up
+  if (temp <= 115) return optimal;                                                 // working window
+  if (temp < 125) return Color3.Lerp(optimal, hot, clamp01((temp - 115) / 10));    // running hot
+  return Color3.Lerp(hot, overheat, clamp01((temp - 125) / 15));                    // overheating
 }
 
 export function TireModel3D({ temperature, compound, label, height = 160 }: TireModel3DProps) {

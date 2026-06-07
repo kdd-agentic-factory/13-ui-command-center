@@ -3,6 +3,8 @@ const en = {
     overview: 'Overview',
     telemetry: 'Live Telemetry',
     circuit: 'Circuit Intelligence',
+    corners: 'Corner Intelligence',
+    replay: 'Lap Replay',
     tires: 'Tyre Degradation',
     setup: 'Setup Management',
     parts: 'Part Design',
@@ -19,11 +21,29 @@ const en = {
     },
   },
   landing: {
-    title: 'KDD RACE ENGINEERING',
-    subtitle: 'Agentic Factory · v3.0 · Race Edition',
+    title: 'KDD MOTO INTELLIGENCE',
+    subtitle: 'AI telemetry & rider performance',
     selectProfile: 'Select your role to enter the platform',
     enterPlatform: 'Enter Platform',
     switchLanguage: 'Switch Language',
+  },
+  intro: {
+    hero: {
+      eyebrow: 'Motorcycle telemetry intelligence',
+      lede: 'Turn motorcycle telemetry into faster, safer laps: see exactly where you lose time, which corner you get wrong and what to change — with an AI crew reading every lap.',
+      scroll: 'See how it works',
+    },
+    session: { title: 'Live session', circuit: 'Circuit', rider: 'Rider', bike: 'Bike', stint: 'Session', weather: 'Weather', tyres: 'Tyres' },
+    kpi: { gain: 'Potential gain', corner: 'Critical corner', issue: 'Main issue', consistency: 'Rider consistency', risk: 'Risk index', grip: 'Rear grip drop' },
+    stat: { agents: 'AI crew', services: 'services', repos: 'KDD repos', hz: 'Hz telemetry' },
+    adv: {
+      edge:    { title: 'Edge AI at the circuit', desc: 'Telemetry ingest above 1000 Hz per channel and lightweight inference next to the garage — no round-trips to central servers.', metric: 'Hz per channel' },
+      twin:    { title: 'Digital twin with real physics', desc: 'Not a dashboard — a deterministic model. PINN Magic-Formula for Pacejka, GRU-VAE for anomalies and a UKF to clean the GPS, with a Physics Guard that never returns impossible numbers.', metric: 'Pacejka RMSE (PINN)' },
+      gps:     { title: 'Open 2027 GPS, decoded', desc: "With the GPS the 2027 rules force everyone to share, we deduce a rival's hidden telemetry: Discrete Fréchet, CVI/Biarc and Inverse-Dynamics Ghosting predict brake and throttle with 99% accuracy.", metric: '% ghost accuracy' },
+      agentic: { title: 'Your AI crew, not just agents', desc: "A full crew of AI specialists — Crew Chief, Telemetry Analyst, Rider Coach, Safety Guardian, Lap-Time Optimizer — watch the session live, read the rider's voice with NLP and push corrective calls before the problem hits the asphalt.", metric: 'AI crew members' },
+      predict: { title: 'End-to-end prediction', desc: 'KDD tyre degradation, FEM/FEA of every part before manufacture, the start (Grid Start), rival intelligence and multi-scenario what-ifs: winning calls before the engine fires.', metric: 'what-if scenarios' },
+    },
+    roles: { eyebrow: 'One panel, every specialist their own view', title: 'Choose your role to enter', enter: 'Enter the platform' },
   },
   profiles: {
     raceEngineer: {

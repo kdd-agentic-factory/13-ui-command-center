@@ -4,10 +4,11 @@ import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard, Activity, Map, Circle, Sliders, Wrench,
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
+  Route, Film,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, TabId } from '../context/AuthContext';
-import { LandingPage } from '../pages/LandingPage';
+import { IntroExperience } from '../components/intro/IntroExperience';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { ToastProvider } from '../components/ToastProvider';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
@@ -15,6 +16,8 @@ import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { OverviewPage }            from '../pages/OverviewPage';
 import { LiveTelemetryPage }       from '../pages/LiveTelemetryPage';
 import { CircuitIntelligencePage } from '../pages/CircuitIntelligencePage';
+import { CornerIntelligencePage }  from '../pages/CornerIntelligencePage';
+import { LapReplayPage }           from '../pages/LapReplayPage';
 import { TireDegradationPage }     from '../pages/TireDegradationPage';
 import { SetupManagementPage }     from '../pages/SetupManagementPage';
 import { PartDesignPage }          from '../pages/PartDesignPage';
@@ -44,6 +47,8 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'overview',  labelKey: 'nav.overview',  icon: LayoutDashboard, badge: 'LIVE', badgeColor: 'red' },
     { id: 'telemetry', labelKey: 'nav.telemetry', icon: Activity,         badge: '10Hz', badgeColor: 'green' },
     { id: 'circuit',   labelKey: 'nav.circuit',   icon: Map },
+    { id: 'corners',   labelKey: 'nav.corners',   icon: Route, badge: 'AI', badgeColor: 'blue' },
+    { id: 'replay',    labelKey: 'nav.replay',    icon: Film },
     { id: 'tires',     labelKey: 'nav.tires',     icon: Circle },
   ]},
   { section: 'nav.sections.engineering', items: [
@@ -82,6 +87,8 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'overview':  return <OverviewPage />;
     case 'telemetry': return <LiveTelemetryPage />;
     case 'circuit':   return <CircuitIntelligencePage />;
+    case 'corners':   return <CornerIntelligencePage />;
+    case 'replay':    return <LapReplayPage />;
     case 'tires':     return <TireDegradationPage />;
     case 'setup':     return <SetupManagementPage />;
     case 'parts':     return <PartDesignPage />;
@@ -166,8 +173,8 @@ function AppShell() {
         <div className="sidebar-brand">
           <div className="sidebar-brand-icon"><Zap size={16} /></div>
           <div>
-            <div className="sidebar-brand-name">KDD RACE</div>
-            <div className="sidebar-brand-sub">Engineering Platform</div>
+            <div className="sidebar-brand-name">KDD MOTO</div>
+            <div className="sidebar-brand-sub">Moto Intelligence</div>
           </div>
         </div>
 
@@ -290,7 +297,7 @@ function AppShell() {
 
 function AppWithAuth() {
   const { profile, login } = useProfile();
-  if (!profile) return <LandingPage onEnter={login} />;
+  if (!profile) return <IntroExperience onEnter={login} />;
   return <AppShell />;
 }
 

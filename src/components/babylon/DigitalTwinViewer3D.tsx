@@ -1,18 +1,19 @@
 import { useEffect, useRef } from 'react';
 import {
   Engine, Scene, ArcRotateCamera, HemisphericLight, Vector3,
-  MeshBuilder, StandardMaterial, Color3, Color4, PointLight, Mesh,
+  MeshBuilder, StandardMaterial, Color3, Color4, PointLight, Mesh, Axis, Space, TransformNode,
 } from '@babylonjs/core';
 
 interface DigitalTwinViewer3DProps {
-  leanAngle: number;  // degrees, positive = lean right
+  leanAngle: number;   // degrees, positive = lean right (roll about the forward axis)
+  pitchAngle?: number; // degrees, positive = nose-down dive (braking); negative = squat (accel)
   height?: number;
 }
 
-export function DigitalTwinViewer3D({ leanAngle, height = 320 }: DigitalTwinViewer3DProps) {
+export function DigitalTwinViewer3D({ leanAngle, pitchAngle = 0, height = 320 }: DigitalTwinViewer3DProps) {
   const canvasRef  = useRef<HTMLCanvasElement>(null);
   const engineRef  = useRef<Engine | null>(null);
-  const chassisRef = useRef<Mesh | null>(null);
+  const chassisRef = useRef<TransformNode | null>(null);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -71,10 +72,18 @@ export function DigitalTwinViewer3D({ leanAngle, height = 320 }: DigitalTwinView
 
     // ── Chassis group (pivot at world origin) ──────────────────────────────
     // We use a thin chassis box as the parent transform node substitute
+    // Lean/pitch must pivot about the tyre contact patch (ground line), not the
+    // chassis centre — otherwise the wheels swing out through the ground when the
+    // bike leans. A pivot node sits on the contact line; the whole bike hangs off
+    // it, and we roll/pitch the pivot.
+    const leanPivot = new TransformNode('leanPivot', scene);
+    leanPivot.position = new Vector3(0, -0.64, 0); // contact patch (ground line)
+
     const chassis = MeshBuilder.CreateBox('chassis', { width: 0.25, height: 0.12, depth: 1.6 }, scene);
-    chassis.position = new Vector3(0, 0.38, 0);
+    chassis.parent = leanPivot;
+    chassis.position = new Vector3(0, 1.02, 0); // world y ≈ 0.38, i.e. 1.02 above the pivot
     chassis.material = darkMat;
-    chassisRef.current = chassis;
+    chassisRef.current = leanPivot;
 
     // ── Engine block ──────────────────────────────────────────────────────
     const engineBlock = MeshBuilder.CreateBox('engine', { width: 0.32, height: 0.34, depth: 0.42 }, scene);
@@ -142,26 +151,26 @@ export function DigitalTwinViewer3D({ leanAngle, height = 320 }: DigitalTwinView
 
     // ── Front wheel ────────────────────────────────────────────────────────
     const fTire = MeshBuilder.CreateTorus('ftire', { diameter: 0.84, thickness: 0.22, tessellation: 28 }, scene);
-    fTire.rotation.x = Math.PI / 2;
+    fTire.rotation.z = Math.PI / 2;
     fTire.position = new Vector3(0, -0.22, -0.84);
     fTire.material = tireMat;
     fTire.parent = chassis;
 
     const fRim = MeshBuilder.CreateCylinder('frim', { height: 0.18, diameter: 0.46, tessellation: 20 }, scene);
-    fRim.rotation.x = Math.PI / 2;
+    fRim.rotation.z = Math.PI / 2;
     fRim.position = new Vector3(0, -0.22, -0.84);
     fRim.material = rimMat;
     fRim.parent = chassis;
 
     // ── Rear wheel ─────────────────────────────────────────────────────────
     const rTire = MeshBuilder.CreateTorus('rtire', { diameter: 0.86, thickness: 0.26, tessellation: 28 }, scene);
-    rTire.rotation.x = Math.PI / 2;
+    rTire.rotation.z = Math.PI / 2;
     rTire.position = new Vector3(0, -0.24, 0.84);
     rTire.material = tireMat;
     rTire.parent = chassis;
 
     const rRim = MeshBuilder.CreateCylinder('rrim', { height: 0.18, diameter: 0.46, tessellation: 20 }, scene);
-    rRim.rotation.x = Math.PI / 2;
+    rRim.rotation.z = Math.PI / 2;
     rRim.position = new Vector3(0, -0.24, 0.84);
     rRim.material = rimMat;
     rRim.parent = chassis;
@@ -181,11 +190,10 @@ export function DigitalTwinViewer3D({ leanAngle, height = 320 }: DigitalTwinView
     accentLight.range     = 2;
 
     // ── Wheel spin animation ────────────────────────────────────────────────
+    // Roll about each wheel's own central axis (local Y of the torus), so the
+    // spin stays correct regardless of how the chassis leans or pitches.
     scene.registerBeforeRender(() => {
-      fTire.rotation.y += 0.04;
-      fRim.rotation.y  += 0.04;
-      rTire.rotation.y += 0.04;
-      rRim.rotation.y  += 0.04;
+      for (const w of [fTire, fRim, rTire, rRim]) w.rotate(Axis.Y, 0.06, Space.LOCAL);
     });
 
     engineRef.current = engine;
@@ -202,12 +210,15 @@ export function DigitalTwinViewer3D({ leanAngle, height = 320 }: DigitalTwinView
     };
   }, []);
 
-  // Apply lean angle
+  // Apply lean (roll) + pitch/squat — both pivot about the contact patch.
   useEffect(() => {
     if (!chassisRef.current) return;
-    // leanAngle in degrees; positive = right lean (positive Z roll)
+    // leanAngle: positive = right lean (roll about the forward Z axis).
     chassisRef.current.rotation.z = (leanAngle * Math.PI) / 180;
-  }, [leanAngle]);
+    // pitchAngle: positive = nose-down dive (braking). Front sits at −Z, so a
+    // nose-down attitude is a negative rotation about X.
+    chassisRef.current.rotation.x = -(pitchAngle * Math.PI) / 180;
+  }, [leanAngle, pitchAngle]);
 
   return (
     <div className="babylon-canvas-wrap" style={{ height }}>

@@ -42,6 +42,8 @@ export function MotorbikeDiagnostics({ t }: { t: BikeTelemetry }) {
   const waterTemp = 88 + Math.round((t.throttle / 100) * 12);
   const frontPress = 1.9;
   const rearPress = 1.7;
+  // Pitch attitude: front dives under braking, squats under acceleration.
+  const pitch = t.brake * 0.08 - t.throttle * 0.04;
 
   return (
     <>
@@ -53,10 +55,10 @@ export function MotorbikeDiagnostics({ t }: { t: BikeTelemetry }) {
           </span>
           <span className="badge badge-green" style={{ animation: 'pulse 2s infinite' }}>LIVE</span>
         </div>
-        <DigitalTwinViewer3D leanAngle={t.leanAngle} height={300} />
+        <DigitalTwinViewer3D leanAngle={t.leanAngle} pitchAngle={pitch} height={300} />
         <div className="grid-4" style={{ marginTop: 12 }}>
           <Stat label="Lean" value={Math.abs(t.leanAngle).toFixed(0)} unit="°" />
-          <Stat label="RPM" value={t.rpm.toLocaleString()} />
+          <Stat label={pitch >= 0 ? 'Dive (brake)' : 'Squat (accel)'} value={Math.abs(pitch).toFixed(1)} unit="°" warn={pitch > 6} />
           <Stat label="Speed" value={t.speed.toFixed(0)} unit="km/h" />
           <Stat label="Gear" value={t.gear} />
         </div>

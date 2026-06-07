@@ -3,6 +3,8 @@ const es = {
     overview: 'Vista General',
     telemetry: 'Telemetría en Vivo',
     circuit: 'Inteligencia de Circuito',
+    corners: 'Inteligencia de Curva',
+    replay: 'Repetición de Vuelta',
     tires: 'Degradación de Neumáticos',
     setup: 'Gestión de Setup',
     parts: 'Diseño de Piezas',
@@ -19,11 +21,29 @@ const es = {
     },
   },
   landing: {
-    title: 'KDD PLATAFORMA DE INGENIERÍA',
-    subtitle: 'Fábrica Agéntica · v3.0 · Edición Carrera',
+    title: 'KDD MOTO INTELLIGENCE',
+    subtitle: 'Telemetría con IA y rendimiento del piloto',
     selectProfile: 'Selecciona tu rol para entrar a la plataforma',
     enterPlatform: 'Entrar a la Plataforma',
     switchLanguage: 'Cambiar Idioma',
+  },
+  intro: {
+    hero: {
+      eyebrow: 'Inteligencia de telemetría para motos',
+      lede: 'Convierte la telemetría de tu moto en vueltas más rápidas y seguras: ve exactamente dónde pierdes tiempo, qué curva haces mal y qué cambiar — con un equipo de IA leyendo cada vuelta.',
+      scroll: 'Ver cómo funciona',
+    },
+    session: { title: 'Sesión en vivo', circuit: 'Circuito', rider: 'Piloto', bike: 'Moto', stint: 'Sesión', weather: 'Clima', tyres: 'Neumáticos' },
+    kpi: { gain: 'Ganancia potencial', corner: 'Curva crítica', issue: 'Problema principal', consistency: 'Consistencia', risk: 'Índice de riesgo', grip: 'Caída agarre trasero' },
+    stat: { agents: 'equipo IA', services: 'servicios', repos: 'repos KDD', hz: 'Hz telemetría' },
+    adv: {
+      edge:    { title: 'Edge AI en el circuito', desc: 'Ingesta de telemetría a más de 1000 Hz por canal e inferencia ligera junto al box, sin viajes de ida y vuelta a servidores centrales.', metric: 'Hz por canal' },
+      twin:    { title: 'Gemelo digital con física real', desc: 'No es un dashboard: es un modelo determinista. PINN Magic-Formula para Pacejka, GRU-VAE para anomalías y UKF para suavizar el GPS — con Physics Guard que nunca entrega cálculos imposibles.', metric: 'RMSE Pacejka (PINN)' },
+      gps:     { title: 'GPS abierto 2027, descifrado', desc: 'Con los datos GPS que el reglamento 2027 obliga a compartir, deducimos la telemetría oculta del rival: Distancia de Fréchet, CVI/Biarc e Inverse-Dynamics Ghosting predicen freno y gas con un 99 % de acierto.', metric: '% acierto ghost' },
+      agentic: { title: 'Tu equipo de IA, no solo agentes', desc: 'Un equipo completo de especialistas IA — Crew Chief, Analista de Telemetría, Rider Coach, Guardián de Seguridad, Optimizador de Vuelta — monitoriza la tanda en vivo, lee la voz del piloto con NLP y lanza correcciones antes de que el problema toque el asfalto.', metric: 'miembros del equipo IA' },
+      predict: { title: 'Predicción de extremo a extremo', desc: 'Degradación KDD del neumático, FEM/FEA de cada pieza antes de fabricar, salida (Grid Start), inteligencia del rival y what-if multi-escenario: decisiones ganadoras antes de encender el motor.', metric: 'escenarios what-if' },
+    },
+    roles: { eyebrow: 'Un panel, cada especialista su vista', title: 'Elige tu rol para entrar', enter: 'Entrar a la plataforma' },
   },
   profiles: {
     raceEngineer: {
