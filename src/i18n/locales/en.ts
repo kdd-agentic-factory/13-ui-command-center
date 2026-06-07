@@ -1,6 +1,7 @@
 const en = {
   nav: {
     overview: 'Overview',
+    live: 'Track-Live',
     telemetry: 'Live Telemetry',
     circuit: 'Circuit Intelligence',
     corners: 'Corner Intelligence',
@@ -15,6 +16,7 @@ const en = {
     copilot: 'AI Copilot',
     report: 'Session Report',
     aiCrew: 'AI Crew',
+    data: 'Connect Data',
     settings: 'Settings',
     sections: {
       race: 'RACE',

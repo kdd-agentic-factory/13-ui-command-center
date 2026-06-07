@@ -73,7 +73,7 @@ const PROFILE_MODULES: Record<ProfileId, string[]> = {
   'team-principal': ['Overview', 'Corner Intel', 'Session Report', 'Pre-GP', 'Copilot'],
   'data-analyst': ['Telemetry', 'Corner Intel', 'Lap Replay', 'Tyres', 'Digital Twin'],
   'mechanic': ['Setup', 'Advisor', 'Parts', 'Tyres'],
-  'spectator': ['Overview'],
+  'spectator': ['Overview', 'Track-Live'],
 };
 
 // ── Live telemetry ticker (sticky top) ──────────────────────────────────────────

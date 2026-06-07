@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard, Activity, Map, Circle, Sliders, Wrench,
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
-  Route, Film, Lightbulb, FileText, Users,
+  Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, TabId } from '../context/AuthContext';
@@ -28,6 +28,8 @@ import { AICopilotPage }           from '../pages/AICopilotPage';
 import { DigitalTwinReportPage }   from '../pages/DigitalTwinReportPage';
 import { SessionReportPage }       from '../pages/SessionReportPage';
 import { AICrewPage }               from '../pages/AICrewPage';
+import { ConnectDataPage }          from '../pages/ConnectDataPage';
+import { TrackLivePage }            from '../pages/TrackLivePage';
 import { SettingsPage }            from '../pages/SettingsPage';
 
 // ─── Nav definition ───────────────────────────────────────────────────────────
@@ -47,7 +49,8 @@ interface NavSectionDef {
 
 const ALL_NAV_SECTIONS: NavSectionDef[] = [
   { section: 'nav.sections.race', items: [
-    { id: 'overview',  labelKey: 'nav.overview',  icon: LayoutDashboard, badge: 'LIVE', badgeColor: 'red' },
+    { id: 'overview',  labelKey: 'nav.overview',  icon: LayoutDashboard },
+    { id: 'live',      labelKey: 'nav.live',      icon: MonitorPlay,      badge: 'LIVE', badgeColor: 'red' },
     { id: 'telemetry', labelKey: 'nav.telemetry', icon: Activity,         badge: '10Hz', badgeColor: 'green' },
     { id: 'circuit',   labelKey: 'nav.circuit',   icon: Map },
     { id: 'corners',   labelKey: 'nav.corners',   icon: Route, badge: 'AI', badgeColor: 'blue' },
@@ -68,6 +71,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'ai-crew', labelKey: 'nav.aiCrew',   icon: Users, badge: 'AI', badgeColor: 'blue' },
   ]},
   { section: 'nav.sections.system', items: [
+    { id: 'data',     labelKey: 'nav.data',     icon: Database },
     { id: 'settings', labelKey: 'nav.settings', icon: Settings },
   ]},
 ];
@@ -91,6 +95,7 @@ function useClock(): string {
 function PageContent({ tab }: { tab: TabId }) {
   switch (tab) {
     case 'overview':  return <OverviewPage />;
+    case 'live':      return <TrackLivePage />;
     case 'telemetry': return <LiveTelemetryPage />;
     case 'circuit':   return <CircuitIntelligencePage />;
     case 'corners':   return <CornerIntelligencePage />;
@@ -104,6 +109,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'copilot':   return <AICopilotPage />;
     case 'report':    return <SessionReportPage />;
     case 'ai-crew':   return <AICrewPage />;
+    case 'data':      return <ConnectDataPage />;
     case 'twin':      return <DigitalTwinReportPage />;
     case 'settings':  return <SettingsPage />;
     default:          return <OverviewPage />;

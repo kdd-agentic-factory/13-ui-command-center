@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 
-export type TabId = 'overview' | 'telemetry' | 'circuit' | 'corners' | 'replay' | 'tires' | 'setup' | 'advisor' | 'parts' | 'twin' | 'pre-gp' | 'crew' | 'copilot' | 'report' | 'ai-crew' | 'settings';
+export type TabId = 'overview' | 'live' | 'telemetry' | 'circuit' | 'corners' | 'replay' | 'tires' | 'setup' | 'advisor' | 'parts' | 'twin' | 'pre-gp' | 'crew' | 'copilot' | 'report' | 'ai-crew' | 'data' | 'settings';
 export type ProfileId = 'race-engineer' | 'team-principal' | 'data-analyst' | 'mechanic' | 'spectator';
 
 export interface Profile {
@@ -21,8 +21,8 @@ export const PROFILES: Profile[] = [
     descKey: 'profiles.raceEngineer.desc',
     color: '#E03737',
     icon: '⚙️',
-    accessCount: '16',
-    allowedTabs: ['overview','telemetry','circuit','corners','replay','tires','setup','advisor','parts','twin','pre-gp','crew','copilot','report','ai-crew','settings'],
+    accessCount: '18',
+    allowedTabs: ['overview','live','telemetry','circuit','corners','replay','tires','setup','advisor','parts','twin','pre-gp','crew','copilot','report','ai-crew','data','settings'],
     defaultTab: 'overview',
   },
   {
@@ -31,8 +31,8 @@ export const PROFILES: Profile[] = [
     descKey: 'profiles.teamPrincipal.desc',
     color: '#F59E0B',
     icon: '👔',
-    accessCount: '9',
-    allowedTabs: ['overview','corners','report','pre-gp','copilot','ai-crew','circuit','tires','settings'],
+    accessCount: '10',
+    allowedTabs: ['overview','live','corners','report','pre-gp','copilot','ai-crew','circuit','tires','settings'],
     defaultTab: 'overview',
   },
   {
@@ -41,8 +41,8 @@ export const PROFILES: Profile[] = [
     descKey: 'profiles.dataAnalyst.desc',
     color: '#3B82F6',
     icon: '📊',
-    accessCount: '9',
-    allowedTabs: ['telemetry','corners','replay','tires','circuit','twin','report','ai-crew','settings'],
+    accessCount: '10',
+    allowedTabs: ['telemetry','corners','replay','tires','circuit','twin','report','ai-crew','data','settings'],
     defaultTab: 'telemetry',
   },
   {
@@ -51,8 +51,8 @@ export const PROFILES: Profile[] = [
     descKey: 'profiles.mechanic.desc',
     color: '#22C55E',
     icon: '🔧',
-    accessCount: '6',
-    allowedTabs: ['setup','advisor','parts','pre-gp','tires','settings'],
+    accessCount: '7',
+    allowedTabs: ['setup','advisor','parts','pre-gp','tires','data','settings'],
     defaultTab: 'setup',
   },
   {
@@ -61,8 +61,8 @@ export const PROFILES: Profile[] = [
     descKey: 'profiles.spectator.desc',
     color: '#A855F7',
     icon: '👁️',
-    accessCount: '1',
-    allowedTabs: ['overview'],
+    accessCount: '2',
+    allowedTabs: ['overview','live'],
     defaultTab: 'overview',
   },
 ];

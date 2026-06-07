@@ -1,6 +1,7 @@
 const es = {
   nav: {
     overview: 'Vista General',
+    live: 'Pista en Vivo',
     telemetry: 'Telemetría en Vivo',
     circuit: 'Inteligencia de Circuito',
     corners: 'Inteligencia de Curva',
@@ -15,6 +16,7 @@ const es = {
     copilot: 'Copiloto IA',
     report: 'Informe de Sesión',
     aiCrew: 'Equipo IA',
+    data: 'Conectar Datos',
     settings: 'Configuración',
     sections: {
       race: 'CARRERA',
