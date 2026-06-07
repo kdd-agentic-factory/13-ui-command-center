@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard, Activity, Map, Circle, Sliders, Wrench,
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
-  Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare,
+  Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, TabId } from '../context/AuthContext';
@@ -31,6 +31,8 @@ import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
 import { RiderComparisonPage }      from '../pages/RiderComparisonPage';
+import { CrashRiskPage }            from '../pages/CrashRiskPage';
+import { CircuitHistoryPage }       from '../pages/CircuitHistoryPage';
 import { SettingsPage }            from '../pages/SettingsPage';
 
 // ─── Nav definition ───────────────────────────────────────────────────────────
@@ -57,6 +59,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'corners',   labelKey: 'nav.corners',   icon: Route, badge: 'AI', badgeColor: 'blue' },
     { id: 'replay',    labelKey: 'nav.replay',    icon: Film },
     { id: 'compare',   labelKey: 'nav.compare',   icon: GitCompare },
+    { id: 'risk',      labelKey: 'nav.risk',      icon: ShieldAlert },
     { id: 'tires',     labelKey: 'nav.tires',     icon: Circle },
   ]},
   { section: 'nav.sections.engineering', items: [
@@ -64,6 +67,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'advisor', labelKey: 'nav.advisor', icon: Lightbulb, badge: 'AI', badgeColor: 'blue' },
     { id: 'parts',   labelKey: 'nav.parts',   icon: Wrench },
     { id: 'twin',    labelKey: 'nav.twin',    icon: GitBranch },
+    { id: 'history', labelKey: 'nav.history', icon: History },
   ]},
   { section: 'nav.sections.command', items: [
     { id: 'pre-gp',  labelKey: 'nav.preGp',   icon: CalendarDays },
@@ -103,6 +107,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'corners':   return <CornerIntelligencePage />;
     case 'replay':    return <LapReplayPage />;
     case 'compare':   return <RiderComparisonPage />;
+    case 'risk':      return <CrashRiskPage />;
     case 'tires':     return <TireDegradationPage />;
     case 'setup':     return <SetupManagementPage />;
     case 'advisor':   return <GarageSetupAdvisorPage />;
@@ -114,6 +119,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'ai-crew':   return <AICrewPage />;
     case 'data':      return <ConnectDataPage />;
     case 'twin':      return <DigitalTwinReportPage />;
+    case 'history':   return <CircuitHistoryPage />;
     case 'settings':  return <SettingsPage />;
     default:          return <OverviewPage />;
   }
