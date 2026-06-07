@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 
-export type TabId = 'overview' | 'telemetry' | 'circuit' | 'corners' | 'replay' | 'tires' | 'setup' | 'advisor' | 'parts' | 'twin' | 'pre-gp' | 'crew' | 'copilot' | 'report' | 'settings';
+export type TabId = 'overview' | 'telemetry' | 'circuit' | 'corners' | 'replay' | 'tires' | 'setup' | 'advisor' | 'parts' | 'twin' | 'pre-gp' | 'crew' | 'copilot' | 'report' | 'ai-crew' | 'settings';
 export type ProfileId = 'race-engineer' | 'team-principal' | 'data-analyst' | 'mechanic' | 'spectator';
 
 export interface Profile {
@@ -21,8 +21,8 @@ export const PROFILES: Profile[] = [
     descKey: 'profiles.raceEngineer.desc',
     color: '#E03737',
     icon: '⚙️',
-    accessCount: '15',
-    allowedTabs: ['overview','telemetry','circuit','corners','replay','tires','setup','advisor','parts','twin','pre-gp','crew','copilot','report','settings'],
+    accessCount: '16',
+    allowedTabs: ['overview','telemetry','circuit','corners','replay','tires','setup','advisor','parts','twin','pre-gp','crew','copilot','report','ai-crew','settings'],
     defaultTab: 'overview',
   },
   {
@@ -31,8 +31,8 @@ export const PROFILES: Profile[] = [
     descKey: 'profiles.teamPrincipal.desc',
     color: '#F59E0B',
     icon: '👔',
-    accessCount: '8',
-    allowedTabs: ['overview','corners','report','pre-gp','copilot','circuit','tires','settings'],
+    accessCount: '9',
+    allowedTabs: ['overview','corners','report','pre-gp','copilot','ai-crew','circuit','tires','settings'],
     defaultTab: 'overview',
   },
   {
@@ -41,8 +41,8 @@ export const PROFILES: Profile[] = [
     descKey: 'profiles.dataAnalyst.desc',
     color: '#3B82F6',
     icon: '📊',
-    accessCount: '8',
-    allowedTabs: ['telemetry','corners','replay','tires','circuit','twin','report','settings'],
+    accessCount: '9',
+    allowedTabs: ['telemetry','corners','replay','tires','circuit','twin','report','ai-crew','settings'],
     defaultTab: 'telemetry',
   },
   {

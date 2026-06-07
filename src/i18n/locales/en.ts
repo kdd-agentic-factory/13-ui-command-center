@@ -14,6 +14,7 @@ const en = {
     crew: 'Crew Chief',
     copilot: 'AI Copilot',
     report: 'Session Report',
+    aiCrew: 'AI Crew',
     settings: 'Settings',
     sections: {
       race: 'RACE',

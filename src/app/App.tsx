@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard, Activity, Map, Circle, Sliders, Wrench,
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
-  Route, Film, Lightbulb, FileText,
+  Route, Film, Lightbulb, FileText, Users,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, TabId } from '../context/AuthContext';
@@ -27,6 +27,7 @@ import { CrewChiefPage }           from '../pages/CrewChiefPage';
 import { AICopilotPage }           from '../pages/AICopilotPage';
 import { DigitalTwinReportPage }   from '../pages/DigitalTwinReportPage';
 import { SessionReportPage }       from '../pages/SessionReportPage';
+import { AICrewPage }               from '../pages/AICrewPage';
 import { SettingsPage }            from '../pages/SettingsPage';
 
 // ─── Nav definition ───────────────────────────────────────────────────────────
@@ -64,6 +65,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'crew',    labelKey: 'nav.crew',     icon: Radio },
     { id: 'copilot', labelKey: 'nav.copilot',  icon: Bot, badge: 'AI', badgeColor: 'blue' },
     { id: 'report',  labelKey: 'nav.report',   icon: FileText, badge: 'PDF', badgeColor: 'muted' },
+    { id: 'ai-crew', labelKey: 'nav.aiCrew',   icon: Users, badge: 'AI', badgeColor: 'blue' },
   ]},
   { section: 'nav.sections.system', items: [
     { id: 'settings', labelKey: 'nav.settings', icon: Settings },
@@ -101,6 +103,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'crew':      return <CrewChiefPage />;
     case 'copilot':   return <AICopilotPage />;
     case 'report':    return <SessionReportPage />;
+    case 'ai-crew':   return <AICrewPage />;
     case 'twin':      return <DigitalTwinReportPage />;
     case 'settings':  return <SettingsPage />;
     default:          return <OverviewPage />;

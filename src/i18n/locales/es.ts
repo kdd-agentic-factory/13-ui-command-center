@@ -14,6 +14,7 @@ const es = {
     crew: 'Jefe de Mecánicos',
     copilot: 'Copiloto IA',
     report: 'Informe de Sesión',
+    aiCrew: 'Equipo IA',
     settings: 'Configuración',
     sections: {
       race: 'CARRERA',
