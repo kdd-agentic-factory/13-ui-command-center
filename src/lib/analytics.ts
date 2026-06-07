@@ -1,5 +1,5 @@
 /**
- * analytics.ts — PostHog wrapper for KDD Agentic Factory Command Center
+ * analytics.ts — PostHog wrapper for KDD Moto Intelligence
  *
  * Single entry-point for all product analytics. Call `initAnalytics()` once
  * at app startup, then use the typed helper functions throughout the codebase.

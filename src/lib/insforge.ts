@@ -1,5 +1,5 @@
 /**
- * insforge.ts — Singleton InsForge client for the KDD Command Center
+ * insforge.ts — Singleton InsForge client for KDD Moto Intelligence
  *
  * Reads VITE_INSFORGE_URL and VITE_INSFORGE_ANON_KEY from .env.local.
  * No key is hardcoded — copy .env.local.example to .env.local and fill in the

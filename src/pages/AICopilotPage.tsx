@@ -200,7 +200,7 @@ export function AICopilotPage() {
   const rearGrip = Math.max(0, 96 - rearWear * 0.52);
   const lapDelta  = t.lastLap - t.bestLap;
 
-  const systemPrompt = `You are the KDD Race Engineering AI Copilot, an expert MotoGP race strategist and data engineer embedded in the KDD Agentic Factory platform.
+  const systemPrompt = `You are the KDD Rider Coach AI, an expert motorcycle race strategist and telemetry analyst inside KDD Moto Intelligence — the AI telemetry and rider-performance platform.
 
 ## Live Race Context — GP Mugello, Italy
 - Lap: ${t.lapCount} / 23  |  Position: P${t.position}  |  Gap to P2: ${t.gap}
