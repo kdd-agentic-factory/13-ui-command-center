@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Flag, AlertTriangle, ChevronRight, Gauge, Activity, TrendingDown, RotateCcw } from 'lucide-react';
+import { useNavigate } from '../context/NavContext';
+import { useToast } from '../components/ToastProvider';
 
 /**
  * Corner Intelligence (engineer feedback #6) — the rider-facing, corner-by-corner
@@ -57,6 +59,8 @@ function ScoreBar({ label, value }: { label: string; value: number }) {
 }
 
 export function CornerIntelligencePage() {
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [selected, setSelected] = useState<number | null>(7);
 
   const { totalGain, critical, sorted } = useMemo(() => {
@@ -150,10 +154,12 @@ export function CornerIntelligencePage() {
                   <div style={{ fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: 4 }}>RIDER COACH AI · RECOMMENDATION</div>
                   <div style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.5, marginBottom: 12 }}>{c.rec}</div>
                   <div style={{ display: 'flex', gap: 8 }}>
-                    <button className="btn btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                    <button className="btn btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                      onClick={() => toast({ type: 'success', title: `T${c.n} ${c.name} · comparison loaded`, message: 'Overlaying your best lap for this corner.' })}>
                       <RotateCcw size={12} /> Compare to best lap
                     </button>
-                    <button className="btn btn-ghost btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                    <button className="btn btn-ghost btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                      onClick={() => navigate('replay')}>
                       Open in Lap Replay <ChevronRight size={12} />
                     </button>
                   </div>

@@ -1,4 +1,5 @@
 import { Bike, ChevronRight, Search, TrendingDown, Wrench, Gauge, ShieldAlert } from 'lucide-react';
+import { useNavigate } from '../context/NavContext';
 
 /**
  * RiderCoachInsight (engineer report v2 §4) — an AI Rider Coach recommendation in
@@ -29,6 +30,7 @@ const DEFAULT_INSIGHT: CoachInsight = {
 const riskColor = (r: CoachInsight['risk']) => (r === 'Low' ? 'var(--green)' : r === 'Medium' ? 'var(--yellow)' : 'var(--accent)');
 
 export function RiderCoachInsight({ insight = DEFAULT_INSIGHT }: { insight?: CoachInsight }) {
+  const navigate = useNavigate();
   return (
     <div className="card" style={{ borderColor: 'color-mix(in srgb, var(--purple) 35%, transparent)' }}>
       <div className="card-header">
@@ -68,7 +70,7 @@ export function RiderCoachInsight({ insight = DEFAULT_INSIGHT }: { insight?: Coa
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-mono)', fontSize: 11 }}>
           <ShieldAlert size={12} style={{ color: riskColor(insight.risk) }} /> Risk <b style={{ color: riskColor(insight.risk) }}>{insight.risk}</b>
         </span>
-        <button className="btn btn-sm" style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+        <button className="btn btn-sm" style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 6 }} onClick={() => navigate('replay')}>
           Open in Lap Replay <ChevronRight size={12} />
         </button>
       </div>

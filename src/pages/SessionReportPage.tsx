@@ -1,4 +1,5 @@
 import { FileText, Download, Send, ArrowRight, AlertTriangle, Check, Flag, Circle, Satellite, Cpu, Gauge, FileSpreadsheet, Lightbulb } from 'lucide-react';
+import { useToast } from '../components/ToastProvider';
 
 /**
  * Session Report — Post-Stint Review / "Box mode" (engineer feedback #17/#18/#21).
@@ -55,6 +56,7 @@ function Pill({ children, color }: { children: React.ReactNode; color: string })
 }
 
 export function SessionReportPage() {
+  const { toast } = useToast();
   return (
     <div className="page">
       <div className="flex items-center justify-between mb-6">
@@ -63,8 +65,9 @@ export function SessionReportPage() {
           <p className="page-subtitle">Jarama · Track Day · Stint 03 · Rubén Juárez · Yamaha R1 · Dry 24°C</p>
         </div>
         <div className="flex items-center gap-2">
-          <button className="btn btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><Download size={13} /> Export PDF</button>
-          <button className="btn btn-ghost btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><Send size={13} /> Send to coach</button>
+          <button className="btn btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }} onClick={() => window.print()}><Download size={13} /> Export PDF</button>
+          <button className="btn btn-ghost btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+            onClick={() => toast({ type: 'success', title: 'Report sent to coach', message: 'Stint 03 report shared with your coach.' })}><Send size={13} /> Send to coach</button>
         </div>
       </div>
 

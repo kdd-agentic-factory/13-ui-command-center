@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Wrench, AlertTriangle, Lightbulb, Check, ChevronRight, Activity } from 'lucide-react';
+import { useNavigate } from '../context/NavContext';
+import { useToast } from '../components/ToastProvider';
 
 /**
  * Garage Setup Advisor (engineer feedback #8) — connects on-track performance to
@@ -74,6 +76,8 @@ const SETUP: Param[] = [
 const SEV_COLOR: Record<Severity, string> = { high: 'var(--accent)', medium: 'var(--yellow)', low: 'var(--blue)' };
 
 export function GarageSetupAdvisorPage() {
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [selected, setSelected] = useState<string>(ISSUES[0].id);
   const active = ISSUES.find(i => i.id === selected) ?? ISSUES[0];
   const groups = ['Front', 'Rear', 'Tyres', 'Electronics'];
@@ -130,7 +134,8 @@ export function GarageSetupAdvisorPage() {
                         </li>
                       ))}
                     </ul>
-                    <button className="btn btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                    <button className="btn btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                      onClick={() => { toast({ type: 'success', title: 'Setup change staged', message: `${iss.recs.length} action(s) for "${iss.problem}" sent to the garage.` }); navigate('setup'); }}>
                       Apply to garage setup <ChevronRight size={12} />
                     </button>
                   </>

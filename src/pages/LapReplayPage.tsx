@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Play, Pause, RotateCcw, Flag, AlertTriangle, Gauge, Activity, ChevronRight } from 'lucide-react';
+import { useToast } from '../components/ToastProvider';
 import { TrackMap3D } from '../components/babylon/TrackMap3D';
 import { DigitalTwinViewer3D } from '../components/babylon/DigitalTwinViewer3D';
 import { trackSpeed } from '../hooks/useLiveTelemetry';
@@ -70,6 +71,7 @@ function Read({ label, value, unit, color }: { label: string; value: string | nu
 }
 
 export function LapReplayPage() {
+  const { toast } = useToast();
   const [pos, setPos] = useState(0.0);
   const [playing, setPlaying] = useState(true);
 
@@ -192,8 +194,9 @@ export function LapReplayPage() {
               })}
             </div>
             <div style={{ marginTop: 10, display: 'flex', gap: 8 }}>
-              <button className="btn btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>Compare to best lap <ChevronRight size={12} /></button>
-              <button className="btn btn-ghost btn-sm">Export PDF</button>
+              <button className="btn btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                onClick={() => toast({ type: 'success', title: 'Best-lap overlay enabled', message: 'Your reference lap is now ghosted on the map.' })}>Compare to best lap <ChevronRight size={12} /></button>
+              <button className="btn btn-ghost btn-sm" onClick={() => window.print()}>Export PDF</button>
             </div>
           </div>
         </div>

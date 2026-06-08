@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Users, TrendingUp, TrendingDown, Trophy, ChevronRight } from 'lucide-react';
+import { useNavigate } from '../context/NavContext';
 
 /**
  * Rider Comparison (engineer Phase 3 #1) — head-to-head, corner-by-corner against
@@ -40,6 +41,7 @@ function deltaColor(d: number): string {
 }
 
 export function RiderComparisonPage() {
+  const navigate = useNavigate();
   const [rival, setRival] = useState(RIVALS[0]);
 
   const { total, sectors, worst, best } = useMemo(() => {
@@ -142,7 +144,7 @@ export function RiderComparisonPage() {
           <span style={{ fontSize: 13 }}>
             Biggest opportunity: <strong>Turn {worst.n} ({worst.name})</strong> — {(worst.rivalKmh - worst.youKmh)} km/h more mid-corner speed and stronger drive would recover {Math.abs(worst.delta).toFixed(3)}s.
           </span>
-          <button className="btn btn-sm" style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 6, flex: 'none' }}>Open in Lap Replay <ChevronRight size={12} /></button>
+          <button className="btn btn-sm" style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 6, flex: 'none' }} onClick={() => navigate('replay')}>Open in Lap Replay <ChevronRight size={12} /></button>
         </div>
       </div>
     </div>

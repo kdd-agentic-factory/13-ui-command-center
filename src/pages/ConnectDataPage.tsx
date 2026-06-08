@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Satellite, Gauge, Cpu, HardDrive, Video, FileSpreadsheet, Smartphone, UploadCloud, Check, Plus, ArrowRight, FileText } from 'lucide-react';
+import { useNavigate } from '../context/NavContext';
+import { useToast } from '../components/ToastProvider';
 
 /**
  * Connect your bike data (engineer feedback #16) — makes it unambiguous where the
@@ -28,6 +30,8 @@ const SOURCES: Source[] = [
 ];
 
 export function ConnectDataPage() {
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [file, setFile] = useState<string | null>(null);
   const [stage, setStage] = useState<'idle' | 'parsing' | 'ready'>('idle');
 
@@ -80,7 +84,7 @@ export function ConnectDataPage() {
         </label>
         {stage === 'ready' && (
           <div style={{ display: 'flex', gap: 8, marginTop: 12, justifyContent: 'center' }}>
-            <button className="btn btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><FileText size={12} /> Open Session Report</button>
+            <button className="btn btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }} onClick={() => navigate('report')}><FileText size={12} /> Open Session Report</button>
             <button className="btn btn-ghost btn-sm" onClick={() => { setFile(null); setStage('idle'); }}>Upload another</button>
           </div>
         )}
@@ -107,7 +111,8 @@ export function ConnectDataPage() {
                 {on ? (
                   <span className="badge badge-green" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><Check size={11} /> Connected</span>
                 ) : (
-                  <button className="btn btn-ghost btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}><Plus size={12} /> Connect</button>
+                  <button className="btn btn-ghost btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}
+                    onClick={() => toast({ type: 'success', title: `${s.name} connected`, message: `Now ingesting ${s.feeds.toLowerCase()}.` })}><Plus size={12} /> Connect</button>
                 )}
               </div>
             </div>

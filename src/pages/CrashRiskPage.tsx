@@ -1,4 +1,5 @@
 import { ShieldAlert, AlertTriangle, ShieldCheck, Activity, ChevronRight } from 'lucide-react';
+import { useNavigate } from '../context/NavContext';
 
 /**
  * Crash-Risk Index (engineer Phase 3 #4) — a safety-first read on how close the
@@ -36,6 +37,7 @@ const NEAR_MISSES = [
 ];
 
 export function CrashRiskPage() {
+  const navigate = useNavigate();
   return (
     <div className="page">
       <div className="flex items-center justify-between mb-6">
@@ -119,7 +121,7 @@ export function CrashRiskPage() {
             <p style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--text-dim)', margin: '6px 0 10px' }}>
               Risk is <strong style={{ color: levelColor }}>medium and manageable</strong>. The exposure is concentrated in T6–T7: easing 2–3° of lean and softening the on-throttle there cuts the rear-slip risk without costing lap time. Hold current pace elsewhere.
             </p>
-            <button className="btn btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>Open T7 in Lap Replay <ChevronRight size={12} /></button>
+            <button className="btn btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }} onClick={() => navigate('replay')}>Open T7 in Lap Replay <ChevronRight size={12} /></button>
           </div>
         </div>
       </div>
