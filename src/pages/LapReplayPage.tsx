@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Play, Pause, RotateCcw, Flag, AlertTriangle, Gauge, Activity, ChevronRight } from 'lucide-react';
 import { TrackMap3D } from '../components/babylon/TrackMap3D';
 import { DigitalTwinViewer3D } from '../components/babylon/DigitalTwinViewer3D';
@@ -72,18 +72,18 @@ function Read({ label, value, unit, color }: { label: string; value: string | nu
 export function LapReplayPage() {
   const [pos, setPos] = useState(0.0);
   const [playing, setPlaying] = useState(true);
-  const raf = useRef<number | null>(null);
 
   useEffect(() => {
     if (!playing) return;
-    let last = performance.now();
-    const tick = (now: number) => {
-      const dt = (now - last) / 1000; last = now;
-      setPos(p => (p + dt / LAP_TIME_S) % 1);
-      raf.current = requestAnimationFrame(tick);
-    };
-    raf.current = requestAnimationFrame(tick);
-    return () => { if (raf.current) cancelAnimationFrame(raf.current); };
+    // Drive the replay with setInterval at ~20 fps rather than requestAnimationFrame
+    // at 60 fps: two Babylon engines (track map + bike) re-rendered 60×/s freezes
+    // the tab. 20 fps state updates are plenty smooth (the WebGL scenes still render
+    // at their own 60 fps) and keep the page responsive.
+    const STEP = 1 / 20;                 // seconds per update
+    const id = setInterval(() => {
+      setPos(p => (p + STEP / LAP_TIME_S) % 1);
+    }, STEP * 1000);
+    return () => clearInterval(id);
   }, [playing]);
 
   const s = sampleAt(pos);
