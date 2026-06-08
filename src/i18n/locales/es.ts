@@ -43,6 +43,7 @@ const es = {
       lede: 'Analiza cada vuelta como un equipo de competición: trazada, frenada, inclinación, gas, neumáticos y setup — con IA especializada en motos.',
       sub: 'Descubre dónde pierdes tiempo, por qué lo pierdes y qué cambiar en la siguiente tanda.',
       scroll: 'Ver cómo funciona',
+      demo: 'Ver demo en vivo',
     },
     decisions: {
       title: 'No solo mostramos datos — convertimos cada tanda en decisiones claras',

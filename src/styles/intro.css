@@ -119,6 +119,17 @@
 .intro-scroll-hint:hover { border-color: var(--accent); background: var(--accent-dim); }
 .intro-scroll-hint svg { animation: intro-bounce 1.8s infinite; }
 
+/* Primary "view live demo" CTA — drops straight into the full dashboard. */
+.intro-demo-cta {
+  display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+  padding: 10px 20px; border-radius: 999px; border: none;
+  font-size: 14px; font-weight: 700; color: #fff;
+  background: linear-gradient(135deg, var(--accent), #b81d1d);
+  box-shadow: 0 8px 24px var(--accent-glow);
+  transition: transform var(--dur-base), box-shadow var(--dur-base);
+}
+.intro-demo-cta:hover { transform: translateY(-2px); box-shadow: 0 12px 30px var(--accent-glow); }
+
 .intro-hero-bike { position: relative; border-radius: var(--radius-xl); overflow: hidden;
   border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.02);
   box-shadow: 0 24px 60px rgba(0,0,0,0.5); }

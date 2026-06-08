@@ -241,12 +241,15 @@ export function IntroExperience({ onEnter }: IntroExperienceProps) {
               </div>
 
               <div className="intro-hero-foot">
-                <span className="intro-hero-foot-stats">
-                  10 {t('intro.stat.agents', 'equipo IA')} · 16 {t('intro.stat.services', 'servicios')} · 1000 {t('intro.stat.hz', 'Hz')}
-                </span>
+                <button className="intro-demo-cta" onClick={() => onEnter('race-engineer')}>
+                  <MonitorPlay size={16} /> {t('intro.hero.demo', 'Ver demo en vivo')}
+                </button>
                 <button className="intro-scroll-hint" onClick={() => scrollToIdx(1)}>
                   {t('intro.hero.scroll', 'Ver cómo funciona')} <ChevronDown size={16} />
                 </button>
+                <span className="intro-hero-foot-stats">
+                  10 {t('intro.stat.agents', 'equipo IA')} · 16 {t('intro.stat.services', 'servicios')} · 1000 {t('intro.stat.hz', 'Hz')}
+                </span>
               </div>
             </div>
 

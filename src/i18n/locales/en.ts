@@ -43,6 +43,7 @@ const en = {
       lede: 'Analyse every lap like a race team: line, braking, lean, throttle, tyres and setup — with AI built for motorcycles.',
       sub: 'See where you lose time, why you lose it, and what to change for the next stint.',
       scroll: 'See how it works',
+      demo: 'View live demo',
     },
     decisions: {
       title: "We don't just show data — we turn every stint into clear decisions",
