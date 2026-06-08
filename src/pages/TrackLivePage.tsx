@@ -2,6 +2,7 @@ import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { DigitalTwinViewer3D } from '../components/babylon/DigitalTwinViewer3D';
 import { TrackMap3D } from '../components/babylon/TrackMap3D';
 import { LeanAngleHUD } from '../components/LeanAngleHUD';
+import { RiderCoachInsight } from '../components/RiderCoachInsight';
 import { AlertTriangle, ShieldAlert, Radio } from 'lucide-react';
 
 /**
@@ -122,6 +123,11 @@ export function TrackLivePage() {
           <Bar label="REAR TYRE" pct={Math.min(100, (rearTemp / 130) * 100)} color={rearTemp > 116 ? 'var(--accent)' : rearTemp > 90 ? 'var(--green)' : 'var(--blue)'} />
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-muted)', marginTop: 6 }}>{rearTemp}°C · {t.rearCompound}</div>
         </div>
+      </div>
+
+      {/* AI Rider Coach — structured insight (problem → evidence → impact → action) */}
+      <div style={{ marginTop: 16 }}>
+        <RiderCoachInsight />
       </div>
     </div>
   );

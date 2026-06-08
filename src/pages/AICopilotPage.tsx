@@ -12,6 +12,7 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 import { Bot, Send, Trash2, Zap, ChevronDown, ChevronUp } from 'lucide-react';
 import { useAIChat } from '../hooks/useAIChat';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
+import { RiderCoachInsight } from '../components/RiderCoachInsight';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -336,6 +337,11 @@ export function AICopilotPage() {
                   Full access to live telemetry, tyre data, race position, rival pace, and the KDD knowledge base.
                   Select a category and pick a question, or type your own.
                 </p>
+
+                {/* Featured structured coaching insight (problem → evidence → impact → action) */}
+                <div style={{ width: '100%', maxWidth: 640, margin: '0 auto 22px', textAlign: 'left' }}>
+                  <RiderCoachInsight />
+                </div>
 
                 {/* Auto-briefing quick-fire buttons */}
                 <div style={{ display:'flex', gap:8, justifyContent:'center', marginBottom:20, flexWrap:'wrap' }}>
