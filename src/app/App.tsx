@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, TabId } from '../context/AuthContext';
+import { NavContext, COPILOT_SEED_KEY } from '../context/NavContext';
 import { IntroExperience } from '../components/intro/IntroExperience';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { ToastProvider } from '../components/ToastProvider';
@@ -172,6 +173,12 @@ function AppShell() {
     }, 100); // matches CSS --dur-fast (120ms)
   }
 
+  // Cross-page navigation that can seed a question for the Copilot (AI Crew "Ask").
+  function navigate(newTab: TabId, seed?: string) {
+    if (seed) sessionStorage.setItem(COPILOT_SEED_KEY, seed);
+    navigateTo(newTab);
+  }
+
   // ── Keyboard shortcuts ─────────────────────────────────────────────────────
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -316,7 +323,9 @@ function AppShell() {
             className={`page-transition${transitioning ? ' page-transition-out' : ' page-transition-in'}`}
             style={{ height: '100%' }}
           >
-            <PageContent tab={activeTab} />
+            <NavContext.Provider value={navigate}>
+              <PageContent tab={activeTab} />
+            </NavContext.Provider>
           </div>
         </main>
       </div>

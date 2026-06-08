@@ -13,6 +13,7 @@ import { Bot, Send, Trash2, Zap, ChevronDown, ChevronUp } from 'lucide-react';
 import { useAIChat } from '../hooks/useAIChat';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { RiderCoachInsight } from '../components/RiderCoachInsight';
+import { COPILOT_SEED_KEY } from '../context/NavContext';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -234,6 +235,16 @@ export function AICopilotPage() {
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages]);
+
+  // Auto-ask a question seeded by another page (e.g. the AI Crew "Ask" buttons).
+  useEffect(() => {
+    const seed = sessionStorage.getItem(COPILOT_SEED_KEY);
+    if (seed) {
+      sessionStorage.removeItem(COPILOT_SEED_KEY);
+      sendMessage(seed);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();

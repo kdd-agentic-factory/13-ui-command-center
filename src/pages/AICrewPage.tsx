@@ -1,4 +1,5 @@
 import { Headphones, BarChart3, Bike, ShieldCheck, Timer, FileText, Wrench, MessageSquare, Circle } from 'lucide-react';
+import { useNavigate } from '../context/NavContext';
 
 /**
  * AI Crew (engineer feedback #7) — the technical agents reframed as a race team.
@@ -30,6 +31,7 @@ const CREW: CrewMember[] = [
 ];
 
 export function AICrewPage() {
+  const navigate = useNavigate();
   const online = CREW.filter(c => c.status === 'active').length;
 
   return (
@@ -72,7 +74,11 @@ export function AICrewPage() {
                   </div>
                 </div>
                 <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-muted)' }}>{(c.confidence * 100).toFixed(0)}% conf</span>
-                <button className="btn btn-ghost btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                <button
+                  className="btn btn-ghost btn-sm"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}
+                  onClick={() => navigate('copilot', `As the ${c.name} (${c.role}), you flagged: "${c.insight}" What exactly should I do about it?`)}
+                >
                   <MessageSquare size={11} /> Ask
                 </button>
               </div>
