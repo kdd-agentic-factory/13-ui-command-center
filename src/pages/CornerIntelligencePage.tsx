@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Flag, AlertTriangle, ChevronRight, Gauge, Activity, TrendingDown, RotateCcw } from 'lucide-react';
 import { useNavigate } from '../context/NavContext';
 import { useToast } from '../components/ToastProvider';
+import { InteractiveCircuitMap } from '../components/InteractiveCircuitMap';
 
 /**
  * Corner Intelligence (engineer feedback #6) — the rider-facing, corner-by-corner
@@ -103,6 +104,11 @@ export function CornerIntelligencePage() {
             <span className="stat-tile__value" style={{ fontSize: 22 }}>86<span className="stat-tile__unit">%</span></span>
           </div>
         </div>
+      </div>
+
+      {/* Interactive circuit map — click a corner to open it (engineer §4) */}
+      <div className="mb-4">
+        <InteractiveCircuitMap selected={selected} onSelect={n => setSelected(n)} />
       </div>
 
       {/* Corner cards (sorted by time lost) */}

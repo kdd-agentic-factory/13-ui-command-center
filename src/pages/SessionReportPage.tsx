@@ -40,6 +40,13 @@ const SETUP_SUGGESTIONS = [
 
 const COACH_NOTES = 'Solid, repeatable pace with a clear, single theme to attack: drive off the slow corners. The deficit is almost entirely throttle timing in T5–T7, not outright lean or braking. Working the rear-grip setup and a touch more patience on the brake into T3 should recover most of the 1.28 s — without raising crash risk.';
 
+const NEXT_STINT_PLAN = [
+  'Work the exit of Turn 7 — open the throttle 0.3 s earlier.',
+  'Keep max lean below 55° on slow-corner exits to protect the rear.',
+  'Brake 9 m earlier into Turn 3 to carry more mid-corner speed.',
+  'Re-check rear tyre pressure after lap 6 (running hot).',
+];
+
 const DATA_SOURCES = [
   { icon: Satellite, label: 'GPS', detail: '10 Hz · 2027 open feed' },
   { icon: Gauge, label: 'IMU', detail: 'lean / accel / gyro' },
@@ -104,6 +111,22 @@ export function SessionReportPage() {
             <span className="stat-tile__value" style={{ fontSize: 22, color: k.color }}>{k.value}</span>
           </div>
         ))}
+      </div>
+
+      {/* Next Stint Plan — turns the report into action (engineer §12) */}
+      <div className="card mb-4" style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.10), rgba(34,197,94,0.05))', borderColor: 'color-mix(in srgb, var(--blue) 32%, transparent)' }}>
+        <div className="card-header">
+          <span className="card-title flex items-center gap-2"><Flag size={14} style={{ color: 'var(--blue)' }} /> Next Stint Plan</span>
+          <span className="badge badge-blue">focus · {NEXT_STINT_PLAN.length} actions</span>
+        </div>
+        <ol style={{ margin: '8px 0 0', paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {NEXT_STINT_PLAN.map((a, i) => (
+            <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13, color: 'var(--text)' }}>
+              <span style={{ flex: 'none', width: 20, height: 20, borderRadius: '50%', background: 'var(--blue-dim)', color: 'var(--blue)', display: 'grid', placeItems: 'center', fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 800 }}>{i + 1}</span>
+              {a}
+            </li>
+          ))}
+        </ol>
       </div>
 
       <div className="grid-2" style={{ gap: 16, alignItems: 'start' }}>
