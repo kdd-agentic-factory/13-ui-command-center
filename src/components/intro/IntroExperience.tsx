@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bike, ChevronRight, ChevronDown, Cpu, GitBranch, Satellite, Bot, Gauge, Radio, MapPin, User, CloudSun, CircleDot } from 'lucide-react';
+import { Bike, ChevronRight, ChevronDown, Cpu, GitBranch, Satellite, Bot, Gauge, Radio, MapPin, User, CloudSun, CircleDot,
+  MonitorPlay, Map as MapIcon, Route, Film, GitCompare, ShieldAlert, Sparkles, Circle, Lightbulb, FileText, Users, Fingerprint } from 'lucide-react';
 import { PROFILES, ProfileId } from '../../context/AuthContext';
 import { LanguageSwitcher } from '../LanguageSwitcher';
 import { DigitalTwinViewer3D } from '../babylon/DigitalTwinViewer3D';
@@ -76,6 +77,22 @@ const PROFILE_MODULES: Record<ProfileId, string[]> = {
   'spectator': ['Overview', 'Track-Live'],
 };
 
+// Real in-app modules previewed on the landing (labels reuse the localised nav keys).
+const MODULES: { icon: React.ElementType; key: string; c: string }[] = [
+  { icon: MonitorPlay, key: 'nav.live', c: 'var(--accent)' },
+  { icon: MapIcon, key: 'nav.circuit', c: 'var(--blue)' },
+  { icon: Route, key: 'nav.corners', c: 'var(--blue)' },
+  { icon: Film, key: 'nav.replay', c: 'var(--purple)' },
+  { icon: GitCompare, key: 'nav.compare', c: 'var(--green)' },
+  { icon: ShieldAlert, key: 'nav.risk', c: 'var(--accent)' },
+  { icon: Sparkles, key: 'nav.predict', c: 'var(--blue)' },
+  { icon: Circle, key: 'nav.tires', c: 'var(--yellow)' },
+  { icon: Lightbulb, key: 'nav.advisor', c: 'var(--green)' },
+  { icon: FileText, key: 'nav.report', c: 'var(--text)' },
+  { icon: Users, key: 'nav.aiCrew', c: 'var(--blue)' },
+  { icon: Fingerprint, key: 'nav.style', c: 'var(--purple)' },
+];
+
 // ── Live telemetry ticker (sticky top) ──────────────────────────────────────────
 function LiveTicker() {
   const t = useLiveTelemetry();
@@ -115,7 +132,8 @@ export function IntroExperience({ onEnter }: IntroExperienceProps) {
   const [active, setActive] = useState(0);
   const [selected, setSelected] = useState<ProfileId | null>(null);
 
-  const TOTAL = ADVANTAGES.length + 2; // hero + advantages + roles
+  const TOTAL = ADVANTAGES.length + 3; // hero + advantages + modules-preview + roles
+  const MODULES_IDX = ADVANTAGES.length + 1;
 
   // Track the section currently in view → drives progress rail + metric counters.
   useEffect(() => {
@@ -177,10 +195,13 @@ export function IntroExperience({ onEnter }: IntroExperienceProps) {
                 KDD MOTO<br /><span className="intro-h1-accent">INTELLIGENCE</span>
               </h1>
               <p className="intro-lede">
-                {t('intro.hero.lede', 'Convierte la telemetría de tu moto en vueltas más rápidas y seguras: ve exactamente dónde pierdes tiempo, qué curva haces mal y qué cambiar — con un equipo de IA leyendo cada vuelta.')}
+                {t('intro.hero.lede', 'Analiza cada vuelta como un equipo de competición: trazada, frenada, inclinación, gas, neumáticos y setup — con IA especializada en motos.')}
+              </p>
+              <p className="intro-sub">
+                {t('intro.hero.sub', 'Descubre dónde pierdes tiempo, por qué lo pierdes y qué cambiar en la siguiente tanda.')}
               </p>
 
-              {/* Reina metric + the questions a rider actually asks */}
+              {/* Reina metric + moto KPIs at a glance */}
               <div className="intro-kpis">
                 <div className="intro-kpi intro-kpi-hero">
                   <span className="intro-kpi-label">{t('intro.kpi.gain', 'Ganancia potencial')}</span>
@@ -191,8 +212,31 @@ export function IntroExperience({ onEnter }: IntroExperienceProps) {
                   <span className="intro-kpi-val">Turn 7</span>
                 </div>
                 <div className="intro-kpi">
+                  <span className="intro-kpi-label">{t('intro.kpi.lean', 'Inclinación máx')}</span>
+                  <span className="intro-kpi-val" style={{ color: 'var(--purple)' }}>57.2°</span>
+                </div>
+                <div className="intro-kpi">
+                  <span className="intro-kpi-label">{t('intro.kpi.reargrip', 'Agarre trasero')}</span>
+                  <span className="intro-kpi-val" style={{ color: 'var(--green)' }}>84%</span>
+                </div>
+                <div className="intro-kpi">
                   <span className="intro-kpi-label">{t('intro.kpi.issue', 'Problema principal')}</span>
                   <span className="intro-kpi-val warn">Late throttle</span>
+                </div>
+              </div>
+
+              {/* Decisions, not just data */}
+              <div className="intro-decisions">
+                <span className="intro-decisions-title">{t('intro.decisions.title', 'No solo mostramos datos — convertimos cada tanda en decisiones claras')}</span>
+                <div className="intro-decisions-row">
+                  {[
+                    t('intro.decisions.q1', 'Dónde pierdes tiempo'),
+                    t('intro.decisions.q2', 'Qué curva te penaliza'),
+                    t('intro.decisions.q3', 'Qué patrón se repite'),
+                    t('intro.decisions.q4', 'Qué cambiar en moto o trazada'),
+                  ].map((q, i) => (
+                    <span key={i} className="intro-decision-chip"><b>{i + 1}</b> {q}</span>
+                  ))}
                 </div>
               </div>
 
@@ -262,6 +306,28 @@ export function IntroExperience({ onEnter }: IntroExperienceProps) {
             </section>
           );
         })}
+
+        {/* ── MODULES PREVIEW (show the real product, not just the pitch) ── */}
+        <section className="intro-section intro-modules" data-idx={MODULES_IDX} ref={setRef(MODULES_IDX)}>
+          <div className="intro-modules-inner">
+            <span className="intro-eyebrow center">{t('intro.modules.sub', 'Piloto → Moto → Circuito → Tanda → Vuelta → Curva → Acción')}</span>
+            <h2 className="intro-modules-title">{t('intro.modules.title', 'Dentro del box · 23 herramientas, un solo flujo')}</h2>
+            <div className="intro-modules-grid">
+              {MODULES.map(m => {
+                const I = m.icon;
+                return (
+                  <div key={m.key} className="intro-module-card" style={{ '--mc': m.c } as React.CSSProperties}>
+                    <span className="intro-module-ic"><I size={18} /></span>
+                    <span className="intro-module-name">{t(m.key)}</span>
+                  </div>
+                );
+              })}
+            </div>
+            <button className="intro-scroll-hint" onClick={() => scrollToIdx(TOTAL - 1)} style={{ marginTop: 24 }}>
+              {t('intro.modules.cta', 'Elige tu rol y entra')} <ChevronDown size={16} />
+            </button>
+          </div>
+        </section>
 
         {/* ── ROLES ─────────────────────────────────────────────────────── */}
         <section className="intro-section intro-roles" data-idx={TOTAL - 1} ref={setRef(TOTAL - 1)}>

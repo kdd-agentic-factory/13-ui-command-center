@@ -40,11 +40,24 @@ const es = {
   intro: {
     hero: {
       eyebrow: 'Inteligencia de telemetría para motos',
-      lede: 'Convierte la telemetría de tu moto en vueltas más rápidas y seguras: ve exactamente dónde pierdes tiempo, qué curva haces mal y qué cambiar — con un equipo de IA leyendo cada vuelta.',
+      lede: 'Analiza cada vuelta como un equipo de competición: trazada, frenada, inclinación, gas, neumáticos y setup — con IA especializada en motos.',
+      sub: 'Descubre dónde pierdes tiempo, por qué lo pierdes y qué cambiar en la siguiente tanda.',
       scroll: 'Ver cómo funciona',
     },
+    decisions: {
+      title: 'No solo mostramos datos — convertimos cada tanda en decisiones claras',
+      q1: 'Dónde pierdes tiempo',
+      q2: 'Qué curva te penaliza',
+      q3: 'Qué patrón se repite en tu pilotaje',
+      q4: 'Qué cambiar en la moto o en la trazada',
+    },
+    modules: {
+      title: 'Dentro del box · 23 herramientas, un solo flujo',
+      sub: 'Piloto → Moto → Circuito → Tanda → Vuelta → Curva → Acción',
+      cta: 'Elige tu rol y entra',
+    },
     session: { title: 'Sesión en vivo', circuit: 'Circuito', rider: 'Piloto', bike: 'Moto', stint: 'Sesión', weather: 'Clima', tyres: 'Neumáticos' },
-    kpi: { gain: 'Ganancia potencial', corner: 'Curva crítica', issue: 'Problema principal', consistency: 'Consistencia', risk: 'Índice de riesgo', grip: 'Caída agarre trasero' },
+    kpi: { gain: 'Ganancia potencial', corner: 'Curva crítica', issue: 'Problema principal', consistency: 'Consistencia', risk: 'Índice de riesgo', grip: 'Caída agarre trasero', lean: 'Inclinación máx', reargrip: 'Agarre trasero' },
     stat: { agents: 'equipo IA', services: 'servicios', repos: 'repos KDD', hz: 'Hz telemetría' },
     adv: {
       edge:    { title: 'Edge AI en el circuito', desc: 'Ingesta de telemetría a más de 1000 Hz por canal e inferencia ligera junto al box, sin viajes de ida y vuelta a servidores centrales.', metric: 'Hz por canal' },

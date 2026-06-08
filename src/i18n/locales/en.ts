@@ -40,11 +40,24 @@ const en = {
   intro: {
     hero: {
       eyebrow: 'Motorcycle telemetry intelligence',
-      lede: 'Turn motorcycle telemetry into faster, safer laps: see exactly where you lose time, which corner you get wrong and what to change — with an AI crew reading every lap.',
+      lede: 'Analyse every lap like a race team: line, braking, lean, throttle, tyres and setup — with AI built for motorcycles.',
+      sub: 'See where you lose time, why you lose it, and what to change for the next stint.',
       scroll: 'See how it works',
     },
+    decisions: {
+      title: "We don't just show data — we turn every stint into clear decisions",
+      q1: 'Where you lose time',
+      q2: 'Which corner penalises you',
+      q3: 'What pattern repeats in your riding',
+      q4: 'What to change on the bike or the line',
+    },
+    modules: {
+      title: 'Inside the box · 23 tools, one workflow',
+      sub: 'Rider → Bike → Circuit → Stint → Lap → Corner → Action',
+      cta: 'Choose your role and enter',
+    },
     session: { title: 'Live session', circuit: 'Circuit', rider: 'Rider', bike: 'Bike', stint: 'Session', weather: 'Weather', tyres: 'Tyres' },
-    kpi: { gain: 'Potential gain', corner: 'Critical corner', issue: 'Main issue', consistency: 'Rider consistency', risk: 'Risk index', grip: 'Rear grip drop' },
+    kpi: { gain: 'Potential gain', corner: 'Critical corner', issue: 'Main issue', consistency: 'Rider consistency', risk: 'Risk index', grip: 'Rear grip drop', lean: 'Max lean', reargrip: 'Rear grip' },
     stat: { agents: 'AI crew', services: 'services', repos: 'KDD repos', hz: 'Hz telemetry' },
     adv: {
       edge:    { title: 'Edge AI at the circuit', desc: 'Telemetry ingest above 1000 Hz per channel and lightweight inference next to the garage — no round-trips to central servers.', metric: 'Hz per channel' },
