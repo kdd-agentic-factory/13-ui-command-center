@@ -421,10 +421,15 @@ export function LiveTelemetryPage() {
   const brakeBuf    = useRef<number[]>([]);
   const leanBuf     = useRef<number[]>([]);
   const gearBuf     = useRef<number[]>([]);
+  const latgBuf     = useRef<number[]>([]);
+  const ftyreBuf    = useRef<number[]>([]);
+  const rtyreBuf    = useRef<number[]>([]);
+  const rgripBuf    = useRef<number[]>([]);
 
   const [speedHistory,      setSpeedHistory]      = useState<number[]>([]);
-  const [analysisSnapshot,  setAnalysisSnapshot]  = useState<number[][]>([[], [], [], [], [], []]);
+  const [analysisSnapshot,  setAnalysisSnapshot]  = useState<number[][]>([[], [], [], [], [], [], [], [], [], []]);
   const [lapRecords,        setLapRecords]         = useState<LapRecord[]>([]);
+  const [visibleCh,         setVisibleCh]          = useState<Set<string>>(() => new Set(['speed', 'rpm', 'thr', 'brake', 'lean', 'gear']));
   const prevLapCount = useRef<number>(0);
   const bestLapRef   = useRef<number>(Infinity);
 
@@ -438,6 +443,11 @@ export function LiveTelemetryPage() {
     push(brakeBuf,    t.brake,     ANALYSIS_LEN);
     push(leanBuf,     t.leanAngle, ANALYSIS_LEN);
     push(gearBuf,     t.gear,      ANALYSIS_LEN);
+    const rtyreVal = (t.tireRearLeft + t.tireRearRight) / 2;
+    push(latgBuf,  Math.abs(Math.tan((t.leanAngle * Math.PI) / 180)), ANALYSIS_LEN);
+    push(ftyreBuf, (t.tireFrontLeft + t.tireFrontRight) / 2, ANALYSIS_LEN);
+    push(rtyreBuf, rtyreVal, ANALYSIS_LEN);
+    push(rgripBuf, Math.max(60, 96 - (t.rearTyreAge || 0) * 0.6 - Math.max(0, rtyreVal - 110) * 0.4), ANALYSIS_LEN);
 
     setSpeedHistory(prev => [...prev, t.speed].slice(-LIVE_LEN));
 
@@ -460,6 +470,10 @@ export function LiveTelemetryPage() {
         [...brakeBuf.current],
         [...leanBuf.current],
         [...gearBuf.current],
+        [...latgBuf.current],
+        [...ftyreBuf.current],
+        [...rtyreBuf.current],
+        [...rgripBuf.current],
       ]);
     }
   }, [t.speed, t.rpm, t.throttle, t.brake, t.leanAngle, t.gear,
@@ -474,6 +488,10 @@ export function LiveTelemetryPage() {
         [...brakeBuf.current],
         [...leanBuf.current],
         [...gearBuf.current],
+        [...latgBuf.current],
+        [...ftyreBuf.current],
+        [...rtyreBuf.current],
+        [...rgripBuf.current],
       ]);
     }
     setMode(m);
@@ -492,19 +510,26 @@ export function LiveTelemetryPage() {
   }, [t.leanAngle]);
 
   // ── Analysis channels ─────────────────────────────────────────────────────
-  const CHANNEL_DEFS: Omit<Channel, 'data'>[] = [
-    { id: 'speed',  name: 'SPEED',    unit: 'km/h', color: '#E03737', range: [0, 350],   panelHeight: 72 },
-    { id: 'rpm',    name: 'RPM',      unit: 'rpm',  color: '#38BDF8', range: [0, 15500], panelHeight: 60 },
-    { id: 'thr',    name: 'THROTTLE', unit: '%',    color: '#22C55E', range: [0, 100],   panelHeight: 52 },
-    { id: 'brake',  name: 'BRAKE',    unit: '%',    color: '#F59E0B', range: [0, 100],   panelHeight: 52 },
-    { id: 'lean',   name: 'LEAN',     unit: '°',    color: '#A78BFA', range: [0, 63],    panelHeight: 52 },
-    { id: 'gear',   name: 'GEAR',     unit: '',     color: '#FCD34D', range: [1, 6],     panelHeight: 44 },
+  const CHANNEL_DEFS: (Omit<Channel, 'data'> & { group: string; quality: string })[] = [
+    { id: 'speed',  name: 'SPEED',    unit: 'km/h', color: '#E03737', range: [0, 350],   panelHeight: 60, group: 'Bike Dynamics', quality: 'OK' },
+    { id: 'rpm',    name: 'RPM',      unit: 'rpm',  color: '#38BDF8', range: [0, 15500], panelHeight: 52, group: 'Bike Dynamics', quality: 'OK' },
+    { id: 'thr',    name: 'THROTTLE', unit: '%',    color: '#22C55E', range: [0, 100],   panelHeight: 48, group: 'Rider Inputs',  quality: 'OK' },
+    { id: 'brake',  name: 'BRAKE',    unit: '%',    color: '#F59E0B', range: [0, 100],   panelHeight: 48, group: 'Rider Inputs',  quality: 'OK' },
+    { id: 'lean',   name: 'LEAN',     unit: '°',    color: '#A78BFA', range: [0, 63],    panelHeight: 48, group: 'Bike Dynamics', quality: 'OK' },
+    { id: 'gear',   name: 'GEAR',     unit: '',     color: '#FCD34D', range: [1, 6],     panelHeight: 40, group: 'Bike Dynamics', quality: 'OK' },
+    { id: 'latg',   name: 'LAT G',    unit: 'g',    color: '#F472B6', range: [0, 2],     panelHeight: 46, group: 'Bike Dynamics', quality: 'OK' },
+    { id: 'ftyre',  name: 'F TYRE',   unit: '°C',   color: '#60A5FA', range: [40, 140],  panelHeight: 46, group: 'Tyres / Grip',  quality: 'OK' },
+    { id: 'rtyre',  name: 'R TYRE',   unit: '°C',   color: '#FB923C', range: [40, 140],  panelHeight: 46, group: 'Tyres / Grip',  quality: 'OK' },
+    { id: 'rgrip',  name: 'R GRIP',   unit: '%',    color: '#34D399', range: [60, 100],  panelHeight: 46, group: 'Tyres / Grip',  quality: 'est' },
   ];
 
-  const channels: Channel[] = CHANNEL_DEFS.map((def, i) => ({
-    ...def,
-    data: analysisSnapshot[i] ?? [],
-  }));
+  const allChannels = CHANNEL_DEFS.map((def, i) => ({ ...def, data: analysisSnapshot[i] ?? [] }));
+  const channels: Channel[] = allChannels.filter(c => visibleCh.has(c.id))
+    .map(({ id, name, unit, color, range, panelHeight, data }) => ({ id, name, unit, color, range, panelHeight, data }));
+  const channelGroups = ['Rider Inputs', 'Bike Dynamics', 'Tyres / Grip'];
+  function toggleCh(id: string) {
+    setVisibleCh(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
+  }
 
   return (
     <div className="page">
@@ -804,25 +829,53 @@ export function LiveTelemetryPage() {
             <AnimKpi label="Brake"         target={t.brake}    unit="%"    color="var(--orange)"  />
           </div>
 
-          {/* Multi-channel chart */}
+          {/* Channels panel + synchronized stacked chart (AiM RaceStudio / 2D style) */}
           <div className="card mb-4">
             <div className="card-header">
-              <span className="card-title">Multi-Channel Analysis — {ANALYSIS_LEN / 10}s window</span>
-              <div className="flex items-center gap-3">
-                {CHANNEL_DEFS.map(ch => (
-                  <div key={ch.id} className="flex items-center gap-1"
-                    style={{ fontSize: 10, fontFamily: 'JetBrains Mono,monospace' }}>
-                    <div style={{
-                      width: 8, height: 8, borderRadius: 2,
-                      background: ch.color, flexShrink: 0,
-                    }} />
-                    <span style={{ color: 'var(--text-muted)' }}>{ch.name}</span>
-                  </div>
+              <span className="card-title">Synchronized Channel Analysis · Last {ANALYSIS_LEN / 10}s · Lap {t.lapCount}</span>
+              <div className="flex items-center gap-2" style={{ flexWrap: 'wrap' }}>
+                {[
+                  { l: 'GPS 12 SAT', c: 'var(--green)' },
+                  { l: 'ECU OK', c: 'var(--green)' },
+                  { l: 'IMU ACTIVE', c: 'var(--green)' },
+                  { l: 'LOGGER 99%', c: 'var(--green)' },
+                  { l: 'DATA 94%', c: 'var(--yellow)' },
+                ].map(s => (
+                  <span key={s.l} style={{ fontFamily: 'var(--font-mono)', fontSize: 9, padding: '2px 7px', borderRadius: 4, color: s.c, background: `color-mix(in srgb, ${s.c} 14%, transparent)`, letterSpacing: '0.05em' }}>{s.l}</span>
                 ))}
               </div>
             </div>
-            <div style={{ background: 'rgba(11,13,18,0.4)' }}>
-              <MultiChannelChart channels={channels} svgWidth={1040} />
+            <div style={{ display: 'grid', gridTemplateColumns: '212px 1fr', gap: 0 }}>
+              {/* Channels panel — toggle channels in/out of the chart */}
+              <div style={{ borderRight: '1px solid var(--border)', padding: '8px 6px', maxHeight: 540, overflowY: 'auto' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 4px 6px' }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)' }}>CHANNELS</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--blue)' }}>{visibleCh.size}/{CHANNEL_DEFS.length}</span>
+                </div>
+                {channelGroups.map(g => (
+                  <div key={g} style={{ marginBottom: 6 }}>
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8.5, letterSpacing: '0.08em', color: 'var(--text-muted)', padding: '4px 4px 2px', textTransform: 'uppercase' }}>{g}</div>
+                    {allChannels.filter(c => c.group === g).map(c => {
+                      const on = visibleCh.has(c.id);
+                      return (
+                        <button key={c.id} onClick={() => toggleCh(c.id)}
+                          style={{ display: 'flex', alignItems: 'center', gap: 7, width: '100%', padding: '5px 6px', borderRadius: 5, border: 'none', cursor: 'pointer', background: on ? 'rgba(255,255,255,0.05)' : 'transparent', textAlign: 'left' }}>
+                          <span style={{ width: 9, height: 9, borderRadius: 2, flex: 'none', background: on ? c.color : 'transparent', border: `1.5px solid ${c.color}` }} />
+                          <span style={{ flex: 1, fontSize: 11, fontWeight: on ? 700 : 400, color: on ? 'var(--text)' : 'var(--text-dim)' }}>{c.name}</span>
+                          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8.5, color: 'var(--text-muted)' }}>{c.unit || '—'}</span>
+                          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8, padding: '0 4px', borderRadius: 3, color: c.quality === 'OK' ? 'var(--green)' : 'var(--yellow)', background: c.quality === 'OK' ? 'var(--green-dim)' : 'var(--yellow-dim)' }}>{c.quality}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+              {/* Stacked synchronized chart */}
+              <div style={{ background: 'rgba(11,13,18,0.4)', minWidth: 0 }}>
+                {channels.length > 0
+                  ? <MultiChannelChart channels={channels} svgWidth={860} />
+                  : <div style={{ padding: 48, textAlign: 'center', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: 12 }}>Select channels from the panel to plot.</div>}
+              </div>
             </div>
           </div>
 
