@@ -1,6 +1,7 @@
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { DigitalTwinViewer3D } from '../components/babylon/DigitalTwinViewer3D';
 import { TrackMap3D } from '../components/babylon/TrackMap3D';
+import { LeanAngleHUD } from '../components/LeanAngleHUD';
 import { AlertTriangle, ShieldAlert, Radio } from 'lucide-react';
 
 /**
@@ -44,6 +45,8 @@ function Bar({ label, pct, color }: { label: string; pct: number; color: string 
 export function TrackLivePage() {
   const t = useLiveTelemetry();
   const rearTemp = Math.round((t.tireRearLeft + t.tireRearRight) / 2);
+  // Alternate corner side so the lean HUD reads left/right around the lap.
+  const leanSide = Math.sin(t.trackPos * Math.PI * 2 * 3) >= 0 ? 1 : -1;
   const sectorDelta = 0.183 * Math.sin(t.trackPos * 6.28) + 0.12 * Math.sin(t.trackPos * 13);
   const deltaPos = sectorDelta >= 0;
 
@@ -104,6 +107,11 @@ export function TrackLivePage() {
           <Big label="POS" value={`P${t.position}`} color="var(--accent)" />
           <Big label="GAP" value={t.gap} color="var(--yellow)" />
         </div>
+      </div>
+
+      {/* Lean Angle HUD — the moto identity metric */}
+      <div className="mb-4">
+        <LeanAngleHUD lean={t.leanAngle * leanSide} />
       </div>
 
       {/* Throttle / brake / grip */}

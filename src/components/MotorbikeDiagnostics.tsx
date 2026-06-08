@@ -1,6 +1,7 @@
 import { Thermometer, Gauge, Activity } from 'lucide-react';
 import { DigitalTwinViewer3D } from './babylon/DigitalTwinViewer3D';
 import { TireModel3D } from './babylon/TireModel3D';
+import { LeanAngleHUD } from './LeanAngleHUD';
 
 /**
  * Race Overview "Motorbike Telemetry & Diagnostics" tab (Spec §3 / crew-chief):
@@ -62,6 +63,11 @@ export function MotorbikeDiagnostics({ t }: { t: BikeTelemetry }) {
           <Stat label="Speed" value={t.speed.toFixed(0)} unit="km/h" />
           <Stat label="Gear" value={t.gear} />
         </div>
+      </div>
+
+      {/* Lean Angle HUD */}
+      <div className="mb-4">
+        <LeanAngleHUD lean={t.leanAngle} />
       </div>
 
       {/* Engine & fluids + pressures */}
