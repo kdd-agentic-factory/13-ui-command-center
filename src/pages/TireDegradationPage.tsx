@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { TireModel3D } from '../components/babylon/TireModel3D';
+import { TyreGridSchematic } from '../components/TyreGridSchematic';
 
 // ── Compound definitions ──────────────────────────────────────────────────────
 
@@ -613,6 +614,14 @@ export function TireDegradationPage() {
             3D
           </button>
         </div>
+      </div>
+
+      {/* Top-down Tyre & Grip Intelligence (engineer §8) */}
+      <div className="mb-4">
+        <TyreGridSchematic
+          front={{ temp: Math.round((t.tireFrontLeft + t.tireFrontRight) / 2), pressure: 2.1, wear: Math.round(frontWear), grip: Math.round(frontGrip), compound: t.frontCompound }}
+          rear={{ temp: Math.round((t.tireRearLeft + t.tireRearRight) / 2), pressure: 1.9, wear: Math.round(rearWear), grip: Math.round(rearGrip), compound: t.rearCompound }}
+        />
       </div>
 
       {/* ── 3D Models (collapsible) ──────────────────────────────────────────── */}
