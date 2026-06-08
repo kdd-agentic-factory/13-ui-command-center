@@ -21,12 +21,12 @@ interface FeedEvent { id: number; time: string; color: string; text: string }
 // ── Baseline feed ─────────────────────────────────────────────────────────────
 
 const INITIAL_EVENTS: FeedEvent[] = [
-  { id: 1, time: '14:22', color: 'var(--green)',  text: 'Crew Chief — <strong>Sector 3 gain +0.15s</strong> vs Lap 5 baseline' },
+  { id: 1, time: '14:22', color: 'var(--green)',  text: 'Crew Chief — <strong>Sector 3 gain +0.15s</strong> vs Lap 2 baseline' },
   { id: 2, time: '14:19', color: 'var(--blue)',   text: 'Digital Twin — Soft rear degradation above model at <strong>1.2% / lap</strong>' },
   { id: 3, time: '14:17', color: 'var(--yellow)', text: 'Tyre Agent — <strong>Pit window opens Lap 9</strong> — optimal Lap 11' },
   { id: 4, time: '14:15', color: 'var(--accent)', text: 'Race Control — <strong>Yellow flag sector 5</strong> — Gap control active' },
   { id: 5, time: '14:12', color: 'var(--green)',  text: 'Setup Agent — Engine map 6 delivering +2.1 km/h top speed' },
-  { id: 6, time: '14:09', color: 'var(--blue)',   text: 'KDD Pipeline — Lap 4 telemetry processed — <strong>12,400 samples</strong>' },
+  { id: 6, time: '14:09', color: 'var(--blue)',   text: 'KDD Pipeline — Lap 3 telemetry processed — <strong>12,400 samples</strong>' },
 ];
 
 type FeedFn = (gap: string, speed: number, fuel: number, lap: number) => { color: string; text: string };
@@ -245,7 +245,8 @@ function ChampionshipBars() {
 // ── Stint progress ────────────────────────────────────────────────────────────
 
 function StintProgress({ tyreAge, lapCount }: { tyreAge: number; lapCount: number }) {
-  const optPit   = Math.max(lapCount + 1, lapCount + Math.round((18 - tyreAge) / 1.5));
+  const optPit   = 11;                 // optimal pit lap — matches the AI strategy feed
+  const winOpen  = 9, winClose = 13;   // pit window
   const lapsLeft = Math.max(0, optPit - lapCount);
   const stintPct = Math.min(100, (tyreAge / 18) * 100);
   const urgency  = lapsLeft <= 2 ? 'var(--accent)' : lapsLeft <= 5 ? 'var(--yellow)' : 'var(--green)';
@@ -263,10 +264,10 @@ function StintProgress({ tyreAge, lapCount }: { tyreAge: number; lapCount: numbe
       </div>
       <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:6 }}>
         {([
-          { label:'Stint Laps',     value:`${tyreAge}L`,       color:'var(--text)' },
-          { label:'Laps to Pit',    value:`${lapsLeft}`,        color:urgency },
-          { label:'Pit Window',     value:`L${optPit}`,         color:'var(--green)' },
-          { label:'Race Laps Left', value:`${23 - lapCount}`,   color:'var(--text-muted)' },
+          { label:'Pit Window',      value:`L${winOpen}–L${winClose}`, color:'var(--green)' },
+          { label:'Optimal Pit',     value:`L${optPit}`,         color:'var(--green)' },
+          { label:'Laps to Optimal', value:`${lapsLeft}`,        color:urgency },
+          { label:'Race Laps Left',  value:`${23 - lapCount}`,   color:'var(--text-muted)' },
         ] as { label:string; value:string; color:string }[]).map(item => (
           <div key={item.label} style={{ background:'var(--bg-surface)', border:'1px solid var(--border)', borderRadius:6, padding:'7px 9px' }}>
             <div style={{ fontSize:8, color:'var(--text-muted)', textTransform:'uppercase', marginBottom:3, letterSpacing:'0.07em' }}>
@@ -323,26 +324,23 @@ export function OverviewPage() {
   const lapDeltaStr   = lapDelta >= 0 ? `+${lapDelta.toFixed(3)}` : lapDelta.toFixed(3);
   const lapDeltaColor = lapDelta > 0.5 ? 'var(--accent)' : lapDelta > 0.1 ? 'var(--yellow)' : 'var(--green)';
 
-  // Sector deltas (simulated from position on track)
+  // Sector deltas — split the real lap delta across 3 sectors so they SUM to it.
   const sectorDeltas = useMemo(() => {
-    const base = 0.12;
-    const pos = t.trackPos;
+    const frac = [0.39, 0.73, -0.12]; // sums to 1.0 → sectors add up to the lap delta
     return [
-      { sector: 'S1', delta: (pos > 0.33 ? -0.05 : +0.08) + (Math.random() * 0.04 - 0.02) },
-      { sector: 'S2', delta: +0.03 + (Math.random() * 0.04 - 0.02) },
-      { sector: 'S3', delta: -0.07 + (Math.random() * 0.04 - 0.02) },
+      { sector: 'S1', delta: lapDelta * frac[0] },
+      { sector: 'S2', delta: lapDelta * frac[1] },
+      { sector: 'S3', delta: lapDelta * frac[2] },
     ];
-  }, [t.lapCount, t.trackPos]);
+  }, [lapDelta]);
 
-  // Gear distribution (simulated from current telemetry)
+  // Gear distribution — 6-speed MotoGP box, normalised to exactly 100%.
   const gearDist = useMemo(() => {
     const gear = t.gear;
-    const base = [2, 5, 18, 28, 24, 14, 9]; // typical MotoGP Mugello dist
-    return base.map((v, i) => ({
-      gear: i + 1,
-      pct: Math.max(0, v + (i + 1 === gear ? 8 : Math.random() * 4 - 2)),
-      active: i + 1 === gear,
-    }));
+    const base = [3, 6, 19, 34, 24, 14]; // 6 gears, Mugello-ish
+    const raw = base.map((v, i) => Math.max(0.5, v + (i + 1 === gear ? 5 : 0)));
+    const total = raw.reduce((a, b) => a + b, 0);
+    return raw.map((v, i) => ({ gear: i + 1, pct: (v / total) * 100, active: i + 1 === gear }));
   }, [t.gear]);
 
   // Fuel model
@@ -386,7 +384,7 @@ export function OverviewPage() {
           <div className="stat-tile__label">Position</div>
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8 }}>
             <span className="stat-tile__value">P{t.position}</span>
-            <span className="badge badge-yellow" style={{ marginBottom: 4 }}>GAP {t.gap}</span>
+            <span className="badge badge-yellow" style={{ marginBottom: 4 }}>GAP {t.gap}{t.gap === 'leader' ? '' : 's'}</span>
           </div>
           <div className="stat-tile__delta" style={{ color: t.position <= 3 ? 'var(--green)' : 'var(--yellow)' }}>
             {t.position <= 3 ? `Top ${t.position} · points zone` : 'Outside top 3'}
@@ -413,6 +411,22 @@ export function OverviewPage() {
             ~{lapsOnFuel.toFixed(1)} laps @ {fuelUsedPerLap} kg/lap
           </div>
         </div>
+      </div>
+
+      {/* ── AI Strategy Call — turns Race Overview into a decision screen ────── */}
+      <div className="card mb-4" style={{ background: 'linear-gradient(135deg, rgba(224,55,55,0.10), rgba(255,255,255,0.02))', borderColor: 'color-mix(in srgb, var(--accent) 32%, transparent)' }}>
+        <div className="card-header">
+          <span className="card-title flex items-center gap-2"><Zap size={14} style={{ color: 'var(--accent)' }} /> AI Strategy Call</span>
+          <div className="flex items-center gap-2">
+            <span className="badge badge-blue">87% confidence</span>
+            <span className="badge badge-yellow">Risk · Medium</span>
+          </div>
+        </div>
+        <ul style={{ listStyle: 'none', margin: '8px 0 0', padding: 0, display: 'flex', flexDirection: 'column', gap: 7 }}>
+          <li style={{ display: 'flex', gap: 8, fontSize: 13 }}><span style={{ color: 'var(--accent)', fontWeight: 800 }}>1</span> Hold P{t.position} and protect the rear tyre until Lap 8.</li>
+          <li style={{ display: 'flex', gap: 8, fontSize: 13 }}><span style={{ color: 'var(--accent)', fontWeight: 800 }}>2</span> Attack P2 in Sector 3 if the gap drops below 0.4&nbsp;s.</li>
+          <li style={{ display: 'flex', gap: 8, fontSize: 13 }}><span style={{ color: 'var(--accent)', fontWeight: 800 }}>3</span> Optimal pit remains <strong style={{ marginLeft: 4 }}>&nbsp;Lap 11</strong>&nbsp;unless the yellow flag extends.</li>
+        </ul>
       </div>
 
       {/* ── Middle grid ─────────────────────────────────────────────────────── */}
@@ -460,7 +474,7 @@ export function OverviewPage() {
                 </div>
                 <div>
                   <div className="card-label">RPM</div>
-                  <span className="telem-md text-mono">{t.rpm.toLocaleString()}</span>
+                  <span className="telem-md text-mono">{t.rpm.toLocaleString('en-US')}</span>
                 </div>
                 <div style={{ textAlign: 'center' }}>
                   <div className="card-label">Gear</div>
@@ -507,7 +521,7 @@ export function OverviewPage() {
                 <div style={{ flex: 1 }}>
                   <div className="card-label" style={{ marginBottom: 6 }}>Front — {t.frontCompound}</div>
                   <div style={{ display: 'flex', gap: 6 }}>
-                    {[{ temp: t.tireFrontLeft, label: 'FL' }, { temp: t.tireFrontRight, label: 'FR' }].map(tire => (
+                    {[{ temp: t.tireFrontLeft, label: 'L' }, { temp: t.tireFrontRight, label: 'R' }].map(tire => (
                       <div key={tire.label} className={`tire ${tire.temp > 100 ? 'hot' : tire.temp > 90 ? 'warm' : 'nominal'}`}>
                         <span className="t-temp">{tire.temp}°</span>
                         <span className="t-label">{tire.label}</span>
@@ -518,7 +532,7 @@ export function OverviewPage() {
                 <div style={{ flex: 1 }}>
                   <div className="card-label" style={{ marginBottom: 6 }}>Rear — {t.rearCompound}</div>
                   <div style={{ display: 'flex', gap: 6 }}>
-                    {[{ temp: t.tireRearLeft, label: 'RL' }, { temp: t.tireRearRight, label: 'RR' }].map(tire => (
+                    {[{ temp: t.tireRearLeft, label: 'L' }, { temp: t.tireRearRight, label: 'R' }].map(tire => (
                       <div key={tire.label} className={`tire ${tire.temp > 105 ? 'hot' : tire.temp > 95 ? 'warm' : 'nominal'}`}>
                         <span className="t-temp">{tire.temp}°</span>
                         <span className="t-label">{tire.label}</span>
@@ -607,23 +621,25 @@ export function OverviewPage() {
               <text x="2" y="62" fill="#535A6E" fontSize="8" fontFamily="JetBrains Mono,monospace">–0.10</text>
               <text x="2" y="47" fill="#535A6E" fontSize="8" fontFamily="JetBrains Mono,monospace">0.00</text>
               {/* Delta bars for last 8 laps */}
-              {Array.from({ length: 8 }, (_, i) => {
-                const lap = Math.max(1, t.lapCount - 7 + i);
-                // Simulate pace delta with some realism
-                const delta = Math.sin(lap * 0.9 + 1.2) * 0.08 + (i === 7 ? lapDelta * 0.3 : 0);
-                const barH = Math.abs(delta) * 400;
-                const isGain = delta < 0;
-                const barY = isGain ? 45 - barH : 45;
-                const barX = 30 + i * 25;
-                return (
-                  <g key={lap}>
-                    <rect x={barX} y={barY} width="18" height={barH}
-                      fill={isGain ? 'var(--green)' : 'var(--accent)'} opacity="0.75" rx="2" />
-                    <text x={barX + 9} y="85" textAnchor="middle" fill="#535A6E" fontSize="7"
-                      fontFamily="JetBrains Mono,monospace">L{lap}</text>
-                  </g>
-                );
-              })}
+              {(() => {
+                const count = Math.min(8, Math.max(1, t.lapCount));
+                return Array.from({ length: count }, (_, i) => {
+                  const lap = t.lapCount - count + 1 + i;   // unique, ending at the current lap
+                  const delta = Math.sin(lap * 0.9 + 1.2) * 0.08 + (i === count - 1 ? lapDelta * 0.3 : 0);
+                  const barH = Math.abs(delta) * 400;
+                  const isGain = delta < 0;
+                  const barY = isGain ? 45 - barH : 45;
+                  const barX = 30 + i * 25;
+                  return (
+                    <g key={lap}>
+                      <rect x={barX} y={barY} width="18" height={barH}
+                        fill={isGain ? 'var(--green)' : 'var(--accent)'} opacity="0.75" rx="2" />
+                      <text x={barX + 9} y="85" textAnchor="middle" fill="#535A6E" fontSize="7"
+                        fontFamily="JetBrains Mono,monospace">L{lap}</text>
+                    </g>
+                  );
+                });
+              })()}
             </svg>
             <div style={{ fontSize: 11, color: 'var(--text-muted)', textAlign: 'center', marginTop: 4 }}>
               Green = faster than model · Red = slower
@@ -683,9 +699,9 @@ export function OverviewPage() {
               <th style={{ width: 48 }}>Pos</th>
               <th>Rider</th>
               <th>Team</th>
-              <th>Gap to Lead</th>
-              <th>Last Lap Δ</th>
-              <th style={{ width: 60 }}>Trend</th>
+              <th>Gap to lead</th>
+              <th>Pace vs you</th>
+              <th style={{ width: 100 }}>Threat</th>
             </tr>
           </thead>
           <tbody>
@@ -713,15 +729,22 @@ export function OverviewPage() {
                 }}>
                   {r.lastLapDiff}
                 </td>
-                <td style={{ textAlign: 'center' }}>
-                  <span style={{ fontSize: 15, lineHeight: 1 }}>
-                    {r.self ? '—' : r.pos <= 2 ? '↑' : r.pos >= 4 ? '↓' : '—'}
-                  </span>
+                <td style={{ textAlign: 'center', fontSize: 11 }}>
+                  {r.self ? <span style={{ color: 'var(--text-muted)' }}>—</span> : (() => {
+                    const faster = r.lastLapDiff.startsWith('-');
+                    const ahead = r.pos < t.position;
+                    const label = ahead ? (faster ? 'Pulling away' : 'Target') : (faster ? 'Closing' : 'Holding');
+                    const col = (label === 'Pulling away' || label === 'Closing') ? 'var(--accent)' : 'var(--green)';
+                    return <span style={{ color: col, fontWeight: 600 }}>{label}</span>;
+                  })()}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        <div style={{ padding: '8px 14px', fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-muted)', borderTop: '1px solid var(--border)' }}>
+          Pace vs you: negative = faster than your last lap · Threat = pace + track position relative to P{t.position}
+        </div>
       </div>
       </>)}
 
