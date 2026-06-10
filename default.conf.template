@@ -7,6 +7,9 @@
 
 server {
     listen 3000;
+    # Relative redirects — the absolute form leaks the internal port 3000 and
+    # http scheme behind Fly/Docker, making `/` → /pit-wall-os/ unreachable.
+    absolute_redirect off;
     root /usr/share/nginx/html;
     index index.html;
 
