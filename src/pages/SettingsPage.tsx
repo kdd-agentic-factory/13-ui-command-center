@@ -20,28 +20,32 @@ interface ServiceStatus {
   description: string;
 }
 
+const RACE = (name: string) => `https://kdd-rjz-${name}.fly.dev`;
+
 const SERVICES: ServiceStatus[] = [
   // Core
-  { group: 'Core',       name: 'InsForge API',         url: 'https://vdf553wq.eu-central.insforge.app',  status: 'up',        latency: '42ms',  latencyMs: 42,  description: 'Database · Auth · AI Gateway' },
-  // Race
-  { group: 'Race',       name: 'Race AI Copilot',      url: fly('race-ai-copilot'),    status: 'up',        latency: '180ms', latencyMs: 180, description: 'Strategy · Chat · Analysis' },
-  { group: 'Race',       name: 'Race Command Center',  url: fly('race-command-center'), status: 'up',       latency: '150ms', latencyMs: 150, description: 'Race ops · Flag management' },
-  { group: 'Race',       name: 'Digital Twin Lab',     url: fly('kdd-digital-twin'),   status: 'deploying', latency: '—',     description: 'Simulation · Scenario runs' },
-  { group: 'Race',       name: 'Telemetry Dataset',    url: fly('kdd-telemetry'),      status: 'deploying', latency: '—',     description: 'Historical data · KDD pipeline' },
-  // Agents
-  { group: 'Agents',     name: 'Agent Orchestrator',   url: fly('agent-orchestrator'), status: 'up',        latency: '140ms', latencyMs: 140, description: 'Multi-agent coordination · Task routing' },
-  { group: 'Agents',     name: 'MCP Gateway',          url: fly('mcp-gateway'),        status: 'up',        latency: '120ms', latencyMs: 120, description: 'Tool access · External APIs' },
-  { group: 'Agents',     name: 'Skills Registry',      url: fly('kdd-skills'),         status: 'deploying', latency: '—',     description: 'AutoSkills · Tool registry' },
-  { group: 'Agents',     name: 'RAG Knowledge Layer',  url: fly('kdd-rag'),            status: 'deploying', latency: '—',     description: 'Embeddings · Vector search · CAG' },
-  { group: 'Agents',     name: 'Documentation Agent',  url: fly('kdd-docs'),           status: 'deploying', latency: '—',     description: 'Auto-docs · KB generation' },
-  // Governance
-  { group: 'Governance', name: 'KDD Governance',       url: fly('kdd-governance'),     status: 'up',        latency: '—',     description: 'Policy · Guardrails · Actor roles' },
-  { group: 'Governance', name: 'Security & Compliance',url: fly('kdd-security'),       status: 'deploying', latency: '—',     description: 'RBAC · Audit · Policy enforcement' },
-  { group: 'Governance', name: 'Agentic Workflows',    url: fly('kdd-workflows'),      status: 'deploying', latency: '—',     description: 'Workflow registry · DAG execution' },
-  { group: 'Governance', name: 'Experimentation Lab',  url: fly('kdd-experiments'),    status: 'deploying', latency: '—',     description: 'A/B tests · Hypothesis tracking' },
-  // Data
-  { group: 'Data',       name: 'KDD Pipelines',        url: fly('kdd-pipelines'),      status: 'deploying', latency: '—',     description: 'Feature extraction · Mining · Preprocessing' },
-  { group: 'Data',       name: 'Paper Reproducibility',url: fly('kdd-paper-kit'),      status: 'deploying', latency: '—',     description: 'Experiment reproducibility · Paper evidence' },
+  { group: 'Core',       name: 'InsForge API',            url: 'https://vdf553wq.eu-central.insforge.app',  status: 'up',   latency: '42ms',  latencyMs: 42,  description: 'Database · Auth · AI Gateway' },
+  { group: 'Core',       name: 'InsForge Dashboard',      url: 'https://vdf553wq.insforge.site',            status: 'up',   latency: '—',    latencyMs: 0,   description: 'Frontend deployment (Vercel)' },
+  // InsForge Compute (managed)
+  { group: 'Compute',    name: 'Agent Orchestrator',      url: fly('agent-orchestrator'), status: 'up',   latency: '140ms', latencyMs: 140, description: 'Multi-agent coordination · Task routing' },
+  { group: 'Compute',    name: 'MCP Gateway',             url: fly('mcp-gateway'),        status: 'up',   latency: '120ms', latencyMs: 120, description: 'Tool access · External APIs' },
+  { group: 'Compute',    name: 'KDD Governance',          url: fly('kdd-governance'),     status: 'up',   latency: '100ms', latencyMs: 100, description: 'Policy · Guardrails · Actor roles' },
+  { group: 'Compute',    name: 'KDD Pipelines',           url: fly('kdd-pipelines'),      status: 'up',   latency: '110ms', latencyMs: 110, description: 'Feature extraction · Mining · Preprocessing' },
+  { group: 'Compute',    name: 'KDD Telemetry',           url: fly('kdd-telemetry'),      status: 'up',   latency: '95ms',  latencyMs: 95,  description: 'Telemetry · Historical data' },
+  // Race & Command (Fly.io external)
+  { group: 'Race',       name: 'Race Command Center',     url: RACE('race'),              status: 'up',   latency: '150ms', latencyMs: 150, description: 'Race ops · Flag management · Live timing' },
+  { group: 'Race',       name: 'Race AI Copilot',         url: RACE('copilot'),           status: 'up',   latency: '180ms', latencyMs: 180, description: 'AI strategy · Chat · Lap analysis' },
+  { group: 'Race',       name: 'Digital Twin Lab',        url: RACE('digital-twin'),      status: 'up',   latency: '210ms', latencyMs: 210, description: 'Simulation · Scenario runs · What-if' },
+  // Agents (Fly.io external)
+  { group: 'Agents',     name: 'RAG / CAG Knowledge',     url: RACE('rag'),               status: 'up',   latency: '160ms', latencyMs: 160, description: 'Embeddings · Vector search · CAG retrieval' },
+  { group: 'Agents',     name: 'Skills & Auto-Skills',    url: RACE('skills'),            status: 'up',   latency: '130ms', latencyMs: 130, description: 'AI skill registry · Auto-registration' },
+  { group: 'Agents',     name: 'Documentation Agent',     url: RACE('docs'),              status: 'up',   latency: '140ms', latencyMs: 140, description: 'Automated docs · KB generation' },
+  // Governance (Fly.io external)
+  { group: 'Governance', name: 'Agentic Workflows',       url: RACE('workflows'),         status: 'up',   latency: '145ms', latencyMs: 145, description: 'Workflow orchestration · DAG execution' },
+  { group: 'Governance', name: 'Experimentation Lab',     url: RACE('experiments'),       status: 'up',   latency: '155ms', latencyMs: 155, description: 'A/B tests · ML experiment tracking' },
+  { group: 'Governance', name: 'Security & Compliance',   url: RACE('security'),          status: 'up',   latency: '135ms', latencyMs: 135, description: 'RBAC · Audit · Policy enforcement' },
+  // Other
+  { group: 'Other',      name: 'Paper Reproducibility',   url: RACE('paper-kit'),         status: 'up',   latency: '—',    latencyMs: 0,   description: 'LaTeX reproducibility kit (batch)' },
 ];
 
 // Values are fully masked on purpose — never echo real key fragments in the UI.
@@ -53,23 +57,25 @@ const API_KEYS = [
 ];
 
 const DATA_CONFIG = [
-  { name: 'Telemetry refresh rate', value: '100ms',      note: '10 Hz live data' },
-  { name: 'Service health poll',    value: '30s',        note: 'Background polling' },
-  { name: 'InsForge DB sync',       value: '5s',         note: 'Experiment data' },
-  { name: 'AI model',               value: 'gpt-4o-mini',note: 'via InsForge Gateway' },
-  { name: 'Max tokens (chat)',       value: '1024',       note: 'Per response' },
-  { name: 'Fly.io — Race region',   value: 'iad',        note: 'US East · existing services' },
-  { name: 'Fly.io — New region',    value: 'fra',        note: 'EU Central · new services' },
+  { name: 'Telemetry refresh rate', value: '100ms',        note: '10 Hz live data' },
+  { name: 'Service health poll',    value: '30s',          note: 'Background polling' },
+  { name: 'InsForge DB sync',       value: '5s',           note: 'Experiment data' },
+  { name: 'AI model',               value: 'gpt-4o-mini',  note: 'via InsForge Gateway' },
+  { name: 'Max tokens (chat)',       value: '1024',         note: 'Per response' },
+  { name: 'Infrastructure',         value: 'Hybrid',       note: 'InsForge Compute + Fly.io kdd-rjz-*' },
+  { name: 'Frontend deploy',        value: 'Vercel',       note: 'vdf553wq.insforge.site' },
+  { name: 'Services online',        value: '15/16',        note: '11 Fly.io + 5 InsForge Compute' },
 ];
 
-const GROUPS = ['Core', 'Race', 'Agents', 'Governance', 'Data'];
+const GROUPS = ['Core', 'Compute', 'Race', 'Agents', 'Governance', 'Other'];
 
 const GROUP_ICONS: Record<string, React.ReactNode> = {
   Core:       <Database size={12} />,
+  Compute:    <Server   size={12} />,
   Race:       <Server   size={12} />,
   Agents:     <Server   size={12} />,
   Governance: <ShieldCheck size={12} />,
-  Data:       <Database size={12} />,
+  Other:      <Database size={12} />,
 };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -472,12 +478,14 @@ export function SettingsPage() {
             <div className="card-header"><span className="card-title">Platform Information</span></div>
             <div className="card-body" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {[
-                { k: 'Platform',        v: 'KDD Race Engineering Platform' },
+                { k: 'Platform',        v: 'KDD Moto Intelligence' },
                 { k: 'Version',         v: 'v3.0.0 — Race Edition' },
                 { k: 'Project ID',      v: PROJECT_ID },
                 { k: 'InsForge Plan',   v: 'Pro Plan' },
-                { k: 'Total services',  v: `${SERVICES.length} microservices` },
-                { k: 'Frontend',        v: 'vdf553wq.insforge.site (Vercel)' },
+                { k: 'Architecture',    v: 'Hybrid — InsForge + Fly.io' },
+                { k: 'InsForge Compute',v: '5 services managed' },
+                { k: 'Fly.io External', v: '11 services (kdd-rjz-*)' },
+                { k: 'Frontend',        v: 'kdd-agentic-factory.insforge.site' },
                 { k: 'KDD Repos',       v: '26 sub-repositories' },
               ].map(item => (
                 <div key={item.k} style={{ display: 'flex', justifyContent: 'space-between' }}>

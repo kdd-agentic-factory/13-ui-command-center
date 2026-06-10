@@ -16,4 +16,18 @@ __pycache__/
 venv/
 *.egg-info/
 tsconfig.node.tsbuildinfo
+.github/
+approvals/
+audit/
+compliance/
+controls/
+docs/
+incidents/
+policies/
+privacy/
+risk/
+schemas/
+secure-sdlc/
+threat-models/
+tooling/
 

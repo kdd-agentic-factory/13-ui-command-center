@@ -33,6 +33,12 @@ export interface TelemetryFrame {
   rearTyreAge:  number; // laps
   // Track position 0–1 (fraction of lap)
   trackPos: number;
+  // --- Race data integrity ---
+  lapAnomaly: boolean;   // true if last lap is an outlier
+  fuelValid: boolean;    // false if fuel sensor reports impossible value
+  raceLapsLeft: number;  // total race laps - current lap
+  session: 'race' | 'test';
+  stintAge: number;      // laps on current stint (reset at pit)
 }
 
 // Simulated track speed profile (speeds normalized 0–1 over track position 0–1)
@@ -47,17 +53,28 @@ export function trackSpeed(pos: number): number {
   return Math.max(0.1, Math.min(1.0, s));
 }
 
-const TRACK_LAP_S = 93.4; // approximate lap time in seconds
+// MotoGP Mugello 2025 realistic references
+// Record qualifying lap: 1:44.169 (Marquez, 2025)
+// Race pace: ~1:45.x
+// Total race distance: 23 laps × 5.245 km = 120.635 km
+// Fuel capacity: 22 kg, consumption ~0.95 kg/lap for MotoGP
+// Main straight speed trap: ~351 km/h
+const TRACK_LAP_S = 105.0;  // realistic Mugello lap time
+const RACE_LAPS = 23;
+const FUEL_CAPACITY = 22.0;
+const FUEL_PER_LAP = 0.95;
 
 export function useLiveTelemetry(): TelemetryFrame {
   const simTime = useRef(0);
   const lapStartRef = useRef(Date.now());
-  const lapCountRef = useRef(0);
-  const fuelRef = useRef(21.8);
-  const lastLapRef = useRef(93.412);
-  const bestLapRef = useRef(92.847);
+  const lapCountRef = useRef(0);        // increments each lap, 0-based
+  const fuelRef = useRef(FUEL_CAPACITY);
+  const lastLapRef = useRef(105.203);
+  const bestLapRef = useRef(104.847);   // 1:44.847 — realistic Mugello best
+  const anomalyRef = useRef(false);
+  const anomalyLaps = useRef<Set<number>>(new Set([7, 13])); // laps 7 & 13 are slow
 
-  const [frame, setFrame] = useState<TelemetryFrame>(() => computeFrame(0, 21.8, 0, 93.412, 92.847, 0));
+  const [frame, setFrame] = useState<TelemetryFrame>(() => computeFrame(0, FUEL_CAPACITY, 0, 105.203, 104.847, 0, false));
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -66,13 +83,33 @@ export function useLiveTelemetry(): TelemetryFrame {
       // Lap progression
       const lapElapsed = (Date.now() - lapStartRef.current) / 1000;
       if (lapElapsed >= TRACK_LAP_S) {
-        lastLapRef.current = lapElapsed + (Math.random() - 0.5) * 0.4;
-        if (lastLapRef.current < bestLapRef.current) {
+        const lap = lapCountRef.current + 1;
+        const isAnomaly = anomalyLaps.current.has(lap);
+
+        // Realistic last lap: ~105.2s normally, +12-18s if anomaly (off-track/traffic)
+        lastLapRef.current = isAnomaly
+          ? 104.847 + 12 + Math.random() * 6   // +12–18s slow lap
+          : 104.7 + (lap * 0.04) + (Math.random() - 0.5) * 0.6; // degrading pace ~0.04s/lap
+
+        if (!isAnomaly && lastLapRef.current < bestLapRef.current) {
           bestLapRef.current = lastLapRef.current;
         }
-        lapCountRef.current += 1;
+
+        anomalyRef.current = isAnomaly;
+        lapCountRef.current = lap;
+
+        // Fuel: starts at 22kg, consumption ~0.95 kg/lap
+        // Never goes below 0.5 kg (sensor noise floor)
+        fuelRef.current = Math.max(0.5, fuelRef.current - FUEL_PER_LAP + (Math.random() - 0.5) * 0.1);
+
         lapStartRef.current = Date.now();
-        fuelRef.current = Math.max(0, fuelRef.current - 2.2);
+
+        // Race complete — reset session
+        if (lap >= RACE_LAPS) {
+          lapCountRef.current = 0;
+          fuelRef.current = FUEL_CAPACITY;
+          bestLapRef.current = 104.847;
+        }
       }
 
       const trackPos = (lapElapsed % TRACK_LAP_S) / TRACK_LAP_S;
@@ -83,6 +120,7 @@ export function useLiveTelemetry(): TelemetryFrame {
         lastLapRef.current,
         bestLapRef.current,
         simTime.current,
+        anomalyRef.current!,
       ));
     }, 100);
 
@@ -99,6 +137,7 @@ function computeFrame(
   lastLap: number,
   bestLap: number,
   simTime: number,
+  anomaly = false,
 ): TelemetryFrame {
   const speedNorm = trackSpeed(trackPos);
   const rawSpeed = speedNorm * 330 + 10;
@@ -118,8 +157,6 @@ function computeFrame(
   const leanEffect = leanAngle * 0.4;
 
   // Gap — slow oscillation (two overlapping sine waves) + tiny tick noise
-  // simTime increments at 1.0 /s in real time; periods ~40 s and ~17 s feel
-  // like organic track-position swings without being obviously periodic.
   const gapRaw =
     0.842 +
     0.55 * Math.sin(simTime * 0.157) +  // ~40 s period
@@ -128,6 +165,9 @@ function computeFrame(
   const gapAbs  = Math.abs(gapRaw);
   const gapSign = gapRaw >= 0 ? '+' : '–';
   const gap     = gapAbs < 0.05 ? 'leader' : `${gapSign}${gapAbs.toFixed(3)}`;
+
+  const lapsLeft = Math.max(0, RACE_LAPS - lapCount);
+  const stintAge = lapCount; // fresh stint every race start
 
   return {
     speed:       Math.round(speed),
@@ -140,8 +180,7 @@ function computeFrame(
     lapTime:     (trackPos * TRACK_LAP_S),
     lastLap,
     bestLap,
-    lapCount:    lapCount + 3, // starts from lap 4
-    // P3 most of the time; briefly drops to P4 when gap goes negative
+    lapCount:    lapCount,  // now real lap count, no offset
     position:    gapRaw < -0.4 ? 4 : 3,
     gap,
     tireFrontLeft:  Math.round(baseTemp + 2 + leanEffect + Math.random() * 3),
@@ -150,8 +189,13 @@ function computeFrame(
     tireRearRight:  Math.round(baseTemp + 4 + Math.random() * 4),
     frontCompound:  'MEDIUM',
     rearCompound:   'SOFT',
-    frontTyreAge:   lapCount + 3,
-    rearTyreAge:    lapCount + 3,
+    frontTyreAge:   lapCount,      // real tyre age
+    rearTyreAge:    lapCount,      // real tyre age
     trackPos,
+    lapAnomaly:    anomaly,
+    fuelValid:     fuel >= 0.5 && fuel <= FUEL_CAPACITY,
+    raceLapsLeft:  lapsLeft,
+    session:       lapCount < 1 ? 'test' : 'race',
+    stintAge,
   };
 }

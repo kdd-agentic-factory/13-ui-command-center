@@ -1,24 +1,54 @@
 /**
- * OverviewPage — Expert Race Overview with sector analysis and mini circuit map.
+ * OverviewPage — Race Overview with full data validation, Mugello circuit map,
+ * AI strategy, tyre telemetry, gear distribution, pace model, stint progress,
+ * race standings, championship projections, and data integrity monitoring.
  *
- * Expert additions:
- *   • Sector time delta bars — S1/S2/S3 vs personal best
- *   • Gear distribution chart — heatmap of gear usage
- *   • Live performance delta overlay — actual vs Digital Twin predicted pace
- *   • Fuel consumption tracker with depletion model
- *   • Enhanced rivals table with last-lap pace comparison
+ * Data flow: useLiveTelemetry() → TelemetryFrame → validated sub-components
+ * Every consumer validates its data before rendering. Bogus values = blank with
+ * error indicator, NOT wrong numbers.
  */
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { Flag, Zap, TrendingUp, Activity } from 'lucide-react';
+import {
+  Flag, Zap, TrendingUp, Activity, AlertTriangle,
+  Shield, Fuel, Layers, Siren, Gauge, CircleDot,
+} from 'lucide-react';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { Tabs } from '../components/Tabs';
 import { MotorbikeDiagnostics, type BikeTelemetry } from '../components/MotorbikeDiagnostics';
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// ── Validation helpers ───────────────────────────────────────────────────────
+
+/** Lap count that makes sense for a MotoGP race (1..23). Returns null if bogus. */
+function validLap(lap: number): number | null {
+  return lap >= 1 && lap <= 23 ? lap : null;
+}
+
+/** Seconds that look like a real lap time (80..180s = 1:20..3:00). */
+function validLapTime(s: number): boolean {
+  return s >= 80 && s <= 180;
+}
+
+/** Fuel in kg that's physically possible (0.5..22.0). */
+function validFuel(kg: number): boolean {
+  return kg >= 0.5 && kg <= 22.0;
+}
+
+// ── Types ───────────────────────────────────────────────────────────────────
 
 interface FeedEvent { id: number; time: string; color: string; text: string }
+interface Rival {
+  pos: number; rider: string; team: string; num: number;
+  self: boolean; gap: string; lastLapDiff: string; threat: string;
+  threatColor: string; basePos: number;
+}
 
-// ── Baseline feed ─────────────────────────────────────────────────────────────
+// ── Constants ────────────────────────────────────────────────────────────────
+
+const RACE_LAPS = 23;
+const FUEL_CAPACITY = 22;
+const FUEL_PER_LAP = 0.95;
+
+// ── Baseline feed events ─────────────────────────────────────────────────────
 
 const INITIAL_EVENTS: FeedEvent[] = [
   { id: 1, time: '14:22', color: 'var(--green)',  text: 'Crew Chief — <strong>Sector 3 gain +0.15s</strong> vs Lap 2 baseline' },
@@ -34,14 +64,14 @@ type FeedFn = (gap: string, speed: number, fuel: number, lap: number) => { color
 const FEED_TEMPLATES: FeedFn[] = [
   (gap)              => ({ color: 'var(--blue)',   text: `Gap Monitor — P2 gap now <strong>${gap}</strong>` }),
   (_g, speed)        => ({ color: 'var(--green)',  text: `Telemetry — Top speed Straight 1: <strong>${speed} km/h</strong>` }),
-  ()                 => ({ color: 'var(--yellow)', text: 'Tyre Agent — Rear temp stable at 98°C · degradation nominal' }),
+  ()                 => ({ color: 'var(--yellow)', text: 'Tyre Agent — Rear temp stable at 98°C — degradation nominal' }),
   (_g, _s, fuel)     => ({ color: 'var(--orange)', text: `Fuel Model — Remaining: <strong>${fuel.toFixed(1)} kg</strong>` }),
-  ()                 => ({ color: 'var(--blue)',   text: 'KDD Pipeline — Telemetry batch processed · 12,400 samples' }),
+  ()                 => ({ color: 'var(--blue)',   text: 'KDD Pipeline — Telemetry batch processed — 12,400 samples' }),
   (_g, _s, _f, lap)  => ({ color: 'var(--green)',  text: `Digital Twin — Lap ${lap} delta: <strong>–0.08s</strong> vs predicted` }),
   ()                 => ({ color: 'var(--accent)', text: 'Race Control — No incidents in last 2 laps. Green flag all sectors.' }),
 ];
 
-// ── Rivals ────────────────────────────────────────────────────────────────────
+// ── Base rivals ──────────────────────────────────────────────────────────────
 
 const BASE_RIVALS = [
   { basePos: 1, rider: 'M. Marquez',    team: 'Gresini Duc.',  num: 93, self: false },
@@ -51,29 +81,54 @@ const BASE_RIVALS = [
   { basePos: 5, rider: 'E. Bastianini', team: 'Lenovo Duc.',   num: 23, self: false },
 ];
 
-function buildRivals(position: number, gap: string) {
+/** Determine threat level and color for a rival vs our rider. */
+function calcThreat(r: typeof BASE_RIVALS[number], ourPos: number, lastLapDiff: string): { threat: string; color: string } {
+  if (r.self) return { threat: '—', color: 'var(--text-muted)' };
+  const faster = lastLapDiff.startsWith('–');
+  const ahead = r.basePos < ourPos;
+  // Rider ahead pulling away = low threat. Rider ahead but we're faster = target.
+  // Rider behind closing = HIGH threat. Rider behind holding = low.
+  if (ahead) return faster
+    ? { threat: 'Pulling away', color: 'var(--green)' }
+    : { threat: 'Target', color: 'var(--blue)' };
+  return faster
+    ? { threat: '⚠ Closing', color: 'var(--accent)' }
+    : { threat: 'Holding', color: 'var(--green)' };
+}
+
+function buildRivals(position: number, gap: string): Rival[] {
   const myGap = gap === 'leader' ? 'LEADER' : gap;
   return BASE_RIVALS.map((r, i) => {
     const displayPos  = r.self ? position : i < position - 1 ? i + 1 : i + 1;
     const gapToLead   = r.self ? myGap : r.basePos === 1 ? 'LEADER' : `+${(r.basePos * 0.421).toFixed(3)}s`;
-    const lastLapDiff = r.self ? '—' : r.basePos < position ? `+${(Math.random() * 0.3).toFixed(3)}s` : `–${(Math.random() * 0.2).toFixed(3)}s`;
-    return { ...r, pos: displayPos, gap: gapToLead, lastLapDiff };
+    const lastLapDiff = r.self ? '—' : r.basePos < position
+      ? `+${(Math.random() * 0.3).toFixed(3)}s`
+      : `–${(Math.random() * 0.2).toFixed(3)}s`;
+    const { threat, color } = calcThreat(r, position, lastLapDiff);
+    return { ...r, pos: displayPos, gap: gapToLead, lastLapDiff, threat, threatColor: color };
   }).sort((a, b) => a.pos - b.pos);
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// ── Helpers ─────────────────────────────────────────────────────────────────
 
-function formatLap(s: number) {
+function formatLap(s: number): string {
+  if (!validLapTime(s)) return '—.——.———';
   const m = Math.floor(s / 60);
   const sec = (s % 60).toFixed(3).padStart(6, '0');
   return `${m}:${sec}`;
 }
 
-function now() {
+function now(): string {
   return new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 }
 
-// ── Sector delta bar ──────────────────────────────────────────────────────────
+/** Projected fuel at end of race (negative = will run out). */
+function fuelProjection(currentLap: number, fuelKg: number): number {
+  const remainingLaps = RACE_LAPS - currentLap;
+  return fuelKg - remainingLaps * FUEL_PER_LAP;
+}
+
+// ── Sector delta bar ────────────────────────────────────────────────────────
 
 function SectorBar({ sector, delta, base }: { sector: string; delta: number; base: number }) {
   const pct = Math.min(100, Math.abs(delta / base) * 100 * 10);
@@ -102,14 +157,38 @@ function SectorBar({ sector, delta, base }: { sector: string; delta: number; bas
   );
 }
 
-// ── Mugello mini track map ────────────────────────────────────────────────────
+// ── Mugello circuit map — full SVG with 15 named corners, DRS zones ─────────
 
+/** Mugello track control points (GP line). Coordinates in 320×200 viewBox. */
 const MUGELLO_PTS: [number, number][] = [
-  [30,148],[70,152],[110,153],[150,152],[182,146],
-  [205,132],[214,116],[216,98],[210,82],[198,68],
-  [182,56],[164,49],[144,46],[124,48],[106,53],
-  [88,62],[74,74],[66,90],[62,108],[64,126],
-  [70,140],[88,148],[30,148],
+  [45,178],[75,180],[108,179],[140,177],[168,171],  // Start/finish → San Donato entry
+  [192,160],[210,145],[222,124],[228,104],[226,84],  // San Donato → Luco → Poggio Secco
+  [216,66],[200,52],[180,43],[158,39],[136,40],      // Biondetti → Casanova
+  [114,44],[94,52],[76,64],[62,80],[52,98],          // Savelli → Arrabbiata 1
+  [46,118],[44,138],[48,156],[55,170],[45,178],      // Arrabbiata 2 → Scarperia → Palagio → S/F
+];
+
+/** Mugello corner names with approximate track positions (0-1). */
+const CORNERS: { name: string; pos: number; tag: string }[] = [
+  { name: 'San Donato',     pos: 0.08, tag: 'T1' },
+  { name: 'Luco',           pos: 0.18, tag: 'T2' },
+  { name: 'Poggio Secco',   pos: 0.27, tag: 'T3' },
+  { name: 'Biondetti 1',    pos: 0.34, tag: 'T4' },
+  { name: 'Biondetti 2',    pos: 0.40, tag: 'T5' },
+  { name: 'Casanova',       pos: 0.47, tag: 'T6' },
+  { name: 'Savelli',        pos: 0.54, tag: 'T7' },
+  { name: 'Arrabbiata 1',   pos: 0.61, tag: 'T8' },
+  { name: 'Arrabbiata 2',   pos: 0.67, tag: 'T9' },
+  { name: 'Scarperia',      pos: 0.74, tag: 'T10' },
+  { name: 'Palagio 1',      pos: 0.80, tag: 'T11' },
+  { name: 'Palagio 2',      pos: 0.86, tag: 'T12' },
+  { name: 'Main Straight',  pos: 0.96, tag: 'SF' },
+];
+
+/** DRS / overtake zones. */
+const DRS_ZONES: { label: string; start: number; end: number }[] = [
+  { label: 'DRS Z1', start: 0.70, end: 0.82 },  // Scarperia → Palagio
+  { label: 'DRS Z2', start: 0.92, end: 0.99 },  // Final corner → finish
 ];
 
 function interpolateTrackPos(pts: [number, number][], frac: number): [number, number] {
@@ -137,48 +216,79 @@ const TRACK_RIVALS: { num: number; color: string; offset: number }[] = [
   { num: 23, color: '#22C55E', offset: +0.10 },
 ];
 
-function MiniTrackMap({ trackPos }: { trackPos: number }) {
+function MugelloCircuit({ trackPos, lapAnomaly }: { trackPos: number; lapAnomaly: boolean }) {
   const polyStr = MUGELLO_PTS.map(p => `${p[0]},${p[1]}`).join(' ');
   const [kx, ky] = interpolateTrackPos(MUGELLO_PTS, trackPos);
+
   return (
     <div>
-      <svg width="100%" height="170" viewBox="0 0 250 170" preserveAspectRatio="xMidYMid meet">
-        {/* shadow */}
+      <svg width="100%" height="200" viewBox="0 0 260 200" preserveAspectRatio="xMidYMid meet">
+        {/* Shadow */}
         <polyline points={polyStr} fill="none" stroke="rgba(255,255,255,0.04)"
-          strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
-        {/* base track */}
+          strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" />
+        {/* Base track */}
         <polyline points={polyStr} fill="none" stroke="rgba(255,255,255,0.10)"
-          strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
-        {/* sector colour overlays */}
+          strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+        {/* Sector colour overlays */}
         <polyline
-          points={MUGELLO_PTS.slice(0, 8).map(p => `${p[0]},${p[1]}`).join(' ')}
-          fill="none" stroke="var(--blue)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" opacity="0.55"
+          points={MUGELLO_PTS.slice(0, 9).map(p => `${p[0]},${p[1]}`).join(' ')}
+          fill="none" stroke="var(--blue)" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" opacity="0.50"
         />
         <polyline
-          points={MUGELLO_PTS.slice(7, 15).map(p => `${p[0]},${p[1]}`).join(' ')}
-          fill="none" stroke="var(--yellow)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" opacity="0.55"
+          points={MUGELLO_PTS.slice(8, 17).map(p => `${p[0]},${p[1]}`).join(' ')}
+          fill="none" stroke="var(--yellow)" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" opacity="0.50"
         />
         <polyline
-          points={MUGELLO_PTS.slice(14).map(p => `${p[0]},${p[1]}`).join(' ')}
-          fill="none" stroke="var(--green)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" opacity="0.55"
+          points={MUGELLO_PTS.slice(16).map(p => `${p[0]},${p[1]}`).join(' ')}
+          fill="none" stroke="var(--green)" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" opacity="0.50"
         />
-        {/* rival dots */}
+
+        {/* DRS zones — dashed highlight */}
+        {DRS_ZONES.map((z, i) => {
+          const [sx, sy] = interpolateTrackPos(MUGELLO_PTS, z.start);
+          const [ex, ey] = interpolateTrackPos(MUGELLO_PTS, z.end);
+          return (
+            <line key={i} x1={sx} y1={sy} x2={ex} y2={ey}
+              stroke="var(--green)" strokeWidth="2" strokeDasharray="3,3" opacity="0.5" />
+          );
+        })}
+
+        {/* Corner markers */}
+        {CORNERS.filter(c => c.tag !== 'SF').map(c => {
+          const [cx, cy] = interpolateTrackPos(MUGELLO_PTS, c.pos);
+          return (
+            <g key={c.tag}>
+              <circle cx={cx} cy={cy} r="2" fill="rgba(255,255,255,0.3)" />
+              <text x={cx + 5} y={cy + 3} fill="rgba(255,255,255,0.35)" fontSize="6"
+                fontFamily="JetBrains Mono,monospace">{c.tag}</text>
+            </g>
+          );
+        })}
+
+        {/* Rival dots */}
         {TRACK_RIVALS.map(r => {
           const [rx, ry] = interpolateTrackPos(MUGELLO_PTS, (trackPos + r.offset + 1) % 1);
           return <circle key={r.num} cx={rx} cy={ry} r="4" fill={r.color} opacity="0.82" />;
         })}
-        {/* KDD #47 */}
-        <circle cx={kx} cy={ky} r="5.5" fill="var(--accent)" stroke="white" strokeWidth="1.5"
-          style={{ filter: 'drop-shadow(0 0 5px var(--accent))' }} />
+
+        {/* KDD #47 — with anomaly glow if lap was anomalous */}
+        <circle cx={kx} cy={ky} r="5.5" fill={lapAnomaly ? 'var(--orange)' : 'var(--accent)'}
+          stroke="white" strokeWidth="1.5"
+          style={{ filter: lapAnomaly ? 'drop-shadow(0 0 8px var(--orange))' : 'drop-shadow(0 0 5px var(--accent))' }} />
         <text x={kx + 8} y={ky + 4} fill="white" fontSize="8" fontWeight="700"
           fontFamily="JetBrains Mono,monospace">#47</text>
-        {/* S/F marker */}
-        <rect x="26" y="142" width="6" height="12" rx="1" fill="rgba(255,255,255,0.22)" />
-        <text x="35" y="151" fill="#535A6E" fontSize="7" fontFamily="JetBrains Mono,monospace">S/F</text>
-        <text x="125" y="11" textAnchor="middle" fill="rgba(255,255,255,0.15)"
-          fontSize="8" fontFamily="JetBrains Mono,monospace" letterSpacing="0.12em">MUGELLO</text>
+
+        {/* S/F line */}
+        <rect x="41" y="172" width="6" height="12" rx="1" fill="rgba(255,255,255,0.22)" />
+        <text x="50" y="181" fill="#535A6E" fontSize="7" fontFamily="JetBrains Mono,monospace">S/F</text>
+
+        {/* Title */}
+        <text x="190" y="16" textAnchor="middle" fill="rgba(255,255,255,0.12)"
+          fontSize="9" fontFamily="JetBrains Mono,monospace" letterSpacing="0.12em">MUGELLO</text>
       </svg>
-      <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap', marginTop: 2 }}>
+
+      {/* Legend */}
+      <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap', marginTop: 2 }}>
         {([['S1','var(--blue)'],['S2','var(--yellow)'],['S3','var(--green)']] as [string,string][]).map(([s,c]) => (
           <span key={s} style={{ display:'flex', alignItems:'center', gap:3, fontSize:9, color:'var(--text-muted)' }}>
             <span style={{ width:12, height:3, background:c, borderRadius:1, display:'inline-block' }} />{s}
@@ -192,12 +302,23 @@ function MiniTrackMap({ trackPos }: { trackPos: number }) {
             <span style={{ width:5, height:5, background:r.color, borderRadius:'50%', display:'inline-block' }} />#{r.num}
           </span>
         ))}
+        <span style={{ display:'flex', alignItems:'center', gap:3, fontSize:9, color:'var(--green)' }}>
+          <span style={{ width:8, height:2, background:'var(--green)', borderRadius:1, display:'inline-block' }} />DRS
+        </span>
+      </div>
+      {/* Corner names for reference */}
+      <div style={{ display:'flex', flexWrap:'wrap', gap:'3px 8px', justifyContent:'center', marginTop:3 }}>
+        {CORNERS.filter(c => c.tag !== 'SF').map(c => (
+          <span key={c.tag} style={{ fontSize:8, color:'rgba(255,255,255,0.25)', fontFamily:'JetBrains Mono,monospace' }}>
+            {c.tag} {c.name}
+          </span>
+        ))}
       </div>
     </div>
   );
 }
 
-// ── Championship standings ────────────────────────────────────────────────────
+// ── Championship standings — with live projection ───────────────────────────
 
 const CHAMPIONSHIP_DATA: { rider: string; num: number; pts: number; self: boolean }[] = [
   { rider: 'J. Martin',    num: 89, pts: 142, self: false },
@@ -207,50 +328,91 @@ const CHAMPIONSHIP_DATA: { rider: string; num: number; pts: number; self: boolea
   { rider: 'F. Bagnaia',   num: 1,  pts:  96, self: false },
 ];
 
-function ChampionshipBars() {
+/** Points awarded per position in MotoGP. */
+function pointsForPos(pos: number): number {
+  if (pos === 1) return 25; if (pos === 2) return 20; if (pos === 3) return 16;
+  if (pos === 4) return 13; if (pos === 5) return 11; if (pos === 6) return 10;
+  if (pos === 7) return 9; if (pos === 8) return 8; if (pos === 9) return 7;
+  if (pos === 10) return 6; if (pos === 11) return 5; if (pos === 12) return 4;
+  if (pos === 13) return 3; if (pos === 14) return 2; if (pos === 15) return 1;
+  return 0;
+}
+
+function ChampionshipBars({ currentPos }: { currentPos: number }) {
   const maxPts = CHAMPIONSHIP_DATA[0].pts;
-  const selfPts = CHAMPIONSHIP_DATA.find(r => r.self)?.pts ?? 0;
+  const selfRider = CHAMPIONSHIP_DATA.find(r => r.self);
+  const selfPts = selfRider?.pts ?? 0;
   const gap = maxPts - selfPts;
+  const projectedPts = selfPts + pointsForPos(currentPos);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
       {CHAMPIONSHIP_DATA.map((r, i) => {
         const podCol = i === 0 ? '#F59E0B' : i === 1 ? '#C0C0C0' : i === 2 ? '#CD7F32' : 'var(--text-muted)';
+        const isSelf = r.self;
         return (
           <div key={r.num} style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-            <span style={{ width:22, fontFamily:'JetBrains Mono,monospace', fontWeight:800, fontSize:11, color:podCol, textAlign:'right', flexShrink:0 }}>
-              P{i + 1}
-            </span>
+            <span style={{
+              width:22, fontFamily:'JetBrains Mono,monospace', fontWeight:800, fontSize:11,
+              color: podCol, textAlign:'right', flexShrink:0
+            }}>P{i + 1}</span>
             <div style={{ flex: 1 }}>
               <div style={{ display:'flex', justifyContent:'space-between', marginBottom:2 }}>
-                <span style={{ fontSize:11, fontWeight:r.self ? 700 : 400, color:r.self ? 'var(--accent)' : 'var(--text)' }}>
+                <span style={{ fontSize:11, fontWeight:isSelf ? 700 : 400, color:isSelf ? 'var(--accent)' : 'var(--text)' }}>
                   {r.rider}
-                  {r.self && <span className="badge badge-red" style={{ marginLeft:4, fontSize:8 }}>YOU</span>}
+                  {isSelf && <span className="badge badge-red" style={{ marginLeft:4, fontSize:8 }}>YOU</span>}
                 </span>
                 <span style={{ fontSize:11, fontFamily:'JetBrains Mono,monospace', color:'var(--text-muted)' }}>{r.pts}</span>
               </div>
               <div className="bar-track">
-                <div className="bar-fill" style={{ width:`${(r.pts / maxPts) * 100}%`, background:r.self ? 'var(--accent)' : 'rgba(255,255,255,0.15)' }} />
+                <div className="bar-fill" style={{
+                  width:`${(r.pts / maxPts) * 100}%`,
+                  background:isSelf ? 'var(--accent)' : 'rgba(255,255,255,0.15)'
+                }} />
               </div>
             </div>
           </div>
         );
       })}
-      <div style={{ fontSize:10, color:'var(--text-muted)', textAlign:'right', marginTop:2 }}>
-        {gap > 0 ? `–${gap} pts from lead · After R6` : 'CHAMPIONSHIP LEADER'}
+      {/* Live projection */}
+      <div style={{
+        marginTop:4, padding:'5px 8px', borderRadius:6,
+        background:'rgba(224,55,55,0.08)', border:'1px solid rgba(224,55,55,0.2)',
+        display:'flex', justifyContent:'space-between', alignItems:'center'
+      }}>
+        <span style={{ fontSize:10, color:'var(--text-dim)' }}>
+          If P{currentPos} holds → <strong style={{ color:'var(--accent)' }}>{projectedPts} pts</strong>
+        </span>
+        <span style={{ fontSize:10, color:'var(--text-muted)', fontFamily:'JetBrains Mono,monospace' }}>
+          {gap > 0 ? `–${gap} pts` : 'CHAMPION'}
+        </span>
       </div>
     </div>
   );
 }
 
-// ── Stint progress ────────────────────────────────────────────────────────────
+// ── Stint progress — with session validation ────────────────────────────────
 
 function StintProgress({ tyreAge, lapCount }: { tyreAge: number; lapCount: number }) {
-  const optPit   = 11;                 // optimal pit lap — matches the AI strategy feed
-  const winOpen  = 9, winClose = 13;   // pit window
-  const lapsLeft = Math.max(0, optPit - lapCount);
-  const stintPct = Math.min(100, (tyreAge / 18) * 100);
+  const valid = validLap(lapCount);
+  const optPit   = 11;
+  const winOpen  = 9;
+  const winClose = 13;
+  const lapsLeft = valid ? Math.max(0, optPit - lapCount) : 0;
+  const raceLapsLeft = valid ? Math.max(0, RACE_LAPS - lapCount) : 0;
+  const stintPct = valid ? Math.min(100, (tyreAge / 18) * 100) : 0;
   const urgency  = lapsLeft <= 2 ? 'var(--accent)' : lapsLeft <= 5 ? 'var(--yellow)' : 'var(--green)';
   const barCol   = stintPct > 85 ? 'var(--accent)' : stintPct > 65 ? 'var(--yellow)' : 'var(--blue)';
+
+  if (!valid) {
+    return (
+      <div style={{ padding:'12px', textAlign:'center', color:'var(--text-muted)', fontSize:12 }}>
+        <AlertTriangle size={14} style={{ display:'inline', verticalAlign:'middle', marginRight:6 }} />
+        Stint data unavailable — waiting for lap data
+      </div>
+    );
+  }
+
   return (
     <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
       <div>
@@ -265,9 +427,9 @@ function StintProgress({ tyreAge, lapCount }: { tyreAge: number; lapCount: numbe
       <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:6 }}>
         {([
           { label:'Pit Window',      value:`L${winOpen}–L${winClose}`, color:'var(--green)' },
-          { label:'Optimal Pit',     value:`L${optPit}`,         color:'var(--green)' },
-          { label:'Laps to Optimal', value:`${lapsLeft}`,        color:urgency },
-          { label:'Race Laps Left',  value:`${23 - lapCount}`,   color:'var(--text-muted)' },
+          { label:'Optimal Pit',     value:`L${optPit}`,               color:'var(--green)' },
+          { label:'Laps to Optimal', value:`${lapsLeft}`,              color:urgency },
+          { label:'Race Laps Left',  value:`${raceLapsLeft}`,          color:'var(--text-muted)' },
         ] as { label:string; value:string; color:string }[]).map(item => (
           <div key={item.label} style={{ background:'var(--bg-surface)', border:'1px solid var(--border)', borderRadius:6, padding:'7px 9px' }}>
             <div style={{ fontSize:8, color:'var(--text-muted)', textTransform:'uppercase', marginBottom:3, letterSpacing:'0.07em' }}>
@@ -283,7 +445,383 @@ function StintProgress({ tyreAge, lapCount }: { tyreAge: number; lapCount: numbe
   );
 }
 
-// ── Page ──────────────────────────────────────────────────────────────────────
+// ── Data Integrity module ────────────────────────────────────────────────────
+
+function DataIntegrity({ fuelValid, lapAnomaly, lapCount, lastLap, bestLap }: {
+  fuelValid: boolean; lapAnomaly: boolean; lapCount: number; lastLap: number; bestLap: number;
+}) {
+  const checks = [
+    { label: 'Fuel Sensor',      ok: fuelValid,                   desc: fuelValid ? 'Within range' : 'Check sensor' },
+    { label: 'Lap Counter',      ok: validLap(lapCount) !== null, desc: validLap(lapCount) !== null ? `${lapCount}/${RACE_LAPS}` : 'Unreliable' },
+    { label: 'Last Lap Time',    ok: validLapTime(lastLap),       desc: validLapTime(lastLap) ? formatLap(lastLap) : 'Invalid' },
+    { label: 'Best Lap Time',    ok: validLapTime(bestLap),       desc: validLapTime(bestLap) ? formatLap(bestLap) : 'Invalid' },
+    { label: 'Lap Anomaly',      ok: !lapAnomaly,                 desc: lapAnomaly ? 'Flagged' : 'Clean' },
+  ];
+
+  const allOk = checks.every(c => c.ok);
+  const criticalIssues = checks.filter(c => !c.ok).length;
+
+  return (
+    <div className="card" style={{ borderColor: allOk ? 'color-mix(in srgb, var(--green) 30%, transparent)' : 'color-mix(in srgb, var(--accent) 30%, transparent)' }}>
+      <div className="card-header">
+        <span className="card-title flex items-center gap-2">
+          <Shield size={14} style={{ color: allOk ? 'var(--green)' : 'var(--yellow)' }} />
+          Race Data Integrity
+        </span>
+        <span className={`badge ${allOk ? 'badge-green' : criticalIssues > 2 ? 'badge-red' : 'badge-yellow'}`}>
+          {allOk ? 'All nominal' : `${criticalIssues} issue${criticalIssues > 1 ? 's' : ''}`}
+        </span>
+      </div>
+      <div className="card-body" style={{ flexDirection: 'column', gap: 5 }}>
+        {checks.map(c => (
+          <div key={c.label} style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+              <span style={{
+                width:8, height:8, borderRadius:'50%', display:'inline-block',
+                background: c.ok ? 'var(--green)' : 'var(--accent)',
+                opacity: c.ok ? 0.7 : 1,
+              }} />
+              <span style={{ fontSize:11, color:'var(--text-muted)' }}>{c.label}</span>
+            </div>
+            <span style={{
+              fontSize:10, fontFamily:'JetBrains Mono,monospace',
+              color: c.ok ? 'var(--green)' : 'var(--accent)',
+              fontWeight: c.ok ? 400 : 700,
+            }}>
+              {c.desc}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Race Standings table ────────────────────────────────────────────────────
+
+function RaceStandingsTable({ rivals, position }: { rivals: Rival[]; position: number }) {
+  const posColor = (pos: number) =>
+    pos === 1 ? '#F59E0B' : pos === 2 ? '#C0C0C0' : pos === 3 ? '#CD7F32' : 'var(--text-muted)';
+
+  return (
+    <table className="data-table">
+      <thead>
+        <tr>
+          <th style={{ width: 48 }}>Pos</th>
+          <th>Rider</th>
+          <th>Team</th>
+          <th>Gap to lead</th>
+          <th>Pace vs you</th>
+          <th style={{ width: 120 }}>Threat</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rivals.map(r => (
+          <tr key={r.num} style={r.self ? { background: 'var(--accent-dim)' } : {}}>
+            <td>
+              <span className="text-mono" style={{ fontWeight: 800, fontSize: 13, color: posColor(r.pos) }}>
+                P{r.pos}
+              </span>
+            </td>
+            <td>
+              <span style={{ fontWeight: r.self ? 700 : 500, color: r.self ? 'var(--accent)' : 'var(--text)' }}>
+                {r.rider}
+              </span>
+              {r.self && <span className="badge badge-red" style={{ marginLeft: 8, fontSize: 9 }}>YOU</span>}
+            </td>
+            <td style={{ color: 'var(--text-dim)', fontSize: 12 }}>{r.team}</td>
+            <td className="mono" style={{ fontSize: 13, color: r.self ? 'var(--yellow)' : 'var(--text)' }}>
+              {r.gap}
+            </td>
+            <td className="mono" style={{
+              fontSize: 12,
+              color: r.lastLapDiff === '—' ? 'var(--text-muted)' :
+                r.lastLapDiff.startsWith('+') ? 'var(--accent)' : 'var(--green)',
+            }}>
+              {r.lastLapDiff}
+            </td>
+            <td style={{ textAlign: 'center', fontSize: 11 }}>
+              <span style={{ color: r.threatColor, fontWeight: 600 }}>{r.threat}</span>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+// ── AI Strategy Call — dynamic, context-aware ───────────────────────────────
+
+function AIStrategyCall({ position, lapCount, fuelLoad, lastLap, bestLap, lapAnomaly }: {
+  position: number; lapCount: number; fuelLoad: number; lastLap: number; bestLap: number; lapAnomaly: boolean;
+}) {
+  const lap = validLap(lapCount);
+  const fuelOk = validFuel(fuelLoad);
+  const projected = fuelOk ? fuelProjection(lapCount, fuelLoad) : 0;
+  const isEarly = lap !== null && lap <= 5;
+  const isMid = lap !== null && lap > 5 && lap <= 12;
+  const isLate = lap !== null && lap > 12;
+
+  // Build dynamic strategy list based on race state
+  const strategies: { num: number; text: string; urgency: 'low' | 'medium' | 'high' }[] = [];
+
+  // Position advice
+  if (position === 3) {
+    strategies.push({ num: 1, text: `Hold P${position} and protect the rear tyre until Lap 8.`, urgency: 'medium' });
+    strategies.push({ num: 2, text: 'Attack P2 in Sector 3 if gap drops below 0.4s.', urgency: 'low' });
+  } else if (position < 3) {
+    strategies.push({ num: 1, text: `Defend P${position} — rivals have fresher tyres.`, urgency: 'high' });
+  } else {
+    strategies.push({ num: 1, text: `P${position} — look ahead: gap management to P${position - 1}.`, urgency: 'medium' });
+  }
+
+  // Fuel advice
+  if (fuelOk) {
+    if (projected < 0) {
+      strategies.push({ num: strategies.length + 1, text: `⚠ FUEL CRITICAL: will be –${Math.abs(projected).toFixed(1)}kg short. Engage Map 1 now.`, urgency: 'high' });
+    } else if (projected < 2) {
+      strategies.push({ num: strategies.length + 1, text: `Fuel tight: projected +${projected.toFixed(1)}kg at finish. Consider lift & coast.`, urgency: 'high' });
+    } else {
+      strategies.push({ num: strategies.length + 1, text: `Fuel nominal — ${fuelLoad.toFixed(1)}kg remaining (${(fuelLoad / FUEL_PER_LAP).toFixed(1)} laps).`, urgency: 'low' });
+    }
+  }
+
+  // Pit advice
+  if (isEarly) {
+    strategies.push({ num: strategies.length + 1, text: 'Optimal pit remains Lap 11 — protect the rear.', urgency: 'low' });
+  } else if (isMid) {
+    strategies.push({ num: strategies.length + 1, text: 'Pit window closing — plan box in 2–3 laps.', urgency: 'high' });
+  } else if (isLate) {
+    strategies.push({ num: strategies.length + 1, text: 'Last stint — push to finish. No pit planned.', urgency: 'medium' });
+  }
+
+  // Anomaly feedback
+  if (lapAnomaly) {
+    strategies.push({ num: strategies.length + 1, text: '⚠ Last lap flagged anomalous — check telemetry for off-track or traffic.', urgency: 'high' });
+  }
+
+  // Pace vs best
+  const delta = lastLap - bestLap;
+  if (delta > 1.5) {
+    strategies.push({ num: strategies.length + 1, text: `Pace drop: +${delta.toFixed(2)}s off best. Check tyre condition.`, urgency: 'medium' });
+  }
+
+  // Confidence: how many items are low urgency vs high
+  const highCount = strategies.filter(s => s.urgency === 'high').length;
+  const confidence = highCount === 0 ? 87 : Math.max(55, 87 - highCount * 12);
+  const riskLabel = highCount >= 2 ? 'High' : highCount === 1 ? 'Medium' : 'Low';
+  const riskColor = highCount >= 2 ? 'var(--accent)' : highCount === 1 ? 'var(--yellow)' : 'var(--green)';
+
+  return (
+    <div className="card mb-4" style={{
+      background: 'linear-gradient(135deg, rgba(224,55,55,0.10), rgba(255,255,255,0.02))',
+      borderColor: 'color-mix(in srgb, var(--accent) 32%, transparent)'
+    }}>
+      <div className="card-header">
+        <span className="card-title flex items-center gap-2"><Zap size={14} style={{ color: 'var(--accent)' }} /> AI Strategy Call</span>
+        <div className="flex items-center gap-2">
+          <span className="badge badge-blue">{confidence}% confidence</span>
+          <span className="badge" style={{ background: `${riskColor}18`, color: riskColor, border: `1px solid ${riskColor}40` }}>
+            Risk · {riskLabel}
+          </span>
+        </div>
+      </div>
+      <ul style={{ listStyle: 'none', margin: '8px 0 0', padding: 0, display: 'flex', flexDirection: 'column', gap: 7 }}>
+        {strategies.map(s => (
+          <li key={s.num} style={{
+            display: 'flex', gap: 8, fontSize: 13,
+            color: s.urgency === 'high' ? 'var(--accent)' : undefined,
+            fontWeight: s.urgency === 'high' ? 600 : 400,
+          }}>
+            <span style={{
+              color: s.urgency === 'high' ? 'var(--accent)' : 'var(--text-muted)',
+              fontWeight: 800,
+              flexShrink: 0,
+            }}>{s.num}</span>
+            <span dangerouslySetInnerHTML={{ __html: s.text }} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+// ── Gear Distribution Chart ─────────────────────────────────────────────────
+
+function GearDistribution({ currentGear }: { currentGear: number }) {
+  // Normalized distribution: lower gears used less (acceleration zones),
+  // 3rd & 4th most (medium speed corners), 5th & 6th main straight
+  const base = [4, 8, 22, 32, 20, 14];
+  const raw = base.map((v, i) => Math.max(0.5, v + (i + 1 === currentGear ? 4 : 0)));
+  const total = raw.reduce((a, b) => a + b, 0);
+  const dist = raw.map((v, i) => ({ gear: i + 1, pct: (v / total) * 100, active: i + 1 === currentGear }));
+
+  return (
+    <div className="card-body" style={{ flexDirection: 'column', gap: 6 }}>
+      {dist.map(g => (
+        <div key={g.gear} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{
+            fontFamily: 'JetBrains Mono,monospace', fontWeight: 800, fontSize: 13,
+            width: 20, textAlign: 'right',
+            color: g.active ? 'var(--accent)' : 'var(--text-muted)',
+          }}>
+            {g.gear}
+          </span>
+          <div style={{ flex: 1 }}>
+            <div className="bar-track">
+              <div className="bar-fill" style={{
+                width: `${g.pct}%`,
+                background: g.active ? 'var(--accent)' : 'rgba(255,255,255,0.12)',
+              }} />
+            </div>
+          </div>
+          <span style={{ fontSize: 10, fontFamily: 'JetBrains Mono,monospace', color: 'var(--text-muted)', width: 32 }}>
+            {g.pct.toFixed(0)}%
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── Pace Model Chart — with anomaly marking ─────────────────────────────────
+
+function PaceModelChart({ lapCount, lastLap, bestLap, lapAnomaly }: {
+  lapCount: number; lastLap: number; bestLap: number; lapAnomaly: boolean;
+}) {
+  const count = Math.min(8, Math.max(1, validLap(lapCount) ?? 1));
+  const currentDelta = lastLap - bestLap;
+
+  return (
+    <div className="card-body" style={{ flexDirection: 'column' }}>
+      <svg width="100%" height="100" viewBox="0 0 240 100" preserveAspectRatio="xMidYMid meet">
+        {/* Zero line */}
+        <line x1="25" y1="50" x2="235" y2="50" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
+        {/* ± labels */}
+        <text x="2" y="32" fill="#535A6E" fontSize="8" fontFamily="JetBrains Mono,monospace">+0.15</text>
+        <text x="2" y="70" fill="#535A6E" fontSize="8" fontFamily="JetBrains Mono,monospace">–0.15</text>
+        <text x="2" y="52" fill="#535A6E" fontSize="8" fontFamily="JetBrains Mono,monospace">0.00</text>
+        {/* Delta bars for last N laps */}
+        {Array.from({ length: count }, (_, i) => {
+          const lap = lapCount - count + 1 + i;
+          // Simulated pace delta — degrades slightly each lap, last = current delta
+          const simulated = Math.sin(lap * 0.9 + 1.2) * 0.06 + (i === count - 1 ? currentDelta * 0.3 : 0);
+          const delta = Math.min(0.15, Math.max(-0.15, simulated));
+          const barH = Math.abs(delta) * 350;
+          const isGain = delta < 0;
+          const barY = isGain ? 50 - barH : 50;
+          const barX = 28 + i * 26;
+          const isAnomaly = lapAnomaly && i === count - 1;
+          return (
+            <g key={lap}>
+              <rect x={barX} y={barY} width="18" height={Math.max(2, barH)}
+                fill={isAnomaly ? 'var(--orange)' : isGain ? 'var(--green)' : 'var(--accent)'}
+                opacity={isAnomaly ? 0.9 : 0.75} rx="2"
+                stroke={isAnomaly ? 'var(--orange)' : 'none'}
+                strokeWidth={isAnomaly ? 1 : 0}
+              />
+              <text x={barX + 9} y="93" textAnchor="middle" fill="#535A6E" fontSize="7"
+                fontFamily="JetBrains Mono,monospace">L{lap}</text>
+              {isAnomaly && (
+                <text x={barX + 9} y="8" textAnchor="middle" fill="var(--orange)" fontSize="7"
+                  fontFamily="JetBrains Mono,monospace" fontWeight="700">!</text>
+              )}
+            </g>
+          );
+        })}
+      </svg>
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', textAlign: 'center', marginTop: 2 }}>
+        Green = faster than model · Red = slower · <span style={{ color: 'var(--orange)' }}>Orange = anomaly</span>
+      </div>
+    </div>
+  );
+}
+
+// ── Tyre Display — with center temps and pressure ──────────────────────────
+
+interface TyreDisplayProps {
+  frontLeft: number; frontRight: number;
+  rearLeft: number; rearRight: number;
+  frontCompound: string; rearCompound: string;
+  frontAge: number; rearAge: number;
+}
+
+/** Simulated tyre center temperature (slightly higher than surface). */
+function centerTemp(surface: number): number {
+  return Math.round(surface + 3 + Math.random() * 5);
+}
+
+/** Simulated tyre pressure in psi (MotoGP: ~24–27 psi front, ~20–23 rear). */
+function tyrePressure(isFront: boolean): number {
+  return isFront ? 24.5 + Math.random() * 2 : 20.5 + Math.random() * 2;
+}
+
+function TyreDisplay(props: TyreDisplayProps) {
+  const showPressure = true;
+
+  const renderTyre = (label: string, side: 'L' | 'R', temp: number, compound: string, isFront: boolean) => {
+    const center = centerTemp(temp);
+    const press = showPressure ? tyrePressure(isFront) : 0;
+    const tempColor = temp > 105 ? 'var(--accent)' : temp > 95 ? 'var(--yellow)' : 'var(--green)';
+    const wearLabel = props.frontAge > 12 ? 'Worn' : props.frontAge > 6 ? 'Used' : 'Fresh';
+
+    return (
+      <div key={label + side} style={{
+        flex: 1, padding: '6px 8px', borderRadius: 6,
+        background: temp > 105 ? 'rgba(224,55,55,0.08)' : temp > 95 ? 'rgba(245,158,11,0.08)' : 'rgba(34,197,94,0.06)',
+        border: '1px solid',
+        borderColor: temp > 105 ? 'rgba(224,55,55,0.2)' : temp > 95 ? 'rgba(245,158,11,0.2)' : 'rgba(34,197,94,0.15)',
+        minWidth: 60,
+      }}>
+        <div style={{ display:'flex', justifyContent:'space-between', marginBottom:4 }}>
+          <span style={{ fontSize:9, fontWeight:700, color:'var(--text-muted)', textTransform:'uppercase', letterSpacing:'0.05em' }}>
+            {side}
+          </span>
+          <span style={{ fontSize:9, fontFamily:'JetBrains Mono,monospace', color: tempColor, fontWeight:700 }}>
+            {temp}°S / {center}°C
+          </span>
+        </div>
+        <div style={{ display:'flex', justifyContent:'space-between', fontSize:9, color:'var(--text-dim)' }}>
+          <span>{compound}</span>
+          {showPressure && <span>{press.toFixed(1)} psi</span>}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="card-body">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {/* Front row */}
+        <div>
+          <div className="card-label" style={{ marginBottom: 4, fontSize: 10 }}>
+            Front — {props.frontCompound} · Age: {props.frontAge} laps
+          </div>
+          <div style={{ display: 'flex', gap: 6 }}>
+            {renderTyre('front', 'L', props.frontLeft, props.frontCompound, true)}
+            {renderTyre('front', 'R', props.frontRight, props.frontCompound, true)}
+          </div>
+        </div>
+        {/* Rear row */}
+        <div>
+          <div className="card-label" style={{ marginBottom: 4, fontSize: 10 }}>
+            Rear — {props.rearCompound} · Age: {props.rearAge} laps
+          </div>
+          <div style={{ display: 'flex', gap: 6 }}>
+            {renderTyre('rear', 'L', props.rearLeft, props.rearCompound, false)}
+            {renderTyre('rear', 'R', props.rearRight, props.rearCompound, false)}
+          </div>
+        </div>
+      </div>
+      {/* Legend */}
+      <div style={{ display:'flex', gap:8, marginTop:6, fontSize:9, color:'var(--text-dim)' }}>
+        <span>S = Surface · C = Center</span>
+      </div>
+    </div>
+  );
+}
+
+// ── Main Page ───────────────────────────────────────────────────────────────
 
 export function OverviewPage() {
   const t = useLiveTelemetry();
@@ -291,6 +829,14 @@ export function OverviewPage() {
   const [activeTab, setActiveTab] = useState<'live' | 'telemetry'>('live');
   const templateIdx  = useRef(0);
   const lastLapRef   = useRef(t.lapCount);
+
+  // ── Validation guard: if lap counter is bogus, show a clear error ──────
+  const lapValid = validLap(t.lapCount);
+  const displayLap = lapValid !== null ? t.lapCount : '—';
+
+  // Fuel projection
+  const projectedFuel = validFuel(t.fuelLoad) ? fuelProjection(t.lapCount, t.fuelLoad) : null;
+  const fuelCritical = projectedFuel !== null && projectedFuel < 1;
 
   // Generate feed events every 9s
   useEffect(() => {
@@ -319,14 +865,16 @@ export function OverviewPage() {
 
   const rivals = buildRivals(t.position, t.gap);
 
-  // Lap delta analysis
-  const lapDelta = t.lastLap - t.bestLap;
+  // Lap delta analysis — only when data is valid
+  const lapDelta = validLapTime(t.lastLap) && validLapTime(t.bestLap)
+    ? t.lastLap - t.bestLap
+    : 0;
   const lapDeltaStr   = lapDelta >= 0 ? `+${lapDelta.toFixed(3)}` : lapDelta.toFixed(3);
   const lapDeltaColor = lapDelta > 0.5 ? 'var(--accent)' : lapDelta > 0.1 ? 'var(--yellow)' : 'var(--green)';
 
-  // Sector deltas — split the real lap delta across 3 sectors so they SUM to it.
+  // Sector deltas
   const sectorDeltas = useMemo(() => {
-    const frac = [0.39, 0.73, -0.12]; // sums to 1.0 → sectors add up to the lap delta
+    const frac = [0.39, 0.73, -0.12];
     return [
       { sector: 'S1', delta: lapDelta * frac[0] },
       { sector: 'S2', delta: lapDelta * frac[1] },
@@ -334,35 +882,28 @@ export function OverviewPage() {
     ];
   }, [lapDelta]);
 
-  // Gear distribution — 6-speed MotoGP box, normalised to exactly 100%.
-  const gearDist = useMemo(() => {
-    const gear = t.gear;
-    const base = [3, 6, 19, 34, 24, 14]; // 6 gears, Mugello-ish
-    const raw = base.map((v, i) => Math.max(0.5, v + (i + 1 === gear ? 5 : 0)));
-    const total = raw.reduce((a, b) => a + b, 0);
-    return raw.map((v, i) => ({ gear: i + 1, pct: (v / total) * 100, active: i + 1 === gear }));
-  }, [t.gear]);
-
-  // Fuel model
-  const fuelUsedPerLap = 2.18;
-  const fuelRemaining = t.fuelLoad;
-  const lapsOnFuel = fuelRemaining / fuelUsedPerLap;
-
   const posColor = (pos: number) =>
     pos === 1 ? '#F59E0B' : pos === 2 ? '#C0C0C0' : pos === 3 ? '#CD7F32' : 'var(--text-muted)';
 
   return (
     <div className="page">
 
-      {/* ── Header ──────────────────────────────────────────────────────────── */}
+      {/* ═══ HEADER with validation guard ═════════════════════════════════ */}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">Race Overview</h1>
-          <p className="page-subtitle">GP Mugello · Round 7 of 20 · Lap {t.lapCount} / 23</p>
+          <p className="page-subtitle">
+            GP Mugello · Round 7 of 20 · Lap {displayLap} / 23
+            {!lapValid && <span style={{ marginLeft:8, color:'var(--accent)', fontSize:11 }}>
+              ⚠ Data validation active
+            </span>}
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <span className="badge badge-red" style={{ animation: 'pulse 2s infinite' }}>RACE IN PROGRESS</span>
-          <span className="badge badge-green">All agents nominal</span>
+          {t.session === 'test' && <span className="badge badge-yellow">TEST SESSION</span>}
+          {fuelCritical && <span className="badge badge-red" style={{ animation: 'pulse 1.5s infinite' }}>FUEL CRITICAL</span>}
+          {t.lapAnomaly && <span className="badge badge-orange" style={{ animation: 'pulse 1s infinite' }}>ANOMALY</span>}
         </div>
       </div>
 
@@ -378,13 +919,16 @@ export function OverviewPage() {
       {activeTab === 'telemetry' && <MotorbikeDiagnostics t={t as unknown as BikeTelemetry} />}
 
       {activeTab === 'live' && (<>
-      {/* ── KPI row ─────────────────────────────────────────────────────────── */}
+
+      {/* ═══ KPI ROW ════════════════════════════════════════════════════ */}
       <div className="grid-4 mb-4">
         <div className="stat-tile accent-border">
           <div className="stat-tile__label">Position</div>
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8 }}>
             <span className="stat-tile__value">P{t.position}</span>
-            <span className="badge badge-yellow" style={{ marginBottom: 4 }}>GAP {t.gap}{t.gap === 'leader' ? '' : 's'}</span>
+            <span className="badge badge-yellow" style={{ marginBottom: 4 }}>
+              {t.gap === 'leader' ? 'LEADER' : `GAP ${t.gap}`}{t.gap === 'leader' ? '' : 's'}
+            </span>
           </div>
           <div className="stat-tile__delta" style={{ color: t.position <= 3 ? 'var(--green)' : 'var(--yellow)' }}>
             {t.position <= 3 ? `Top ${t.position} · points zone` : 'Outside top 3'}
@@ -392,44 +936,69 @@ export function OverviewPage() {
         </div>
         <div className="stat-tile green-border">
           <div className="stat-tile__label">Last Lap</div>
-          <span className="stat-tile__value text-mono" style={{ fontSize: 20 }}>{formatLap(t.lastLap)}</span>
-          <div className="stat-tile__delta" style={{ color: lapDeltaColor }}>
-            {lapDeltaStr}s vs personal best
-          </div>
+          {validLapTime(t.lastLap) ? (
+            <>
+              <span className="stat-tile__value text-mono" style={{ fontSize: 20 }}>{formatLap(t.lastLap)}</span>
+              <div className="stat-tile__delta" style={{ color: lapDeltaColor }}>
+                {lapDeltaStr}s vs personal best
+              </div>
+            </>
+          ) : (
+            <>
+              <span className="stat-tile__value text-mono" style={{ fontSize: 20, color:'var(--accent)' }}>—.——.———</span>
+              <div className="stat-tile__delta" style={{ color:'var(--accent)' }}>Unavailable</div>
+            </>
+          )}
         </div>
         <div className="stat-tile blue-border">
           <div className="stat-tile__label">Best Lap</div>
-          <span className="stat-tile__value text-mono" style={{ fontSize: 20 }}>{formatLap(t.bestLap)}</span>
-          <div className="stat-tile__delta delta-pos">⚡ Personal best</div>
+          {validLapTime(t.bestLap) ? (
+            <>
+              <span className="stat-tile__value text-mono" style={{ fontSize: 20 }}>{formatLap(t.bestLap)}</span>
+              <div className="stat-tile__delta delta-pos">⚡ Personal best</div>
+            </>
+          ) : (
+            <>
+              <span className="stat-tile__value text-mono" style={{ fontSize: 20, color:'var(--accent)' }}>—.——.———</span>
+              <div className="stat-tile__delta" style={{ color:'var(--accent)' }}>Unavailable</div>
+            </>
+          )}
         </div>
         <div className="stat-tile yellow-border">
           <div className="stat-tile__label">Fuel Remaining</div>
-          <span className="stat-tile__value" style={{ color: fuelRemaining < 5 ? 'var(--accent)' : undefined }}>
-            {fuelRemaining.toFixed(1)}<span className="stat-tile__unit">kg</span>
-          </span>
-          <div className="stat-tile__delta delta-neu">
-            ~{lapsOnFuel.toFixed(1)} laps @ {fuelUsedPerLap} kg/lap
-          </div>
+          {validFuel(t.fuelLoad) ? (
+            <>
+              <span className="stat-tile__value" style={{ color: fuelCritical ? 'var(--accent)' : undefined }}>
+                {t.fuelLoad.toFixed(1)}<span className="stat-tile__unit">kg</span>
+              </span>
+              <div className="stat-tile__delta" style={{ color: fuelCritical ? 'var(--accent)' : 'var(--text-dim)' }}>
+                {projectedFuel !== null && (
+                  projectedFuel < 0
+                    ? `⚠ Short ${Math.abs(projectedFuel).toFixed(1)} kg at finish`
+                    : `Projected +${projectedFuel.toFixed(1)} kg · @ ${FUEL_PER_LAP} kg/lap`
+                )}
+              </div>
+            </>
+          ) : (
+            <>
+              <span className="stat-tile__value" style={{ color:'var(--accent)' }}>—<span className="stat-tile__unit">kg</span></span>
+              <div className="stat-tile__delta" style={{ color:'var(--accent)' }}>Sensor error</div>
+            </>
+          )}
         </div>
       </div>
 
-      {/* ── AI Strategy Call — turns Race Overview into a decision screen ────── */}
-      <div className="card mb-4" style={{ background: 'linear-gradient(135deg, rgba(224,55,55,0.10), rgba(255,255,255,0.02))', borderColor: 'color-mix(in srgb, var(--accent) 32%, transparent)' }}>
-        <div className="card-header">
-          <span className="card-title flex items-center gap-2"><Zap size={14} style={{ color: 'var(--accent)' }} /> AI Strategy Call</span>
-          <div className="flex items-center gap-2">
-            <span className="badge badge-blue">87% confidence</span>
-            <span className="badge badge-yellow">Risk · Medium</span>
-          </div>
-        </div>
-        <ul style={{ listStyle: 'none', margin: '8px 0 0', padding: 0, display: 'flex', flexDirection: 'column', gap: 7 }}>
-          <li style={{ display: 'flex', gap: 8, fontSize: 13 }}><span style={{ color: 'var(--accent)', fontWeight: 800 }}>1</span> Hold P{t.position} and protect the rear tyre until Lap 8.</li>
-          <li style={{ display: 'flex', gap: 8, fontSize: 13 }}><span style={{ color: 'var(--accent)', fontWeight: 800 }}>2</span> Attack P2 in Sector 3 if the gap drops below 0.4&nbsp;s.</li>
-          <li style={{ display: 'flex', gap: 8, fontSize: 13 }}><span style={{ color: 'var(--accent)', fontWeight: 800 }}>3</span> Optimal pit remains <strong style={{ marginLeft: 4 }}>&nbsp;Lap 11</strong>&nbsp;unless the yellow flag extends.</li>
-        </ul>
-      </div>
+      {/* ═══ AI STRATEGY CALL ═══════════════════════════════════════════ */}
+      <AIStrategyCall
+        position={t.position}
+        lapCount={t.lapCount}
+        fuelLoad={t.fuelLoad}
+        lastLap={t.lastLap}
+        bestLap={t.bestLap}
+        lapAnomaly={t.lapAnomaly}
+      />
 
-      {/* ── Middle grid ─────────────────────────────────────────────────────── */}
+      {/* ═══ MIDDLE GRID: Feed + Live Snapshot + Tyres ═════════════════ */}
       <div className="grid-3-2 mb-4">
 
         {/* Left: Agent event feed */}
@@ -455,7 +1024,7 @@ export function OverviewPage() {
         {/* Right column */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 
-          {/* Live snapshot */}
+          {/* Live Snapshot */}
           <div className="card">
             <div className="card-header">
               <span className="card-title flex items-center gap-2">
@@ -510,43 +1079,27 @@ export function OverviewPage() {
             </div>
           </div>
 
-          {/* Tyres */}
+          {/* Tyres — full display with center temps + pressure */}
           <div className="card">
             <div className="card-header">
               <span className="card-title">Tyres</span>
               <span className="badge badge-orange">Lap {t.rearTyreAge}</span>
             </div>
-            <div className="card-body">
-              <div style={{ display: 'flex', gap: 12 }}>
-                <div style={{ flex: 1 }}>
-                  <div className="card-label" style={{ marginBottom: 6 }}>Front — {t.frontCompound}</div>
-                  <div style={{ display: 'flex', gap: 6 }}>
-                    {[{ temp: t.tireFrontLeft, label: 'L' }, { temp: t.tireFrontRight, label: 'R' }].map(tire => (
-                      <div key={tire.label} className={`tire ${tire.temp > 100 ? 'hot' : tire.temp > 90 ? 'warm' : 'nominal'}`}>
-                        <span className="t-temp">{tire.temp}°</span>
-                        <span className="t-label">{tire.label}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div className="card-label" style={{ marginBottom: 6 }}>Rear — {t.rearCompound}</div>
-                  <div style={{ display: 'flex', gap: 6 }}>
-                    {[{ temp: t.tireRearLeft, label: 'L' }, { temp: t.tireRearRight, label: 'R' }].map(tire => (
-                      <div key={tire.label} className={`tire ${tire.temp > 105 ? 'hot' : tire.temp > 95 ? 'warm' : 'nominal'}`}>
-                        <span className="t-temp">{tire.temp}°</span>
-                        <span className="t-label">{tire.label}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
+            <TyreDisplay
+              frontLeft={t.tireFrontLeft}
+              frontRight={t.tireFrontRight}
+              rearLeft={t.tireRearLeft}
+              rearRight={t.tireRearRight}
+              frontCompound={t.frontCompound}
+              rearCompound={t.rearCompound}
+              frontAge={t.frontTyreAge}
+              rearAge={t.rearTyreAge}
+            />
           </div>
         </div>
       </div>
 
-      {/* ── Analysis row ─────────────────────────────────────────────────────── */}
+      {/* ═══ ANALYSIS ROW ══════════════════════════════════════════════ */}
       <div className="grid-3 mb-4">
 
         {/* Sector delta analysis */}
@@ -559,18 +1112,27 @@ export function OverviewPage() {
             <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Last lap</span>
           </div>
           <div className="card-body" style={{ flexDirection: 'column', gap: 14 }}>
-            {sectorDeltas.map(s => (
-              <SectorBar key={s.sector} sector={s.sector} delta={s.delta} base={0.5} />
-            ))}
-            <div style={{ paddingTop: 10, borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Total</span>
-              <span style={{
-                fontFamily: 'JetBrains Mono,monospace', fontSize: 14, fontWeight: 700,
-                color: lapDeltaColor,
-              }}>
-                {lapDeltaStr}s
-              </span>
-            </div>
+            {validLapTime(t.lastLap) && validLapTime(t.bestLap) ? (
+              <>
+                {sectorDeltas.map(s => (
+                  <SectorBar key={s.sector} sector={s.sector} delta={s.delta} base={0.5} />
+                ))}
+                <div style={{ paddingTop: 10, borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Total</span>
+                  <span style={{
+                    fontFamily: 'JetBrains Mono,monospace', fontSize: 14, fontWeight: 700,
+                    color: lapDeltaColor,
+                  }}>
+                    {lapDeltaStr}s
+                  </span>
+                </div>
+              </>
+            ) : (
+              <div style={{ padding:12, textAlign:'center', color:'var(--text-muted)', fontSize:12 }}>
+                <AlertTriangle size={14} style={{ display:'inline', verticalAlign:'middle', marginRight:6 }} />
+                Lap time data unavailable
+              </div>
+            )}
           </div>
         </div>
 
@@ -580,75 +1142,25 @@ export function OverviewPage() {
             <span className="card-title">Gear Distribution</span>
             <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>% lap time per gear</span>
           </div>
-          <div className="card-body" style={{ flexDirection: 'column', gap: 6 }}>
-            {gearDist.map(g => (
-              <div key={g.gear} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{
-                  fontFamily: 'JetBrains Mono,monospace', fontWeight: 800, fontSize: 13,
-                  width: 20, textAlign: 'right',
-                  color: g.active ? 'var(--accent)' : 'var(--text-muted)',
-                }}>
-                  {g.gear}
-                </span>
-                <div style={{ flex: 1 }}>
-                  <div className="bar-track">
-                    <div className="bar-fill" style={{
-                      width: `${g.pct}%`,
-                      background: g.active ? 'var(--accent)' : 'rgba(255,255,255,0.12)',
-                    }} />
-                  </div>
-                </div>
-                <span style={{ fontSize: 10, fontFamily: 'JetBrains Mono,monospace', color: 'var(--text-muted)', width: 32 }}>
-                  {g.pct.toFixed(0)}%
-                </span>
-              </div>
-            ))}
-          </div>
+          <GearDistribution currentGear={t.gear} />
         </div>
 
-        {/* Pace model: last 8 laps actual vs DT predicted */}
+        {/* Pace model */}
         <div className="card">
           <div className="card-header">
             <span className="card-title">Pace vs Model</span>
             <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Digital Twin Δ</span>
           </div>
-          <div className="card-body" style={{ flexDirection: 'column' }}>
-            <svg width="100%" height="90" viewBox="0 0 220 90" preserveAspectRatio="xMidYMid meet">
-              {/* Zero line */}
-              <line x1="0" y1="45" x2="220" y2="45" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
-              {/* +0.1s / -0.1s labels */}
-              <text x="2" y="30" fill="#535A6E" fontSize="8" fontFamily="JetBrains Mono,monospace">+0.10</text>
-              <text x="2" y="62" fill="#535A6E" fontSize="8" fontFamily="JetBrains Mono,monospace">–0.10</text>
-              <text x="2" y="47" fill="#535A6E" fontSize="8" fontFamily="JetBrains Mono,monospace">0.00</text>
-              {/* Delta bars for last 8 laps */}
-              {(() => {
-                const count = Math.min(8, Math.max(1, t.lapCount));
-                return Array.from({ length: count }, (_, i) => {
-                  const lap = t.lapCount - count + 1 + i;   // unique, ending at the current lap
-                  const delta = Math.sin(lap * 0.9 + 1.2) * 0.08 + (i === count - 1 ? lapDelta * 0.3 : 0);
-                  const barH = Math.abs(delta) * 400;
-                  const isGain = delta < 0;
-                  const barY = isGain ? 45 - barH : 45;
-                  const barX = 30 + i * 25;
-                  return (
-                    <g key={lap}>
-                      <rect x={barX} y={barY} width="18" height={barH}
-                        fill={isGain ? 'var(--green)' : 'var(--accent)'} opacity="0.75" rx="2" />
-                      <text x={barX + 9} y="85" textAnchor="middle" fill="#535A6E" fontSize="7"
-                        fontFamily="JetBrains Mono,monospace">L{lap}</text>
-                    </g>
-                  );
-                });
-              })()}
-            </svg>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)', textAlign: 'center', marginTop: 4 }}>
-              Green = faster than model · Red = slower
-            </div>
-          </div>
+          <PaceModelChart
+            lapCount={t.lapCount}
+            lastLap={t.lastLap}
+            bestLap={t.bestLap}
+            lapAnomaly={t.lapAnomaly}
+          />
         </div>
       </div>
 
-      {/* ── Track map + Championship + Stint ──────────────────────────────────── */}
+      {/* ═══ TRACK MAP + CHAMPIONSHIP + STINT ══════════════════════════ */}
       <div className="grid-2 mb-4">
         <div className="card">
           <div className="card-header">
@@ -658,7 +1170,7 @@ export function OverviewPage() {
             </span>
           </div>
           <div className="card-body" style={{ flexDirection:'column' }}>
-            <MiniTrackMap trackPos={t.trackPos} />
+            <MugelloCircuit trackPos={t.trackPos} lapAnomaly={t.lapAnomaly} />
           </div>
         </div>
 
@@ -669,7 +1181,7 @@ export function OverviewPage() {
               <span className="badge badge-yellow">After R6</span>
             </div>
             <div className="card-body" style={{ flexDirection:'column' }}>
-              <ChampionshipBars />
+              <ChampionshipBars currentPos={t.position} />
             </div>
           </div>
           <div className="card">
@@ -684,70 +1196,33 @@ export function OverviewPage() {
         </div>
       </div>
 
-      {/* ── Race standings ────────────────────────────────────────────────────── */}
+      {/* ═══ RACE STANDINGS ════════════════════════════════════════════ */}
       <div className="card">
         <div className="card-header">
           <span className="card-title flex items-center gap-2">
             <Flag size={14} />
-            Race Standings — Lap {t.lapCount}
+            Race Standings — Lap {displayLap}
           </span>
           <span className="badge badge-muted">Top 5</span>
         </div>
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th style={{ width: 48 }}>Pos</th>
-              <th>Rider</th>
-              <th>Team</th>
-              <th>Gap to lead</th>
-              <th>Pace vs you</th>
-              <th style={{ width: 100 }}>Threat</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rivals.map(r => (
-              <tr key={r.num} style={r.self ? { background: 'var(--accent-dim)' } : {}}>
-                <td>
-                  <span className="text-mono" style={{ fontWeight: 800, fontSize: 13, color: posColor(r.pos) }}>
-                    P{r.pos}
-                  </span>
-                </td>
-                <td>
-                  <span style={{ fontWeight: r.self ? 700 : 500, color: r.self ? 'var(--accent)' : 'var(--text)' }}>
-                    {r.rider}
-                  </span>
-                  {r.self && <span className="badge badge-red" style={{ marginLeft: 8, fontSize: 9 }}>YOU</span>}
-                </td>
-                <td style={{ color: 'var(--text-dim)', fontSize: 12 }}>{r.team}</td>
-                <td className="mono" style={{ fontSize: 13, color: r.self ? 'var(--yellow)' : 'var(--text)' }}>
-                  {r.gap}
-                </td>
-                <td className="mono" style={{
-                  fontSize: 12,
-                  color: r.lastLapDiff === '—' ? 'var(--text-muted)' :
-                    r.lastLapDiff.startsWith('+') ? 'var(--accent)' : 'var(--green)',
-                }}>
-                  {r.lastLapDiff}
-                </td>
-                <td style={{ textAlign: 'center', fontSize: 11 }}>
-                  {r.self ? <span style={{ color: 'var(--text-muted)' }}>—</span> : (() => {
-                    const faster = r.lastLapDiff.startsWith('-');
-                    const ahead = r.pos < t.position;
-                    const label = ahead ? (faster ? 'Pulling away' : 'Target') : (faster ? 'Closing' : 'Holding');
-                    const col = (label === 'Pulling away' || label === 'Closing') ? 'var(--accent)' : 'var(--green)';
-                    return <span style={{ color: col, fontWeight: 600 }}>{label}</span>;
-                  })()}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <RaceStandingsTable rivals={rivals} position={t.position} />
         <div style={{ padding: '8px 14px', fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-muted)', borderTop: '1px solid var(--border)' }}>
-          Pace vs you: negative = faster than your last lap · Threat = pace + track position relative to P{t.position}
+          Pace vs you: – = faster than your last lap · Threat: pace + position relative to P{t.position}
         </div>
       </div>
-      </>)}
 
+      {/* ═══ RACE DATA INTEGRITY ═══════════════════════════════════════ */}
+      <div style={{ marginTop: 16 }}>
+        <DataIntegrity
+          fuelValid={t.fuelValid}
+          lapAnomaly={t.lapAnomaly}
+          lapCount={t.lapCount}
+          lastLap={t.lastLap}
+          bestLap={t.bestLap}
+        />
+      </div>
+
+      </>)}
     </div>
   );
 }
