@@ -11,7 +11,7 @@
  * Usage:
  *   <MultiChannelChart channels={channels} />
  */
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -28,10 +28,21 @@ export interface Channel {
   panelHeight: number;
 }
 
+export type XAxisMode = 'samples' | 'time' | 'distance' | 'trackPos';
+export type ScaleMode = 'auto' | 'manual';
+
 interface Props {
   channels: Channel[];
   /** Optional X-axis labels. Defaults to sample index. */
   xLabels?: string[];
+  /** X-axis display mode */
+  xAxisMode?: XAxisMode;
+  /** Y-axis scaling mode */
+  scaleMode?: ScaleMode;
+  /** Track length in meters (for distance mode) */
+  trackLength?: number;
+  /** Callback when cursor position changes */
+  onCursorChange?: (cursor: { index: number; values: Record<string, number> } | null) => void;
   /** Pixel width; used for viewBox (component itself is 100% wide). */
   svgWidth?: number;
 }
@@ -51,7 +62,10 @@ function hexToRgba(hex: string, alpha: number): string {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export function MultiChannelChart({ channels, xLabels, svgWidth = 880 }: Props) {
+export function MultiChannelChart({
+  channels, xLabels, xAxisMode = 'samples', scaleMode = 'manual',
+  trackLength = 5245, onCursorChange, svgWidth = 880,
+}: Props) {
   const svgRef = useRef<SVGSVGElement>(null);
   const [cursorIdx, setCursorIdx] = useState<number | null>(null);
 
@@ -78,12 +92,32 @@ export function MultiChannelChart({ channels, xLabels, svgWidth = 880 }: Props) 
 
   const handleMouseLeave = useCallback(() => setCursorIdx(null), []);
 
+  // ── Report cursor to parent ──────────────────────────────────────────────
+  useEffect(() => {
+    if (!onCursorChange) return;
+    if (cursorIdx === null) { onCursorChange(null); return; }
+    const values: Record<string, number> = {};
+    for (const ch of channels) {
+      if (cursorIdx < ch.data.length) {
+        values[ch.id] = ch.data[cursorIdx];
+      }
+    }
+    onCursorChange({ index: cursorIdx, values });
+  }, [cursorIdx, channels, onCursorChange]);
+
   // ── Build panels ──────────────────────────────────────────────────────────
   let yOffset = PAD.top;
   const panels = activeChannels.map(ch => {
     const panelTop = yOffset;
     yOffset += ch.panelHeight + 1; // +1 for separator
-    const [minV, maxV] = ch.range;
+    const [minV, maxV] = scaleMode === 'auto'
+      ? (() => {
+          const dMin = Math.min(...ch.data);
+          const dMax = Math.max(...ch.data);
+          const pad = (dMax - dMin) * 0.08 || 1;
+          return [dMin - pad, dMax + pad];
+        })()
+      : ch.range;
     const span = maxV - minV || 1;
     const innerH = ch.panelHeight - 6; // leave 3px top/bottom padding
 
@@ -263,7 +297,20 @@ export function MultiChannelChart({ channels, xLabels, svgWidth = 880 }: Props) 
           return Array.from({ length: Math.ceil(dataLen / tickEvery) }, (_, i) => {
             const idx = i * tickEvery;
             const x = xOf(idx);
-            const label = xLabels ? xLabels[idx] : `${idx}`;
+            let label: string;
+            switch (xAxisMode) {
+              case 'time':
+                label = `${(idx / 10).toFixed(1)}s`;
+                break;
+              case 'distance':
+                label = `${Math.round((idx / (dataLen - 1)) * trackLength)}m`;
+                break;
+              case 'trackPos':
+                label = `${Math.round((idx / (dataLen - 1)) * 100)}%`;
+                break;
+              default:
+                label = xLabels ? xLabels[idx] : `${idx}`;
+            }
             return (
               <text key={idx}
                 x={x} y={axisY}
@@ -284,7 +331,7 @@ export function MultiChannelChart({ channels, xLabels, svgWidth = 880 }: Props) 
             <rect
               x={cX - 18}
               y={totalH - PAD.xAxis + 2}
-              width={36}
+              width={44}
               height={13}
               rx={3}
               fill="rgba(255,255,255,0.1)"
@@ -297,7 +344,14 @@ export function MultiChannelChart({ channels, xLabels, svgWidth = 880 }: Props) 
               textAnchor="middle"
               fontFamily="JetBrains Mono,monospace"
             >
-              {xLabels ? xLabels[cursorIdx] : `#${cursorIdx}`}
+              {(() => {
+                switch (xAxisMode) {
+                  case 'time': return `${(cursorIdx / 10).toFixed(1)}s`;
+                  case 'distance': return `${Math.round((cursorIdx / (dataLen - 1)) * trackLength)}m`;
+                  case 'trackPos': return `${Math.round((cursorIdx / (dataLen - 1)) * 100)}%`;
+                  default: return xLabels ? xLabels[cursorIdx] : `#${cursorIdx}`;
+                }
+              })()}
             </text>
           </g>
         )}
