@@ -1,9 +1,9 @@
 /**
- * InteractiveCircuitMap (engineer report §4) — the circuit map as the protagonist:
- * a clickable, numbered corner map with the racing line. Selecting a corner shows
- * its full breakdown — time loss, entry/exit speed, max lean, brake/throttle
- * timing, rear grip — and the AI Coach call. Colour + number + label (never
- * colour alone) so it is readable and WCAG-friendly.
+ * InteractiveCircuitMap — Mugello 15-turn circuit map with racing line.
+ *
+ * Click a corner to see full breakdown: loss, entry/exit speed, max lean,
+ * brake/throttle timing, rear grip, coach recommendation.
+ * Colour + number + label (never colour alone) — WCAG-friendly.
  */
 
 interface CornerMap {
@@ -12,18 +12,23 @@ interface CornerMap {
   brake: string; throttle: string; rearGrip: number; coach: string;
 }
 
-// Jarama-style closed loop; corner pins are the bends of the circuit.
+// Mugello 15-turn layout — clockwise, S/F near T15/Bucine
 const CORNERS: CornerMap[] = [
-  { n: 1, name: 'Nuvolari', x: 70, y: 70, lossS: 0.061, entry: 138, exit: 96, maxLean: 51, brake: '1 m late', throttle: 'on reference', rearGrip: 90, coach: 'Tidy — turn in a touch earlier to free the exit.' },
-  { n: 2, name: 'Le Mans', x: 150, y: 46, lossS: 0.022, entry: 96, exit: 92, maxLean: 48, brake: '1 m early', throttle: 'on reference', rearGrip: 92, coach: 'Reference-lap quality. Keep it.' },
-  { n: 3, name: 'Tunel', x: 245, y: 58, lossS: 0.216, entry: 84, exit: 90, maxLean: 55, brake: '9 m late', throttle: '0.18 s late', rearGrip: 86, coach: 'Release the brake earlier, roll more mid-corner speed, then open the gas progressively.' },
-  { n: 4, name: 'Ascari', x: 322, y: 96, lossS: 0.088, entry: 132, exit: 118, maxLean: 53, brake: '3 m late', throttle: '0.08 s late', rearGrip: 84, coach: 'Trail less front brake to settle the front and rotate.' },
-  { n: 5, name: 'Bus Stop', x: 352, y: 158, lossS: 0.131, entry: 76, exit: 70, maxLean: 49, brake: '4 m late', throttle: '0.12 s late', rearGrip: 80, coach: 'Pick the bike up sooner to get drive onto the straight.' },
-  { n: 6, name: 'Pedrosa', x: 320, y: 214, lossS: 0.074, entry: 154, exit: 140, maxLean: 56, brake: '2 m late', throttle: '0.06 s late', rearGrip: 82, coach: 'Use less lean and more steering to save the rear tyre.' },
-  { n: 7, name: 'Portago', x: 236, y: 238, lossS: 0.284, entry: 121, exit: 94, maxLean: 57, brake: '7 m late', throttle: '0.40 s late', rearGrip: 78, coach: 'Open the throttle 0.3 s earlier with lower lean; raise TC +1 to control the rear on exit.' },
-  { n: 8, name: 'Fonsi', x: 158, y: 230, lossS: 0.030, entry: 188, exit: 176, maxLean: 47, brake: 'on reference', throttle: 'on reference', rearGrip: 88, coach: 'Strong corner — no change.' },
-  { n: 9, name: 'Nieto', x: 86, y: 198, lossS: 0.142, entry: 103, exit: 88, maxLean: 54, brake: '5 m late', throttle: '0.10 s late', rearGrip: 83, coach: 'Brake 5 m earlier, square the corner for a better exit.' },
-  { n: 10, name: 'Bugatti', x: 48, y: 132, lossS: 0.048, entry: 142, exit: 130, maxLean: 50, brake: '1 m late', throttle: 'on reference', rearGrip: 87, coach: 'Hold the line.' },
+  { n: 1,  name: 'San Donato',     x: 135, y: 55,  lossS: 0.216, entry: 350, exit: 148, maxLean: 52, brake: '9 m late',   throttle: '0.18 s late', rearGrip: 84, coach: 'Brake 5 m earlier, trail less front brake to settle the bike.' },
+  { n: 2,  name: 'Luco',           x: 200, y: 48,  lossS: 0.022, entry: 155, exit: 142, maxLean: 45, brake: 'on ref.',    throttle: 'on ref.',      rearGrip: 92, coach: 'Keep it. Reference-lap quality.' },
+  { n: 3,  name: 'Poggio Secco',   x: 265, y: 58,  lossS: 0.037, entry: 148, exit: 132, maxLean: 48, brake: 'on ref.',    throttle: '0.02 s late',  rearGrip: 88, coach: 'Avoid aggressive brake release before weight settles over crest.' },
+  { n: 4,  name: 'Materassi',      x: 315, y: 82,  lossS: 0.030, entry: 182, exit: 171, maxLean: 47, brake: 'on ref.',    throttle: '0.02 s late',  rearGrip: 89, coach: 'Turn in a touch earlier to free the exit.' },
+  { n: 5,  name: 'Borgo S. Lorenzo', x: 335, y: 125, lossS: 0.026, entry: 171, exit: 184, maxLean: 46, brake: 'on ref.',  throttle: '0.01 s late',  rearGrip: 90, coach: 'Reference-lap quality. Hold the line.' },
+  { n: 6,  name: 'Casanova',       x: 330, y: 175, lossS: 0.061, entry: 218, exit: 204, maxLean: 50, brake: '1 m late',   throttle: '0.05 s late',  rearGrip: 86, coach: 'Pick the bike up sooner to get drive onto the straight.' },
+  { n: 7,  name: 'Savelli',        x: 305, y: 215, lossS: 0.058, entry: 204, exit: 198, maxLean: 53, brake: '1 m late',   throttle: '0.04 s late',  rearGrip: 85, coach: 'Hold the line through transition.' },
+  { n: 8,  name: 'Arrabbiata 1',   x: 260, y: 240, lossS: 0.131, entry: 242, exit: 224, maxLean: 58, brake: '4 m late',   throttle: '0.12 s late',  rearGrip: 82, coach: 'Release the brake earlier, roll more mid-corner speed.' },
+  { n: 9,  name: 'Arrabbiata 2',   x: 210, y: 238, lossS: 0.088, entry: 238, exit: 229, maxLean: 57, brake: '3 m late',   throttle: '0.08 s late',  rearGrip: 83, coach: 'Use less lean and more steering to save the rear tyre.' },
+  { n: 10, name: 'Scarperia',      x: 165, y: 215, lossS: 0.074, entry: 195, exit: 171, maxLean: 51, brake: '2 m late',   throttle: '0.06 s late',  rearGrip: 84, coach: 'Turn in earlier to carry more speed.' },
+  { n: 11, name: 'Palagio',        x: 130, y: 182, lossS: 0.018, entry: 171, exit: 186, maxLean: 44, brake: 'on ref.',    throttle: 'on ref.',      rearGrip: 92, coach: 'Keep it. Reference-lap quality.' },
+  { n: 12, name: 'Correntaio',     x: 108, y: 140, lossS: 0.142, entry: 186, exit: 158, maxLean: 54, brake: '5 m late',   throttle: '0.10 s late',  rearGrip: 80, coach: 'Square the corner for a better exit.' },
+  { n: 13, name: 'Biondetti 1',    x: 105, y: 95,  lossS: 0.048, entry: 228, exit: 214, maxLean: 49, brake: '1 m late',   throttle: '0.03 s late',  rearGrip: 88, coach: 'Hold the line.' },
+  { n: 14, name: 'Biondetti 2',    x: 125, y: 62,  lossS: 0.043, entry: 214, exit: 207, maxLean: 50, brake: '1 m late',   throttle: '0.03 s late',  rearGrip: 87, coach: 'Hold the line on exit.' },
+  { n: 15, name: 'Bucine',         x: 165, y: 50,  lossS: 0.284, entry: 159, exit: 184, maxLean: 57, brake: '7 m late',   throttle: '0.40 s late',  rearGrip: 78, coach: 'Open throttle 0.3 s earlier with lower lean; raise TC +1 if rear slip persists.' },
 ];
 
 function lossColor(l: number): string {
@@ -48,12 +53,12 @@ function smoothLoop(pts: CornerMap[]): string {
 const PATH = smoothLoop(CORNERS);
 
 export function InteractiveCircuitMap({ selected, onSelect }: { selected: number | null; onSelect: (n: number) => void }) {
-  const sel = CORNERS.find(c => c.n === selected) ?? CORNERS.find(c => c.n === 7) ?? CORNERS[0];
+  const sel = CORNERS.find(c => c.n === selected) ?? CORNERS.find(c => c.n === 15) ?? CORNERS[0];
 
   return (
     <div className="card">
       <div className="card-header">
-        <span className="card-title flex items-center gap-2">Circuit Map · Jarama · racing line</span>
+        <span className="card-title flex items-center gap-2">Circuit Map · Mugello · racing line</span>
         <span className="badge badge-blue">click a corner</span>
       </div>
 
@@ -61,22 +66,25 @@ export function InteractiveCircuitMap({ selected, onSelect }: { selected: number
         {/* Map */}
         <svg viewBox="0 0 400 290" style={{ width: '100%', height: 'auto' }}>
           {/* track ribbon */}
-          <path d={PATH} fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth="16" strokeLinejoin="round" />
-          <path d={PATH} fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="13" strokeLinejoin="round" />
+          <path d={PATH} fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth="20" strokeLinejoin="round" />
+          <path d={PATH} fill="none" stroke="rgba(255,255,255,0.20)" strokeWidth="16" strokeLinejoin="round" />
           {/* racing line */}
-          <path d={PATH} fill="none" stroke="var(--accent)" strokeWidth="2" strokeDasharray="1 5" strokeLinecap="round" opacity="0.7" />
+          <path d={PATH} fill="none" stroke="var(--accent)" strokeWidth="2.5" strokeDasharray="1 5" strokeLinecap="round" opacity="0.6" />
           {/* corner pins */}
           {CORNERS.map(c => {
             const isSel = c.n === sel.n;
             const col = lossColor(c.lossS);
             return (
               <g key={c.n} onClick={() => onSelect(c.n)} style={{ cursor: 'pointer' }}>
-                {isSel && <circle cx={c.x} cy={c.y} r="15" fill="none" stroke={col} strokeWidth="2" opacity="0.6" />}
-                <circle cx={c.x} cy={c.y} r="10" fill={col} stroke="#0B0D12" strokeWidth="2" />
-                <text x={c.x} y={c.y + 3.5} textAnchor="middle" fontSize="10" fontWeight="800" fill="#0B0D12" fontFamily="var(--font-mono)">{c.n}</text>
+                {isSel && <circle cx={c.x} cy={c.y} r="14" fill="none" stroke={col} strokeWidth="2" opacity="0.6" />}
+                <circle cx={c.x} cy={c.y} r="9" fill={col} stroke="#0B0D12" strokeWidth="2" />
+                <text x={c.x} y={c.y + 3} textAnchor="middle" fontSize="9" fontWeight="800" fill="#0B0D12" fontFamily="var(--font-mono)">{c.n}</text>
               </g>
             );
           })}
+          {/* S/F line marker */}
+          <line x1="88" y1="268" x2="118" y2="268" stroke="var(--text-muted)" strokeWidth="2" strokeDasharray="4 2" opacity="0.5" />
+          <text x="170" y="274" fill="var(--text-muted)" fontSize="8" fontFamily="var(--font-mono)" opacity="0.5">S/F</text>
         </svg>
 
         {/* Selected corner detail */}
