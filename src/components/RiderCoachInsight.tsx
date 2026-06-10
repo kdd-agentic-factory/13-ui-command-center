@@ -1,10 +1,13 @@
-import { Bike, ChevronRight, Search, TrendingDown, Wrench, Gauge, ShieldAlert } from 'lucide-react';
+import { Bike, ChevronRight, Search, TrendingDown, Wrench, Gauge, ShieldAlert, Eye, BookOpen, Flag } from 'lucide-react';
 import { useNavigate } from '../context/NavContext';
 
 /**
  * RiderCoachInsight (engineer report v2 §4) — an AI Rider Coach recommendation in
  * the exact structure the engineer asked for: detected issue → evidence → impact
  * → action → confidence → risk. Concrete and measurable, never vague.
+ *
+ * cornerName overrides the `where` field in insight for dynamic corner display
+ * (e.g. "T7 Savelli" instead of static "Turn 7").
  */
 
 export interface CoachInsight {
@@ -29,12 +32,13 @@ const DEFAULT_INSIGHT: CoachInsight = {
 
 const riskColor = (r: CoachInsight['risk']) => (r === 'Low' ? 'var(--green)' : r === 'Medium' ? 'var(--yellow)' : 'var(--accent)');
 
-export function RiderCoachInsight({ insight = DEFAULT_INSIGHT }: { insight?: CoachInsight }) {
+export function RiderCoachInsight({ insight = DEFAULT_INSIGHT, cornerName }: { insight?: CoachInsight; cornerName?: string }) {
   const navigate = useNavigate();
+  const displayWhere = cornerName ?? insight.where;
   return (
     <div className="card" style={{ borderColor: 'color-mix(in srgb, var(--purple) 35%, transparent)' }}>
       <div className="card-header">
-        <span className="card-title flex items-center gap-2"><Bike size={14} style={{ color: 'var(--purple)' }} /> Rider Coach AI · {insight.where}</span>
+        <span className="card-title flex items-center gap-2"><Bike size={14} style={{ color: 'var(--purple)' }} /> Rider Coach AI · {displayWhere}</span>
         <span className="badge badge-blue">{(insight.confidence * 100).toFixed(0)}% confidence</span>
       </div>
 
@@ -62,7 +66,7 @@ export function RiderCoachInsight({ insight = DEFAULT_INSIGHT }: { insight?: Coa
         <div style={{ fontSize: 14, color: 'var(--text)', lineHeight: 1.5, fontWeight: 600 }}>{insight.action}</div>
       </div>
 
-      {/* Confidence + risk + CTA */}
+      {/* Confidence + risk + CTAs */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-mono)', fontSize: 11 }}>
           <Gauge size={12} style={{ color: 'var(--blue)' }} /> Confidence <b style={{ color: 'var(--blue)' }}>{(insight.confidence * 100).toFixed(0)}%</b>
@@ -70,9 +74,17 @@ export function RiderCoachInsight({ insight = DEFAULT_INSIGHT }: { insight?: Coa
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-mono)', fontSize: 11 }}>
           <ShieldAlert size={12} style={{ color: riskColor(insight.risk) }} /> Risk <b style={{ color: riskColor(insight.risk) }}>{insight.risk}</b>
         </span>
-        <button className="btn btn-sm" style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 6 }} onClick={() => navigate('replay')}>
-          Open in Lap Replay <ChevronRight size={12} />
-        </button>
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
+          <button className="btn btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }} onClick={() => navigate('live')}>
+            <Eye size={11} /> View telemetry
+          </button>
+          <button className="btn btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }} onClick={() => navigate('replay')}>
+            <BookOpen size={11} /> Compare best lap
+          </button>
+          <button className="btn btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: 'var(--accent-dim)', color: 'var(--accent)' }}>
+            <Flag size={11} /> Mark for next lap
+          </button>
+        </div>
       </div>
     </div>
   );

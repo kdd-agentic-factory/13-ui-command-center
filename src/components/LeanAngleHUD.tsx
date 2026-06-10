@@ -1,19 +1,25 @@
 /**
  * LeanAngleHUD (engineer report v2 §6) — lean is the identity metric of a
  * motorcycle, so it gets its own HUD: a semicircular gauge with the live lean,
- * the session max, the best-lap max, the target window, and a left/right
+ * the session max, the best-lap max, the apex target window, and a left/right
  * corner-average comparison (asymmetry tells you which side you trust less).
  * Risk is shown with colour + an explicit label (WCAG).
+ *
+ * KEY DESIGN DECISION: "Apex target" must specify APEX (52-55°) because the
+ * lean value OUTSIDE a corner (approach, straight) is naturally much lower.
+ * A target without context creates false alarms.
  */
 
 interface LeanAngleHUDProps {
-  lean: number;        // signed degrees: + = right, − = left
-  maxLean?: number;    // session max (magnitude)
-  bestMax?: number;    // best-lap max (magnitude)
+  lean: number;         // signed degrees: + = right, − = left
+  maxLean?: number;     // session max (magnitude)
+  bestMax?: number;     // best-lap max (magnitude)
   targetLo?: number;
   targetHi?: number;
   leftAvg?: number;
   rightAvg?: number;
+  phase?: string;       // current corner phase: 'approach' | 'braking' | 'apex' | 'exit' | 'straight'
+  rearTemp?: number;    // for AI note context (pass rear tyre temp)
 }
 
 const MAXθ = 64;
@@ -30,7 +36,7 @@ function arc(a: number, b: number, r: number): string {
 
 export function LeanAngleHUD({
   lean, maxLean = 57.2, bestMax = 55.6, targetLo = 52, targetHi = 55,
-  leftAvg = 51.2, rightAvg = 48.7,
+  leftAvg = 51.2, rightAvg = 48.7, phase, rearTemp,
 }: LeanAngleHUDProps) {
   const mag = Math.abs(lean);
   const clamped = Math.max(-MAXθ, Math.min(MAXθ, lean));
@@ -38,6 +44,10 @@ export function LeanAngleHUD({
   const [nx, ny] = pt(clamped, R - 14);
   const asym = Math.abs(leftAvg - rightAvg);
   const maxBar = 64;
+
+  const isApproach = phase === 'approach' || phase === 'straight' || phase === 'braking';
+  const isApex = phase === 'apex';
+  const isExit = phase === 'exit';
 
   return (
     <div className="card">
@@ -77,7 +87,7 @@ export function LeanAngleHUD({
             {[
               { l: 'Session max', v: `${maxLean.toFixed(1)}°`, c: 'var(--accent)' },
               { l: 'Best-lap max', v: `${bestMax.toFixed(1)}°`, c: 'var(--yellow)' },
-              { l: 'Target', v: `${targetLo}–${targetHi}°`, c: 'var(--green)' },
+              { l: 'Apex target', v: `${targetLo}–${targetHi}°`, c: 'var(--green)' },
               { l: 'Current', v: `${mag.toFixed(1)}°`, c: risk.c },
             ].map(s => (
               <div key={s.l} className="stat-tile">
@@ -103,6 +113,29 @@ export function LeanAngleHUD({
               </div>
             </div>
           </div>
+
+          {/* Phase & AI note */}
+          {phase && (
+            <div style={{
+              marginTop: 2, padding: '5px 8px', borderRadius: 6,
+              background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)',
+              fontSize: 10, color: 'var(--text-dim)', fontFamily: 'var(--font-mono)',
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
+                <span>Phase: <strong style={{ color: 'var(--text-muted)', textTransform: 'capitalize' }}>{phase}</strong></span>
+                {isApproach && <span style={{ color: 'var(--green)' }}>Low lean normal</span>}
+                {isApex && <span style={{ color: 'var(--yellow)' }}>Target window</span>}
+                {isExit && <span style={{ color: 'var(--blue)' }}>Pickup phase</span>}
+              </div>
+              <div style={{ color: 'var(--text-dim)' }}>
+                {isApproach && `Current lean is normal for ${phase}. Apex target applies mid-corner only.`}
+                {isApex && `Target apex lean: ${targetLo}–${targetHi}°. Stay within window.`}
+                {isExit && `Reduce lean as throttle opens. Risk increases above 55° with rear tyre >116°C.`}
+                {!phase && `Apex target applies in mid-corner; lower values are normal on straights.`}
+                {rearTemp && rearTemp > 116 && <span style={{ color: 'var(--accent)' }}> · Rear tyre thermal risk active</span>}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
