@@ -87,7 +87,7 @@ export function GarageSetupAdvisorPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">Garage Setup Advisor</h1>
-          <p className="page-subtitle">Jarama · Garage Setup Advisor AI · performance → setup change</p>
+          <p className="page-subtitle">Mugello · Garage Setup Advisor AI · performance → setup change</p>
         </div>
         <span className="badge badge-green" style={{ animation: 'pulse 2s infinite' }}>STINT 03 · 3 findings</span>
       </div>

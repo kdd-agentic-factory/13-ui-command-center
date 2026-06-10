@@ -259,7 +259,7 @@ export function IntroExperience({ onEnter }: IntroExperienceProps) {
               {/* Live session context — circuit / rider / bike / stint / weather */}
               <div className="intro-session">
                 {[
-                  { icon: MapPin, l: t('intro.session.circuit', 'Circuito'), v: 'Jarama' },
+                  { icon: MapPin, l: t('intro.session.circuit', 'Circuito'), v: 'Mugello' },
                   { icon: User, l: t('intro.session.rider', 'Piloto'), v: 'Rubén Juárez' },
                   { icon: Bike, l: t('intro.session.bike', 'Moto'), v: 'Yamaha R1' },
                   { icon: CircleDot, l: t('intro.session.stint', 'Sesión'), v: 'Track Day · Stint 03' },
@@ -363,7 +363,7 @@ export function IntroExperience({ onEnter }: IntroExperienceProps) {
             <button className="intro-enter" disabled={!selected} onClick={() => selected && onEnter(selected)}>
               {t('intro.roles.enter', 'Entrar a la plataforma')} <ChevronRight size={20} />
             </button>
-            <div className="intro-footer">Jarama · Track Day · Stint 03 · Dry 24°C · #47 — powered by KDD Agentic Factory</div>
+            <div className="intro-footer">Mugello · GP · 5.245 km · 15 turns · Dry 24°C · #47 — powered by KDD Agentic Factory</div>
           </div>
         </section>
       </main>

@@ -7,7 +7,7 @@ import { History, Trophy, TrendingDown, CloudSun, Droplets } from 'lucide-react'
  * log with conditions, and how weather correlates with pace.
  */
 
-const CIRCUITS = ['Jarama', 'Albacete', 'Motorland Aragón'];
+const CIRCUITS = ['Mugello', 'Albacete', 'Motorland Aragón'];
 
 interface Session {
   date: string; type: string; weather: 'Dry' | 'Damp' | 'Wet'; tempC: number; bestLap: string; laps: number;

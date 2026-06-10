@@ -97,7 +97,7 @@ export function LapReplayPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">Lap Replay</h1>
-          <p className="page-subtitle">Jarama · Lap 08 · 1:41.882 · synchronised telemetry + AI notes</p>
+          <p className="page-subtitle">Mugello · Lap 08 · 1:41.882 · synchronised telemetry + AI notes</p>
         </div>
         <div className="flex items-center gap-2">
           <span className="badge" style={{ background: deltaPos ? 'var(--accent-dim)' : 'var(--green-dim)', color: deltaPos ? 'var(--accent)' : 'var(--green)' }}>

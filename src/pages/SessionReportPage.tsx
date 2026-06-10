@@ -69,7 +69,7 @@ export function SessionReportPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">Session Report</h1>
-          <p className="page-subtitle">Jarama · Track Day · Stint 03 · Rubén Juárez · Yamaha R1 · Dry 24°C</p>
+          <p className="page-subtitle">Mugello · GP · Rubén Juárez · Yamaha R1 · Dry 24°C · Stint 03</p>
         </div>
         <div className="flex items-center gap-2">
           <button className="btn btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }} onClick={() => window.print()}><Download size={13} /> Export PDF</button>

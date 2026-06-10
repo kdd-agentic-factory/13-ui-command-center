@@ -39,7 +39,7 @@ export function AICrewPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">AI Crew</h1>
-          <p className="page-subtitle">Your pit-wall team of AI specialists · Jarama · Stint 03</p>
+          <p className="page-subtitle">Your pit-wall team of AI specialists · Mugello · GP · 5.245 km · 15 turns</p>
         </div>
         <span className="badge badge-green" style={{ animation: 'pulse 2s infinite' }}>{online}/{CREW.length} on the wall</span>
       </div>

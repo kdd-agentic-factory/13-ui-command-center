@@ -53,7 +53,7 @@ export function PredictiveModelPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">Predictive Improvement Model</h1>
-          <p className="page-subtitle">Jarama · Lap Time Optimizer AI · pick what you'll work on</p>
+          <p className="page-subtitle">Mugello · Lap Time Optimizer AI · pick what you'll work on</p>
         </div>
         <span className="badge badge-blue"><Sparkles size={11} style={{ verticalAlign: -1, marginRight: 4 }} /> projection</span>
       </div>

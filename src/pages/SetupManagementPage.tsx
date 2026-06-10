@@ -468,7 +468,7 @@ export function SetupManagementPage() {
 
       {/* Context strip — session / track / baseline / confidence */}
       <div style={{ display:'flex', flexWrap:'wrap', gap:16, alignItems:'center', marginBottom:16, padding:'8px 14px', borderRadius:8, border:'1px solid var(--border)', background:'rgba(255,255,255,0.02)', fontSize:12, fontFamily:'JetBrains Mono,monospace' }}>
-        <span style={{ color:'var(--text-dim)' }}>Jarama · Q3 · Dry · Track 42°C · Rider #47</span>
+        <span style={{ color:'var(--text-dim)' }}>Mugello · Q3 · Dry · Track 42°C · Rider #47</span>
         <span style={{ color:'var(--text-muted)' }}>Current: <strong style={{ color:'var(--accent)' }}>Q3 Active</strong></span>
         <span style={{ color:'var(--text-muted)' }}>Baseline: <strong style={{ color:'var(--text-dim)' }}>Race Baseline FP3</strong></span>
         <span style={{ marginLeft:'auto', color:'var(--text-muted)' }}>Model confidence <strong style={{ color:'var(--blue)' }}>{MODEL_CONFIDENCE}%</strong></span>

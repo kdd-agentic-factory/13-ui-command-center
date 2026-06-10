@@ -43,7 +43,7 @@ export function CrashRiskPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">Crash-Risk Index</h1>
-          <p className="page-subtitle">Jarama · Stint 03 · Safety Guardian AI</p>
+          <p className="page-subtitle">Mugello · GP · Safety Guardian AI · 15 turns · 5.245 km</p>
         </div>
         <span className="badge" style={{ background: `color-mix(in srgb, ${levelColor} 16%, transparent)`, color: levelColor, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
           <ShieldAlert size={12} /> {level} RISK
