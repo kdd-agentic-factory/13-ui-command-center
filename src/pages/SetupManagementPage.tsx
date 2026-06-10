@@ -54,12 +54,34 @@ const SETUP_PARAMS: SetupParam[] = [
 const MODEL_CONFIDENCE = 68; // %
 const STORAGE_KEY = 'kdd-setup-v1';
 
+function defaultValues(): Record<string, number> {
+  return Object.fromEntries(SETUP_PARAMS.map(p => [p.name, p.defaultValue]));
+}
+
+function clampValue(value: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, value));
+}
+
+function normalizeSetupValues(input: unknown): Record<string, number> {
+  const normalized = defaultValues();
+  if (!input || typeof input !== 'object') return normalized;
+
+  const saved = input as Record<string, unknown>;
+  for (const param of SETUP_PARAMS) {
+    const raw = saved[param.name];
+    if (typeof raw !== 'number' || !Number.isFinite(raw)) continue;
+    normalized[param.name] = clampValue(raw, param.min, param.max);
+  }
+
+  return normalized;
+}
+
 function loadSavedValues(): Record<string, number> {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw) as Record<string, number>;
+    const raw = globalThis.localStorage?.getItem(STORAGE_KEY);
+    if (raw) return normalizeSetupValues(JSON.parse(raw));
   } catch { /* ignore */ }
-  return Object.fromEntries(SETUP_PARAMS.map(p => [p.name, p.defaultValue]));
+  return defaultValues();
 }
 
 function baselineValues(): Record<string, number> {
@@ -167,8 +189,15 @@ function RadarChart({ values, baseline }: { values: Record<string, number>; base
 interface SliderProps {
   param: SetupParam;
   value: number;
-  onChange: (name: string, v: number) => void;
+  onChange: SliderChangeHandler;
 }
+
+function sliderChangeSignature(name: string, value: number) {
+  void name;
+  void value;
+}
+
+type SliderChangeHandler = typeof sliderChangeSignature;
 
 function SetupSlider({ param, value, onChange }: SliderProps) {
   const diff = value - param.baseline;
@@ -178,8 +207,14 @@ function SetupSlider({ param, value, onChange }: SliderProps) {
   const impactStr = impact > 0 ? `+${impact.toFixed(3)}s` : `${impact.toFixed(3)}s`;
 
   return (
-    <div className="setup-row">
-      <span className="setup-name" title={`Impact: ${impactStr}/lap (${impact < 0 ? 'gain' : 'penalty'})`}>{param.name}</span>
+    <div className="setup-row" style={{
+      display: 'grid',
+      gridTemplateColumns: 'minmax(150px, 1.15fr) minmax(170px, 2fr) 64px 56px 42px',
+      gap: 10,
+      alignItems: 'center',
+      overflowX: 'auto',
+    }}>
+      <span className="setup-name" style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={`Impact: ${impactStr}/lap (${impact < 0 ? 'gain' : 'penalty'})`}>{param.name}</span>
       <input
         type="range"
         min={param.min}
@@ -187,7 +222,7 @@ function SetupSlider({ param, value, onChange }: SliderProps) {
         step={(param.max - param.min) / 100}
         value={value}
         onChange={e => onChange(param.name, parseFloat(e.target.value))}
-        style={{ flex: 1, accentColor: 'var(--accent)' }}
+        style={{ width: '100%', minWidth: 160, accentColor: 'var(--accent)' }}
       />
       <span className="setup-val text-mono">{value.toFixed(1)}</span>
       <span style={{
@@ -355,10 +390,10 @@ export function SetupManagementPage() {
   const { toast } = useToast();
   const [values, setValues] = useState<Record<string, number>>(loadSavedValues);
   const [savedAt, setSavedAt] = useState<string | null>(() => {
-    try { return localStorage.getItem(`${STORAGE_KEY}-ts`); } catch { return null; }
+    try { return globalThis.localStorage?.getItem(`${STORAGE_KEY}-ts`) ?? null; } catch { return null; }
   });
 
-  const groups = [...new Set(SETUP_PARAMS.map(p => p.group))];
+  const groups = useMemo(() => [...new Set(SETUP_PARAMS.map(p => p.group))], []);
   const changedParams = SETUP_PARAMS.filter(p => Math.abs(values[p.name] - p.baseline) >= 0.01);
   const changedCount  = changedParams.length;
 
@@ -399,8 +434,8 @@ export function SetupManagementPage() {
   function handleSave() {
     const ts = nowStamp();
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
-      localStorage.setItem(`${STORAGE_KEY}-ts`, ts);
+      globalThis.localStorage?.setItem(STORAGE_KEY, JSON.stringify(values));
+      globalThis.localStorage?.setItem(`${STORAGE_KEY}-ts`, ts);
       setSavedAt(ts);
     } catch { /* quota exceeded */ }
     toast({
@@ -413,8 +448,8 @@ export function SetupManagementPage() {
     const base = baselineValues();
     setValues(base);
     try {
-      localStorage.removeItem(STORAGE_KEY);
-      localStorage.removeItem(`${STORAGE_KEY}-ts`);
+      globalThis.localStorage?.removeItem(STORAGE_KEY);
+      globalThis.localStorage?.removeItem(`${STORAGE_KEY}-ts`);
     } catch { /* ignore */ }
     setSavedAt(null);
     toast({ type: 'info', title: 'Reset to baseline', message: `All ${SETUP_PARAMS.length} parameters restored to race baseline values.` });
@@ -429,7 +464,7 @@ export function SetupManagementPage() {
 
   function handleExport() {
     toast({ type: 'info', title: 'Setup sheet', message: 'Generating printable setup sheet…' });
-    setTimeout(() => window.print(), 200);
+    globalThis.setTimeout(() => globalThis.print(), 200);
   }
 
   const deltaColor = lapTimeDelta < -0.05 ? 'var(--green)' : lapTimeDelta > 0.05 ? 'var(--accent)' : 'var(--yellow)';
@@ -444,7 +479,7 @@ export function SetupManagementPage() {
           <h1 className="page-title">Garage Setup Lab</h1>
           <p className="page-subtitle">Live setup control · Lap-time impact prediction · Variant management</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2" style={{ flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           {changedCount > 0 && <span className="badge badge-yellow">{changedCount} modified</span>}
           {savedAt && (
             <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>
@@ -531,8 +566,10 @@ export function SetupManagementPage() {
           <span className="card-title">Parameter Deviation Map</span>
           <span style={{ fontSize:11, color:'var(--text-muted)' }}>Current setup vs Race Baseline</span>
         </div>
-        <div className="card-body" style={{ flexDirection:'column', paddingTop:8 }}>
-          <GroupDeviationGrid values={values} />
+        <div className="card-body" style={{ flexDirection:'column', paddingTop:8, overflowX: 'auto' }}>
+          <div style={{ minWidth: 620 }}>
+            <GroupDeviationGrid values={values} />
+          </div>
         </div>
       </div>
 
@@ -687,6 +724,7 @@ export function SetupManagementPage() {
           {/* Variants */}
           <div className="card">
             <div className="card-header"><span className="card-title">Setup Variants</span></div>
+            <div style={{ overflowX: 'auto' }}>
             <table className="data-table">
               <thead>
                 <tr><th>Variant</th><th>Sess.</th><th>Best Lap</th><th></th></tr>
@@ -719,6 +757,7 @@ export function SetupManagementPage() {
                 })}
               </tbody>
             </table>
+            </div>
           </div>
 
           {/* Rider feedback ↔ telemetry correlation */}

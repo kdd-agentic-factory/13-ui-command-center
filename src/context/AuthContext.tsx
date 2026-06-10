@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import { insforge } from '../lib/insforge';
 
 export type TabId = 'overview' | 'live' | 'telemetry' | 'circuit' | 'corners' | 'replay' | 'compare' | 'risk' | 'predict' | 'tires' | 'setup' | 'advisor' | 'parts' | 'twin' | 'history' | 'pre-gp' | 'crew' | 'copilot' | 'report' | 'ai-crew' | 'style' | 'data' | 'settings';
 export type ProfileId = 'race-engineer' | 'team-principal' | 'data-analyst' | 'mechanic' | 'spectator';
@@ -12,6 +13,8 @@ export interface Profile {
   accessCount: string;
   allowedTabs: TabId[];
   defaultTab: TabId;
+  /** When true, selecting this profile requires an authenticated InsForge user. */
+  requiresAuth: boolean;
 }
 
 export const PROFILES: Profile[] = [
@@ -24,6 +27,7 @@ export const PROFILES: Profile[] = [
     accessCount: '23',
     allowedTabs: ['overview','live','telemetry','circuit','corners','replay','compare','risk','predict','tires','setup','advisor','parts','twin','history','pre-gp','crew','copilot','report','ai-crew','style','data','settings'],
     defaultTab: 'overview',
+    requiresAuth: true,
   },
   {
     id: 'team-principal',
@@ -34,6 +38,7 @@ export const PROFILES: Profile[] = [
     accessCount: '14',
     allowedTabs: ['overview','live','corners','compare','risk','predict','report','history','pre-gp','copilot','ai-crew','circuit','tires','settings'],
     defaultTab: 'overview',
+    requiresAuth: true,
   },
   {
     id: 'data-analyst',
@@ -44,6 +49,7 @@ export const PROFILES: Profile[] = [
     accessCount: '14',
     allowedTabs: ['telemetry','corners','replay','compare','predict','tires','circuit','twin','history','report','ai-crew','style','data','settings'],
     defaultTab: 'telemetry',
+    requiresAuth: true,
   },
   {
     id: 'mechanic',
@@ -54,6 +60,7 @@ export const PROFILES: Profile[] = [
     accessCount: '7',
     allowedTabs: ['setup','advisor','parts','pre-gp','tires','data','settings'],
     defaultTab: 'setup',
+    requiresAuth: true,
   },
   {
     id: 'spectator',
@@ -64,45 +71,84 @@ export const PROFILES: Profile[] = [
     accessCount: '2',
     allowedTabs: ['overview','live'],
     defaultTab: 'overview',
+    requiresAuth: false, // public read-only showcase — no login required
   },
 ];
 
+export interface AuthUser {
+  id: string;
+  email?: string;
+  name?: string;
+}
+
 interface AuthContextValue {
+  // Profile (role) state
   profile: Profile | null;
   login: (id: ProfileId) => void;
   logout: () => void;
+  // Real identity state (InsForge)
+  user: AuthUser | null;
+  authLoading: boolean;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue>({
   profile: null,
   login: () => {},
   logout: () => {},
+  user: null,
+  authLoading: true,
+  refreshUser: async () => {},
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [profileId, setProfileId] = useState<ProfileId | null>(
     () => (localStorage.getItem('kdd-profile') as ProfileId | null)
   );
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
 
   const profile = profileId ? PROFILES.find(p => p.id === profileId) ?? null : null;
+
+  const refreshUser = useCallback(async () => {
+    try {
+      const { data, error } = await insforge.auth.getCurrentUser();
+      const u = !error ? (data?.user ?? null) : null;
+      setUser(u ? { id: u.id, email: u.email, name: u.name } : null);
+    } catch {
+      setUser(null);
+    } finally {
+      setAuthLoading(false);
+    }
+  }, []);
+
+  // Rehydrate the InsForge session on cold load (uses the httpOnly refresh cookie).
+  useEffect(() => { void refreshUser(); }, [refreshUser]);
 
   function login(id: ProfileId) {
     localStorage.setItem('kdd-profile', id);
     setProfileId(id);
   }
 
-  function logout() {
+  async function logout() {
     localStorage.removeItem('kdd-profile');
     setProfileId(null);
+    try { await insforge.auth.signOut(); } catch { /* ignore */ }
+    setUser(null);
   }
 
   return (
-    <AuthContext.Provider value={{ profile, login, logout }}>
+    <AuthContext.Provider value={{ profile, login, logout, user, authLoading, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
 export function useProfile() {
+  return useContext(AuthContext);
+}
+
+/** Alias that reads better where identity (not just the profile) is the concern. */
+export function useAuth() {
   return useContext(AuthContext);
 }

@@ -1497,6 +1497,7 @@ textarea:focus-visible {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
 }
+.spin { animation: spin 0.8s linear infinite; }
 
 /* ── Additional utility classes ───────────────────────────────────────────────── */
 .mt-2 { margin-top: 8px; }

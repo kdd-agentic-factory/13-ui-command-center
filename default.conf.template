@@ -13,6 +13,15 @@ server {
     root /usr/share/nginx/html;
     index index.html;
 
+    # ── CORS for the InsForge static front (browser → this BFF) ──────────────
+    # The internal API key is still injected server-side below; the browser only
+    # receives JSON. Only the canonical public origin is allowed.
+    add_header Access-Control-Allow-Origin "https://kdd-agentic-factory.insforge.site" always;
+    add_header Access-Control-Allow-Methods "GET, POST, OPTIONS" always;
+    add_header Access-Control-Allow-Headers "Content-Type, Authorization" always;
+    add_header Vary "Origin" always;
+    if ($request_method = OPTIONS) { return 204; }
+
     location = /health {
         default_type application/json;
         return 200 '{"status":"ok","service":"ui-command-center","version":"0.1.0"}';
@@ -63,6 +72,11 @@ server {
         proxy_pass https://kdd-rjz-mcp-gateway.fly.dev/;
         proxy_ssl_server_name on;
         proxy_set_header Host kdd-rjz-mcp-gateway.fly.dev;
+        # The gateway requires an authenticated principal (06-09 hardening):
+        # X-Internal-API-Key + X-Principal-Id + X-Principal-Role.
+        proxy_set_header X-Internal-API-Key "${KDD_INTERNAL_API_KEY}";
+        proxy_set_header X-Principal-Id "ui-command-center";
+        proxy_set_header X-Principal-Role "viewer";
         proxy_set_header X-API-Key "${KDD_INTERNAL_API_KEY}";
         proxy_connect_timeout 15s;
         proxy_read_timeout 60s;

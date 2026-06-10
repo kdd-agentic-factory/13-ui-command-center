@@ -5,18 +5,19 @@
  * Falls back gracefully — callers receive null on any network error.
  */
 
-const env = import.meta.env as Record<string, string | undefined>;
-
 // Same-origin proxy prefixes — the UI's own nginx (BFF) proxies these to the Fly
 // services and injects the internal API key server-side (no CORS, no key in the
-// browser). Overridable via VITE_<SVC>_URL for direct-call setups.
+// browser). Overridable via VITE_<SVC>_URL for direct-call setups (the InsForge
+// static deployment points these at the Fly BFF cross-origin).
+// NOTE: read import.meta.env.<KEY> directly — Vite only statically inlines these
+// literal member expressions at build time, not aliased/dynamic property access.
 const BASE = {
-  governance:   env.VITE_GOVERNANCE_URL   ?? '/api/governance',
-  orchestrator: env.VITE_ORCHESTRATOR_URL ?? '/api/orchestrator',
-  skills:       env.VITE_SKILLS_URL       ?? '/api/skills',
-  workflows:    env.VITE_WORKFLOWS_URL    ?? '/api/workflows',
-  experiments:  env.VITE_EXPERIMENTS_URL  ?? '/api/experiments',
-  mcp:          env.VITE_MCP_URL          ?? '/api/mcp',
+  governance:   import.meta.env.VITE_GOVERNANCE_URL   ?? '/api/governance',
+  orchestrator: import.meta.env.VITE_ORCHESTRATOR_URL ?? '/api/orchestrator',
+  skills:       import.meta.env.VITE_SKILLS_URL       ?? '/api/skills',
+  workflows:    import.meta.env.VITE_WORKFLOWS_URL    ?? '/api/workflows',
+  experiments:  import.meta.env.VITE_EXPERIMENTS_URL  ?? '/api/experiments',
+  mcp:          import.meta.env.VITE_MCP_URL          ?? '/api/mcp',
 } as const;
 
 const V1 = '/api/v1';

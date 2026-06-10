@@ -661,25 +661,7 @@ export function LiveTelemetryPage() {
     { id: 'rgrip',  name: 'R GRIP',   unit: '%',    color: '#34D399', range: [60, 100],  panelHeight: 46, group: 'Tyres / Grip',  quality: 'est' },
   ];
 
-  const allChannels = CHANNEL_DEFS.map((def, i) => ({ ...def, data: displaySnapshot[i] ?? [] }));
-  const channels: Channel[] = allChannels.filter(c => visibleCh.has(c.id))
-    .map(({ id, name, unit, color, range, panelHeight, data }) => ({ id, name, unit, color, range, panelHeight, data }));
-  const channelGroups = ['Rider Inputs', 'Bike Dynamics', 'Tyres / Grip'];
-  function toggleCh(id: string) {
-    setVisibleCh(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
-  }
-
-  // ── Live Telemetry clock ─────────────────────────────────────────────────
-  const [clock, setClock] = useState('');
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setClock(new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
-    }, 1000);
-    return () => clearInterval(id);
-  }, []);
-
-  // ── Analysis controls state ─────────────────────────────────────────────
+  // ── Analysis controls state — MUST be before allChannels (avoids TDZ) ──
   const [xAxisMode,    setXAxisMode]    = useState<XAxisMode>('time');
   const [scaleMode,    setScaleMode]    = useState<ScaleMode>('auto');
   const [analysisWin,  setAnalysisWin]  = useState<number>(ANALYSIS_LEN);
@@ -697,6 +679,24 @@ export function LiveTelemetryPage() {
     if (win === 0 || analysisSnapshot[0]?.length === undefined) return analysisSnapshot;
     return analysisSnapshot.map(buf => buf.slice(-win));
   }, [analysisSnapshot, analysisWin]);
+
+  const allChannels = CHANNEL_DEFS.map((def, i) => ({ ...def, data: displaySnapshot[i] ?? [] }));
+  const channels: Channel[] = allChannels.filter(c => visibleCh.has(c.id))
+    .map(({ id, name, unit, color, range, panelHeight, data }) => ({ id, name, unit, color, range, panelHeight, data }));
+  const channelGroups = ['Rider Inputs', 'Bike Dynamics', 'Tyres / Grip'];
+  function toggleCh(id: string) {
+    setVisibleCh(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
+  }
+
+  // ── Live Telemetry clock ─────────────────────────────────────────────────
+  const [clock, setClock] = useState('');
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setClock(new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+    }, 1000);
+    return () => clearInterval(id);
+  }, []);
 
   // ── Speed trace min/max/current ──────────────────────────────────────
   const speedStats = useMemo(() => {

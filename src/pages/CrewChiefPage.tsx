@@ -14,6 +14,7 @@ import {
   ArrowUp, ArrowDown, Minus, Check, X,
 } from 'lucide-react';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
+import { renderHighlighted } from '../lib/richText';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -670,13 +671,9 @@ export function CrewChiefPage() {
                         {ev.type === 'radio' && <span className="badge badge-muted" style={{ fontSize: 9 }}>RADIO</span>}
                         {ev.type === 'alert' && <span className="badge badge-red" style={{ fontSize: 9 }}>ALERT</span>}
                       </div>
-                      <span
-                        className="event-text"
-                        style={{ fontSize: 13 }}
-                        dangerouslySetInnerHTML={{
-                          __html: ev.message.replace(/(P\d+|STAY OUT|PIT|BOX|PUSH|LEAD|Yellow|GREEN|TC\d+|OPEN|CONFIRMED|OVERRIDDEN|FUEL)/g, '<strong>$1</strong>'),
-                        }}
-                      />
+                      <span className="event-text" style={{ fontSize: 13 }}>
+                        {renderHighlighted(ev.message, /(P\d+|STAY OUT|PIT|BOX|PUSH|LEAD|Yellow|GREEN|TC\d+|OPEN|CONFIRMED|OVERRIDDEN|FUEL)/g)}
+                      </span>
                     </div>
                   </div>
                 );

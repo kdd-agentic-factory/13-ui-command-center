@@ -13,6 +13,7 @@ import {
   Shield, Fuel, Layers, Siren, Gauge, CircleDot,
 } from 'lucide-react';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
+import { renderRichText } from '../lib/richText';
 import { Tabs } from '../components/Tabs';
 import { MotorbikeDiagnostics, type BikeTelemetry } from '../components/MotorbikeDiagnostics';
 
@@ -638,7 +639,7 @@ function AIStrategyCall({ position, lapCount, fuelLoad, lastLap, bestLap, lapAno
               fontWeight: 800,
               flexShrink: 0,
             }}>{s.num}</span>
-            <span dangerouslySetInnerHTML={{ __html: s.text }} />
+            <span>{renderRichText(s.text)}</span>
           </li>
         ))}
       </ul>
@@ -1015,7 +1016,7 @@ export function OverviewPage() {
               <div className="event-item" key={ev.id}>
                 <div className="event-dot" style={{ background: ev.color }} />
                 <span className="event-time text-mono">{ev.time}</span>
-                <span className="event-text" dangerouslySetInnerHTML={{ __html: ev.text }} />
+                <span className="event-text">{renderRichText(ev.text)}</span>
               </div>
             ))}
           </div>

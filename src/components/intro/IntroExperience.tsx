@@ -10,6 +10,7 @@ import { useAnimeCount } from '../../hooks/useAnimeCount';
 import '../../styles/intro.css';
 
 interface IntroExperienceProps {
+  // eslint-disable-next-line no-unused-vars
   onEnter: (id: ProfileId) => void;
 }
 
@@ -69,6 +70,8 @@ const ADVANTAGES: Advantage[] = [
 ];
 
 // Module access per real ProfileId (fixes the old mismatched-keys bug).
+const DEFAULT_PROFILE_ID: ProfileId = 'race-engineer';
+
 const PROFILE_MODULES: Record<ProfileId, string[]> = {
   'race-engineer': ['Overview', 'Telemetry', 'Corner Intel', 'Lap Replay', 'Setup', 'AI Crew', 'Report'],
   'team-principal': ['Overview', 'Corner Intel', 'Improvement Model', 'Session Report', 'Crash Risk'],
@@ -127,18 +130,18 @@ function MetricNumber({ value, active, color }: { value: string; active: boolean
 export function IntroExperience({ onEnter }: IntroExperienceProps) {
   const { t } = useTranslation();
   const telem = useLiveTelemetry();
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<InstanceType<typeof globalThis.HTMLDivElement>>(null);
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
   const [active, setActive] = useState(0);
-  const [selected, setSelected] = useState<ProfileId | null>(null);
+  const [selected, setSelected] = useState<ProfileId>(DEFAULT_PROFILE_ID);
 
   const TOTAL = ADVANTAGES.length + 3; // hero + advantages + modules-preview + roles
   const MODULES_IDX = ADVANTAGES.length + 1;
 
   // Track the section currently in view → drives progress rail + metric counters.
   useEffect(() => {
-    if (typeof IntersectionObserver === 'undefined') return; // SSR / very old browsers / test env
-    const obs = new IntersectionObserver(
+    if (typeof globalThis.IntersectionObserver === 'undefined') return; // SSR / very old browsers / test env
+    const obs = new globalThis.IntersectionObserver(
       entries => {
         entries.forEach(e => {
           if (e.isIntersecting) {
@@ -159,6 +162,8 @@ export function IntroExperience({ onEnter }: IntroExperienceProps) {
   }
 
   const setRef = (i: number) => (el: HTMLElement | null) => { sectionRefs.current[i] = el; };
+
+  const selectedProfile = PROFILES.find(p => p.id === selected) ?? PROFILES[0];
 
   return (
     <div className="intro-root" style={{ '--active-color': active === 0 ? 'var(--accent)' : (ADVANTAGES[active - 1]?.color ?? 'var(--accent)') } as React.CSSProperties}>
@@ -209,7 +214,7 @@ export function IntroExperience({ onEnter }: IntroExperienceProps) {
                 </div>
                 <div className="intro-kpi">
                   <span className="intro-kpi-label">{t('intro.kpi.corner', 'Curva crítica')}</span>
-                  <span className="intro-kpi-val">Turn 7</span>
+                  <span className="intro-kpi-val">T15 · Bucine</span>
                 </div>
                 <div className="intro-kpi">
                   <span className="intro-kpi-label">{t('intro.kpi.lean', 'Inclinación máx')}</span>
@@ -241,15 +246,48 @@ export function IntroExperience({ onEnter }: IntroExperienceProps) {
               </div>
 
               <div className="intro-hero-foot">
-                <button className="intro-demo-cta" onClick={() => onEnter('race-engineer')}>
-                  <MonitorPlay size={16} /> {t('intro.hero.demo', 'Ver demo en vivo')}
+                <button className="intro-demo-cta" onClick={() => onEnter(selected)}>
+                  <MonitorPlay size={16} /> {t('intro.hero.demo', 'Entrar al command center')}
                 </button>
-                <button className="intro-scroll-hint" onClick={() => scrollToIdx(1)}>
-                  {t('intro.hero.scroll', 'Ver cómo funciona')} <ChevronDown size={16} />
+                <button className="intro-scroll-hint" onClick={() => scrollToIdx(TOTAL - 1)}>
+                  {t('intro.hero.scroll', 'Cambiar rol')} <ChevronDown size={16} />
                 </button>
                 <span className="intro-hero-foot-stats">
                   10 {t('intro.stat.agents', 'equipo IA')} · 16 {t('intro.stat.services', 'servicios')} · 1000 {t('intro.stat.hz', 'Hz')}
                 </span>
+              </div>
+
+              <div className="intro-access-panel" aria-label="Platform access">
+                <div className="intro-access-head">
+                  <span className="intro-access-kicker">{t('intro.access.kicker', 'Acceso operativo')}</span>
+                  <strong>{t('intro.access.title', 'Entrá con un rol y abrí la plataforma')}</strong>
+                </div>
+                <div className="intro-access-roles">
+                  {PROFILES.map(p => (
+                    <button
+                      key={p.id}
+                      className={`intro-access-role${selected === p.id ? ' sel' : ''}`}
+                      style={{ '--pc': p.color } as React.CSSProperties}
+                      onClick={() => setSelected(p.id)}
+                      type="button"
+                    >
+                      <span className="intro-access-role-icon">{p.icon}</span>
+                      <span>{t(p.nameKey)}</span>
+                    </button>
+                  ))}
+                </div>
+                <div className="intro-access-summary">
+                  <div>
+                    <span>{t('intro.access.selected', 'Rol activo')}</span>
+                    <strong>{t(selectedProfile.nameKey)}</strong>
+                  </div>
+                  <button className="intro-enter compact" onClick={() => onEnter(selected)} type="button">
+                    {t('intro.access.enter', 'Entrar ahora')} <ChevronRight size={18} />
+                  </button>
+                </div>
+                <button className="intro-public-access" onClick={() => onEnter('spectator')} type="button">
+                  {t('intro.access.public', 'Acceso rápido sin login · Vista espectador')}
+                </button>
               </div>
             </div>
 
@@ -360,7 +398,7 @@ export function IntroExperience({ onEnter }: IntroExperienceProps) {
                 );
               })}
             </div>
-            <button className="intro-enter" disabled={!selected} onClick={() => selected && onEnter(selected)}>
+            <button className="intro-enter" onClick={() => onEnter(selected)}>
               {t('intro.roles.enter', 'Entrar a la plataforma')} <ChevronRight size={20} />
             </button>
             <div className="intro-footer">Mugello · GP · 5.245 km · 15 turns · Dry 24°C · #47 — powered by KDD Agentic Factory</div>

@@ -5,12 +5,14 @@ import {
   LayoutDashboard, Activity, Map, Circle, Sliders, Wrench,
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
-  Sparkles, Fingerprint,
+  Sparkles, Fingerprint, Loader2,
 } from 'lucide-react';
 
-import { AuthProvider, useProfile, TabId } from '../context/AuthContext';
+import { AuthProvider, useProfile, PROFILES, TabId, ProfileId } from '../context/AuthContext';
 import { NavContext, COPILOT_SEED_KEY } from '../context/NavContext';
 import { IntroExperience } from '../components/intro/IntroExperience';
+import { LoginModal } from '../components/auth/LoginModal';
+import { useServiceData } from '../hooks/useServiceData';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { ToastProvider } from '../components/ToastProvider';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
@@ -143,6 +145,7 @@ function AppShell() {
   const prevTabRef = useRef<TabId>(tab);
   const telem = useLiveTelemetry();
   const clock = useClock();
+  const live = useServiceData(); // real platform health via the Fly BFF
 
   if (!profile) return null;
 
@@ -255,8 +258,10 @@ function AppShell() {
           <div className="sidebar-footer-line" style={{ color: 'var(--text-muted)', fontSize: 9, letterSpacing: '0.06em' }}>
             ← → arrows to navigate tabs
           </div>
-          <div className="sidebar-footer-line" style={{ color: 'var(--green)', fontWeight: 700 }}>
-            InsForge · Online
+          <div className="sidebar-footer-line" style={{ fontWeight: 700, color: live.loading ? 'var(--text-muted)' : (live.servicesUp > 0 ? 'var(--green)' : 'var(--accent)') }}>
+            {live.loading
+              ? 'Platform · checking…'
+              : `Platform · ${live.servicesUp}/${live.servicesTotal} services online`}
           </div>
         </div>
       </aside>
@@ -336,8 +341,54 @@ function AppShell() {
 // ─── Auth gate ────────────────────────────────────────────────────────────────
 
 function AppWithAuth() {
-  const { profile, login } = useProfile();
-  if (!profile) return <IntroExperience onEnter={login} />;
+  const { profile, login, user, authLoading } = useProfile();
+  const [pendingProfile, setPendingProfile] = useState<ProfileId | null>(null);
+
+  // Picking a profile: public ones (spectator) enter immediately; team profiles
+  // require a real InsForge session first.
+  function handleEnter(id: ProfileId) {
+    const def = PROFILES.find(p => p.id === id);
+    if (def && def.requiresAuth && !user) {
+      setPendingProfile(id);
+      return;
+    }
+    login(id);
+  }
+
+  // While the InsForge session rehydrates, don't flash protected content.
+  if (authLoading && profile?.requiresAuth && !user) {
+    return (
+      <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg, #0c0e14)', color: 'var(--text-muted, #8b8fa3)', fontSize: 13 }}>
+        <Loader2 size={18} className="spin" style={{ marginRight: 8 }} /> Loading session…
+      </div>
+    );
+  }
+
+  if (!profile) {
+    const pendingLabel = pendingProfile
+      ? PROFILES.find(p => p.id === pendingProfile)?.id
+      : undefined;
+    return (
+      <>
+        <IntroExperience onEnter={handleEnter} />
+        {pendingProfile && !user && (
+          <LoginModal
+            profileLabel={pendingLabel}
+            onClose={() => setPendingProfile(null)}
+            onSuccess={() => {
+              const id = pendingProfile;
+              setPendingProfile(null);
+              if (id) login(id);
+            }}
+          />
+        )}
+      </>
+    );
+  }
+  // Guard: a team profile in localStorage must still have a live session.
+  if (profile.requiresAuth && !user && !authLoading) {
+    return <IntroExperience onEnter={handleEnter} />;
+  }
   return <AppShell />;
 }
 
