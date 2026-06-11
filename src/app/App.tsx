@@ -21,6 +21,7 @@ import { CircuitGatePage } from '../pages/CircuitGatePage';
 import { CircuitRecord, setActiveCircuit, dashboardMode, MODE_META } from '../domain/circuits';
 import { SessionModeGatePage } from '../pages/SessionModeGatePage';
 import { SessionContextStrip } from '../components/SessionContextStrip';
+import { getActiveDemoSession } from '../domain/demoSessions';
 import {
   SessionContext, setSessionContext, clearSessionContext, getSessionContext,
   hiddenTabsForMode, defaultTabForMode, persistSessionContext,
@@ -175,7 +176,10 @@ function AppShell() {
   const activeTab: TabId = profile && allowedTabIds.includes(tab)
     ? tab
     : (() => {
-        const md = defaultTabForMode(getSessionContext().sessionMode);
+        const sessionMode = getSessionContext().sessionMode;
+        // Demo packages open on their own focus tab (telemetry/tyres/advisor…).
+        const md = (sessionMode === 'demo' ? getActiveDemoSession()?.focusTab : null)
+          ?? defaultTabForMode(sessionMode);
         if (md && allowedTabIds.includes(md)) return md;
         if (profile && allowedTabIds.includes(profile.defaultTab)) return profile.defaultTab;
         return allowedTabIds[0] ?? 'overview';

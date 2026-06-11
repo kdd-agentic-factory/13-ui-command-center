@@ -12,6 +12,7 @@
  */
 import { AlertTriangle, Radio } from 'lucide-react';
 import { useSessionContext } from '../hooks/useSessionContext';
+import { getActiveDemoSession } from '../domain/demoSessions';
 
 const MONO = 'JetBrains Mono, monospace';
 
@@ -33,7 +34,7 @@ export function SessionContextStrip() {
           <strong style={{ color: badgeColor, fontFamily: MONO, letterSpacing: '0.06em' }}>{badge}</strong>
           <span>
             {ctx.demoMode
-              ? 'Demo mode active — all values are illustrative or based on stored sample sessions. No live data, no real engineer-approval actions.'
+              ? `Demo mode active — reproducible scripted session${getActiveDemoSession() ? `: ${getActiveDemoSession()!.script}` : ''} No live data, no real engineer-approval actions.`
               : ctx.dataMode === 'recorded'
                 ? `Working on recorded data${ctx.setup.session ? ` — ${ctx.setup.session}` : ''}. Nothing on this screen is live.`
                 : 'AI-estimated session — predictions carry simulation confidence, validate with real data before race decisions.'}

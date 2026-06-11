@@ -57,6 +57,7 @@ export function SessionModeGatePage({ circuit, onBack, onOpen }: Props) {
     const setup: Record<string, string> = {};
     if (mode === 'demo') {
       const pkg = DEMO_PACKAGES.find(p => p.id === demoId)!;
+      setup.demoId = pkg.id;       // binds the reproducible session spec
       setup.demoPackage = pkg.title;
       setup.dataType = pkg.dataType;
     } else {
