@@ -174,6 +174,23 @@ export function getSessionContext(): SessionContext {
   };
 }
 
+/** Persist the opened session context to InsForge (audit trail of how each
+ *  session was started). Anonymous sessions stay local — RLS rejects them. */
+export async function persistSessionContext(ctx: SessionContext): Promise<void> {
+  try {
+    const { insforge } = await import('../lib/insforge');
+    const { data: user } = await insforge.auth.getCurrentUser();
+    const uid = (user as { user?: { id?: string } } | null)?.user?.id;
+    if (!uid) return;
+    await insforge.database.from('session_contexts').insert([{
+      circuit_id: ctx.selectedCircuit, session_mode: ctx.sessionMode,
+      data_mode: ctx.dataMode, dashboard_profile: ctx.dashboardProfile,
+      pit_strategy_enabled: ctx.pitStrategyEnabled, demo_mode: ctx.demoMode,
+      setup: ctx.setup, created_by: uid,
+    }]);
+  } catch { /* non-blocking */ }
+}
+
 export function buildSessionContext(
   circuitId: string, circuitName: string, mode: SessionMode, setup: Record<string, string>,
 ): SessionContext {

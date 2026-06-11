@@ -23,7 +23,7 @@ import { SessionModeGatePage } from '../pages/SessionModeGatePage';
 import { SessionContextStrip } from '../components/SessionContextStrip';
 import {
   SessionContext, setSessionContext, clearSessionContext, getSessionContext,
-  hiddenTabsForMode, defaultTabForMode,
+  hiddenTabsForMode, defaultTabForMode, persistSessionContext,
 } from '../domain/sessionContext';
 
 import { OverviewPage }            from '../pages/OverviewPage';
@@ -437,7 +437,7 @@ function AppWithAuth() {
       <SessionModeGatePage
         circuit={gateCircuit}
         onBack={() => { setGateCircuit(null); clearSessionContext(); }}
-        onOpen={(ctx) => { setSessionContext(ctx); setSessionCtx(ctx); }}
+        onOpen={(ctx) => { setSessionContext(ctx); setSessionCtx(ctx); void persistSessionContext(ctx); }}
       />
     );
   }

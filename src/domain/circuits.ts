@@ -158,8 +158,8 @@ const SEED: CircuitRecord[] = [
   },
 ];
 
-// In-memory library (mirrors the future circuits table; created circuits are
-// appended here for the session).
+// In-memory library: seeded locally, refreshed from the InsForge `circuits`
+// table when reachable (migration 009 seeds the same 10 tracks server-side).
 const library: CircuitRecord[] = [...SEED];
 
 export function getCircuitLibrary(): CircuitRecord[] {
@@ -168,6 +168,79 @@ export function getCircuitLibrary(): CircuitRecord[] {
 
 export function addCircuit(record: CircuitRecord): void {
   library.unshift(record);
+  void persistCircuit(record);
+}
+
+// ── InsForge persistence (table: circuits / session_contexts) ────────────────
+
+interface CircuitRow {
+  circuit_id: string; name: string; country: string; layout: string;
+  length_km: string | number; turns: number; direction: CircuitRecord['direction'];
+  sectors: number; main_straight_km: string | number | null;
+  geometry_loaded: boolean; elevation_model: CircuitRecord['elevationModel'];
+  corner_set_loaded: number; sector_map_loaded: boolean; mesh_loaded: boolean;
+  gps_alignment: CircuitRecord['gpsAlignment']; telemetry_sessions: string[];
+  digital_twin_ready: boolean; agent_context_ready: boolean;
+  agent_confidence: string | number; status: CircuitStatus; status_summary: string;
+  key_zones: KeyZone[]; source: CircuitRecord['source']; last_validated: string | null;
+}
+
+function fromRow(r: CircuitRow): CircuitRecord {
+  return {
+    id: r.circuit_id, name: r.name, country: r.country, layout: r.layout,
+    lengthKm: Number(r.length_km), turns: r.turns, direction: r.direction,
+    sectors: r.sectors, mainStraightKm: r.main_straight_km === null ? null : Number(r.main_straight_km),
+    geometryLoaded: r.geometry_loaded, elevationModel: r.elevation_model,
+    cornerSetLoaded: r.corner_set_loaded, sectorMapLoaded: r.sector_map_loaded,
+    meshLoaded: r.mesh_loaded, gpsAlignment: r.gps_alignment,
+    telemetrySessions: r.telemetry_sessions ?? [], digitalTwinReady: r.digital_twin_ready,
+    agentContextReady: r.agent_context_ready, agentConfidence: Number(r.agent_confidence),
+    status: r.status, statusSummary: r.status_summary, keyZones: r.key_zones ?? [],
+    source: r.source, lastValidated: r.last_validated ?? '',
+  };
+}
+
+/**
+ * Refresh the library from the InsForge circuits table. Silent fallback to
+ * the local seed when the backend is unreachable or unconfigured — the gate
+ * must never block on the network.
+ */
+export async function syncCircuitLibrary(): Promise<CircuitRecord[]> {
+  try {
+    const { insforge } = await import('../lib/insforge');
+    const { data, error } = await insforge.database.from('circuits').select('*');
+    if (!error && Array.isArray(data) && data.length > 0) {
+      for (const row of data as CircuitRow[]) {
+        const rec = fromRow(row);
+        const i = library.findIndex(c => c.id === rec.id);
+        if (i >= 0) library[i] = rec; else library.push(rec);
+      }
+    }
+  } catch { /* offline / not configured — seed stays */ }
+  return library;
+}
+
+/** Persist a created circuit (requires an authenticated InsForge session —
+ *  RLS rejects anonymous writes; failures are non-blocking by design). */
+export async function persistCircuit(c: CircuitRecord): Promise<void> {
+  try {
+    const { insforge } = await import('../lib/insforge');
+    const { data: user } = await insforge.auth.getCurrentUser();
+    const uid = (user as { user?: { id?: string } } | null)?.user?.id;
+    if (!uid) return; // anonymous session — local-only circuit
+    await insforge.database.from('circuits').insert([{
+      circuit_id: c.id, name: c.name, country: c.country, layout: c.layout,
+      length_km: c.lengthKm, turns: c.turns, direction: c.direction,
+      sectors: c.sectors, main_straight_km: c.mainStraightKm,
+      geometry_loaded: c.geometryLoaded, elevation_model: c.elevationModel,
+      corner_set_loaded: c.cornerSetLoaded, sector_map_loaded: c.sectorMapLoaded,
+      mesh_loaded: c.meshLoaded, gps_alignment: c.gpsAlignment,
+      telemetry_sessions: c.telemetrySessions, digital_twin_ready: c.digitalTwinReady,
+      agent_context_ready: c.agentContextReady, agent_confidence: c.agentConfidence,
+      status: c.status, status_summary: c.statusSummary, key_zones: c.keyZones,
+      source: c.source, last_validated: c.lastValidated || null, created_by: uid,
+    }]);
+  } catch { /* non-blocking */ }
 }
 
 // ── Validation checklist (spec §4) ───────────────────────────────────────────

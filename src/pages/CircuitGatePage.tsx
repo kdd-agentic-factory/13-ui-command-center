@@ -19,7 +19,7 @@ import {
   Loader2, ArrowLeft, Flag,
 } from 'lucide-react';
 import {
-  CircuitRecord, CircuitStatus, getCircuitLibrary, addCircuit,
+  CircuitRecord, CircuitStatus, getCircuitLibrary, addCircuit, syncCircuitLibrary,
   buildValidationChecklist, dashboardMode, MODE_META, STATUS_META,
   RECONSTRUCTION_AGENTS, buildInitialSimulation, InitialSimulation,
 } from '../domain/circuits';
@@ -284,6 +284,13 @@ export function CircuitGatePage({ onOpenDashboard }: Props) {
   const [creating, setCreating] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [, force] = useState(0);
+
+  // Refresh the library from the InsForge circuits table (silent seed fallback).
+  useEffect(() => {
+    let alive = true;
+    void syncCircuitLibrary().then(() => { if (alive) force(x => x + 1); });
+    return () => { alive = false; };
+  }, []);
 
   const library = getCircuitLibrary();
   const results = useMemo(
