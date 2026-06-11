@@ -4,6 +4,7 @@ import { useToast } from '../components/ToastProvider';
 import { TrackMap3D } from '../components/babylon/TrackMap3D';
 import { DigitalTwinViewer3D } from '../components/babylon/DigitalTwinViewer3D';
 import { trackSpeed } from '../hooks/useLiveTelemetry';
+import { getSessionContext } from '../domain/sessionContext';
 
 /**
  * Lap Replay (engineer feedback #10) — scrub a recorded lap and watch the 3D
@@ -97,7 +98,7 @@ export function LapReplayPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">Lap Replay</h1>
-          <p className="page-subtitle">Mugello · Lap 08 · 1:41.882 · synchronised telemetry + AI notes</p>
+          <p className="page-subtitle">{getSessionContext().circuitName} · Lap 08 · 1:41.882 · synchronised telemetry + AI notes</p>
         </div>
         <div className="flex items-center gap-2">
           <span className="badge" style={{ background: deltaPos ? 'var(--accent-dim)' : 'var(--green-dim)', color: deltaPos ? 'var(--accent)' : 'var(--green)' }}>

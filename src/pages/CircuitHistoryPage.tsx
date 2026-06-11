@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { History, Trophy, TrendingDown, CloudSun, Droplets } from 'lucide-react';
+import { getSessionContext } from '../domain/sessionContext';
 
 /**
  * Circuit History (engineer Phase 3 #2) — your evolution at a track over time:
@@ -46,7 +47,7 @@ export function CircuitHistoryPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">Circuit History</h1>
-          <p className="page-subtitle">Your evolution over time · {SESSIONS.length} sessions logged</p>
+          <p className="page-subtitle">{getSessionContext().circuitName} · your evolution over time · {SESSIONS.length} sessions logged</p>
         </div>
         <select value={circuit} onChange={e => setCircuit(e.target.value)} className="btn btn-sm" style={{ cursor: 'pointer' }}>
           {CIRCUITS.map(c => <option key={c} value={c}>{c}</option>)}

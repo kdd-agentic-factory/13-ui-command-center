@@ -26,6 +26,7 @@ import { useNavigate } from '../context/NavContext';
 import { useToast } from '../components/ToastProvider';
 import { InteractiveCircuitMap } from '../components/InteractiveCircuitMap';
 import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
+import { getActiveCircuit } from '../domain/circuits';
 
 // ── Mugello circuit constants ─────────────────────────────────────────────────
 
@@ -307,7 +308,7 @@ export function CornerIntelligencePage() {
         <div>
           <h1 className="page-title">Corner Intelligence</h1>
           <p className="page-subtitle">
-            {MUGELLO.name} · {MUGELLO.lengthKm} km · {MUGELLO.turns} turns ({MUGELLO.leftTurns}L · {MUGELLO.rightTurns}R) ·
+            {getActiveCircuit().name} · {getActiveCircuit().lengthKm} km · {getActiveCircuit().turns} turns ·
             corner-by-corner analysis vs your ideal lap
           </p>
         </div>

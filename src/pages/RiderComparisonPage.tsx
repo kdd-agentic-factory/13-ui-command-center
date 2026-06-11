@@ -18,6 +18,7 @@ import {
 import { useNavigate } from '../context/NavContext';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { MUGELLO_CIRCUIT, validRaceLap } from '../domain/sessionTruth';
+import { getActiveCircuit } from '../domain/circuits';
 
 // ── Mugello constants (from sessionTruth) ──────────────────────────────────────
 
@@ -138,7 +139,7 @@ function RaceHeader({
         <div>
           <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--accent)', fontFamily: 'JetBrains Mono,monospace', textTransform: 'uppercase' }}>RACE</div>
           <div style={{ fontSize: 12, fontFamily: 'JetBrains Mono,monospace', color: 'var(--text)' }}>
-            GP Mugello · Italy · Round 7/20 · 2026
+            GP {getActiveCircuit().name} · {getActiveCircuit().country} · Round 7/20 · 2026
           </div>
           <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', marginTop: 2 }}>
             {MUGELLO_CIRCUIT.lengthKm} km · {MUGELLO_CIRCUIT.turns} turns · main straight {MAIN_STRAIGHT_M} m
@@ -594,7 +595,7 @@ export function RiderComparisonPage() {
         <div>
           <h1 className="page-title">Rider Comparison</h1>
           <p className="page-subtitle">
-            Mugello · head-to-head · sector, corner, speed, brake, throttle and line comparison
+            {getActiveCircuit().name} · head-to-head · sector, corner, speed, brake, throttle and line comparison
           </p>
         </div>
         <div className="flex items-center gap-2">

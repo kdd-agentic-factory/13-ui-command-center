@@ -14,6 +14,7 @@ import {
   Zap,
 } from 'lucide-react';
 
+import { getSessionContext } from '../domain/sessionContext';
 const TRAIT_STATUS = {
   BELOW: 'below ideal',
   ABOVE: 'above ideal',
@@ -257,7 +258,7 @@ export function RidingStylePage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">Rider Style DNA</h1>
-          <p className="page-subtitle">Rubén Juárez · Yamaha R1 · Mugello GP · Rider Coach AI profile</p>
+          <p className="page-subtitle">{getSessionContext().setup.rider ?? 'Rubén Juárez'} · {getSessionContext().setup.bike ?? 'Yamaha R1'} · {getSessionContext().circuitName} GP · Rider Coach AI profile</p>
         </div>
         <div className="flex items-center gap-2" style={{ flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           <span className="badge badge-blue"><Fingerprint size={11} style={{ verticalAlign: -1, marginRight: 4 }} /> dynamic profile</span>
@@ -288,7 +289,7 @@ export function RidingStylePage() {
       <div className="grid-2 mb-4" style={{ gap: 16, alignItems: 'stretch' }}>
         <div className="card">
           <div className="card-header">
-            <span className="card-title flex items-center gap-2"><MapPinned size={14} style={{ color: 'var(--blue)' }} /> Circuit Fit · Mugello</span>
+            <span className="card-title flex items-center gap-2"><MapPinned size={14} style={{ color: 'var(--blue)' }} /> Circuit Fit · {getSessionContext().circuitName}</span>
             <span className="badge badge-yellow">72 / 100</span>
           </div>
           <div className="card-body" style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.65 }}>

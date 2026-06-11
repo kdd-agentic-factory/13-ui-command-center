@@ -17,6 +17,7 @@ import {
 import { useNavigate } from '../context/NavContext';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
+import { getActiveCircuit } from '../domain/circuits';
 
 // ── Risk factors ───────────────────────────────────────────────────────────────
 
@@ -150,10 +151,10 @@ export function CrashRiskPage() {
         <div>
           <h1 className="page-title">Crash-Risk Index</h1>
           <p className="page-subtitle">
-            {MUGELLO_CIRCUIT.fullName} · Race Lap {t.lapCount}/{MUGELLO_CIRCUIT.raceLaps} · Safety Guardian AI
+            {getActiveCircuit().name} {getActiveCircuit().layout} · Race Lap {t.lapCount}/{MUGELLO_CIRCUIT.raceLaps} · Safety Guardian AI
           </p>
           <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', marginTop: 2 }}>
-            {MUGELLO_CIRCUIT.lengthKm} km · {MUGELLO_CIRCUIT.turns} turns · {MUGELLO_CIRCUIT.assetStatusLabel}
+            {getActiveCircuit().lengthKm} km · {getActiveCircuit().turns} turns · {MUGELLO_CIRCUIT.assetStatusLabel}
           </div>
         </div>
         <span className="badge" style={{
@@ -427,7 +428,7 @@ export function CrashRiskPage() {
         {/* Crash-Risk Map */}
         <div className="card">
           <div className="card-header">
-            <span className="card-title flex items-center gap-2"><Info size={14} style={{ color: 'var(--blue)' }} /> Crash-Risk Map · Mugello</span>
+            <span className="card-title flex items-center gap-2"><Info size={14} style={{ color: 'var(--blue)' }} /> Crash-Risk Map · {getActiveCircuit().name}</span>
           </div>
           <div style={{ marginTop: 6, fontSize: 12, color: 'var(--text-dim)', lineHeight: 1.6 }}>
             <p style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', marginBottom: 8 }}>

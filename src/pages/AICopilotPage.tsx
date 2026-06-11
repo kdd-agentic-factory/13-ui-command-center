@@ -15,6 +15,7 @@ import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { RiderCoachInsight } from '../components/RiderCoachInsight';
 import { COPILOT_SEED_KEY } from '../context/NavContext';
 import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
+import { getSessionContext } from '../domain/sessionContext';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -214,7 +215,7 @@ export function AICopilotPage() {
 - Speed: ${t.speed} km/h  |  Gear: ${t.gear}  |  RPM: ${t.rpm.toLocaleString()}
 - Throttle: ${t.throttle}%  |  Brake: ${t.brake}%  |  Lean: ${t.leanAngle.toFixed(1)}°
 - Fuel: ${t.fuelLoad.toFixed(1)} kg remaining (~${(t.fuelLoad / 2.18).toFixed(1)} laps)
-- Track: Mugello · 48°C asphalt · Grip level HIGH
+- Track: ${getSessionContext().circuitName} · 48°C asphalt · Grip level HIGH
 
 ## Your Capabilities
 - Race strategy optimization (tyre, fuel, pit window timing)

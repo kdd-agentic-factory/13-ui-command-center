@@ -21,6 +21,7 @@ import {
   Wind,
 } from 'lucide-react';
 import { MUGELLO_CIRCUIT, RACE_SESSION } from '../domain/sessionTruth';
+import { getSessionContext } from '../domain/sessionContext';
 
 const SESSION_STATUS = {
   COMPLETED: 'completed',
@@ -330,7 +331,7 @@ export function PreGrandPrixPage() {
               {CIRCUIT_LIBRARY.map(circuit => {
                 const active = selectedCircuit === circuit.name;
                 return (
-                  <button key={circuit.id} type="button" disabled={!circuit.loaded} onClick={() => setSelectedCircuit(circuit.name)} title={circuit.loaded ? 'Loaded for active Mugello session' : 'Not loaded — selecting would mismatch active Mugello session'} style={{ border: `1px solid ${active ? 'var(--blue)' : !circuit.loaded ? 'rgba(245,158,11,0.28)' : 'var(--border)'}`, background: active ? 'rgba(59,130,246,0.12)' : 'rgba(255,255,255,0.03)', color: active ? 'var(--blue)' : !circuit.loaded ? 'var(--yellow)' : 'var(--text-muted)', borderRadius: 999, padding: '6px 10px', fontSize: 10, fontFamily: 'JetBrains Mono,monospace', fontWeight: active ? 800 : 500, cursor: circuit.loaded ? 'pointer' : 'not-allowed', opacity: circuit.loaded ? 1 : 0.72 }}>
+                  <button key={circuit.id} type="button" disabled={!circuit.loaded} onClick={() => setSelectedCircuit(circuit.name)} title={circuit.loaded ? 'Loaded for the active session circuit' : 'Not loaded — selecting would mismatch the active session circuit'} style={{ border: `1px solid ${active ? 'var(--blue)' : !circuit.loaded ? 'rgba(245,158,11,0.28)' : 'var(--border)'}`, background: active ? 'rgba(59,130,246,0.12)' : 'rgba(255,255,255,0.03)', color: active ? 'var(--blue)' : !circuit.loaded ? 'var(--yellow)' : 'var(--text-muted)', borderRadius: 999, padding: '6px 10px', fontSize: 10, fontFamily: 'JetBrains Mono,monospace', fontWeight: active ? 800 : 500, cursor: circuit.loaded ? 'pointer' : 'not-allowed', opacity: circuit.loaded ? 1 : 0.72 }}>
                     {circuit.name}{!circuit.loaded ? ' · not loaded' : ''}
                   </button>
                 );
@@ -359,7 +360,7 @@ export function PreGrandPrixPage() {
 
         <div className="card">
           <div className="card-header">
-            <span className="card-title flex items-center gap-2"><Map size={14} />Circuit Intelligence · Mugello</span>
+            <span className="card-title flex items-center gap-2"><Map size={14} />Circuit Intelligence · {getSessionContext().circuitName}</span>
             <span className="badge badge-blue">MotoGP layout</span>
           </div>
           <div className="card-body">

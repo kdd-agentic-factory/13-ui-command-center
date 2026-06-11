@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { TrendingDown, Sparkles, Check, X, AlertTriangle, Target, Shield, Zap, Brain, BarChart3, Info } from 'lucide-react';
 import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
+import { getSessionContext } from '../domain/sessionContext';
 
 /**
  * Predictive Improvement Model — turns analysis into a forward projection:
@@ -190,7 +191,7 @@ export function PredictiveModelPage() {
       <div className="flex items-center justify-between mb-3">
         <div>
           <h1 className="page-title">Predictive Improvement Model</h1>
-          <p className="page-subtitle">Mugello · Lap Time Optimizer AI · select your next-lap improvement plan</p>
+          <p className="page-subtitle">{getSessionContext().circuitName} · Lap Time Optimizer AI · select your next-lap improvement plan</p>
         </div>
         <span className="badge badge-blue"><Sparkles size={11} style={{ verticalAlign: -1, marginRight: 4 }} />KDD Prototype</span>
       </div>
@@ -368,7 +369,7 @@ export function PredictiveModelPage() {
       {/* ── Opportunity Map ── */}
       <div className="card mb-4">
         <div className="card-header">
-          <span className="card-title">Opportunity Map · Mugello</span>
+          <span className="card-title">Opportunity Map · {getSessionContext().circuitName}</span>
           <span className="badge badge-blue">real circuit geometry</span>
         </div>
         <div style={{ marginTop: 6 }}>

@@ -28,6 +28,7 @@ import {
 import { useLiveTelemetry, trackSpeed } from '../hooks/useLiveTelemetry';
 import { TrackMap3D } from '../components/babylon/TrackMap3D';
 import { MUGELLO_CIRCUIT, sessionDisplayState } from '../domain/sessionTruth';
+import { getActiveCircuit } from '../domain/circuits';
 
 // ── Mugello circuit constants ──────────────────────────────────────────────────
 
@@ -531,7 +532,7 @@ function CircuitIntegrity({ fuelValid, fuelLoad, speed }: { fuelValid: boolean; 
             fontSize: 11, color: 'var(--green)',
             fontFamily: 'JetBrains Mono,monospace',
           }}>
-            Integrity visible · Mugello GP data synchronized · geometry is procedural
+            Integrity visible · {getActiveCircuit().name} GP data synchronized · geometry is procedural
           </div>
         )}
       </div>
@@ -1007,7 +1008,7 @@ export function CircuitIntelligencePage() {
           {/* Speed traps with Mugello-realistic values */}
           <div className="card">
             <div className="card-header">
-              <span className="card-title">Speed Traps — Mugello</span>
+              <span className="card-title">Speed Traps — {getActiveCircuit().name}</span>
             </div>
             <div className="card-body" style={{ flexDirection: 'column', gap: 12 }}>
               {SPEED_TRAPS.map(st => (
@@ -1064,7 +1065,7 @@ export function CircuitIntelligencePage() {
       {showCorners && (
         <div className="card mb-4">
           <div className="card-header">
-            <span className="card-title">Corner Analysis — Mugello {MUGELLO.turns} Turns</span>
+            <span className="card-title">Corner Analysis — {getActiveCircuit().name} {getActiveCircuit().turns} Turns</span>
             <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
               Braking · Entry speed → Apex speed · Exit speed · Key notes
             </span>
