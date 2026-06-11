@@ -20,6 +20,7 @@ import { MUGELLO_CIRCUIT, RACE_SESSION, sessionDisplayState } from '../domain/se
 import { CircuitGatePage } from '../pages/CircuitGatePage';
 import { CircuitRecord, setActiveCircuit, dashboardMode, MODE_META } from '../domain/circuits';
 import { SessionModeGatePage } from '../pages/SessionModeGatePage';
+import { SessionContextStrip } from '../components/SessionContextStrip';
 import {
   SessionContext, setSessionContext, clearSessionContext, getSessionContext,
   hiddenTabsForMode, defaultTabForMode,
@@ -341,7 +342,9 @@ function AppShell() {
                 {sessionState.flagLabel}
               </span>
             </div>
-            <span className="badge badge-yellow" style={{ fontSize: 9 }}>{MUGELLO_CIRCUIT.assetStatusLabel}</span>
+            <span className="badge badge-yellow" style={{ fontSize: 9 }}>
+              {getSessionContext().circuitName}{getSessionContext().selectedCircuit === MUGELLO_CIRCUIT.id ? ` — ${MUGELLO_CIRCUIT.assetStatusLabel}` : ' — Mugello reference dataset'}
+            </span>
             <span className="header-clock">{clock}</span>
           </div>
         </header>
@@ -354,6 +357,7 @@ function AppShell() {
             style={{ height: '100%' }}
           >
             <NavContext.Provider value={navigate}>
+              <SessionContextStrip />
               <PageContent tab={activeTab} />
             </NavContext.Provider>
           </div>

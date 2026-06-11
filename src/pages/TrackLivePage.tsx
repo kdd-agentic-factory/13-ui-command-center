@@ -16,6 +16,7 @@ import {
   Thermometer, Clock,
 } from 'lucide-react';
 import { MUGELLO_CIRCUIT, sessionDisplayState } from '../domain/sessionTruth';
+import { useSessionContext } from '../hooks/useSessionContext';
 
 // ── Mugello circuit data ────────────────────────────────────────────────────
 
@@ -176,6 +177,7 @@ function MiniTrackMap({ trackPos, anomalyFlag }: { trackPos: number; anomalyFlag
 // ── Main page ───────────────────────────────────────────────────────────────
 
 export function TrackLivePage() {
+  const session = useSessionContext();
   const t = useLiveTelemetry();
   const sessionState = sessionDisplayState(t.lapCount);
   const rearTemp = Math.round((t.tireRearLeft + t.tireRearRight) / 2);
@@ -246,7 +248,7 @@ export function TrackLivePage() {
         <div>
           <h1 className="page-title">Track-Live</h1>
           <p className="page-subtitle">
-            Mugello · {sessionState.activeRace ? `Race Lap ${t.lapCount}/${RACE_LAPS}` : 'Pre-race/test telemetry'} · live pit-wall view
+            {session.ctx.circuitName} · {sessionState.activeRace ? `Race Lap ${t.lapCount}/${RACE_LAPS}` : 'Pre-race/test telemetry'} · {session.ctx.sessionMode === 'trackday' ? `${session.ctx.setup.rider ?? 'rider'} · ${session.ctx.setup.bike ?? 'bike'} · ${session.ctx.setup.stint ?? 'stint'}` : 'live pit-wall view'}
             <span style={{ fontSize: 10, color: 'var(--text-dim)', marginLeft: 8 }}>
               · {MUGELLO_TRACK_KM} km · Main straight {MUGELLO_MAIN_STRAIGHT_M} m · procedural map
             </span>

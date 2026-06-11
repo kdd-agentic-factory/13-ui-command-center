@@ -15,6 +15,7 @@ import {
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { useToast } from '../components/ToastProvider';
 import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
+import { useSessionContext } from '../hooks/useSessionContext';
 
 const RACE_MODES = {
   DRY_GP: 'dry-gp',
@@ -432,6 +433,7 @@ function OutcomeProbPanel({ scenarios, activeId, onSelect }: { scenarios: Scenar
 }
 
 export function DigitalTwinReportPage() {
+  const session = useSessionContext();
   const telem = useLiveTelemetry();
   const { toast } = useToast();
   const [activeScenario, setActiveScenario] = useState('baseline');
@@ -481,7 +483,7 @@ export function DigitalTwinReportPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">Digital Twin Report</h1>
-          <p className="page-subtitle">Race simulation · What-if scenarios · Lap-time model · KDD degradation prediction</p>
+          <p className="page-subtitle">{session.ctx.circuitName} race simulation · What-if scenarios · Lap-time model · KDD degradation prediction{session.ctx.dataMode !== 'live' ? ' · all outputs AI-estimated' : ''}{session.ctx.sessionMode === 'simulation' ? ` · circuit confidence ${Math.round(session.circuit.agentConfidence * 100)}%` : ''}</p>
         </div>
         <div className="flex items-center gap-2" style={{ flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           <span className="badge badge-blue">Digital Twin v2.1</span>

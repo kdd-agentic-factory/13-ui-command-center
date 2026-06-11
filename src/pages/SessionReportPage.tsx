@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '../components/ToastProvider';
 import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
+import { useSessionContext } from '../hooks/useSessionContext';
 
 interface MetricCard {
   label: string;
@@ -217,6 +218,7 @@ function NumberedAction({ index, title, body }: { index: number; title: string; 
 }
 
 export function SessionReportPage() {
+  const session = useSessionContext();
   const { toast } = useToast();
 
   function handleAction(label: string) {
@@ -232,7 +234,7 @@ export function SessionReportPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">Session Report</h1>
-          <p className="page-subtitle">Mugello GP · Stint 03 · Rubén Juárez · Yamaha R1</p>
+          <p className="page-subtitle">{session.ctx.circuitName} GP · {session.ctx.setup.stint ?? 'Stint 03'} · {session.ctx.setup.rider ?? 'Rubén Juárez'} · {session.ctx.setup.bike ?? 'Yamaha R1'}</p>
         </div>
         <div className="flex items-center gap-2" style={{ flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           <span className="badge badge-blue">Post-stint</span>

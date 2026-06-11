@@ -16,6 +16,7 @@ import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { renderRichText } from '../lib/richText';
 import { Tabs } from '../components/Tabs';
 import { MotorbikeDiagnostics, type BikeTelemetry } from '../components/MotorbikeDiagnostics';
+import { useSessionContext } from '../hooks/useSessionContext';
 import {
   MUGELLO_CIRCUIT,
   RACE_SESSION,
@@ -821,6 +822,7 @@ function TyreDisplay(props: TyreDisplayProps) {
 // ── Main Page ───────────────────────────────────────────────────────────────
 
 export function OverviewPage() {
+  const session = useSessionContext();
   const t = useLiveTelemetry();
   const [activeTab, setActiveTab] = useState<'live' | 'telemetry'>('live');
   const sessionState = sessionDisplayState(t.lapCount);
@@ -860,7 +862,7 @@ export function OverviewPage() {
         <div>
           <h1 className="page-title">{RACE_SESSION.productName}</h1>
           <p className="page-subtitle">
-            {RACE_SESSION.positioning} · {RACE_SESSION.decisionPromise} · {MUGELLO_CIRCUIT.shortName} {MUGELLO_CIRCUIT.lengthKm} km · {sessionState.activeRace ? `Lap ${displayLap} / ${RACE_LAPS}` : 'Pre-race/test state'}
+            {RACE_SESSION.positioning} · {RACE_SESSION.decisionPromise} · {session.ctx.circuitName} {session.circuit.lengthKm} km · {sessionState.activeRace ? `Lap ${displayLap} / ${RACE_LAPS}` : 'Pre-race/test state'}
             {!lapValid && <span style={{ marginLeft:8, color:'var(--accent)', fontSize:11 }}>
               ⚠ Data validation active
             </span>}
@@ -868,6 +870,7 @@ export function OverviewPage() {
         </div>
         <div className="flex items-center gap-2">
           <span className={`badge ${sessionState.badgeClass}`} style={{ animation: sessionState.activeRace ? 'pulse 2s infinite' : undefined }}>{sessionState.badgeLabel}</span>
+          <span className="badge" style={{ fontSize: 10, color: session.badgeColor, border: `1px solid ${session.badgeColor}`, background: 'transparent' }}>{session.badge}</span>
           <span className="badge badge-yellow">Integrity visible</span>
           {t.session === 'test' && <span className="badge badge-yellow">TEST SESSION</span>}
           {fuelCritical && <span className="badge badge-red" style={{ animation: 'pulse 1.5s infinite' }}>FUEL CRITICAL</span>}

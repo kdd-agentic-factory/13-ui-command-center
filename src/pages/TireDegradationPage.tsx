@@ -24,6 +24,7 @@ import {
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { TireModel3D } from '../components/babylon/TireModel3D';
 import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
+import { useSessionContext } from '../hooks/useSessionContext';
 
 // ── Mugello constants ─────────────────────────────────────────────────────────
 
@@ -556,6 +557,7 @@ function GripCliffPredictor({ compound, lapAge, grip }: { compound: CompoundId; 
 // ── Tyre Management Strategy · Dry Race Mode ─────────────────────────────────
 
 function TyreManagementStrategy({ lapAge, rearGrip }: { lapAge: number; rearGrip: number }) {
+  const session = useSessionContext();
   const riskActive = rearGrip < 78;
   const recActions = [
     { n: 1, text: 'Smooth throttle pickup at T15 Bucine.' },
@@ -570,8 +572,8 @@ function TyreManagementStrategy({ lapAge, rearGrip }: { lapAge: number; rearGrip
       {/* Info bar */}
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
         {[
-          { label: 'Race mode', value: 'Dry GP race', color: 'var(--blue)' },
-          { label: 'Pit stop', value: 'Not planned', color: 'var(--text-muted)' },
+          { label: 'Race mode', value: session.ctx.setup.rules ?? 'Dry GP race', color: 'var(--blue)' },
+          { label: 'Pit stop', value: session.ctx.pitStrategyEnabled ? 'Strategy enabled' : 'Not planned', color: 'var(--text-muted)' },
           { label: 'Objective', value: `Manage rear soft to race distance (L23)`, color: 'var(--green)' },
           { label: 'Risk point', value: `From L${lapAge + Math.max(1, Math.round((78 - rearGrip) / 3.6))}`, color: 'var(--yellow)' },
         ].map(s => (
@@ -625,6 +627,7 @@ function TyreManagementStrategy({ lapAge, rearGrip }: { lapAge: number; rearGrip
 // ── Model Integrity ───────────────────────────────────────────────────────────
 
 function ModelIntegrity() {
+  const session = useSessionContext();
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       {/* Confidence */}
@@ -655,8 +658,8 @@ function ModelIntegrity() {
       {/* Strategy Integrity */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6, marginTop: 4 }}>
         {[
-          ['Race mode', 'Dry GP race', 'var(--blue)'],
-          ['Scheduled pit stops', 'Disabled', 'var(--text-muted)'],
+          ['Race mode', session.ctx.setup.rules ?? 'Dry GP race', 'var(--blue)'],
+          ['Scheduled pit stops', session.ctx.pitStrategyEnabled ? 'Enabled (simulation)' : 'Disabled', 'var(--text-muted)'],
           ['Strategy model', 'Tyre management', 'var(--green)'],
           ['Warnings', 'None', 'var(--green)'],
         ].map(([k, v, c]) => (
@@ -673,6 +676,7 @@ function ModelIntegrity() {
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 export function TireDegradationPage() {
+  const session = useSessionContext();
   const t = useLiveTelemetry();
   const [show3D, setShow3D] = useState(false);
 
@@ -721,7 +725,7 @@ export function TireDegradationPage() {
       {/* Circuit validation */}
       <div style={{ display: 'flex', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
         <span className="badge badge-green" style={{ fontSize: 10 }}>{MUGELLO_CIRCUIT.shortName} GP · Race Lap {t.lapCount}/{MUGELLO_CIRCUIT.raceLaps}</span>
-        <span className="badge" style={{ fontSize: 10, background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)' }}>Dry race mode · No scheduled pit stops</span>
+        <span className="badge" style={{ fontSize: 10, background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)' }}>{session.ctx.pitStrategyEnabled ? 'KDD Simulation Mode · Pit strategy enabled' : 'Dry race mode · No scheduled pit stops'}</span>
       </div>
 
       {/* ── AI Tyre Alerts ───────────────────────────────────────────────── */}

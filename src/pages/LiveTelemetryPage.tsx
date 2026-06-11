@@ -17,6 +17,7 @@ import { useAnimeCount } from '../hooks/useAnimeCount';
 import { MultiChannelChart, Channel, XAxisMode, ScaleMode } from '../components/MultiChannelChart';
 import { WiFiDevicePanel } from '../components/WiFiDevicePanel';
 import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
+import { useSessionContext } from '../hooks/useSessionContext';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -559,6 +560,7 @@ function ChannelStatsStrip({ channels }: { channels: Channel[] }) {
 // ── Main component ────────────────────────────────────────────────────────────
 
 export function LiveTelemetryPage() {
+  const session = useSessionContext();
   const t = useLiveTelemetry();
   const [mode, setMode]         = useState<Mode>('live');
   const [showWifi, setShowWifi] = useState(false);
@@ -752,7 +754,7 @@ export function LiveTelemetryPage() {
         <div>
           <h1 className="page-title">Live Telemetry</h1>
           <p className="page-subtitle">
-            Real-time data stream · 10 Hz · Lap {t.lapCount}
+            {session.ctx.dataMode === 'live' ? 'Real-time data stream' : session.ctx.dataMode === 'recorded' ? 'Recorded session stream (replay)' : 'Sample data stream (not live)'}{session.ctx.setup.source ? ` · ${session.ctx.setup.source}` : ''} · 10 Hz · Lap {t.lapCount}
             {mode === 'analysis' && ` · Analysis window: ${analysisWin / 10}s`}
           </p>
         </div>

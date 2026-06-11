@@ -1,0 +1,59 @@
+/**
+ * SessionContextStrip — global session-context labeling over every page.
+ *
+ * Renders above the page content whenever the session is NOT a plain live
+ * session on a circuit with a real dataset:
+ *   - DEMO / REPLAY / SIMULATION / PRE-RACE data-provenance label (§9: every
+ *     widget must be identifiable as non-live)
+ *   - DATA INTEGRITY warning when the selected circuit has no telemetry yet
+ *     and modules are rendering the Mugello reference sample instead.
+ *
+ * In a normal LIVE session on Mugello it renders nothing — zero chrome.
+ */
+import { AlertTriangle, Radio } from 'lucide-react';
+import { useSessionContext } from '../hooks/useSessionContext';
+
+const MONO = 'JetBrains Mono, monospace';
+
+export function SessionContextStrip() {
+  const { ctx, datasetMismatch, badge, badgeColor } = useSessionContext();
+  const nonLive = ctx.dataMode !== 'live';
+
+  if (!nonLive && !datasetMismatch) return null;
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 14 }}>
+      {nonLive && (
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 8, padding: '7px 12px', borderRadius: 8,
+          background: 'rgba(167,139,250,0.06)', border: `1px solid ${badgeColor}`,
+          fontSize: 11, color: 'var(--text)',
+        }}>
+          <Radio size={12} style={{ color: badgeColor, flexShrink: 0 }} />
+          <strong style={{ color: badgeColor, fontFamily: MONO, letterSpacing: '0.06em' }}>{badge}</strong>
+          <span>
+            {ctx.demoMode
+              ? 'Demo mode active — all values are illustrative or based on stored sample sessions. No live data, no real engineer-approval actions.'
+              : ctx.dataMode === 'recorded'
+                ? `Working on recorded data${ctx.setup.session ? ` — ${ctx.setup.session}` : ''}. Nothing on this screen is live.`
+                : 'AI-estimated session — predictions carry simulation confidence, validate with real data before race decisions.'}
+          </span>
+        </div>
+      )}
+      {datasetMismatch && (
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 8, padding: '7px 12px', borderRadius: 8,
+          background: 'rgba(245,158,11,0.06)', border: '1px solid var(--yellow)',
+          fontSize: 11, color: 'var(--text)',
+        }}>
+          <AlertTriangle size={12} style={{ color: 'var(--yellow)', flexShrink: 0 }} />
+          <strong style={{ color: 'var(--yellow)', fontFamily: MONO }}>DATA INTEGRITY</strong>
+          <span>
+            Selected circuit <strong>{ctx.circuitName}</strong> has no telemetry dataset yet — modules render the
+            Mugello reference sample until a validation stint or upload populates it.
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
