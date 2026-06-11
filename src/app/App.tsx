@@ -17,6 +17,8 @@ import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { ToastProvider } from '../components/ToastProvider';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { MUGELLO_CIRCUIT, RACE_SESSION, sessionDisplayState } from '../domain/sessionTruth';
+import { CircuitGatePage } from '../pages/CircuitGatePage';
+import { CircuitRecord, setActiveCircuit, dashboardMode, MODE_META } from '../domain/circuits';
 
 import { OverviewPage }            from '../pages/OverviewPage';
 import { LiveTelemetryPage }       from '../pages/LiveTelemetryPage';
@@ -352,6 +354,9 @@ function AppShell() {
 function AppWithAuth() {
   const { profile, login, user, authLoading } = useProfile();
   const [pendingProfile, setPendingProfile] = useState<ProfileId | null>(null);
+  // Circuit Intelligence Gate: the dashboard does not open until a circuit is
+  // selected and validated for this session (single source of truth).
+  const [gateCircuit, setGateCircuit] = useState<CircuitRecord | null>(null);
 
   // Picking a profile: public ones (spectator) enter immediately; team profiles
   // require a real InsForge session first.
@@ -398,7 +403,31 @@ function AppWithAuth() {
   if (profile.requiresAuth && !user && !authLoading) {
     return <IntroExperience onEnter={handleEnter} />;
   }
-  return <AppShell />;
+  // Mandatory circuit gate before any dashboard module loads.
+  if (!gateCircuit) {
+    return (
+      <CircuitGatePage
+        onOpenDashboard={(c) => { setActiveCircuit(c); setGateCircuit(c); }}
+      />
+    );
+  }
+  const mode = dashboardMode(gateCircuit.status);
+  return (
+    <>
+      <AppShell />
+      {mode !== 'full' && (
+        <div style={{
+          position: 'fixed', right: 14, bottom: 14, zIndex: 90, maxWidth: 380,
+          padding: '8px 14px', borderRadius: 10, fontSize: 11,
+          background: 'rgba(11,13,18,0.92)', border: `1px solid ${MODE_META[mode].color}`,
+          color: 'var(--text)', boxShadow: '0 4px 18px rgba(0,0,0,0.4)',
+        }}>
+          <strong style={{ color: MODE_META[mode].color }}>{MODE_META[mode].label}</strong>
+          {' · '}{gateCircuit.name} — {MODE_META[mode].note}
+        </div>
+      )}
+    </>
+  );
 }
 
 // ─── Root export ──────────────────────────────────────────────────────────────
