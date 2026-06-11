@@ -25,6 +25,7 @@ import { BootSequence } from '../components/BootSequence';
 import { CircuitRecord, setActiveCircuit, dashboardMode, MODE_META, getCircuitLibrary } from '../domain/circuits';
 import { SessionModeGatePage } from '../pages/SessionModeGatePage';
 import { SessionContextStrip } from '../components/SessionContextStrip';
+import { GlobalContextBar } from '../components/GlobalContextBar';
 import { getActiveDemoSession } from '../domain/demoSessions';
 import {
   SessionContext, setSessionContext, clearSessionContext, getSessionContext,
@@ -351,9 +352,7 @@ function AppShell() {
                 {sessionState.flagLabel}
               </span>
             </div>
-            <span className="badge badge-yellow" style={{ fontSize: 9 }}>
-              {getSessionContext().circuitName}{getSessionContext().selectedCircuit === MUGELLO_CIRCUIT.id ? ` — ${MUGELLO_CIRCUIT.assetStatusLabel}` : ' — Mugello reference dataset'}
-            </span>
+            <GlobalContextBar telem={telem} />
             <span className="header-clock">{clock}</span>
           </div>
         </header>
@@ -510,25 +509,9 @@ function AppWithAuth() {
       />
     );
   }
-  const mode = dashboardMode(gateCircuit.status);
-  const degraded = mode !== 'full';
-  return (
-    <>
-      <AppShell />
-      {/* Session badge: LIVE / TEST / PRACTICE / STINT / REPLAY / DEMO / PRE-RACE / SIMULATION */}
-      <div style={{
-        position: 'fixed', right: 14, bottom: 14, zIndex: 90, maxWidth: 420,
-        padding: '8px 14px', borderRadius: 10, fontSize: 11,
-        background: 'rgba(11,13,18,0.92)', border: `1px solid ${sessionCtx.badgeColor}`,
-        color: 'var(--text)', boxShadow: '0 4px 18px rgba(0,0,0,0.4)',
-      }}>
-        <strong style={{ color: sessionCtx.badgeColor, fontFamily: 'JetBrains Mono, monospace' }}>{sessionCtx.badge}</strong>
-        {' · '}{sessionCtx.circuitName} · {sessionCtx.dashboardProfile.replace(/_/g, ' ')}
-        {sessionCtx.demoMode && <> — <strong style={{ color: sessionCtx.badgeColor }}>demo data, not live</strong></>}
-        {degraded && <> — {MODE_META[mode].note}</>}
-      </div>
-    </>
-  );
+  // The GlobalContextBar in the topbar now carries the session badge,
+  // circuit, mode and integrity state (Data Integrity Center dropdown).
+  return <AppShell />;
 }
 
 // ─── Root export ──────────────────────────────────────────────────────────────
