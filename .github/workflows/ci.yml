@@ -35,9 +35,9 @@ jobs:
         run: npm run build
 
   docker:
-    uses: kdd-agentic-race-engineering/12-ci-cd-security/.github/workflows/reusable-docker-build.yml@main
+    uses: kdd-agentic-factory/12-ci-cd-security/.github/workflows/reusable-docker-build.yml@main
     with:
       image-name: ui-command-center
-      push: ${{ github.event_name != 'pull_request' }}
+      push: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
     secrets:
       registry-token: ${{ secrets.GITHUB_TOKEN }}
