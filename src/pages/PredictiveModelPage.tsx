@@ -499,16 +499,6 @@ export function PredictiveModelPage() {
             </div>
           ))}
         </div>
-        {false && ( // hidden — circuits match, no error
-          <div style={{ marginTop: 8, padding: '8px 10px', borderRadius: 6, background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}>
-            <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-              <AlertTriangle size={14} style={{ color: 'var(--red)', flexShrink: 0 }} />
-              <div style={{ fontSize: 11 }}>
-                <strong>MODEL ERROR:</strong> Race circuit is Mugello, but improvement model loaded Jarama. Reload Mugello optimizer.
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

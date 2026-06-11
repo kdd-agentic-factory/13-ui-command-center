@@ -14,8 +14,7 @@ export function useAnimeCount(
   target: number,
   decimals = 0,
   duration = 900,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  deps: any[] = [],
+  deps: unknown[] = [],
 ): string {
   const [display, setDisplay] = useState('0');
   const objRef = useRef({ value: 0 });

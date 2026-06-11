@@ -101,7 +101,7 @@ const RIVAL_NAMES = [
 
 // ── Pit window timeline ───────────────────────────────────────────────────────
 
-function PitWindowTimeline({ lapCount, tyreAge }: { lapCount: number; tyreAge: number }) {
+function _PitWindowTimeline({ lapCount, tyreAge }: { lapCount: number; tyreAge: number }) {
   const optPit   = Math.max(lapCount + 1, lapCount + Math.round((18 - tyreAge) / 1.5));
   const winOpen  = Math.max(lapCount + 1, optPit - 3);
   const winClose = Math.min(23, optPit + 3);
@@ -296,7 +296,7 @@ export function CrewChiefPage() {
 
   const [events,     setEvents]     = useState<RaceEvent[]>(INITIAL_EVENTS);
   const [radioInput, setRadio]      = useState('');
-  const [msgIdx,     setMsgIdx]     = useState(0);
+  const [,           setMsgIdx]     = useState(0);
   const [filter,     setFilter]     = useState<FilterTab>('all');
   // In-race strategy (replaces the Pit Window Countdown — no pit stops in this class)
   const [engineMap,   setEngineMap]   = useState(6);   // PWR map 1..8
@@ -391,7 +391,7 @@ export function CrewChiefPage() {
   const humidity   = 48 - (t.lapCount % 5);
   const wind       = 'NE 14 km/h';
   const trackState = 'Dry';
-  const gapSec     = Math.abs(parseFloat(String(t.gap).replace(/[^0-9.\-]/g, '')) || 2);
+  const gapSec     = Math.abs(parseFloat(String(t.gap).replace(/[^0-9.-]/g, '')) || 2);
   const cleanAir   = gapSec > 1.0;  // within ~1s of the rider ahead → dirty air
   const optPit     = Math.max(t.lapCount + 1, t.lapCount + Math.round((18 - rearAge) / 1.5));
   const pitOpen    = t.lapCount >= 9;

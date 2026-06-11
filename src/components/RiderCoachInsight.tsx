@@ -1,4 +1,4 @@
-import { Bike, ChevronRight, Search, TrendingDown, Wrench, Gauge, ShieldAlert, Eye, BookOpen, Flag } from 'lucide-react';
+import { Bike, Search, TrendingDown, Wrench, Gauge, ShieldAlert, Eye, BookOpen, Flag } from 'lucide-react';
 import { useNavigate } from '../context/NavContext';
 
 /**

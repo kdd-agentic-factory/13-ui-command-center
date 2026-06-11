@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Wrench, AlertTriangle, Lightbulb, Check, ChevronRight, Activity, TrendingDown, Gauge, Thermometer, Shield, Ban, Target, User, Settings, Droplets, Siren } from 'lucide-react';
+import { Wrench, AlertTriangle, Lightbulb, ChevronRight, Activity, TrendingDown, Gauge, Thermometer, Shield, Ban, Target, User, Settings } from 'lucide-react';
 import { useNavigate } from '../context/NavContext';
 import { useToast } from '../components/ToastProvider';
 
@@ -214,10 +214,8 @@ export function GarageSetupAdvisorPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [selected, setSelected] = useState<string>(FINDINGS[0].id);
-  const active = FINDINGS.find(f => f.id === selected) ?? FINDINGS[0];
   const groups = ['Front', 'Rear', 'Tyres', 'Electronics'];
 
-  const totalChanges = PARAMS.filter(p => p.delta !== null && p.delta !== 'no change' && p.delta !== null).length;
   // Count unique proposed changes (a param with a non-null, non-zero delta)
   const proposedCount = PARAMS.filter(p => p.proposed !== null).length;
 

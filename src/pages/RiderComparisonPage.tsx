@@ -12,8 +12,8 @@
 import { useMemo, useState } from 'react';
 import {
   Users, TrendingUp, TrendingDown, Trophy, ChevronRight,
-  Activity, AlertTriangle, ShieldCheck, Info, Zap, MapPin,
-  CircleDot, ChevronDown,
+  AlertTriangle, ShieldCheck, Info, Zap, MapPin,
+  ChevronDown,
 } from 'lucide-react';
 import { useNavigate } from '../context/NavContext';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
@@ -21,7 +21,6 @@ import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 // ── Mugello constants ──────────────────────────────────────────────────────────
 
 const RACE_LAPS = 23;
-const FUEL_CAP  = 22;
 const FUEL_BURN = 0.95;
 const FUEL_CRITICAL_THRESHOLD = 2.5;
 const TRACK_KM  = 5.245;
@@ -83,12 +82,6 @@ function deltaColor(d: number): string {
   if (d <= -0.02) return 'var(--green)';
   if (d >= 0.02)  return 'var(--accent)';
   return 'var(--text-dim)';
-}
-
-function fmtS(s: number): string {
-  const m = Math.floor(s / 60);
-  const sec = (s % 60).toFixed(3).padStart(6, '0');
-  return `${m}:${sec}`;
 }
 
 // ── Sector labels for Mugello ──────────────────────────────────────────────────
@@ -535,8 +528,6 @@ export function RiderComparisonPage() {
   const [openCorners, setOpenCorners] = useState<Set<number>>(new Set([15]));
 
   const lapOk = t.lapCount <= RACE_LAPS;
-  const fuelInvalid = !t.fuelValid || (t.fuelLoad < 1.0 && t.speed > 50);
-
   // Compute aggregates
   const { total, sectors, worst, best, cornersAhead } = useMemo(() => {
     const total = MUGELLO_CORNERS.reduce((a, c) => a + c.delta, 0);

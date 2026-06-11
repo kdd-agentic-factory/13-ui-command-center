@@ -16,7 +16,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { animate } from 'animejs';
 import {
   Bot, CheckCircle, AlertTriangle, XCircle,
-  Loader2, Download, Plus, Zap, ChevronRight,
+  Loader2, Download, Zap, ChevronRight,
   FlaskConical, Printer, CloudUpload, CloudOff,
 } from 'lucide-react';
 import { useToast } from './ToastProvider';

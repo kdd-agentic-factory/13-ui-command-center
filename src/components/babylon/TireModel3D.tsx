@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import {
   Engine, Scene, ArcRotateCamera, HemisphericLight, Vector3,
-  MeshBuilder, StandardMaterial, Color3, Color4,
+  MeshBuilder, StandardMaterial, Color3, Color4, type Mesh,
 } from '@babylonjs/core';
 
 interface TireModel3DProps {
@@ -30,8 +30,7 @@ function tempToColor(temp: number, compound: 'SOFT' | 'MEDIUM' | 'HARD'): Color3
 export function TireModel3D({ temperature, compound, label, height = 160 }: TireModel3DProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<Engine | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const tireRef   = useRef<any>(null);
+  const tireRef   = useRef<Mesh | null>(null);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -50,7 +49,7 @@ export function TireModel3D({ temperature, compound, label, height = 160 }: Tire
     const tire = MeshBuilder.CreateTorus('tire', { diameter: 1.6, thickness: 0.55, tessellation: 32 }, scene);
     tire.rotation.x = Math.PI / 2;
     const tireMat = new StandardMaterial('tireMat', scene);
-    const col = tempToColor(temperature, compound);
+    const col = new Color3(0.18, 0.72, 0.25);
     tireMat.diffuseColor  = col;
     tireMat.emissiveColor = new Color3(col.r * 0.15, col.g * 0.15, col.b * 0.15);
     tireMat.specularColor = new Color3(0.3, 0.3, 0.3);

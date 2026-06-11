@@ -128,7 +128,6 @@ function compoundRadarValues(id: CompoundId): number[] {
 }
 
 function CompoundRadarChart() {
-  const W = 200; const H = 200;
   const cx = 100; const cy = 100; const R = 72;
   const N = RADAR_AXES.length;
   const angleOf = (i: number) => (i * 2 * Math.PI) / N - Math.PI / 2;
@@ -689,9 +688,6 @@ export function TireDegradationPage() {
   const rearRight  = t.tireRearRight;
   const frontCenter = Math.round((frontLeft + frontRight) * 0.47);
   const rearCenter  = Math.round((rearLeft + rearRight) * 0.47);
-  const frontAvg    = Math.round((frontLeft + frontCenter + frontRight) / 3);
-  const rearAvg     = Math.round((rearLeft + rearCenter + rearRight) / 3);
-
   const lapsToCliff = useMemo(() => lapsToCliffNow('SOFT', rearGrip), [rearGrip]);
   const cliffColor = lapsToCliff <= 2 ? 'var(--accent)' : lapsToCliff <= 5 ? 'var(--yellow)' : 'var(--green)';
   const rearStatus = tempStatus(Math.max(rearLeft, rearCenter, rearRight), COMPOUNDS.SOFT.optTempLow, COMPOUNDS.SOFT.optTempHigh);

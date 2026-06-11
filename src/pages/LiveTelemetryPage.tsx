@@ -625,7 +625,8 @@ export function LiveTelemetryPage() {
       ]);
     }
   }, [t.speed, t.rpm, t.throttle, t.brake, t.leanAngle, t.gear,
-      t.lapCount, t.lastLap, mode]);
+      t.lapCount, t.lastLap, t.tireFrontLeft, t.tireFrontRight,
+      t.tireRearLeft, t.tireRearRight, t.rearTyreAge, mode]);
 
   const handleModeChange = useCallback((m: Mode) => {
     if (m === 'analysis') {

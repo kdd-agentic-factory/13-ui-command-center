@@ -6,15 +6,14 @@
  * CRITICAL RULE: session identity is MUGGELLO RACE. Any Jarama references are
  * incorrect — this is GP Mugello, Round 7 of 20, 2026 season.
  */
-import { useState } from 'react';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { DigitalTwinViewer3D } from '../components/babylon/DigitalTwinViewer3D';
 import { TrackMap3D } from '../components/babylon/TrackMap3D';
 import { LeanAngleHUD } from '../components/LeanAngleHUD';
 import { RiderCoachInsight } from '../components/RiderCoachInsight';
 import {
-  AlertTriangle, ShieldAlert, Radio, CircleDot, Map,
-  Gauge, Thermometer, Clock,
+  AlertTriangle, ShieldAlert, Radio, Map,
+  Thermometer, Clock,
 } from 'lucide-react';
 
 // ── Mugello circuit data ────────────────────────────────────────────────────

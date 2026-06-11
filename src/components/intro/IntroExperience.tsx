@@ -10,7 +10,6 @@ import { useAnimeCount } from '../../hooks/useAnimeCount';
 import '../../styles/intro.css';
 
 interface IntroExperienceProps {
-  // eslint-disable-next-line no-unused-vars
   onEnter: (id: ProfileId) => void;
 }
 

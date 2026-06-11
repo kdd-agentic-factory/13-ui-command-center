@@ -2,8 +2,8 @@ import { useMemo, useState } from 'react';
 import {
   CheckCircle, AlertTriangle, XCircle, Wrench, CalendarCheck,
   Cloud, CloudOff, Trash2, RefreshCw, BarChart2, Layers,
-  Shield, Ban, Target, Thermometer, Gauge, Printer, User, Settings,
-  Clock, CheckSquare, FileText, Download, ChevronRight,
+  Shield, Printer, Settings,
+  Clock, CheckSquare, FileText, ChevronRight,
 } from 'lucide-react';
 import { useToast } from '../components/ToastProvider';
 import { PartGeneratorPanel } from '../components/PartGeneratorPanel';
@@ -394,7 +394,6 @@ export function PartDesignPage() {
 
   const critParts = useMemo(() => parts.filter(p => p.status === 'crit' && !scheduledServices.has(p.name)).length, [parts, scheduledServices]);
   const warnParts = useMemo(() => parts.filter(p => p.status === 'warn' && !scheduledServices.has(p.name)).length, [parts, scheduledServices]);
-  const okParts = useMemo(() => parts.filter(p => p.status === 'ok').length + scheduledServices.size, [parts, scheduledServices]);
   const totalMass = useMemo(() => parts.reduce((a, p) => a + p.mass, 0), [parts]);
 
   const massSavingKg = useMemo(() => {

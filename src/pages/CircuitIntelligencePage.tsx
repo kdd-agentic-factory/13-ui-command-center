@@ -23,7 +23,7 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
 import {
   CloudSun, Thermometer, Wind, TrendingDown, Droplets,
-  AlertTriangle, ChevronDown, ChevronUp, Layers,
+  AlertTriangle, Layers,
 } from 'lucide-react';
 import { useLiveTelemetry, trackSpeed } from '../hooks/useLiveTelemetry';
 import { TrackMap3D } from '../components/babylon/TrackMap3D';
@@ -305,7 +305,6 @@ function SectorSparkline({ deltas }: { deltas: number[] }) {
 function ElevationProfile({ trackPos }: { trackPos: number }) {
   const N = 60;
   const W = 600; const H = 120;
-  const W_HALF = W / 2;
 
   // Compute elevation samples
   const samples = Array.from({ length: N }, (_, i) => {
@@ -736,9 +735,6 @@ export function CircuitIntelligencePage() {
       : viewMode === 'throttle'
         ? 'throttle'
         : heatChannel;
-
-  // Current elevation
-  const currentElevation = MUGELLO.baseAltitude + trackElevation(t.trackPos) * 10;
 
   return (
     <div className="page">

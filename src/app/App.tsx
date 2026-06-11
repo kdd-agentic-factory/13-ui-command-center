@@ -1,5 +1,5 @@
 import '../i18n'; // must be first — initialises i18next before any component renders
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard, Activity, Map, Circle, Sliders, Wrench,
@@ -147,26 +147,24 @@ function AppShell() {
   const clock = useClock();
   const live = useServiceData(); // real platform health via the Fly BFF
 
-  if (!profile) return null;
-
   // Filter nav sections to only show allowed tabs
-  const filteredSections = ALL_NAV_SECTIONS
+  const filteredSections = profile ? ALL_NAV_SECTIONS
     .map(sec => ({
       ...sec,
       items: sec.items.filter(item => profile.allowedTabs.includes(item.id)),
     }))
-    .filter(sec => sec.items.length > 0);
+    .filter(sec => sec.items.length > 0) : [];
 
   // Flat list of tabs this profile can access (for keyboard nav)
   const allowedTabIds = filteredSections.flatMap(s => s.items.map(i => i.id));
 
   // If current tab not in allowed set, fall back to profile default
-  const activeTab: TabId = profile.allowedTabs.includes(tab) ? tab : profile.defaultTab;
+  const activeTab: TabId = profile && profile.allowedTabs.includes(tab) ? tab : profile?.defaultTab ?? 'overview';
 
   const isFullBleed = activeTab === 'copilot';
 
   // ── Tab navigation with animation ─────────────────────────────────────────
-  function navigateTo(newTab: TabId) {
+  const navigateTo = useCallback((newTab: TabId) => {
     if (newTab === activeTab) return;
     setTransitioning(true);
     setTimeout(() => {
@@ -174,7 +172,7 @@ function AppShell() {
       setTab(newTab);
       setTransitioning(false);
     }, 100); // matches CSS --dur-fast (120ms)
-  }
+  }, [activeTab]);
 
   // Cross-page navigation that can seed a question for the Copilot (AI Crew "Ask").
   function navigate(newTab: TabId, seed?: string) {
@@ -183,7 +181,6 @@ function AppShell() {
   }
 
   // ── Keyboard shortcuts ─────────────────────────────────────────────────────
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
       // Don't intercept when typing in an input / textarea
@@ -191,6 +188,7 @@ function AppShell() {
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
 
       const tabOrderAll = ALL_TAB_IDS.filter(id => allowedTabIds.includes(id));
+      if (tabOrderAll.length === 0) return;
       const idx = tabOrderAll.indexOf(activeTab);
 
       if (e.key === 'ArrowRight' || (e.altKey && e.key === ']')) {
@@ -206,6 +204,8 @@ function AppShell() {
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
   }, [activeTab, allowedTabIds, navigateTo]);
+
+  if (!profile) return null;
 
   return (
     <div className="app-shell">

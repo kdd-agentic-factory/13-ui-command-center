@@ -10,7 +10,7 @@
 import { useState, useMemo } from 'react';
 import {
   Flag, Zap, TrendingUp, Activity, AlertTriangle,
-  Shield, Fuel, Layers, Siren, Gauge, CircleDot,
+  Shield, CircleDot,
 } from 'lucide-react';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { renderRichText } from '../lib/richText';
@@ -34,6 +34,10 @@ function validFuel(kg: number): boolean {
   return kg >= 0.5 && kg <= 22.0;
 }
 
+function posColor(pos: number): string {
+  return pos === 1 ? '#F59E0B' : pos === 2 ? '#C0C0C0' : pos === 3 ? '#CD7F32' : 'var(--text-muted)';
+}
+
 // ── Types ───────────────────────────────────────────────────────────────────
 
 interface Rival {
@@ -45,7 +49,6 @@ interface Rival {
 // ── Constants ────────────────────────────────────────────────────────────────
 
 const RACE_LAPS = 23;
-const FUEL_CAPACITY = 22;
 const FUEL_PER_LAP = 0.95;
 
 // ── Base rivals ──────────────────────────────────────────────────────────────
@@ -473,9 +476,6 @@ function DataIntegrity({ fuelValid, lapAnomaly, lapCount, lastLap, bestLap }: {
 // ── Race Standings table ────────────────────────────────────────────────────
 
 function RaceStandingsTable({ rivals, position }: { rivals: Rival[]; position: number }) {
-  const posColor = (pos: number) =>
-    pos === 1 ? '#F59E0B' : pos === 2 ? '#C0C0C0' : pos === 3 ? '#CD7F32' : 'var(--text-muted)';
-
   return (
     <table className="data-table">
       <thead>
@@ -844,9 +844,6 @@ export function OverviewPage() {
       { sector: 'S3', delta: lapDelta * frac[2] },
     ];
   }, [lapDelta]);
-
-  const posColor = (pos: number) =>
-    pos === 1 ? '#F59E0B' : pos === 2 ? '#C0C0C0' : pos === 3 ? '#CD7F32' : 'var(--text-muted)';
 
   return (
     <div className="page">

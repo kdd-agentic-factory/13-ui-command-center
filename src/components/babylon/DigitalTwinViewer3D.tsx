@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import {
   Engine, Scene, ArcRotateCamera, HemisphericLight, Vector3,
-  MeshBuilder, StandardMaterial, Color3, Color4, PointLight, Mesh, Axis, Space, TransformNode,
+  MeshBuilder, StandardMaterial, Color3, Color4, PointLight, Axis, Space, TransformNode,
 } from '@babylonjs/core';
 
 interface DigitalTwinViewer3DProps {

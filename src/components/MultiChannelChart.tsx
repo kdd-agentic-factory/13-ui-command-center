@@ -51,15 +51,6 @@ interface Props {
 
 const PAD = { left: 52, right: 16, top: 2, xAxis: 22 };
 
-// ── Color helpers ─────────────────────────────────────────────────────────────
-
-function hexToRgba(hex: string, alpha: number): string {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `rgba(${r},${g},${b},${alpha})`;
-}
-
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export function MultiChannelChart({
@@ -70,9 +61,7 @@ export function MultiChannelChart({
   const [cursorIdx, setCursorIdx] = useState<number | null>(null);
 
   const activeChannels = channels.filter(c => c.data.length > 1);
-  if (activeChannels.length === 0) return null;
-
-  const dataLen = activeChannels[0].data.length;
+  const dataLen = activeChannels[0]?.data.length ?? 1;
   const chartW = svgWidth - PAD.left - PAD.right;
 
   // Total SVG height
@@ -104,6 +93,8 @@ export function MultiChannelChart({
     }
     onCursorChange({ index: cursorIdx, values });
   }, [cursorIdx, channels, onCursorChange]);
+
+  if (activeChannels.length === 0) return null;
 
   // ── Build panels ──────────────────────────────────────────────────────────
   let yOffset = PAD.top;

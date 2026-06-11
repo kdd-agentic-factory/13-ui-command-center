@@ -298,7 +298,6 @@ export function WiFiDevicePanel({ onClose, onConnected }: Props) {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
                 {DISCOVERED_DEVICES.map(dev => {
                   const isSelected = selected?.id === dev.id;
-                  const isConnecting = state === 'connecting' && isSelected;
                   return (
                     <div
                       key={dev.id}

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Satellite, Gauge, Cpu, HardDrive, Video, FileSpreadsheet, Smartphone, UploadCloud, Check, Plus, ArrowRight, FileText } from 'lucide-react';
+import { Satellite, Gauge, Cpu, HardDrive, Video, Smartphone, UploadCloud, Check, Plus, ArrowRight, FileText } from 'lucide-react';
 import { useNavigate } from '../context/NavContext';
 import { useToast } from '../components/ToastProvider';
 
