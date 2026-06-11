@@ -12,6 +12,7 @@ import {
   Flag, Wrench, Timer, Bike, Film, PlayCircle, CalendarDays, FlaskConical,
   ChevronRight, ArrowLeft, CheckCircle2, Database, AlertTriangle,
 } from 'lucide-react';
+import { GateProgress } from '../components/GateProgress';
 import type { CircuitRecord } from '../domain/circuits';
 import { STATUS_META } from '../domain/circuits';
 import {
@@ -74,6 +75,7 @@ export function SessionModeGatePage({ circuit, onBack, onOpen }: Props) {
   return (
     <div style={{ position: 'fixed', inset: 0, overflowY: 'auto', background: 'var(--bg, #0B0D12)', zIndex: 50 }}>
       <div style={{ maxWidth: 1180, margin: '0 auto', padding: '32px 24px 60px' }}>
+        <GateProgress step={1} />
 
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, marginBottom: 20 }}>

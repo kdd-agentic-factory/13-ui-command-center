@@ -18,6 +18,7 @@ import {
   Mountain, Route, Radar, ShieldAlert, Wrench, Upload, Eye, FlaskConical,
   Loader2, ArrowLeft, Flag,
 } from 'lucide-react';
+import { GateProgress } from '../components/GateProgress';
 import {
   CircuitRecord, CircuitStatus, getCircuitLibrary, addCircuit, syncCircuitLibrary,
   buildValidationChecklist, dashboardMode, MODE_META, STATUS_META,
@@ -26,6 +27,10 @@ import {
 
 interface Props {
   onOpenDashboard: (circuit: CircuitRecord) => void;
+  /** Back to Mission Control (rendered only when provided). */
+  onBack?: () => void;
+  /** Open directly in the create-circuit wizard. */
+  startCreating?: boolean;
 }
 
 const MONO = 'JetBrains Mono, monospace';
@@ -278,10 +283,10 @@ function CreateCircuitWizard({ initialName, onCancel, onCreated }: {
 
 // ── Main gate ─────────────────────────────────────────────────────────────────
 
-export function CircuitGatePage({ onOpenDashboard }: Props) {
+export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Props) {
   const [query, setQuery] = useState('');
   const [selectedId, setSelectedId] = useState<string>('mugello');
-  const [creating, setCreating] = useState(false);
+  const [creating, setCreating] = useState(startCreating ?? false);
   const [showPreview, setShowPreview] = useState(false);
   const [, force] = useState(0);
 
@@ -307,9 +312,15 @@ export function CircuitGatePage({ onOpenDashboard }: Props) {
     <div style={{ position: 'fixed', inset: 0, overflowY: 'auto', background: 'var(--bg, #0B0D12)', zIndex: 50 }}>
       <div style={{ maxWidth: 1180, margin: '0 auto', padding: '32px 24px 60px' }}>
 
+        <GateProgress step={0} />
         {/* Header */}
         <div style={{ marginBottom: 22 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            {onBack && (
+              <button onClick={onBack} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: 11 }}>
+                <ArrowLeft size={13} /> Mission Control
+              </button>
+            )}
             <Radar size={20} style={{ color: 'var(--accent)' }} />
             <h1 style={{ fontSize: 22, fontWeight: 800, letterSpacing: '0.04em', color: 'var(--text)', margin: 0 }}>
               CIRCUIT INTELLIGENCE GATE

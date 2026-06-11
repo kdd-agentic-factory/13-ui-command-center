@@ -18,13 +18,17 @@ import { ToastProvider } from '../components/ToastProvider';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { MUGELLO_CIRCUIT, RACE_SESSION, sessionDisplayState } from '../domain/sessionTruth';
 import { CircuitGatePage } from '../pages/CircuitGatePage';
-import { CircuitRecord, setActiveCircuit, dashboardMode, MODE_META } from '../domain/circuits';
+import { MissionControlPage } from '../pages/MissionControlPage';
+import { DataSourceGatePage } from '../pages/DataSourceGatePage';
+import { LaunchBriefPage } from '../pages/LaunchBriefPage';
+import { CircuitRecord, setActiveCircuit, dashboardMode, MODE_META, getCircuitLibrary } from '../domain/circuits';
 import { SessionModeGatePage } from '../pages/SessionModeGatePage';
 import { SessionContextStrip } from '../components/SessionContextStrip';
 import { getActiveDemoSession } from '../domain/demoSessions';
 import {
   SessionContext, setSessionContext, clearSessionContext, getSessionContext,
   hiddenTabsForMode, defaultTabForMode, persistSessionContext,
+  buildSessionContext, DEMO_PACKAGES,
 } from '../domain/sessionContext';
 
 import { OverviewPage }            from '../pages/OverviewPage';
@@ -376,11 +380,35 @@ function AppShell() {
 function AppWithAuth() {
   const { profile, login, user, authLoading } = useProfile();
   const [pendingProfile, setPendingProfile] = useState<ProfileId | null>(null);
-  // Entry gates: the dashboard does not open until the session knows WHICH
-  // circuit it is on (Circuit Intelligence Gate) and WHAT we are doing with it
-  // (Session Mode Gate). Together they build the global context object.
+  // Entry workflow (pit-wall boot sequence): Mission Control → Circuit →
+  // Mode → Data → Launch Brief → Dashboard. Each stage feeds the global
+  // context object; quick actions on Mission Control can pre-fill and jump.
+  type Stage = 'mission' | 'circuit' | 'mode' | 'data' | 'launch' | 'dashboard';
+  const [stage, setStage] = useState<Stage>('mission');
+  const [createOnOpen, setCreateOnOpen] = useState(false);
   const [gateCircuit, setGateCircuit] = useState<CircuitRecord | null>(null);
   const [sessionCtx, setSessionCtx] = useState<SessionContext | null>(null);
+
+  function presetLatestSession() {
+    const mugello = getCircuitLibrary().find(c => c.id === 'mugello')!;
+    setActiveCircuit(mugello); setGateCircuit(mugello);
+    const ctx = buildSessionContext('mugello', 'Mugello', 'replay', {
+      session: 'Mugello · Stint 03 · 14:32 · Yamaha R1',
+      channels: 'GPS · IMU · ECU · Video · CSV', analysis: 'Full session',
+      rider: 'Rubén Juárez', bike: 'Yamaha R1', dataSource: 'upload',
+    });
+    setSessionContext(ctx); setSessionCtx(ctx); setStage('launch');
+  }
+
+  function presetGuidedDemo() {
+    const mugello = getCircuitLibrary().find(c => c.id === 'mugello')!;
+    setActiveCircuit(mugello); setGateCircuit(mugello);
+    const pkg = DEMO_PACKAGES.find(p => p.id === 'trackday')!;
+    const ctx = buildSessionContext('mugello', 'Mugello', 'demo', {
+      demoId: pkg.id, demoPackage: pkg.title, dataType: pkg.dataType, dataSource: 'demo',
+    });
+    setSessionContext(ctx); setSessionCtx(ctx); setStage('launch');
+  }
 
   // Picking a profile: public ones (spectator) enter immediately; team profiles
   // require a real InsForge session first.
@@ -427,21 +455,54 @@ function AppWithAuth() {
   if (profile.requiresAuth && !user && !authLoading) {
     return <IntroExperience onEnter={handleEnter} />;
   }
-  // Gate 1: circuit selection + validation.
-  if (!gateCircuit) {
+  // ── Entry workflow stages ──────────────────────────────────────────────
+  if (stage === 'mission') {
     return (
-      <CircuitGatePage
-        onOpenDashboard={(c) => { setActiveCircuit(c); setGateCircuit(c); }}
+      <MissionControlPage
+        onSelectCircuit={() => { setCreateOnOpen(false); setStage('circuit'); }}
+        onCreateCircuit={() => { setCreateOnOpen(true); setStage('circuit'); }}
+        onLoadLatest={presetLatestSession}
+        onDemo={presetGuidedDemo}
       />
     );
   }
-  // Gate 2: session mode + setup → global context object.
-  if (!sessionCtx) {
+  if (stage === 'circuit' || !gateCircuit) {
+    return (
+      <CircuitGatePage
+        startCreating={createOnOpen}
+        onBack={() => setStage('mission')}
+        onOpenDashboard={(c) => { setActiveCircuit(c); setGateCircuit(c); setStage('mode'); }}
+      />
+    );
+  }
+  if (stage === 'mode' || !sessionCtx) {
     return (
       <SessionModeGatePage
         circuit={gateCircuit}
-        onBack={() => { setGateCircuit(null); clearSessionContext(); }}
-        onOpen={(ctx) => { setSessionContext(ctx); setSessionCtx(ctx); void persistSessionContext(ctx); }}
+        onBack={() => { clearSessionContext(); setSessionCtx(null); setStage('circuit'); }}
+        onOpen={(ctx) => { setSessionContext(ctx); setSessionCtx(ctx); setStage('data'); }}
+      />
+    );
+  }
+  if (stage === 'data') {
+    return (
+      <DataSourceGatePage
+        ctx={sessionCtx}
+        onBack={() => setStage('mode')}
+        onContinue={(dataSource) => {
+          const updated = { ...sessionCtx, setup: { ...sessionCtx.setup, dataSource } };
+          setSessionContext(updated); setSessionCtx(updated); setStage('launch');
+        }}
+      />
+    );
+  }
+  if (stage === 'launch') {
+    return (
+      <LaunchBriefPage
+        circuit={gateCircuit}
+        ctx={sessionCtx}
+        onBack={() => setStage('data')}
+        onLaunch={() => { void persistSessionContext(sessionCtx); setStage('dashboard'); }}
       />
     );
   }
