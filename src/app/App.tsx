@@ -21,6 +21,7 @@ import { CircuitGatePage } from '../pages/CircuitGatePage';
 import { MissionControlPage } from '../pages/MissionControlPage';
 import { DataSourceGatePage } from '../pages/DataSourceGatePage';
 import { LaunchBriefPage } from '../pages/LaunchBriefPage';
+import { BootSequence } from '../components/BootSequence';
 import { CircuitRecord, setActiveCircuit, dashboardMode, MODE_META, getCircuitLibrary } from '../domain/circuits';
 import { SessionModeGatePage } from '../pages/SessionModeGatePage';
 import { SessionContextStrip } from '../components/SessionContextStrip';
@@ -383,7 +384,7 @@ function AppWithAuth() {
   // Entry workflow (pit-wall boot sequence): Mission Control → Circuit →
   // Mode → Data → Launch Brief → Dashboard. Each stage feeds the global
   // context object; quick actions on Mission Control can pre-fill and jump.
-  type Stage = 'mission' | 'circuit' | 'mode' | 'data' | 'launch' | 'dashboard';
+  type Stage = 'mission' | 'circuit' | 'mode' | 'data' | 'launch' | 'booting' | 'dashboard';
   const [stage, setStage] = useState<Stage>('mission');
   const [createOnOpen, setCreateOnOpen] = useState(false);
   const [gateCircuit, setGateCircuit] = useState<CircuitRecord | null>(null);
@@ -496,13 +497,16 @@ function AppWithAuth() {
       />
     );
   }
+  if (stage === 'booting') {
+    return <BootSequence ctx={sessionCtx} onDone={() => setStage('dashboard')} />;
+  }
   if (stage === 'launch') {
     return (
       <LaunchBriefPage
         circuit={gateCircuit}
         ctx={sessionCtx}
         onBack={() => setStage('data')}
-        onLaunch={() => { void persistSessionContext(sessionCtx); setStage('dashboard'); }}
+        onLaunch={() => { void persistSessionContext(sessionCtx); setStage('booting'); }}
       />
     );
   }

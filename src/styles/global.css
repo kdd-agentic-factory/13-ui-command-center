@@ -3,10 +3,19 @@
    Palette: deep black base · racing red accent · data-precision typography
 ──────────────────────────────────────────────────────────────────────────── */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+/* Fonts are self-hosted via @fontsource imports in main.tsx — a Google Fonts
+   @import here is blocked by the production CSP (font-src 'self'). */
 
 :root {
   color-scheme: dark;
+  /* ── Typography stacks (racing display + UI + data) */
+  --font-display: 'Barlow Condensed', 'Rajdhani', 'Inter', system-ui, sans-serif;
+  --font-metric:  'Rajdhani', 'Barlow Condensed', 'JetBrains Mono', monospace;
+  /* ── 2026 cockpit palette tokens (additive — legacy tokens stay valid) */
+  --cyan:        #00B7FF;
+  --violet:      #8B5CF6;
+  --thermal:     #FF6A00;
+  --grip:        #00E676;
   /* ── Backgrounds */
   --bg-base:     #0B0D12;
   --bg-surface:  #111318;
@@ -405,10 +414,26 @@ a { color: inherit; text-decoration: none; }
 }
 
 .page-title {
-  font-size: 22px;
-  font-weight: 800;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.035em;
   color: var(--text);
   margin-bottom: 4px;
+}
+
+/* Racing display type for gate/cockpit headings */
+h1 { font-family: var(--font-display); letter-spacing: 0.045em; }
+
+/* Mini track-map dash animation (circuit cards) */
+@keyframes trackDash { to { stroke-dashoffset: 0; } }
+.mini-track path {
+  stroke-dasharray: 320;
+  stroke-dashoffset: 320;
+}
+.mini-track--active path,
+button:hover .mini-track path {
+  animation: trackDash 1.1s ease-out forwards;
 }
 
 .page-subtitle {

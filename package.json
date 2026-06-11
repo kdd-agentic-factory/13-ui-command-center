@@ -13,6 +13,10 @@
   },
   "dependencies": {
     "@babylonjs/core": "^7.35.0",
+    "@fontsource/barlow-condensed": "^5.2.8",
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/jetbrains-mono": "^5.2.8",
+    "@fontsource/rajdhani": "^5.2.7",
     "@insforge/sdk": "^1.2.10",
     "@vitejs/plugin-react": "^5.0.0",
     "animejs": "^4.4.1",

@@ -19,6 +19,7 @@ import {
   Loader2, ArrowLeft, Flag,
 } from 'lucide-react';
 import { GateProgress } from '../components/GateProgress';
+import { MiniTrackMap } from '../components/MiniTrackMap';
 import {
   CircuitRecord, CircuitStatus, getCircuitLibrary, addCircuit, syncCircuitLibrary,
   buildValidationChecklist, dashboardMode, MODE_META, STATUS_META,
@@ -367,7 +368,7 @@ export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Prop
                     borderRadius: 8, padding: '8px 10px', marginBottom: 4,
                   }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <MapPin size={12} style={{ color: STATUS_META[c.status].color, flexShrink: 0 }} />
+                    <MiniTrackMap id={c.id} color={STATUS_META[c.status].color} size={26} active={c.id === selectedId} />
                     <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text)', flex: 1 }}>{c.name}</span>
                     <StatusBadge status={c.status} />
                   </div>
