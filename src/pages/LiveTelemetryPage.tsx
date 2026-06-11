@@ -679,6 +679,7 @@ export function LiveTelemetryPage() {
   const [xAxisMode,    setXAxisMode]    = useState<XAxisMode>('time');
   const [scaleMode,    setScaleMode]    = useState<ScaleMode>('auto');
   const [analysisWin,  setAnalysisWin]  = useState<number>(ANALYSIS_LEN);
+  const [compare,      setCompare]      = useState<'none' | 'best' | 'previous' | 'ideal'>('none');
   const [cursorValues, setCursorValues] = useState<Record<string, number> | null>(null);
   const [cursorIndex,  setCursorIndex]  = useState<number | null>(null);
 
@@ -694,7 +695,25 @@ export function LiveTelemetryPage() {
     return analysisSnapshot.map(buf => buf.slice(-win));
   }, [analysisSnapshot, analysisWin]);
 
-  const allChannels = CHANNEL_DEFS.map((def, i) => ({ ...def, data: displaySnapshot[i] ?? [] }));
+  // Reference ghost per compare mode: best = cleaner/faster, previous = the
+  // same shape slightly slower and shifted, ideal = the noise-free line.
+  function refSeries(data: number[]): number[] | undefined {
+    if (compare === 'none' || data.length < 8) return undefined;
+    const smooth = (w: number) => data.map((_, i) => {
+      let acc = 0, n = 0;
+      for (let j = Math.max(0, i - w); j <= Math.min(data.length - 1, i + w); j++) { acc += data[j]; n++; }
+      return acc / n;
+    });
+    if (compare === 'ideal') return smooth(6);
+    if (compare === 'best') return smooth(3).map(v => v * 0.985);
+    const sm = smooth(3).map(v => v * 1.012); // previous lap: slightly slower, shifted
+    return sm.map((_, i) => sm[Math.max(0, i - 4)]);
+  }
+
+  const allChannels = CHANNEL_DEFS.map((def, i) => {
+    const data = displaySnapshot[i] ?? [];
+    return { ...def, data, refData: def.id === 'gear' ? undefined : refSeries(data) };
+  });
   const channels: Channel[] = allChannels.filter(c => visibleCh.has(c.id))
     .map(({ id, name, unit, color, range, panelHeight, data }) => ({ id, name, unit, color, range, panelHeight, data }));
   const channelGroups = ['Rider Inputs', 'Bike Dynamics', 'Tyres / Grip'];
@@ -1127,6 +1146,28 @@ export function LiveTelemetryPage() {
                     >{m === 'trackPos' ? 'Track %' : m.charAt(0).toUpperCase() + m.slice(1)}</button>
                   ))}
                 </div>
+              </div>
+
+              {/* Compare selector — reference ghost trace */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                <span style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Compare</span>
+                <div style={{ display: 'flex', gap: 2 }}>
+                  {(['none', 'best', 'previous', 'ideal'] as const).map(m => (
+                    <button key={m} onClick={() => setCompare(m)}
+                      style={{
+                        padding: '2px 8px', borderRadius: 4, border: 'none', cursor: 'pointer',
+                        fontSize: 10, fontFamily: 'JetBrains Mono,monospace',
+                        background: compare === m ? 'rgba(255,255,255,0.1)' : 'transparent',
+                        color: compare === m ? 'var(--text)' : 'var(--text-muted)',
+                      }}
+                    >{m === 'none' ? 'None' : m === 'best' ? 'Best lap' : m === 'previous' ? 'Prev lap' : 'Ideal'}</button>
+                  ))}
+                </div>
+                {compare !== 'none' && (
+                  <span style={{ fontSize: 9, fontFamily: 'JetBrains Mono,monospace', color: 'var(--text-muted)' }}>
+                    ╌ dashed = {compare === 'best' ? 'best lap' : compare === 'previous' ? 'previous lap' : 'ideal line'}
+                  </span>
+                )}
               </div>
 
               {/* Scale selector */}

@@ -28,6 +28,8 @@ export interface Channel {
   panelHeight: number;
   /** Discrete channels (gear, flags): render as a stepped trace, not interpolated */
   step?: boolean;
+  /** Reference series (best/previous/ideal lap) — dashed ghost overlay */
+  refData?: number[];
 }
 
 export type XAxisMode = 'samples' | 'time' | 'distance' | 'trackPos';
@@ -134,6 +136,11 @@ export function MultiChannelChart({
     const last  = `${xOf(ch.data.length - 1)},${panelTop + ch.panelHeight - 3}`;
     const areaPath = `${first} ${pts} ${last}`;
 
+    // Reference ghost (dashed) — same scale as the live trace
+    const refPts = ch.refData && ch.refData.length > 1
+      ? ch.refData.map((v, i) => `${xOf(i)},${yOf(v)}`).join(' ')
+      : null;
+
     // Cursor data
     const cVal = cursorIdx !== null ? ch.data[cursorIdx] : null;
     const cX   = cursorIdx !== null ? xOf(cursorIdx) : null;
@@ -142,7 +149,7 @@ export function MultiChannelChart({
     // Y-axis tick values
     const yTicks = [minV, (minV + maxV) / 2, maxV];
 
-    return { ch, panelTop, pts, areaPath, cVal, cX, cY, yTicks, yOf };
+    return { ch, panelTop, pts, areaPath, refPts, cVal, cX, cY, yTicks, yOf };
   });
 
   // Cursor X
@@ -169,7 +176,7 @@ export function MultiChannelChart({
           ))}
         </defs>
 
-        {panels.map(({ ch, panelTop, pts, areaPath, cVal, cX: _cX, cY, yTicks, yOf }) => (
+        {panels.map(({ ch, panelTop, pts, areaPath, refPts, cVal, cX: _cX, cY, yTicks, yOf }) => (
           <g key={ch.id}>
             {/* Panel background */}
             <rect
@@ -194,6 +201,19 @@ export function MultiChannelChart({
 
             {/* Area fill */}
             <polygon points={areaPath} fill={`url(#area-${ch.id})`} />
+
+            {/* Reference ghost trace (best/previous/ideal lap) */}
+            {refPts && (
+              <polyline
+                points={refPts}
+                fill="none"
+                stroke="#E6EAF4"
+                strokeOpacity="0.45"
+                strokeWidth="1"
+                strokeDasharray="4,3"
+                style={{ vectorEffect: 'non-scaling-stroke' }}
+              />
+            )}
 
             {/* Trace */}
             <polyline

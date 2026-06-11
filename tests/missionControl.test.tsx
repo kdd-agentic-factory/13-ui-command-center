@@ -20,8 +20,10 @@ describe('MissionControlPage', () => {
     expect(screen.getByText('KDD MOTO INTELLIGENCE')).toBeInTheDocument();
     expect(screen.getByText('SYSTEM READY')).toBeInTheDocument();
     expect(screen.getByText('START YOUR SESSION')).toBeInTheDocument();
+    expect(screen.getByText('Iniciar misión')).toBeInTheDocument(); // hero CTA
+    // 'Crear circuito' appears in the hero AND its action card — presence, not uniqueness
     for (const cta of ['Seleccionar circuito', 'Cargar última sesión', 'Crear circuito', 'Abrir demo guiada']) {
-      expect(screen.getByText(cta)).toBeInTheDocument();
+      expect(screen.getAllByText(cta).length).toBeGreaterThan(0);
     }
     expect(screen.getByText('ORACLE QUICK BRIEF')).toBeInTheDocument();
     expect(screen.getByText('DATA QUALITY CENTER')).toBeInTheDocument();
@@ -31,11 +33,12 @@ describe('MissionControlPage', () => {
     const select = vi.fn(); const create = vi.fn(); const latest = vi.fn(); const demo = vi.fn();
     render(<MissionControlPage onSelectCircuit={select} onCreateCircuit={create} onLoadLatest={latest} onDemo={demo} />);
 
+    fireEvent.click(screen.getByText('Iniciar misión'));
     fireEvent.click(screen.getByText('Seleccionar circuito'));
-    fireEvent.click(screen.getByText('Crear circuito'));
+    fireEvent.click(screen.getAllByText('Crear circuito')[0]);
     fireEvent.click(screen.getByText('Cargar última sesión'));
     fireEvent.click(screen.getByText('Abrir demo guiada'));
-    expect(select).toHaveBeenCalledTimes(1);
+    expect(select).toHaveBeenCalledTimes(2); // hero "Iniciar misión" + card
     expect(create).toHaveBeenCalledTimes(1);
     expect(latest).toHaveBeenCalledTimes(1);
     expect(demo).toHaveBeenCalledTimes(1);

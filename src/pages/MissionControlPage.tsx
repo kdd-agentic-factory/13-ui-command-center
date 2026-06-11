@@ -87,6 +87,17 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
             <div style={{ fontSize: 10.5, fontFamily: MONO, color: 'var(--text-muted)', marginTop: 8 }}>
               Circuit intelligence · Live telemetry · Digital twin · Rider coach · Oracle pit-wall
             </div>
+            <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
+              <button className="btn-primary" onClick={onSelectCircuit} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 18px', fontSize: 13 }}>
+                <ChevronRight size={14} /> Iniciar misión
+              </button>
+              <button onClick={onDemo} style={{ padding: '9px 16px', borderRadius: 8, cursor: 'pointer', fontSize: 12, background: 'rgba(139,92,246,0.12)', border: '1px solid #8B5CF6', color: '#8B5CF6' }}>
+                Ver demo
+              </button>
+              <button onClick={onCreateCircuit} style={{ padding: '9px 16px', borderRadius: 8, cursor: 'pointer', fontSize: 12, background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', color: 'var(--text)' }}>
+                Crear circuito
+              </button>
+            </div>
           </div>
 
           {/* System status */}
@@ -100,6 +111,9 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
               ['Latest session', 'Mugello · Stint 03'],
               ['Data sources', 'GPS · IMU · ECU · CSV'],
               ['Oracle Pit Wall', 'Ready'],
+              ['Digital Twin', 'Ready'],
+              ['Data quality', '94%'],
+              ['Last sync', 'Today · 14:32'],
             ].map(([k, v]) => (
               <div key={k} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, fontSize: 10.5, padding: '2px 0' }}>
                 <span style={{ color: 'var(--text-muted)' }}>{k}</span>
@@ -116,7 +130,11 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
           <span style={{ fontSize: 11.5, fontFamily: MONO, color: 'var(--text-muted)' }}>
             1 Select or create circuit · 2 Choose session mode · 3 Load telemetry or simulation · 4 Open the digital pit-wall
           </span>
-          <span style={{ marginLeft: 'auto', fontSize: 11, fontFamily: MONO, color: '#00B7FF' }}>Circuit → Mode → Data → Launch</span>
+          <span style={{ marginLeft: 'auto', display: 'flex', gap: 10, fontSize: 10, fontFamily: MONO }}>
+            {[['Circuit', 'Not selected'], ['Mode', 'Pending'], ['Data', 'Pending'], ['Dashboard', 'Locked']].map(([k, v]) => (
+              <span key={k}><span style={{ color: '#00B7FF' }}>{k}</span> <span style={{ color: 'var(--text-muted)' }}>{v}</span>{k !== 'Dashboard' && <span style={{ color: 'var(--text-muted)' }}> →</span>}</span>
+            ))}
+          </span>
         </div>
 
         {/* ── Primary action cards (bento) ─────────────────────────────────── */}
@@ -149,9 +167,13 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
               ['Jarama · Setup Test', 'Needs telemetry sync', 'var(--yellow)'],
               ['Custom Track 01', 'SIMULATED · needs validation', '#8B5CF6'],
             ].map(([title, sub, c]) => (
-              <div key={title as string} style={{ padding: '7px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>{title}</div>
-                <div style={{ fontSize: 10, fontFamily: MONO, color: c as string }}>{sub}</div>
+              <div key={title as string} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '7px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>{title}</div>
+                  <div style={{ fontSize: 10, fontFamily: MONO, color: c as string }}>{sub}</div>
+                </div>
+                <button onClick={onSelectCircuit} style={{ fontSize: 9.5, fontFamily: MONO, padding: '3px 8px', borderRadius: 5, cursor: 'pointer', background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', color: 'var(--text)' }}>Open</button>
+                <button onClick={onLoadLatest} style={{ fontSize: 9.5, fontFamily: MONO, padding: '3px 8px', borderRadius: 5, cursor: 'pointer', background: 'rgba(0,183,255,0.08)', border: '1px solid #00B7FF', color: '#00B7FF' }}>Continue</button>
               </div>
             ))}
           </div>
@@ -170,6 +192,10 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
               <span style={{ color: 'var(--green)' }}>gain −0.42s/lap</span>
               <span style={{ color: 'var(--yellow)' }}>risk medium</span>
               <span style={{ color: '#8B5CF6' }}>confidence 88%</span>
+            </div>
+            <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+              <button onClick={onLoadLatest} style={{ fontSize: 10, fontFamily: MONO, padding: '5px 10px', borderRadius: 6, cursor: 'pointer', background: 'rgba(139,92,246,0.12)', border: '1px solid #8B5CF6', color: '#8B5CF6' }}>Ask Oracle</button>
+              <button onClick={onLoadLatest} style={{ fontSize: 10, fontFamily: MONO, padding: '5px 10px', borderRadius: 6, cursor: 'pointer', background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', color: 'var(--text)' }}>Open Session Report</button>
             </div>
           </div>
 
