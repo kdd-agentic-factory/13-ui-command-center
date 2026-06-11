@@ -19,6 +19,11 @@ import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { MUGELLO_CIRCUIT, RACE_SESSION, sessionDisplayState } from '../domain/sessionTruth';
 import { CircuitGatePage } from '../pages/CircuitGatePage';
 import { CircuitRecord, setActiveCircuit, dashboardMode, MODE_META } from '../domain/circuits';
+import { SessionModeGatePage } from '../pages/SessionModeGatePage';
+import {
+  SessionContext, setSessionContext, clearSessionContext, getSessionContext,
+  hiddenTabsForMode, defaultTabForMode,
+} from '../domain/sessionContext';
 
 import { OverviewPage }            from '../pages/OverviewPage';
 import { LiveTelemetryPage }       from '../pages/LiveTelemetryPage';
@@ -152,19 +157,28 @@ function AppShell() {
   const clock = useClock();
   const live = useServiceData(); // real platform health via the Fly BFF
 
-  // Filter nav sections to only show allowed tabs
+  // Filter nav sections to only show allowed tabs (profile role) minus the
+  // modules the active session mode hides (race vs track day vs pre-GP …).
+  const modeHidden = hiddenTabsForMode(getSessionContext().sessionMode);
   const filteredSections = profile ? ALL_NAV_SECTIONS
     .map(sec => ({
       ...sec,
-      items: sec.items.filter(item => profile.allowedTabs.includes(item.id)),
+      items: sec.items.filter(item => profile.allowedTabs.includes(item.id) && !modeHidden.includes(item.id)),
     }))
     .filter(sec => sec.items.length > 0) : [];
 
   // Flat list of tabs this profile can access (for keyboard nav)
   const allowedTabIds = filteredSections.flatMap(s => s.items.map(i => i.id));
 
-  // If current tab not in allowed set, fall back to profile default
-  const activeTab: TabId = profile && profile.allowedTabs.includes(tab) ? tab : profile?.defaultTab ?? 'overview';
+  // If current tab not in allowed set, fall back to mode default → profile default → first visible
+  const activeTab: TabId = profile && allowedTabIds.includes(tab)
+    ? tab
+    : (() => {
+        const md = defaultTabForMode(getSessionContext().sessionMode);
+        if (md && allowedTabIds.includes(md)) return md;
+        if (profile && allowedTabIds.includes(profile.defaultTab)) return profile.defaultTab;
+        return allowedTabIds[0] ?? 'overview';
+      })();
 
   const isFullBleed = activeTab === 'copilot';
 
@@ -354,9 +368,11 @@ function AppShell() {
 function AppWithAuth() {
   const { profile, login, user, authLoading } = useProfile();
   const [pendingProfile, setPendingProfile] = useState<ProfileId | null>(null);
-  // Circuit Intelligence Gate: the dashboard does not open until a circuit is
-  // selected and validated for this session (single source of truth).
+  // Entry gates: the dashboard does not open until the session knows WHICH
+  // circuit it is on (Circuit Intelligence Gate) and WHAT we are doing with it
+  // (Session Mode Gate). Together they build the global context object.
   const [gateCircuit, setGateCircuit] = useState<CircuitRecord | null>(null);
+  const [sessionCtx, setSessionCtx] = useState<SessionContext | null>(null);
 
   // Picking a profile: public ones (spectator) enter immediately; team profiles
   // require a real InsForge session first.
@@ -403,7 +419,7 @@ function AppWithAuth() {
   if (profile.requiresAuth && !user && !authLoading) {
     return <IntroExperience onEnter={handleEnter} />;
   }
-  // Mandatory circuit gate before any dashboard module loads.
+  // Gate 1: circuit selection + validation.
   if (!gateCircuit) {
     return (
       <CircuitGatePage
@@ -411,21 +427,33 @@ function AppWithAuth() {
       />
     );
   }
+  // Gate 2: session mode + setup → global context object.
+  if (!sessionCtx) {
+    return (
+      <SessionModeGatePage
+        circuit={gateCircuit}
+        onBack={() => { setGateCircuit(null); clearSessionContext(); }}
+        onOpen={(ctx) => { setSessionContext(ctx); setSessionCtx(ctx); }}
+      />
+    );
+  }
   const mode = dashboardMode(gateCircuit.status);
+  const degraded = mode !== 'full';
   return (
     <>
       <AppShell />
-      {mode !== 'full' && (
-        <div style={{
-          position: 'fixed', right: 14, bottom: 14, zIndex: 90, maxWidth: 380,
-          padding: '8px 14px', borderRadius: 10, fontSize: 11,
-          background: 'rgba(11,13,18,0.92)', border: `1px solid ${MODE_META[mode].color}`,
-          color: 'var(--text)', boxShadow: '0 4px 18px rgba(0,0,0,0.4)',
-        }}>
-          <strong style={{ color: MODE_META[mode].color }}>{MODE_META[mode].label}</strong>
-          {' · '}{gateCircuit.name} — {MODE_META[mode].note}
-        </div>
-      )}
+      {/* Session badge: LIVE / TEST / PRACTICE / STINT / REPLAY / DEMO / PRE-RACE / SIMULATION */}
+      <div style={{
+        position: 'fixed', right: 14, bottom: 14, zIndex: 90, maxWidth: 420,
+        padding: '8px 14px', borderRadius: 10, fontSize: 11,
+        background: 'rgba(11,13,18,0.92)', border: `1px solid ${sessionCtx.badgeColor}`,
+        color: 'var(--text)', boxShadow: '0 4px 18px rgba(0,0,0,0.4)',
+      }}>
+        <strong style={{ color: sessionCtx.badgeColor, fontFamily: 'JetBrains Mono, monospace' }}>{sessionCtx.badge}</strong>
+        {' · '}{sessionCtx.circuitName} · {sessionCtx.dashboardProfile.replace(/_/g, ' ')}
+        {sessionCtx.demoMode && <> — <strong style={{ color: sessionCtx.badgeColor }}>demo data, not live</strong></>}
+        {degraded && <> — {MODE_META[mode].note}</>}
+      </div>
     </>
   );
 }
