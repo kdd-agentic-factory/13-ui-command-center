@@ -13,6 +13,8 @@ export interface TelemetryFrame {
   gear:       number;   // 1–6 (0 = neutral)
   throttle:   number;   // % 0–100
   brake:      number;   // % 0–100
+  brakePressureFront: number; // % 0–100, front circuit pressure
+  brakePressureRear:  number; // % 0–100, rear circuit pressure
   leanAngle:  number;   // degrees 0–63
   fuelLoad:   number;   // kg 0–22
   lapTime:    number;   // seconds current lap
@@ -26,6 +28,10 @@ export interface TelemetryFrame {
   tireFrontRight: number;
   tireRearLeft:   number;
   tireRearRight:  number;
+  tirePressureFront: number; // bar
+  tirePressureRear:  number; // bar
+  tireWearFront:     number; // % worn
+  tireWearRear:      number; // % worn
   // Tyre compound
   frontCompound: 'SOFT' | 'MEDIUM' | 'HARD';
   rearCompound:  'SOFT' | 'MEDIUM' | 'HARD';
@@ -148,6 +154,8 @@ function computeFrame(
 
   const throttle = isAccel ? 85 + Math.random() * 15 : isBraking ? Math.random() * 10 : 40 + Math.random() * 40;
   const brake    = isBraking ? 60 + Math.random() * 35 : Math.random() * 5;
+  const brakePressureFront = Math.min(100, brake * (isBraking ? 0.92 : 0.65) + Math.random() * 3);
+  const brakePressureRear = Math.min(100, brake * (isBraking ? 0.38 : 0.25) + Math.random() * 2);
   const gear     = Math.max(1, Math.min(6, Math.round(speed / 55)));
   const rpm      = Math.min(15500, gear > 0 ? (speed * 45 + 2000 + (Math.random() - 0.5) * 500) : 6000);
   const leanAngle = isBraking ? 5 + Math.random() * 20 : (1 - speedNorm) * 55 + Math.random() * 5;
@@ -168,6 +176,10 @@ function computeFrame(
 
   const lapsLeft = Math.max(0, RACE_LAPS - lapCount);
   const stintAge = lapCount; // fresh stint every race start
+  const tirePressureFront = 1.86 + Math.min(0.18, lapCount * 0.006) + speedNorm * 0.03;
+  const tirePressureRear = 1.70 + Math.min(0.20, lapCount * 0.008) + speedNorm * 0.04;
+  const tireWearFront = Math.min(100, Math.round((lapCount * 2.8 + leanAngle * 0.05) * 10) / 10);
+  const tireWearRear = Math.min(100, Math.round((lapCount * 4.1 + throttle * 0.04) * 10) / 10);
 
   return {
     speed:       Math.round(speed),
@@ -175,6 +187,8 @@ function computeFrame(
     gear,
     throttle:    Math.round(throttle),
     brake:       Math.round(brake),
+    brakePressureFront: Math.round(brakePressureFront),
+    brakePressureRear:  Math.round(brakePressureRear),
     leanAngle:   Math.round(leanAngle * 10) / 10,
     fuelLoad:    Math.round(fuel * 10) / 10,
     lapTime:     (trackPos * TRACK_LAP_S),
@@ -187,6 +201,10 @@ function computeFrame(
     tireFrontRight: Math.round(baseTemp - 2 + Math.random() * 3),
     tireRearLeft:   Math.round(baseTemp + 6 + leanEffect + Math.random() * 4),
     tireRearRight:  Math.round(baseTemp + 4 + Math.random() * 4),
+    tirePressureFront: Math.round(tirePressureFront * 100) / 100,
+    tirePressureRear:  Math.round(tirePressureRear * 100) / 100,
+    tireWearFront,
+    tireWearRear,
     frontCompound:  'MEDIUM',
     rearCompound:   'SOFT',
     frontTyreAge:   lapCount,      // real tyre age

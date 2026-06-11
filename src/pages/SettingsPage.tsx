@@ -294,7 +294,7 @@ export function SettingsPage() {
         }
 
         try {
-          const controller = new AbortController();
+          const controller = new globalThis.AbortController();
           const timer = globalThis.setTimeout(() => controller.abort(), 6000);
           await globalThis.fetch(svc.url, { signal: controller.signal, mode: 'no-cors' });
           globalThis.clearTimeout(timer);

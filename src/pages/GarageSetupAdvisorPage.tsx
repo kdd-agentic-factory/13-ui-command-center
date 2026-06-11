@@ -78,9 +78,9 @@ const FINDINGS: SetupFinding[] = [
       },
       {
         param: 'Rear rebound',
-        current: '7 clicks',
-        proposed: '9 clicks',
-        delta: '+2 slower',
+        current: '7.0 clicks',
+        proposed: '9.0 clicks',
+        delta: '+2.0 slower',
         expectedEffect: 'calmer rear return on exit',
         risk: 'slower direction change if overdone',
       },
@@ -108,17 +108,17 @@ const FINDINGS: SetupFinding[] = [
     changes: [
       {
         param: 'Front compression',
-        current: '8 clicks',
-        proposed: '7 clicks',
-        delta: '-1 softer',
+        current: '8.0 clicks',
+        proposed: '7.0 clicks',
+        delta: '-1.0 softer',
         expectedEffect: 'reduce chatter into San Donato and Correntaio',
         risk: 'more fork dive if overdone',
       },
       {
         param: 'Front rebound',
-        current: '11 clicks',
-        proposed: '10 clicks',
-        delta: '-1 softer',
+        current: '11.0 clicks',
+        proposed: '10.0 clicks',
+        delta: '-1.0 softer',
         expectedEffect: 'improve front settling during brake release',
         risk: 'less support on trail braking',
       },
@@ -176,22 +176,22 @@ interface Param {
 
 const PARAMS: Param[] = [
   // Front
-  { key: 'frontPreload', label: 'Front preload',  current: '0.75',    baseline: '0.75',  proposed: null,   delta: null,       impact: 'braking support acceptable',                                risk: 'no change' },
-  { key: 'frontComp',    label: 'Front compression', current: '8 clicks', baseline: '8 clicks', proposed: '7 clicks', delta: '-1 softer', impact: 'reduce braking chatter',                                       risk: 'more fork dive' },
-  { key: 'frontRebound', label: 'Front rebound',   current: '11 clicks', baseline: '11 clicks', proposed: '10 clicks', delta: '-1 softer', impact: 'improve front settling during brake release',                  risk: 'less trail-braking support' },
-  { key: 'frontHeight',  label: 'Front ride height', current: '12 mm',   baseline: '12 mm',  proposed: null,   delta: null,       impact: 'geometry stable — no change recommended',                        risk: 'no change' },
+  { key: 'frontPreload', label: 'Front preload',  current: '0.75',    baseline: '0.75',  proposed: null,   delta: null,       impact: 'braking support acceptable',                                risk: 'no change', group: 'Front' },
+  { key: 'frontComp',    label: 'Front compression (0.5-click)', current: '8.0 clicks', baseline: '8.0 clicks', proposed: '7.0 clicks', delta: '-1.0 softer', impact: 'reduce braking chatter',                                       risk: 'more fork dive', group: 'Front' },
+  { key: 'frontRebound', label: 'Front rebound (0.5-click)',   current: '11.0 clicks', baseline: '11.0 clicks', proposed: '10.0 clicks', delta: '-1.0 softer', impact: 'improve front settling during brake release',                  risk: 'less trail-braking support', group: 'Front' },
+  { key: 'frontHeight',  label: 'Front ride height', current: '12.0 mm',   baseline: '12.0 mm',  proposed: null,   delta: null,       impact: 'geometry stable — no change recommended',                        risk: 'no change', group: 'Front' },
   // Rear
-  { key: 'rearPreload',  label: 'Rear preload',     current: '1.00',    baseline: '1.00',  proposed: null,   delta: null,       impact: 'rear balance stable',                                           risk: 'no change' },
-  { key: 'rearComp',     label: 'Rear comp (hi/lo)', current: '6 / 9',   baseline: '6 / 9',  proposed: null,   delta: null,       impact: 'no complaint on entry',                                          risk: 'no change' },
-  { key: 'rearRebound',  label: 'Rear rebound',    current: '7 clicks', baseline: '7 clicks', proposed: '9 clicks', delta: '+2 slower', impact: 'calm rear return on exit',                                       risk: 'slower direction change' },
-  { key: 'rearHeight',   label: 'Rear ride height', current: '+2 mm',   baseline: '+2 mm',  proposed: '+3 mm (optional test)', delta: '+1 mm', impact: 'improve mid-corner rotation (understeer finding only)',           risk: 'may reduce rear grip on exit' },
+  { key: 'rearPreload',  label: 'Rear preload',     current: '1.00',    baseline: '1.00',  proposed: null,   delta: null,       impact: 'rear balance stable',                                           risk: 'no change', group: 'Rear' },
+  { key: 'rearComp',     label: 'Rear comp hi/lo (0.5-click)', current: '6.0 / 9.0',   baseline: '6.0 / 9.0',  proposed: null,   delta: null,       impact: 'no complaint on entry',                                          risk: 'no change', group: 'Rear' },
+  { key: 'rearRebound',  label: 'Rear rebound (0.5-click)',    current: '7.0 clicks', baseline: '7.0 clicks', proposed: '9.0 clicks', delta: '+2.0 slower', impact: 'calm rear return on exit',                                       risk: 'slower direction change', group: 'Rear' },
+  { key: 'rearHeight',   label: 'Rear ride height', current: '+2.0 mm',   baseline: '+2.0 mm',  proposed: '+3.0 mm (optional test)', delta: '+1.0 mm', impact: 'improve mid-corner rotation (understeer finding only)',           risk: 'may reduce rear grip on exit', group: 'Rear' },
   // Tyres
-  { key: 'frontPress',   label: 'Front pressure',   current: '1.90 bar', baseline: '1.86 bar', proposed: '1.86 bar cold', delta: '-0.04 bar', impact: 'reduce hot pressure peak, lower chatter amplitude',              risk: 'less front support if too low' },
-  { key: 'rearPress',    label: 'Rear pressure',    current: '1.70 bar', baseline: '1.72 bar', proposed: null,   delta: null,       impact: 'verify hot — do not change cold target yet',                      risk: 'monitor hot build-up' },
+  { key: 'frontPress',   label: 'Front pressure',   current: '1.90 bar', baseline: '1.86 bar', proposed: '1.86 bar cold', delta: '-0.04 bar', impact: 'reduce hot pressure peak, lower chatter amplitude',              risk: 'less front support if too low', group: 'Tyres' },
+  { key: 'rearPress',    label: 'Rear pressure',    current: '1.70 bar', baseline: '1.72 bar', proposed: null,   delta: null,       impact: 'verify hot — do not change cold target yet',                      risk: 'monitor hot build-up', group: 'Tyres' },
   // Electronics
-  { key: 'tc',           label: 'Traction control',  current: 'Level 4', baseline: 'Level 4',  proposed: 'Level 5', delta: '+1',       impact: 'reduce rear slip on throttle pickup',                             risk: 'slight loss of exit drive' },
-  { key: 'engineBrake',  label: 'Engine brake',     current: 'Level 2', baseline: 'Level 2',  proposed: null,   delta: null,       impact: 'keep — rear exit instability is not entry-related',               risk: 'no change' },
-  { key: 'powerMap',     label: 'Power map',        current: 'Map B',   baseline: 'Map B',   proposed: null,   delta: null,       impact: 'no top-speed deficit detected',                                   risk: 'no change' },
+  { key: 'tc',           label: 'Traction control',  current: 'Level 4', baseline: 'Level 4',  proposed: 'Level 5', delta: '+1',       impact: 'reduce rear slip on throttle pickup',                             risk: 'slight loss of exit drive', group: 'Electronics' },
+  { key: 'engineBrake',  label: 'Engine brake',     current: 'Level 2', baseline: 'Level 2',  proposed: null,   delta: null,       impact: 'keep — rear exit instability is not entry-related',               risk: 'no change', group: 'Electronics' },
+  { key: 'powerMap',     label: 'Power map',        current: 'Map B',   baseline: 'Map B',   proposed: null,   delta: null,       impact: 'no top-speed deficit detected',                                   risk: 'no change', group: 'Electronics' },
 ];
 
 const PRIORITY_COLOR: Record<Priority, string> = {

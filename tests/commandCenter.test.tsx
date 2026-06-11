@@ -16,6 +16,6 @@ describe('Moto Intelligence positioning', () => {
     // Engineer feedback #5: the headline metric is rider value, not "active agents".
     expect(screen.getByText('Potential gain')).toBeInTheDocument();
     // Role-based entry is preserved.
-    expect(screen.getByText('Race Engineer')).toBeInTheDocument();
+    expect(screen.getAllByText('Race Engineer').length).toBeGreaterThan(0);
   });
 });

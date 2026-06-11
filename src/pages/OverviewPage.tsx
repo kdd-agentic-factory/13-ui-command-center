@@ -7,7 +7,7 @@
  * Every consumer validates its data before rendering. Bogus values = blank with
  * error indicator, NOT wrong numbers.
  */
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Flag, Zap, TrendingUp, Activity, AlertTriangle,
   Shield, Fuel, Layers, Siren, Gauge, CircleDot,
@@ -36,7 +36,6 @@ function validFuel(kg: number): boolean {
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
-interface FeedEvent { id: number; time: string; color: string; text: string }
 interface Rival {
   pos: number; rider: string; team: string; num: number;
   self: boolean; gap: string; lastLapDiff: string; threat: string;
@@ -48,29 +47,6 @@ interface Rival {
 const RACE_LAPS = 23;
 const FUEL_CAPACITY = 22;
 const FUEL_PER_LAP = 0.95;
-
-// ── Baseline feed events ─────────────────────────────────────────────────────
-
-const INITIAL_EVENTS: FeedEvent[] = [
-  { id: 1, time: '14:22', color: 'var(--green)',  text: 'Crew Chief — <strong>Sector 3 gain +0.15s</strong> vs Lap 2 baseline' },
-  { id: 2, time: '14:19', color: 'var(--blue)',   text: 'Digital Twin — Soft rear degradation above model at <strong>1.2% / lap</strong>' },
-  { id: 3, time: '14:17', color: 'var(--yellow)', text: 'Tyre Agent — <strong>Pit window opens Lap 9</strong> — optimal Lap 11' },
-  { id: 4, time: '14:15', color: 'var(--accent)', text: 'Race Control — <strong>Yellow flag sector 5</strong> — Gap control active' },
-  { id: 5, time: '14:12', color: 'var(--green)',  text: 'Setup Agent — Engine map 6 delivering +2.1 km/h top speed' },
-  { id: 6, time: '14:09', color: 'var(--blue)',   text: 'KDD Pipeline — Lap 3 telemetry processed — <strong>12,400 samples</strong>' },
-];
-
-type FeedFn = (gap: string, speed: number, fuel: number, lap: number) => { color: string; text: string };
-
-const FEED_TEMPLATES: FeedFn[] = [
-  (gap)              => ({ color: 'var(--blue)',   text: `Gap Monitor — P2 gap now <strong>${gap}</strong>` }),
-  (_g, speed)        => ({ color: 'var(--green)',  text: `Telemetry — Top speed Straight 1: <strong>${speed} km/h</strong>` }),
-  ()                 => ({ color: 'var(--yellow)', text: 'Tyre Agent — Rear temp stable at 98°C — degradation nominal' }),
-  (_g, _s, fuel)     => ({ color: 'var(--orange)', text: `Fuel Model — Remaining: <strong>${fuel.toFixed(1)} kg</strong>` }),
-  ()                 => ({ color: 'var(--blue)',   text: 'KDD Pipeline — Telemetry batch processed — 12,400 samples' }),
-  (_g, _s, _f, lap)  => ({ color: 'var(--green)',  text: `Digital Twin — Lap ${lap} delta: <strong>–0.08s</strong> vs predicted` }),
-  ()                 => ({ color: 'var(--accent)', text: 'Race Control — No incidents in last 2 laps. Green flag all sectors.' }),
-];
 
 // ── Base rivals ──────────────────────────────────────────────────────────────
 
@@ -117,10 +93,6 @@ function formatLap(s: number): string {
   const m = Math.floor(s / 60);
   const sec = (s % 60).toFixed(3).padStart(6, '0');
   return `${m}:${sec}`;
-}
-
-function now(): string {
-  return new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 }
 
 /** Projected fuel at end of race (negative = will run out). */
@@ -745,6 +717,8 @@ interface TyreDisplayProps {
   rearLeft: number; rearRight: number;
   frontCompound: string; rearCompound: string;
   frontAge: number; rearAge: number;
+  frontPressure?: number; rearPressure?: number;
+  frontWear?: number; rearWear?: number;
 }
 
 /** Simulated tyre center temperature (slightly higher than surface). */
@@ -752,23 +726,32 @@ function centerTemp(surface: number): number {
   return Math.round(surface + 3 + Math.random() * 5);
 }
 
-/** Simulated tyre pressure in psi (MotoGP: ~24–27 psi front, ~20–23 rear). */
+/** Fallback tyre pressure in bar when a live channel is unavailable. */
 function tyrePressure(isFront: boolean): number {
-  return isFront ? 24.5 + Math.random() * 2 : 20.5 + Math.random() * 2;
+  return isFront ? 1.90 : 1.72;
+}
+
+function tyreWear(age: number, isFront: boolean): number {
+  const perLap = isFront ? 2.8 : 4.1;
+  return Math.min(100, Math.round(age * perLap * 10) / 10);
 }
 
 function TyreDisplay(props: TyreDisplayProps) {
-  const showPressure = true;
-
   const renderTyre = (label: string, side: 'L' | 'R', temp: number, compound: string, isFront: boolean) => {
     const center = centerTemp(temp);
-    const press = showPressure ? tyrePressure(isFront) : 0;
+    const press = isFront ? props.frontPressure ?? tyrePressure(true) : props.rearPressure ?? tyrePressure(false);
+    const wear = isFront ? props.frontWear ?? tyreWear(props.frontAge, true) : props.rearWear ?? tyreWear(props.rearAge, false);
     const tempColor = temp > 105 ? 'var(--accent)' : temp > 95 ? 'var(--yellow)' : 'var(--green)';
-    const wearLabel = props.frontAge > 12 ? 'Worn' : props.frontAge > 6 ? 'Used' : 'Fresh';
+    const wearColor = wear > 55 ? 'var(--accent)' : wear > 35 ? 'var(--yellow)' : 'var(--green)';
+    const zones = [
+      { name: 'inner flank', temp: Math.round(temp + (side === 'L' ? 3 : -1)) },
+      { name: 'center', temp: center },
+      { name: 'outer flank', temp: Math.round(temp + (side === 'R' ? 3 : -1)) },
+    ];
 
     return (
       <div key={label + side} style={{
-        flex: 1, padding: '6px 8px', borderRadius: 6,
+        flex: 1, padding: '8px', borderRadius: 8,
         background: temp > 105 ? 'rgba(224,55,55,0.08)' : temp > 95 ? 'rgba(245,158,11,0.08)' : 'rgba(34,197,94,0.06)',
         border: '1px solid',
         borderColor: temp > 105 ? 'rgba(224,55,55,0.2)' : temp > 95 ? 'rgba(245,158,11,0.2)' : 'rgba(34,197,94,0.15)',
@@ -776,15 +759,22 @@ function TyreDisplay(props: TyreDisplayProps) {
       }}>
         <div style={{ display:'flex', justifyContent:'space-between', marginBottom:4 }}>
           <span style={{ fontSize:9, fontWeight:700, color:'var(--text-muted)', textTransform:'uppercase', letterSpacing:'0.05em' }}>
-            {side}
+            {isFront ? 'F' : 'R'}{side}
           </span>
           <span style={{ fontSize:9, fontFamily:'JetBrains Mono,monospace', color: tempColor, fontWeight:700 }}>
             {temp}°S / {center}°C
           </span>
         </div>
-        <div style={{ display:'flex', justifyContent:'space-between', fontSize:9, color:'var(--text-dim)' }}>
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:2, height:9, marginBottom:6, borderRadius:4, overflow:'hidden' }}>
+          {zones.map(zone => (
+            <div key={zone.name} title={zone.name} style={{ background: zone.temp > 105 ? 'var(--accent)' : zone.temp > 95 ? 'var(--yellow)' : 'var(--green)', opacity: 0.86 }} />
+          ))}
+        </div>
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:4, fontSize:9, color:'var(--text-dim)', fontFamily:'JetBrains Mono,monospace' }}>
           <span>{compound}</span>
-          {showPressure && <span>{press.toFixed(1)} psi</span>}
+          <span style={{ color:'var(--cyan)', textAlign:'right' }}>{press.toFixed(2)} bar</span>
+          <span style={{ color: wearColor }}>{wear.toFixed(1)}% wear</span>
+          <span style={{ textAlign:'right' }}>flank / center / flank</span>
         </div>
       </div>
     );
@@ -816,7 +806,7 @@ function TyreDisplay(props: TyreDisplayProps) {
       </div>
       {/* Legend */}
       <div style={{ display:'flex', gap:8, marginTop:6, fontSize:9, color:'var(--text-dim)' }}>
-        <span>S = Surface · C = Center</span>
+        <span>S = Surface · C = Center · visual blocks = inner flank / center / outer flank</span>
       </div>
     </div>
   );
@@ -826,10 +816,7 @@ function TyreDisplay(props: TyreDisplayProps) {
 
 export function OverviewPage() {
   const t = useLiveTelemetry();
-  const [feedEvents, setFeedEvents] = useState<FeedEvent[]>(INITIAL_EVENTS);
   const [activeTab, setActiveTab] = useState<'live' | 'telemetry'>('live');
-  const templateIdx  = useRef(0);
-  const lastLapRef   = useRef(t.lapCount);
 
   // ── Validation guard: if lap counter is bogus, show a clear error ──────
   const lapValid = validLap(t.lapCount);
@@ -838,31 +825,6 @@ export function OverviewPage() {
   // Fuel projection
   const projectedFuel = validFuel(t.fuelLoad) ? fuelProjection(t.lapCount, t.fuelLoad) : null;
   const fuelCritical = projectedFuel !== null && projectedFuel < 1;
-
-  // Generate feed events every 9s
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const idx = templateIdx.current % FEED_TEMPLATES.length;
-      templateIdx.current += 1;
-      const { color, text } = FEED_TEMPLATES[idx](t.gap, t.speed, t.fuelLoad, t.lapCount);
-      setFeedEvents(prev => [
-        { id: Date.now(), time: now(), color, text },
-        ...prev.slice(0, 11),
-      ]);
-    }, 9000);
-    return () => clearInterval(interval);
-  }, [t.gap, t.speed, t.fuelLoad, t.lapCount]);
-
-  // Lap-complete events
-  useEffect(() => {
-    if (t.lapCount > lastLapRef.current) {
-      lastLapRef.current = t.lapCount;
-      setFeedEvents(prev => [{
-        id: Date.now(), time: now(), color: 'var(--accent)',
-        text: `<strong>LAP ${t.lapCount} COMPLETE</strong> — ${formatLap(t.lastLap)} · Best ${formatLap(t.bestLap)}`,
-      }, ...prev.slice(0, 11)]);
-    }
-  }, [t.lapCount, t.lastLap, t.bestLap]);
 
   const rivals = buildRivals(t.position, t.gap);
 
@@ -1002,21 +964,39 @@ export function OverviewPage() {
       {/* ═══ MIDDLE GRID: Feed + Live Snapshot + Tyres ═════════════════ */}
       <div className="grid-3-2 mb-4">
 
-        {/* Left: Agent event feed */}
+        {/* Left: detailed tyre operations panel */}
         <div className="card">
           <div className="card-header">
             <span className="card-title flex items-center gap-2">
-              <Zap size={14} style={{ color: 'var(--accent)' }} />
-              Agent Activity Feed
+              <CircleDot size={14} style={{ color: 'var(--yellow)' }} />
+              Tyre Operations · Neumáticos
             </span>
-            <span className="badge badge-green" style={{ animation: 'pulse 2s infinite' }}>LIVE</span>
+            <span className="badge badge-orange">pressure · wear · flank split</span>
           </div>
-          <div className="event-feed">
-            {feedEvents.map(ev => (
-              <div className="event-item" key={ev.id}>
-                <div className="event-dot" style={{ background: ev.color }} />
-                <span className="event-time text-mono">{ev.time}</span>
-                <span className="event-text">{renderRichText(ev.text)}</span>
+          <TyreDisplay
+            frontLeft={t.tireFrontLeft}
+            frontRight={t.tireFrontRight}
+            rearLeft={t.tireRearLeft}
+            rearRight={t.tireRearRight}
+            frontCompound={t.frontCompound}
+            rearCompound={t.rearCompound}
+            frontAge={t.frontTyreAge}
+            rearAge={t.rearTyreAge}
+            frontPressure={t.tirePressureFront}
+            rearPressure={t.tirePressureRear}
+            frontWear={t.tireWearFront}
+            rearWear={t.tireWearRear}
+          />
+          <div style={{ padding: '0 16px 14px', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+            {[
+              { label: 'Front pressure', value: `${t.tirePressureFront.toFixed(2)} bar`, color: 'var(--cyan)' },
+              { label: 'Rear pressure', value: `${t.tirePressureRear.toFixed(2)} bar`, color: 'var(--cyan)' },
+              { label: 'Front wear', value: `${t.tireWearFront.toFixed(1)}%`, color: t.tireWearFront > 35 ? 'var(--yellow)' : 'var(--green)' },
+              { label: 'Rear wear', value: `${t.tireWearRear.toFixed(1)}%`, color: t.tireWearRear > 55 ? 'var(--accent)' : t.tireWearRear > 35 ? 'var(--yellow)' : 'var(--green)' },
+            ].map(item => (
+              <div key={item.label} style={{ padding: '8px', borderRadius: 6, background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)' }}>
+                <div style={{ fontSize: 9, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{item.label}</div>
+                <div className="text-mono" style={{ fontSize: 13, color: item.color, fontWeight: 700 }}>{item.value}</div>
               </div>
             ))}
           </div>
@@ -1095,6 +1075,10 @@ export function OverviewPage() {
               rearCompound={t.rearCompound}
               frontAge={t.frontTyreAge}
               rearAge={t.rearTyreAge}
+              frontPressure={t.tirePressureFront}
+              rearPressure={t.tirePressureRear}
+              frontWear={t.tireWearFront}
+              rearWear={t.tireWearRear}
             />
           </div>
         </div>

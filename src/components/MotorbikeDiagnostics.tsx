@@ -15,12 +15,18 @@ export interface BikeTelemetry {
   gear: number;
   throttle: number;
   brake: number;
+  brakePressureFront?: number;
+  brakePressureRear?: number;
   frontCompound: 'SOFT' | 'MEDIUM' | 'HARD';
   rearCompound: 'SOFT' | 'MEDIUM' | 'HARD';
   tireFrontLeft: number;
   tireFrontRight: number;
   tireRearLeft: number;
   tireRearRight: number;
+  tirePressureFront?: number;
+  tirePressureRear?: number;
+  tireWearFront?: number;
+  tireWearRear?: number;
   rearTyreAge?: number;
 }
 
@@ -41,8 +47,10 @@ export function MotorbikeDiagnostics({ t }: { t: BikeTelemetry }) {
   const engineTemp = 92 + Math.round((t.rpm / 18000) * 18);
   const oilTemp = 105 + Math.round((t.rpm / 18000) * 15);
   const waterTemp = 88 + Math.round((t.throttle / 100) * 12);
-  const frontPress = 1.9;
-  const rearPress = 1.7;
+  const frontPress = t.tirePressureFront ?? 1.9;
+  const rearPress = t.tirePressureRear ?? 1.7;
+  const frontBrake = t.brakePressureFront ?? t.brake;
+  const rearBrake = t.brakePressureRear ?? Math.round(t.brake * 0.35);
   // Pitch attitude: front dives under braking, squats under acceleration.
   const pitch = t.brake * 0.08 - t.throttle * 0.04;
 
@@ -82,10 +90,11 @@ export function MotorbikeDiagnostics({ t }: { t: BikeTelemetry }) {
         </div>
         <div className="card">
           <div className="card-header"><span className="card-title flex items-center gap-2"><Gauge size={14} style={{ color: 'var(--accent)' }} /> Pressures & Brakes</span></div>
-          <div className="grid-3" style={{ marginTop: 8 }}>
+          <div className="grid-4" style={{ marginTop: 8 }}>
             <Stat label="F Press" value={frontPress.toFixed(2)} unit="bar" />
             <Stat label="R Press" value={rearPress.toFixed(2)} unit="bar" />
-            <Stat label="Brake" value={t.brake.toFixed(0)} unit="%" />
+            <Stat label="F Brake" value={frontBrake.toFixed(0)} unit="%" />
+            <Stat label="R Brake" value={rearBrake.toFixed(0)} unit="%" />
           </div>
         </div>
       </div>
@@ -99,6 +108,12 @@ export function MotorbikeDiagnostics({ t }: { t: BikeTelemetry }) {
         <div className="grid-2" style={{ marginTop: 8 }}>
           <TireModel3D temperature={Math.round((t.tireFrontLeft + t.tireFrontRight) / 2)} compound={t.frontCompound} label="FRONT" height={170} />
           <TireModel3D temperature={Math.round((t.tireRearLeft + t.tireRearRight) / 2)} compound={t.rearCompound} label="REAR" height={170} />
+        </div>
+        <div className="grid-4" style={{ marginTop: 12 }}>
+          <Stat label="Front wear" value={(t.tireWearFront ?? 0).toFixed(1)} unit="%" />
+          <Stat label="Rear wear" value={(t.tireWearRear ?? 0).toFixed(1)} unit="%" warn={(t.tireWearRear ?? 0) > 55} />
+          <Stat label="Front press" value={frontPress.toFixed(2)} unit="bar" />
+          <Stat label="Rear press" value={rearPress.toFixed(2)} unit="bar" />
         </div>
       </div>
     </>

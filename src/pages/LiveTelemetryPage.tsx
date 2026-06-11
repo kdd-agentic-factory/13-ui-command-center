@@ -359,9 +359,9 @@ function LapDeltaHistory({ records }: { records: LapRecord[] }) {
 
 // ── Moto Tyre Card (shoulder/center layout) ────────────────────────────────────
 
-function MotoTyreCard({ label, leftTemp, centerTemp, rightTemp, compound, age }: {
+function MotoTyreCard({ label, leftTemp, centerTemp, rightTemp, compound, age, pressure, wear }: {
   label: string; leftTemp: number; centerTemp: number; rightTemp: number;
-  compound: string; age: number;
+  compound: string; age: number; pressure: number; wear: number;
 }) {
   const sections = [
     { name: 'Left shoulder', temp: leftTemp },
@@ -381,7 +381,7 @@ function MotoTyreCard({ label, leftTemp, centerTemp, rightTemp, compound, age }:
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
         <span className="card-label">{label}</span>
         <span style={{ fontSize: 9, fontFamily: 'JetBrains Mono,monospace', color: 'var(--text-muted)' }}>
-          {compound} · {age} laps
+          {compound} · {age} laps · {pressure.toFixed(2)} bar · {wear.toFixed(1)}% wear
         </span>
       </div>
       {/* 3-zone thermal bar */}
@@ -399,6 +399,16 @@ function MotoTyreCard({ label, leftTemp, centerTemp, rightTemp, compound, age }:
           <span style={{ color: tempColor(s.temp), fontWeight: 600 }}>{s.temp}°C</span>
         </div>
       ))}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginTop: 6 }}>
+        <div style={{ padding: '5px 7px', borderRadius: 5, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>Pressure</div>
+          <div className="text-mono" style={{ fontSize: 12, color: 'var(--cyan)', fontWeight: 700 }}>{pressure.toFixed(2)} bar</div>
+        </div>
+        <div style={{ padding: '5px 7px', borderRadius: 5, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>Wear</div>
+          <div className="text-mono" style={{ fontSize: 12, color: wear > 55 ? 'var(--accent)' : wear > 35 ? 'var(--yellow)' : 'var(--green)', fontWeight: 700 }}>{wear.toFixed(1)}%</div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -861,13 +871,30 @@ export function LiveTelemetryPage() {
                     <div className="bar-fill green" style={{ width: `${t.throttle}%`, transition: 'width 0.1s' }} />
                   </div>
                 </div>
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                    <span className="card-label">Brake Pressure</span>
-                    <span className="telem-md text-mono" style={{ color: 'var(--accent)' }}>{t.brake}%</span>
+                <div style={{ padding: 10, borderRadius: 8, border: '1px solid rgba(224,55,55,0.18)', background: 'rgba(224,55,55,0.05)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                    <span className="card-label">Brake pressure split</span>
+                    <span className="text-mono" style={{ fontSize: 11, color: 'var(--text-muted)' }}>total {t.brake}%</span>
                   </div>
-                  <div className="bar-track" style={{ height: 20 }}>
-                    <div className="bar-fill" style={{ width: `${t.brake}%`, background: 'var(--accent)', transition: 'width 0.1s' }} />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                        <span className="card-label">Front brake</span>
+                        <span className="telem-md text-mono" style={{ color: 'var(--accent)' }}>{t.brakePressureFront}%</span>
+                      </div>
+                      <div className="bar-track" style={{ height: 14 }}>
+                        <div className="bar-fill" style={{ width: `${t.brakePressureFront}%`, background: 'var(--accent)', transition: 'width 0.1s' }} />
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                        <span className="card-label">Rear brake</span>
+                        <span className="telem-md text-mono" style={{ color: 'var(--orange)' }}>{t.brakePressureRear}%</span>
+                      </div>
+                      <div className="bar-track" style={{ height: 14 }}>
+                        <div className="bar-fill" style={{ width: `${t.brakePressureRear}%`, background: 'var(--orange)', transition: 'width 0.1s' }} />
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div>
@@ -969,6 +996,8 @@ export function LiveTelemetryPage() {
                     rightTemp={t.tireFrontRight}
                     compound={t.frontCompound}
                     age={t.frontTyreAge}
+                    pressure={t.tirePressureFront}
+                    wear={t.tireWearFront}
                   />
                   <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', margin: '4px 0' }} />
                   <MotoTyreCard
@@ -978,6 +1007,8 @@ export function LiveTelemetryPage() {
                     rightTemp={t.tireRearRight}
                     compound={t.rearCompound}
                     age={t.rearTyreAge}
+                    pressure={t.tirePressureRear}
+                    wear={t.tireWearRear}
                   />
                 </div>
               </div>

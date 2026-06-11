@@ -81,6 +81,12 @@ export interface AuthUser {
   name?: string;
 }
 
+function getProfileName(profile: unknown): string | undefined {
+  if (typeof profile !== 'object' || profile === null || !('name' in profile)) return undefined;
+  const name = profile.name;
+  return typeof name === 'string' && name.trim().length > 0 ? name : undefined;
+}
+
 interface AuthContextValue {
   // Profile (role) state
   profile: Profile | null;
@@ -114,7 +120,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const { data, error } = await insforge.auth.getCurrentUser();
       const u = !error ? (data?.user ?? null) : null;
-      setUser(u ? { id: u.id, email: u.email, name: u.name } : null);
+      setUser(u ? { id: u.id, email: u.email, name: getProfileName(u.profile) } : null);
     } catch {
       setUser(null);
     } finally {

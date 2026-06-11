@@ -112,8 +112,8 @@ function getLossPhase(c: MugelloCorner): LossPhase {
     [Math.abs(entryDiff), 'entry'],
     [Math.abs(apexDiff),  'apex'],
     [Math.abs(exitDiff),  'exit'],
-    [Math.abs(c.brakeDelta - c.rival.brakeDelta) * 0.3, 'brake'],
-    [Math.abs(c.throttlePickup - c.rival.throttlePickup) * 0.3, 'throttle'],
+    [Math.abs(c.you.brakeDelta - c.rival.brakeDelta) * 0.3, 'brake'],
+    [Math.abs(c.you.throttlePickup - c.rival.throttlePickup) * 0.3, 'throttle'],
   ];
   return phases.sort((a, b) => b[0] - a[0])[0][1];
 }
