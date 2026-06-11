@@ -14,6 +14,7 @@ import { useAIChat } from '../hooks/useAIChat';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { RiderCoachInsight } from '../components/RiderCoachInsight';
 import { COPILOT_SEED_KEY } from '../context/NavContext';
+import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -116,7 +117,7 @@ function LiveMetricBar({ lap, pos, gap, speed, gear, grip, fuel, lastLap }: {
   gear: number; grip: number; fuel: number; lastLap: string;
 }) {
   const items = [
-    { k: 'LAP',  v: `${lap}/23`,    c: 'var(--text-muted)' },
+    { k: 'LAP',  v: `${lap}/${MUGELLO_CIRCUIT.raceLaps}`,    c: 'var(--text-muted)' },
     { k: 'POS',  v: `P${pos}`,      c: 'var(--accent)' },
     { k: 'GAP',  v: gap,            c: 'var(--yellow)' },
     { k: 'SPD',  v: `${speed}`,     c: 'var(--blue)' },

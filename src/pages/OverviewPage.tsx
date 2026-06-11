@@ -7,7 +7,7 @@
  * Every consumer validates its data before rendering. Bogus values = blank with
  * error indicator, NOT wrong numbers.
  */
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import {
   Flag, Zap, TrendingUp, Activity, AlertTriangle,
   Shield, CircleDot,
@@ -16,12 +16,20 @@ import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { renderRichText } from '../lib/richText';
 import { Tabs } from '../components/Tabs';
 import { MotorbikeDiagnostics, type BikeTelemetry } from '../components/MotorbikeDiagnostics';
+import {
+  MUGELLO_CIRCUIT,
+  RACE_SESSION,
+  buildGearDistribution,
+  buildRaceDataIntegrity,
+  gearDistributionTotalPct,
+  sessionDisplayState,
+} from '../domain/sessionTruth';
 
 // ── Validation helpers ───────────────────────────────────────────────────────
 
 /** Lap count that makes sense for a MotoGP race (1..23). Returns null if bogus. */
 function validLap(lap: number): number | null {
-  return lap >= 1 && lap <= 23 ? lap : null;
+  return lap >= 1 && lap <= MUGELLO_CIRCUIT.raceLaps ? lap : null;
 }
 
 /** Seconds that look like a real lap time (80..180s = 1:20..3:00). */
@@ -31,7 +39,7 @@ function validLapTime(s: number): boolean {
 
 /** Fuel in kg that's physically possible (0.5..22.0). */
 function validFuel(kg: number): boolean {
-  return kg >= 0.5 && kg <= 22.0;
+  return kg >= 0.5 && kg <= MUGELLO_CIRCUIT.fuelCapacityKg;
 }
 
 function posColor(pos: number): string {
@@ -48,8 +56,8 @@ interface Rival {
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
-const RACE_LAPS = 23;
-const FUEL_PER_LAP = 0.95;
+const RACE_LAPS = MUGELLO_CIRCUIT.raceLaps;
+const FUEL_PER_LAP = MUGELLO_CIRCUIT.fuelBurnKgPerLap;
 
 // ── Base rivals ──────────────────────────────────────────────────────────────
 
@@ -423,16 +431,19 @@ function StintProgress({ tyreAge, lapCount }: { tyreAge: number; lapCount: numbe
 
 // ── Data Integrity module ────────────────────────────────────────────────────
 
-function DataIntegrity({ fuelValid, lapAnomaly, lapCount, lastLap, bestLap }: {
-  fuelValid: boolean; lapAnomaly: boolean; lapCount: number; lastLap: number; bestLap: number;
+function DataIntegrity({ fuelValid, lapAnomaly, lapCount, lastLap, bestLap, sectorDeltasValidated, gearDistributionTotal }: {
+  fuelValid: boolean; lapAnomaly: boolean; lapCount: number; lastLap: number; bestLap: number; sectorDeltasValidated: boolean; gearDistributionTotal: number;
 }) {
-  const checks = [
-    { label: 'Fuel Sensor',      ok: fuelValid,                   desc: fuelValid ? 'Within range' : 'Check sensor' },
-    { label: 'Lap Counter',      ok: validLap(lapCount) !== null, desc: validLap(lapCount) !== null ? `${lapCount}/${RACE_LAPS}` : 'Unreliable' },
-    { label: 'Last Lap Time',    ok: validLapTime(lastLap),       desc: validLapTime(lastLap) ? formatLap(lastLap) : 'Invalid' },
-    { label: 'Best Lap Time',    ok: validLapTime(bestLap),       desc: validLapTime(bestLap) ? formatLap(bestLap) : 'Invalid' },
-    { label: 'Lap Anomaly',      ok: !lapAnomaly,                 desc: lapAnomaly ? 'Flagged' : 'Clean' },
-  ];
+  const checks = buildRaceDataIntegrity({
+    lapCount,
+    fuelValid,
+    lastLapValid: validLapTime(lastLap),
+    bestLapValid: validLapTime(bestLap),
+    lapAnomaly,
+    sectorDeltasValidated,
+    gearDistributionTotalPct: gearDistributionTotal,
+    selectedCircuitId: MUGELLO_CIRCUIT.id,
+  });
 
   const allOk = checks.every(c => c.ok);
   const criticalIssues = checks.filter(c => !c.ok).length;
@@ -622,12 +633,7 @@ function AIStrategyCall({ position, lapCount, fuelLoad, lastLap, bestLap, lapAno
 // ── Gear Distribution Chart ─────────────────────────────────────────────────
 
 function GearDistribution({ currentGear }: { currentGear: number }) {
-  // Normalized distribution: lower gears used less (acceleration zones),
-  // 3rd & 4th most (medium speed corners), 5th & 6th main straight
-  const base = [4, 8, 22, 32, 20, 14];
-  const raw = base.map((v, i) => Math.max(0.5, v + (i + 1 === currentGear ? 4 : 0)));
-  const total = raw.reduce((a, b) => a + b, 0);
-  const dist = raw.map((v, i) => ({ gear: i + 1, pct: (v / total) * 100, active: i + 1 === currentGear }));
+  const dist = buildGearDistribution(currentGear);
 
   return (
     <div className="card-body" style={{ flexDirection: 'column', gap: 6 }}>
@@ -817,6 +823,7 @@ function TyreDisplay(props: TyreDisplayProps) {
 export function OverviewPage() {
   const t = useLiveTelemetry();
   const [activeTab, setActiveTab] = useState<'live' | 'telemetry'>('live');
+  const sessionState = sessionDisplayState(t.lapCount);
 
   // ── Validation guard: if lap counter is bogus, show a clear error ──────
   const lapValid = validLap(t.lapCount);
@@ -836,14 +843,14 @@ export function OverviewPage() {
   const lapDeltaColor = lapDelta > 0.5 ? 'var(--accent)' : lapDelta > 0.1 ? 'var(--yellow)' : 'var(--green)';
 
   // Sector deltas
-  const sectorDeltas = useMemo(() => {
-    const frac = [0.39, 0.73, -0.12];
-    return [
-      { sector: 'S1', delta: lapDelta * frac[0] },
-      { sector: 'S2', delta: lapDelta * frac[1] },
-      { sector: 'S3', delta: lapDelta * frac[2] },
-    ];
-  }, [lapDelta]);
+  const frac = [0.39, 0.73, -0.12];
+  const sectorDeltas = [
+    { sector: 'S1', delta: lapDelta * frac[0] },
+    { sector: 'S2', delta: lapDelta * frac[1] },
+    { sector: 'S3', delta: lapDelta * frac[2] },
+  ];
+  const sectorDeltasValidated = validLapTime(t.lastLap) && validLapTime(t.bestLap) && sectorDeltas.every(item => Number.isFinite(item.delta));
+  const gearTotal = gearDistributionTotalPct(buildGearDistribution(t.gear));
 
   return (
     <div className="page">
@@ -851,16 +858,17 @@ export function OverviewPage() {
       {/* ═══ HEADER with validation guard ═════════════════════════════════ */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="page-title">Race Overview</h1>
+          <h1 className="page-title">{RACE_SESSION.productName}</h1>
           <p className="page-subtitle">
-            GP Mugello · Round 7 of 20 · Lap {displayLap} / 23
+            {RACE_SESSION.positioning} · {RACE_SESSION.decisionPromise} · {MUGELLO_CIRCUIT.shortName} {MUGELLO_CIRCUIT.lengthKm} km · {sessionState.activeRace ? `Lap ${displayLap} / ${RACE_LAPS}` : 'Pre-race/test state'}
             {!lapValid && <span style={{ marginLeft:8, color:'var(--accent)', fontSize:11 }}>
               ⚠ Data validation active
             </span>}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="badge badge-red" style={{ animation: 'pulse 2s infinite' }}>RACE IN PROGRESS</span>
+          <span className={`badge ${sessionState.badgeClass}`} style={{ animation: sessionState.activeRace ? 'pulse 2s infinite' : undefined }}>{sessionState.badgeLabel}</span>
+          <span className="badge badge-yellow">Integrity visible</span>
           {t.session === 'test' && <span className="badge badge-yellow">TEST SESSION</span>}
           {fuelCritical && <span className="badge badge-red" style={{ animation: 'pulse 1.5s infinite' }}>FUEL CRITICAL</span>}
           {t.lapAnomaly && <span className="badge badge-orange" style={{ animation: 'pulse 1s infinite' }}>ANOMALY</span>}
@@ -879,6 +887,16 @@ export function OverviewPage() {
       {activeTab === 'telemetry' && <MotorbikeDiagnostics t={t as unknown as BikeTelemetry} />}
 
       {activeTab === 'live' && (<>
+
+      <div className="card mb-4" style={{ borderLeft: '4px solid var(--green)' }}>
+        <div className="card-header">
+          <span className="card-title">Actionable Decision</span>
+          <span className="badge badge-green">Decision first</span>
+        </div>
+        <div className="card-body" style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>
+          <strong style={{ color: 'var(--green)' }}>Primary call:</strong> Protect rear tyre through L1–L5; attack P2 at San Donato only if gap is under 0.6s. Data below is supporting evidence, not the product headline.
+        </div>
+      </div>
 
       {/* ═══ KPI ROW ════════════════════════════════════════════════════ */}
       <div className="grid-4 mb-4">
@@ -1148,7 +1166,7 @@ export function OverviewPage() {
           <div className="card-header">
             <span className="card-title">Live Track Position — Mugello</span>
             <span className="badge badge-muted" style={{ fontFamily:'JetBrains Mono,monospace' }}>
-              {Math.round(t.trackPos * 100)}% lap
+              {Math.round(t.trackPos * 100)}% lap · procedural map
             </span>
           </div>
           <div className="card-body" style={{ flexDirection:'column' }}>
@@ -1201,6 +1219,8 @@ export function OverviewPage() {
           lapCount={t.lapCount}
           lastLap={t.lastLap}
           bestLap={t.bestLap}
+          sectorDeltasValidated={sectorDeltasValidated}
+          gearDistributionTotal={gearTotal}
         />
       </div>
 

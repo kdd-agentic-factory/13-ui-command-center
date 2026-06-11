@@ -16,12 +16,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from '../context/NavContext';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
-
-// ── Constants ──────────────────────────────────────────────────────────────────
-
-const RACE_LAPS = 23;
-const TRACK_KM  = 5.245;
-const TURNS      = 15;
+import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 
 // ── Risk factors ───────────────────────────────────────────────────────────────
 
@@ -155,10 +150,10 @@ export function CrashRiskPage() {
         <div>
           <h1 className="page-title">Crash-Risk Index</h1>
           <p className="page-subtitle">
-            Mugello · Race Lap {t.lapCount}/{RACE_LAPS} · Safety Guardian AI
+            {MUGELLO_CIRCUIT.fullName} · Race Lap {t.lapCount}/{MUGELLO_CIRCUIT.raceLaps} · Safety Guardian AI
           </p>
           <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', marginTop: 2 }}>
-            {TRACK_KM} km · {TURNS} turns · 3D elevation model active
+            {MUGELLO_CIRCUIT.lengthKm} km · {MUGELLO_CIRCUIT.turns} turns · {MUGELLO_CIRCUIT.assetStatusLabel}
           </div>
         </div>
         <span className="badge" style={{
@@ -436,7 +431,7 @@ export function CrashRiskPage() {
           </div>
           <div style={{ marginTop: 6, fontSize: 12, color: 'var(--text-dim)', lineHeight: 1.6 }}>
             <p style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', marginBottom: 8 }}>
-              Real circuit geometry loaded · 15 turns
+              {MUGELLO_CIRCUIT.assetStatusLabel} · {MUGELLO_CIRCUIT.turns} turns
             </p>
             <div style={{ marginBottom: 8 }}>
               <div style={{ fontSize: 10, fontWeight: 700, fontFamily: 'JetBrains Mono,monospace', color: 'var(--accent)', marginBottom: 4 }}>

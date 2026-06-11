@@ -1,8 +1,8 @@
 /**
- * CircuitIntelligencePage — REAL Mugello circuit intelligence.
+ * CircuitIntelligencePage — Mugello circuit intelligence with explicit asset integrity.
  *
  * Fixes applied per diagnostic:
- *   1. Real Mugello geometry (SVG path), 5.245 km, 15 turns, 1.141 km main straight
+ *   1. Mugello procedural geometry, 5.245 km, 15 turns, 1.141 km main straight
  *   2. GPS position shown as "3.545 / 5.245 km" (not mistaken for circuit length)
  *   3. Lap consistency: lapCount/23 everywhere, no mismatch
  *   4. Fuel < 1.0 kg with speed > 50 → CRITICAL FUEL DATA ERROR
@@ -27,26 +27,27 @@ import {
 } from 'lucide-react';
 import { useLiveTelemetry, trackSpeed } from '../hooks/useLiveTelemetry';
 import { TrackMap3D } from '../components/babylon/TrackMap3D';
+import { MUGELLO_CIRCUIT, sessionDisplayState } from '../domain/sessionTruth';
 
 // ── Mugello circuit constants ──────────────────────────────────────────────────
 
 const MUGELLO = {
-  name: 'Autodromo Internazionale del Mugello',
-  lengthKm: 5.245,
-  mainStraightKm: 1.141,
-  turns: 15,
-  leftTurns: 6,
-  rightTurns: 9,
-  raceLaps: 23,
+  name: MUGELLO_CIRCUIT.fullName,
+  lengthKm: MUGELLO_CIRCUIT.lengthKm,
+  mainStraightKm: MUGELLO_CIRCUIT.mainStraightKm,
+  turns: MUGELLO_CIRCUIT.turns,
+  leftTurns: MUGELLO_CIRCUIT.leftTurns,
+  rightTurns: MUGELLO_CIRCUIT.rightTurns,
+  raceLaps: MUGELLO_CIRCUIT.raceLaps,
   altitudeVariance: 41.19,  // m
   baseAltitude: 292,        // m AMSL
   highestPoint: 'Poggio Secco',
-  recordLap: '1:44.169',
-  recordHolder: 'M. Marquez',
-  recordYear: 2025,
-  typicalLapS: 93.4,
-  fuelBurnPerLap: 0.95,     // kg/lap
-  fuelCapacity: 22,         // kg
+  recordLap: MUGELLO_CIRCUIT.recordLap,
+  recordHolder: MUGELLO_CIRCUIT.recordHolder,
+  recordYear: MUGELLO_CIRCUIT.recordYear,
+  typicalLapS: MUGELLO_CIRCUIT.typicalLapSeconds,
+  fuelBurnPerLap: MUGELLO_CIRCUIT.fuelBurnKgPerLap,     // kg/lap
+  fuelCapacity: MUGELLO_CIRCUIT.fuelCapacityKg,         // kg
   tag: 'Mugello GP layout',
 };
 
@@ -352,7 +353,7 @@ function ElevationProfile({ trackPos }: { trackPos: number }) {
     <div className="card">
       <div className="card-header">
         <span className="card-title">Elevation & Gradient Profile</span>
-        <span className="badge badge-blue">Real Mugello elevation model</span>
+        <span className="badge badge-yellow">Procedural elevation model</span>
       </div>
       <div className="card-body" style={{ flexDirection: 'column' }}>
         {/* Stats row */}
@@ -444,7 +445,7 @@ function ElevationProfile({ trackPos }: { trackPos: number }) {
 // ── Circuit Data Integrity ─────────────────────────────────────────────────────
 
 function CircuitIntegrity({ fuelValid, fuelLoad, speed }: { fuelValid: boolean; fuelLoad: number; speed: number }) {
-  const geometryLoaded = true;
+  const geometryAvailable = true;
   const gpsAlignment = 98.7;
 
   const warnings: { label: string; critical: boolean; message: string }[] = [];
@@ -459,7 +460,7 @@ function CircuitIntegrity({ fuelValid, fuelLoad, speed }: { fuelValid: boolean; 
   }
 
   // Always add a geometry check (passing)
-  if (!geometryLoaded) {
+  if (!geometryAvailable) {
     warnings.push({
       label: 'Circuit geometry',
       critical: true,
@@ -480,8 +481,8 @@ function CircuitIntegrity({ fuelValid, fuelLoad, speed }: { fuelValid: boolean; 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
           {[
             { label: 'Circuit selected', value: MUGELLO.tag, ok: true },
-            { label: 'Geometry loaded',  value: `Real Mugello SVG/3D mesh · ${MUGELLO.lengthKm} km · ${MUGELLO.turns} turns`, ok: geometryLoaded },
-            { label: 'Elevation model',  value: `Active · ${MUGELLO.altitudeVariance} m variance`, ok: true },
+            { label: 'Geometry status',  value: MUGELLO_CIRCUIT.assetStatusLabel, ok: geometryAvailable },
+            { label: 'Elevation model',  value: `Procedural · ${MUGELLO.altitudeVariance} m variance`, ok: true },
             { label: 'GPS alignment',    value: `${gpsAlignment}%`, ok: gpsAlignment > 90 },
           ].map(s => (
             <div key={s.label} style={{
@@ -530,7 +531,7 @@ function CircuitIntegrity({ fuelValid, fuelLoad, speed }: { fuelValid: boolean; 
             fontSize: 11, color: 'var(--green)',
             fontFamily: 'JetBrains Mono,monospace',
           }}>
-            All systems nominal · Mugello GP data validated
+            Integrity visible · Mugello GP data synchronized · geometry is procedural
           </div>
         )}
       </div>
@@ -726,6 +727,7 @@ export function CircuitIntelligencePage() {
 
   // Fuel error detection
   const fuelCritical = !t.fuelValid || (t.fuelLoad < 1.0 && t.speed > 50);
+  const sessionState = sessionDisplayState(t.lapCount);
 
   // Corner/overlay heat channel based on view mode
   const effectiveHeat: HeatChannel = viewMode === 'speed'
@@ -745,12 +747,12 @@ export function CircuitIntelligencePage() {
           <span className="card-title">3D TRACK MAP — MUGELLO</span>
           <div className="flex items-center gap-2">
             <span className="badge badge-blue">
-              ● Real circuit geometry · {MUGELLO.lengthKm} km · {MUGELLO.turns} turns
+              ● Procedural circuit geometry · {MUGELLO.lengthKm} km · {MUGELLO.turns} turns
             </span>
             <span className={`badge ${fuelCritical ? 'badge-red' : 'badge-green'}`}>
-              {fuelCritical ? 'FUEL DATA ERROR' : 'REAL TRACK GEOMETRY LOADED'}
+              {fuelCritical ? 'FUEL DATA ERROR' : 'PROCEDURAL GEOMETRY ACTIVE'}
             </span>
-            <span className="badge badge-red">LIVE</span>
+            <span className={`badge ${sessionState.badgeClass}`}>{sessionState.badgeLabel}</span>
           </div>
         </div>
 
@@ -806,7 +808,7 @@ export function CircuitIntelligencePage() {
           <h1 className="page-title">Circuit Intelligence</h1>
           <p className="page-subtitle">
             {MUGELLO.name} · {MUGELLO.lengthKm} km · {MUGELLO.turns} turns ({MUGELLO.leftTurns}L · {MUGELLO.rightTurns}R) ·
-            Lap {t.lapCount}/{MUGELLO.raceLaps} · {MUGELLO.mainStraightKm} km main straight
+            {sessionState.activeRace ? `Lap ${t.lapCount}/${MUGELLO.raceLaps}` : 'Pre-race/test telemetry'} · {MUGELLO.mainStraightKm} km main straight
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -1183,7 +1185,7 @@ export function CircuitIntelligencePage() {
             <div style={{ fontSize: 12, color: 'var(--text)', lineHeight: 1.5 }}>
               Track grip is improving, but tyre thermal load is rising.
               <strong> Rear soft risk increases after Lap 18.</strong>
-              &nbsp;Current: Lap {t.lapCount}/{MUGELLO.raceLaps} · Tyre age {t.rearTyreAge} laps.
+              &nbsp;Current: {sessionState.activeRace ? `Lap ${t.lapCount}/${MUGELLO.raceLaps}` : 'pre-race/test telemetry'} · Tyre age {t.rearTyreAge} laps.
             </div>
           </div>
         </div>

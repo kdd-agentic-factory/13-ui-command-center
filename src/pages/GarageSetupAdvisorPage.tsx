@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Wrench, AlertTriangle, Lightbulb, ChevronRight, Activity, TrendingDown, Gauge, Thermometer, Shield, Ban, Target, User, Settings } from 'lucide-react';
 import { useNavigate } from '../context/NavContext';
 import { useToast } from '../components/ToastProvider';
+import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 
 /**
  * Garage Setup Advisor (engineer feedback #8) — professional-grade setup
@@ -247,7 +248,7 @@ export function GarageSetupAdvisorPage() {
           border: '1px solid var(--border)', background: 'rgba(255,255,255,0.02)',
           fontSize: 11, fontFamily: 'var(--font-mono)',
         }}>
-          <span><span style={{ color: 'var(--text-muted)' }}>Circuit</span> <strong style={{ color: 'var(--text)' }}>Mugello</strong></span>
+          <span><span style={{ color: 'var(--text-muted)' }}>Circuit</span> <strong style={{ color: 'var(--text)' }}>{MUGELLO_CIRCUIT.shortName}</strong></span>
           <span className="sep" style={{ width: 1, height: 14, background: 'var(--border)' }} />
           <span><span style={{ color: 'var(--text-muted)' }}>Bike</span> <strong style={{ color: 'var(--text)' }}>Yamaha R1</strong></span>
           <span className="sep" style={{ width: 1, height: 14, background: 'var(--border)' }} />

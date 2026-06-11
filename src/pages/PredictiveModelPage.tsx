@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { TrendingDown, Sparkles, Check, X, AlertTriangle, Target, Shield, Zap, Brain, BarChart3, Info } from 'lucide-react';
+import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 
 /**
  * Predictive Improvement Model — turns analysis into a forward projection:
@@ -196,7 +197,7 @@ export function PredictiveModelPage() {
 
       {/* ── Circuit validation ── */}
       <div style={{ display: 'flex', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
-        <span className="badge badge-green" style={{ fontSize: 10 }}>Mugello GP · 5.245 km · 15 turns · 3D elevation active</span>
+        <span className="badge badge-green" style={{ fontSize: 10 }}>{MUGELLO_CIRCUIT.shortName} GP · {MUGELLO_CIRCUIT.lengthKm} km · {MUGELLO_CIRCUIT.turns} turns · {MUGELLO_CIRCUIT.assetStatusLabel}</span>
         <span className="badge" style={{ fontSize: 10, background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)' }}>AI Racing Simulation</span>
       </div>
 
@@ -252,6 +253,18 @@ export function PredictiveModelPage() {
               FROM {picked.size} CHANGES
             </div>
           </div>
+          {/* Model adjustment indicator */}
+          {penalty > 0 && (
+            <div style={{
+              padding: '4px 10px', borderRadius: 6,
+              background: 'rgba(245,158,11,0.10)', border: '1px solid rgba(245,158,11,0.2)',
+              fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--yellow)',
+              display: 'flex', alignItems: 'center', gap: 6,
+            }}>
+              <Info size={12} />
+              Model adjustment: raw −{rawGain.toFixed(3)}s → {realisticGain.toFixed(3)}s net
+            </div>
+          )}
           {/* Theoretical progress bar */}
           <div style={{ flex: 1, minWidth: 200 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-muted)', marginBottom: 4 }}>
@@ -279,10 +292,12 @@ export function PredictiveModelPage() {
                 <span style={{ color: 'var(--text-muted)' }}>Raw selected gain</span>
                 <span style={{ color: 'var(--green)', fontWeight: 700 }}>−{rawGain.toFixed(3)}s</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', maxWidth: 360 }}>
-                <span style={{ color: 'var(--text-muted)' }}>Interaction penalty ×{picked.size} levers</span>
-                <span style={{ color: 'var(--accent)', fontWeight: 700 }}>+{penalty.toFixed(3)}s</span>
-              </div>
+              {penalty > 0 && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', maxWidth: 360 }}>
+                  <span style={{ color: 'var(--yellow)' }}>Model adjustment (overlap/interaction correction)</span>
+                  <span style={{ color: 'var(--yellow)', fontWeight: 700 }}>+{penalty.toFixed(3)}s</span>
+                </div>
+              )}
               <div style={{ display: 'flex', justifyContent: 'space-between', maxWidth: 360, borderTop: '1px solid var(--border)', paddingTop: 4 }}>
                 <span style={{ color: 'var(--green)', fontWeight: 700 }}>Realistic combined gain</span>
                 <span style={{ color: 'var(--green)', fontWeight: 900 }}>−{realisticGain.toFixed(3)}s</span>

@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { TireModel3D } from '../components/babylon/TireModel3D';
+import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 
 // ── Mugello constants ─────────────────────────────────────────────────────────
 
@@ -719,7 +720,7 @@ export function TireDegradationPage() {
 
       {/* Circuit validation */}
       <div style={{ display: 'flex', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
-        <span className="badge badge-green" style={{ fontSize: 10 }}>Mugello GP · Race Lap {t.lapCount}/23</span>
+        <span className="badge badge-green" style={{ fontSize: 10 }}>{MUGELLO_CIRCUIT.shortName} GP · Race Lap {t.lapCount}/{MUGELLO_CIRCUIT.raceLaps}</span>
         <span className="badge" style={{ fontSize: 10, background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)' }}>Dry race mode · No scheduled pit stops</span>
       </div>
 

@@ -52,10 +52,10 @@ const ADVANTAGES: Advantage[] = [
   },
   {
     n: '04', color: 'var(--green)', icon: Bot,
-    titleKey: 'intro.adv.agentic.title', title: 'Muro de boxes agéntico',
+    titleKey: 'intro.adv.agentic.title', title: 'Tu equipo de IA, no solo agentes',
     descKey: 'intro.adv.agentic.desc',
-    desc: 'Diez agentes de IA monitorizan la tanda en vivo, capturan la voz del piloto y la interpretan con NLP, y lanzan directivas correctoras al muro antes de que el problema toque el asfalto.',
-    metric: '10', metricLabelKey: 'intro.adv.agentic.metric', metricLabel: 'agentes en vivo',
+    desc: 'Un equipo completo de especialistas IA — Crew Chief, Analista de Telemetría, Rider Coach, Guardián de Seguridad — monitoriza la tanda en vivo, lee la voz del piloto con NLP y lanza correcciones antes de que el problema toque el asfalto.',
+    metric: '10', metricLabelKey: 'intro.adv.agentic.metric', metricLabel: 'miembros del equipo IA',
     tags: ['Voice→NLP', 'Crew Chief', 'Directivas'],
   },
   {
@@ -246,7 +246,7 @@ export function IntroExperience({ onEnter }: IntroExperienceProps) {
 
               <div className="intro-hero-foot">
                 <button className="intro-demo-cta" onClick={() => onEnter(selected)}>
-                  <MonitorPlay size={16} /> {t('intro.hero.demo', 'Entrar al command center')}
+                  <MonitorPlay size={16} /> {t('intro.hero.demo', 'Ver demo en vivo')}
                 </button>
                 <button className="intro-scroll-hint" onClick={() => scrollToIdx(TOTAL - 1)}>
                   {t('intro.hero.scroll', 'Cambiar rol')} <ChevronDown size={16} />
@@ -400,7 +400,7 @@ export function IntroExperience({ onEnter }: IntroExperienceProps) {
             <button className="intro-enter" onClick={() => onEnter(selected)}>
               {t('intro.roles.enter', 'Entrar a la plataforma')} <ChevronRight size={20} />
             </button>
-            <div className="intro-footer">Mugello · GP · 5.245 km · 15 turns · Dry 24°C · #47 — powered by KDD Agentic Factory</div>
+            <div className="intro-footer">Mugello · GP · 5.245 km · 15 turns · Dry 24°C · #47 — KDD Moto Intelligence</div>
           </div>
         </section>
       </main>

@@ -3,7 +3,7 @@
  * Real-time telemetry, contextual alerts (with cause + action), current zone,
  * rider coach AI per Mugello corner, track map, and tyre/degradation monitoring.
  *
- * CRITICAL RULE: session identity is MUGGELLO RACE. Any Jarama references are
+ * CRITICAL RULE: session identity is MUGELLO. Any Jarama references are
  * incorrect — this is GP Mugello, Round 7 of 20, 2026 season.
  */
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
@@ -15,13 +15,14 @@ import {
   AlertTriangle, ShieldAlert, Radio, Map,
   Thermometer, Clock,
 } from 'lucide-react';
+import { MUGELLO_CIRCUIT, sessionDisplayState } from '../domain/sessionTruth';
 
 // ── Mugello circuit data ────────────────────────────────────────────────────
 
-const RACE_LAPS = 23;
-const MUGELLO_TRACK_KM = 5.245;
-const MUGELLO_TURNS = 15;
-const MUGELLO_MAIN_STRAIGHT_M = 1141;
+const RACE_LAPS = MUGELLO_CIRCUIT.raceLaps;
+const MUGELLO_TRACK_KM = MUGELLO_CIRCUIT.lengthKm;
+const MUGELLO_TURNS = MUGELLO_CIRCUIT.turns;
+const MUGELLO_MAIN_STRAIGHT_M = MUGELLO_CIRCUIT.mainStraightKm * 1000;
 
 /** Corner names with Mugello GP numbering (official). */
 const MUGELLO_CORNERS: { tag: string; name: string; pos: number }[] = [
@@ -176,6 +177,7 @@ function MiniTrackMap({ trackPos, anomalyFlag }: { trackPos: number; anomalyFlag
 
 export function TrackLivePage() {
   const t = useLiveTelemetry();
+  const sessionState = sessionDisplayState(t.lapCount);
   const rearTemp = Math.round((t.tireRearLeft + t.tireRearRight) / 2);
   // Alternate corner side for the lean HUD
   const leanSide = Math.sin(t.trackPos * Math.PI * 2 * 3) >= 0 ? 1 : -1;
@@ -221,7 +223,7 @@ export function TrackLivePage() {
       }}>
         <div>
           <div style={{ fontSize: 10, letterSpacing: '0.15em', color: 'var(--accent)', fontWeight: 700, textTransform: 'uppercase', marginBottom: 2 }}>
-            RACE · GP Mugello · Italy
+            {sessionState.badgeLabel} · GP Mugello · Italy
           </div>
           <div style={{ fontSize: 12, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
             Round 7/20 · 2026 · {MUGELLO_TRACK_KM} km · {MUGELLO_TURNS} turns
@@ -229,10 +231,10 @@ export function TrackLivePage() {
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: 18, color: 'var(--text)' }}>
-            LAP {t.lapCount}/{RACE_LAPS}
+            {sessionState.lapValue}
           </div>
           <div style={{ display: 'flex', gap: 6, marginTop: 4, justifyContent: 'flex-end' }}>
-            <span className="badge badge-red" style={{ fontSize: 9 }}>RACE</span>
+            <span className={`badge ${sessionState.badgeClass}`} style={{ fontSize: 9 }}>{sessionState.badgeLabel}</span>
             {t.session === 'test' && <span className="badge badge-yellow" style={{ fontSize: 9 }}>TEST</span>}
             {anomalyAlert && <span className="badge badge-orange" style={{ fontSize: 9 }}>ANOMALY</span>}
           </div>
@@ -244,9 +246,9 @@ export function TrackLivePage() {
         <div>
           <h1 className="page-title">Track-Live</h1>
           <p className="page-subtitle">
-            Mugello · Race Lap {t.lapCount}/{RACE_LAPS} · live pit-wall view
+            Mugello · {sessionState.activeRace ? `Race Lap ${t.lapCount}/${RACE_LAPS}` : 'Pre-race/test telemetry'} · live pit-wall view
             <span style={{ fontSize: 10, color: 'var(--text-dim)', marginLeft: 8 }}>
-              · {MUGELLO_TRACK_KM} km · Main straight {MUGELLO_MAIN_STRAIGHT_M} m
+              · {MUGELLO_TRACK_KM} km · Main straight {MUGELLO_MAIN_STRAIGHT_M} m · procedural map
             </span>
           </p>
         </div>
@@ -306,10 +308,10 @@ export function TrackLivePage() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-              <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--green)', display: 'inline-block' }} />
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, color: 'var(--green)' }}>GREEN FLAG</span>
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: sessionState.activeRace ? 'var(--green)' : 'var(--yellow)', display: 'inline-block' }} />
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, color: sessionState.activeRace ? 'var(--green)' : 'var(--yellow)' }}>{sessionState.flagLabel}</span>
             </div>
-            <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>All sectors clear · gap control active</span>
+            <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{sessionState.activeRace ? 'All sectors clear · gap control active' : 'Pre-race/test stream · race timing not started'}</span>
           </div>
           <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-dim)' }}>
             <Clock size={10} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 3 }} />

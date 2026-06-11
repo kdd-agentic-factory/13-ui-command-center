@@ -16,6 +16,7 @@ import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { useAnimeCount } from '../hooks/useAnimeCount';
 import { MultiChannelChart, Channel, XAxisMode, ScaleMode } from '../components/MultiChannelChart';
 import { WiFiDevicePanel } from '../components/WiFiDevicePanel';
+import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -25,7 +26,7 @@ const RACE_LAPS    = 23;
 const FUEL_BURN    = 0.95;           // kg/lap (matches useLiveTelemetry hook)
 const FUEL_CAP     = 22;
 const FUEL_CRITICAL_THRESHOLD = 2.5; // kg — below this triggers CRITICAL
-const MUGELLO_TRACK_KM = 5.245;
+const MUGELLO_TRACK_KM = MUGELLO_CIRCUIT.lengthKm;
 const MUGELLO_TURNS = 15;
 const MUGELLO_MAIN_STRAIGHT_M = 1141;
 
@@ -665,7 +666,7 @@ export function LiveTelemetryPage() {
     { id: 'thr',    name: 'THROTTLE', unit: '%',    color: '#22C55E', range: [0, 100],   panelHeight: 48, group: 'Rider Inputs',  quality: 'OK' },
     { id: 'brake',  name: 'BRAKE',    unit: '%',    color: '#F59E0B', range: [0, 100],   panelHeight: 48, group: 'Rider Inputs',  quality: 'OK' },
     { id: 'lean',   name: 'LEAN',     unit: '°',    color: '#A78BFA', range: [0, 63],    panelHeight: 48, group: 'Bike Dynamics', quality: 'OK' },
-    { id: 'gear',   name: 'GEAR',     unit: '',     color: '#FCD34D', range: [1, 6],     panelHeight: 40, group: 'Bike Dynamics', quality: 'OK' },
+    { id: 'gear',   name: 'GEAR',     unit: '',     color: '#FCD34D', range: [1, 6],     panelHeight: 40, group: 'Bike Dynamics', quality: 'OK', step: true },
     { id: 'latg',   name: 'LAT G',    unit: 'g',    color: '#F472B6', range: [0, 2],     panelHeight: 46, group: 'Bike Dynamics', quality: 'OK' },
     { id: 'ftyre',  name: 'F TYRE',   unit: '°C',   color: '#60A5FA', range: [40, 140],  panelHeight: 46, group: 'Tyres / Grip',  quality: 'OK' },
     { id: 'rtyre',  name: 'R TYRE',   unit: '°C',   color: '#FB923C', range: [40, 140],  panelHeight: 46, group: 'Tyres / Grip',  quality: 'OK' },

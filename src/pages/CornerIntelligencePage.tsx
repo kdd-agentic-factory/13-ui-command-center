@@ -25,12 +25,13 @@ import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { useNavigate } from '../context/NavContext';
 import { useToast } from '../components/ToastProvider';
 import { InteractiveCircuitMap } from '../components/InteractiveCircuitMap';
+import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 
 // ── Mugello circuit constants ─────────────────────────────────────────────────
 
 const MUGELLO = {
   name: 'Autodromo Internazionale del Mugello',
-  lengthKm: 5.245,
+  lengthKm: MUGELLO_CIRCUIT.lengthKm,
   turns: 15,
   leftTurns: 6,
   rightTurns: 9,

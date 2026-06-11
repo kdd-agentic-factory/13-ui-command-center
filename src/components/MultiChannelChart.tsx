@@ -26,6 +26,8 @@ export interface Channel {
   range: [number, number];
   /** Height in pixels for this channel's panel */
   panelHeight: number;
+  /** Discrete channels (gear, flags): render as a stepped trace, not interpolated */
+  step?: boolean;
 }
 
 export type XAxisMode = 'samples' | 'time' | 'distance' | 'trackPos';
@@ -114,8 +116,18 @@ export function MultiChannelChart({
 
     const yOf = (v: number) => panelTop + 3 + innerH - ((v - minV) / span) * innerH;
 
-    // Polyline points
-    const pts = ch.data.map((v, i) => `${xOf(i)},${yOf(v)}`).join(' ');
+    // Polyline points — stepped channels hold each value until the next sample
+    let pts: string;
+    if (ch.step) {
+      const parts: string[] = [];
+      ch.data.forEach((v, i) => {
+        if (i > 0) parts.push(`${xOf(i)},${yOf(ch.data[i - 1])}`);
+        parts.push(`${xOf(i)},${yOf(v)}`);
+      });
+      pts = parts.join(' ');
+    } else {
+      pts = ch.data.map((v, i) => `${xOf(i)},${yOf(v)}`).join(' ');
+    }
 
     // Area fill path
     const first = `${xOf(0)},${panelTop + ch.panelHeight - 3}`;

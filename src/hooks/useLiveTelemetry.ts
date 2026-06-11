@@ -6,6 +6,7 @@
  * so the UI always shows live-feeling data during development.
  */
 import { useState, useEffect, useRef } from 'react';
+import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 
 export interface TelemetryFrame {
   speed:      number;   // km/h  0–350
@@ -65,10 +66,10 @@ export function trackSpeed(pos: number): number {
 // Total race distance: 23 laps × 5.245 km = 120.635 km
 // Fuel capacity: 22 kg, consumption ~0.95 kg/lap for MotoGP
 // Main straight speed trap: ~351 km/h
-const TRACK_LAP_S = 105.0;  // realistic Mugello lap time
-const RACE_LAPS = 23;
-const FUEL_CAPACITY = 22.0;
-const FUEL_PER_LAP = 0.95;
+const TRACK_LAP_S = MUGELLO_CIRCUIT.typicalLapSeconds;  // realistic Mugello lap time
+const RACE_LAPS = MUGELLO_CIRCUIT.raceLaps;
+const FUEL_CAPACITY = MUGELLO_CIRCUIT.fuelCapacityKg;
+const FUEL_PER_LAP = MUGELLO_CIRCUIT.fuelBurnKgPerLap;
 
 export function useLiveTelemetry(): TelemetryFrame {
   const simTime = useRef(0);

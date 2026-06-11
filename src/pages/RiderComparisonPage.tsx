@@ -17,15 +17,12 @@ import {
 } from 'lucide-react';
 import { useNavigate } from '../context/NavContext';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
+import { MUGELLO_CIRCUIT, validRaceLap } from '../domain/sessionTruth';
 
-// ── Mugello constants ──────────────────────────────────────────────────────────
+// ── Mugello constants (from sessionTruth) ──────────────────────────────────────
 
-const RACE_LAPS = 23;
-const FUEL_BURN = 0.95;
 const FUEL_CRITICAL_THRESHOLD = 2.5;
-const TRACK_KM  = 5.245;
-const TURNS      = 15;
-const MAIN_STRAIGHT_M = 1141;
+const MAIN_STRAIGHT_M = MUGELLO_CIRCUIT.mainStraightKm * 1000;
 
 // ── Mugello corner data ────────────────────────────────────────────────────────
 
@@ -127,7 +124,7 @@ function RaceHeader({
 }) {
   const fuelCritical = fuel <= FUEL_CRITICAL_THRESHOLD;
   const fuelInvalid  = !fuelValid || (fuel < 1.0 && speed > 50);
-  const fuelRange    = fuelInvalid ? 0 : Math.max(0, +(fuel / FUEL_BURN).toFixed(1));
+  const fuelRange    = fuelInvalid ? 0 : Math.max(0, +(fuel / MUGELLO_CIRCUIT.fuelBurnKgPerLap).toFixed(1));
 
   return (
     <div className="card mb-4" style={{
@@ -144,7 +141,7 @@ function RaceHeader({
             GP Mugello · Italy · Round 7/20 · 2026
           </div>
           <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', marginTop: 2 }}>
-            {TRACK_KM} km · {TURNS} turns · main straight {MAIN_STRAIGHT_M} m
+            {MUGELLO_CIRCUIT.lengthKm} km · {MUGELLO_CIRCUIT.turns} turns · main straight {MAIN_STRAIGHT_M} m
           </div>
         </div>
 
@@ -152,14 +149,14 @@ function RaceHeader({
         <div style={{ display: 'flex', gap: 20, justifyContent: 'center' }}>
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', letterSpacing: '0.06em' }}>LAP</div>
-            <div className="text-mono" style={{ fontSize: 22, fontWeight: 700, color: lap > totalLaps ? 'var(--accent)' : 'var(--text)', lineHeight: 1.1 }}>
-              {lap > totalLaps ? (
+            <div className="text-mono" style={{ fontSize: 22, fontWeight: 700, color: !validRaceLap(lap) ? 'var(--accent)' : 'var(--text)', lineHeight: 1.1 }}>
+              {!validRaceLap(lap) ? (
                 <span style={{ color: 'var(--accent)', animation: 'pulse 1.5s infinite' }}>INVALID</span>
               ) : (
                 <>{lap}<span style={{ fontSize: 14, color: 'var(--text-muted)' }}>/{totalLaps}</span></>
               )}
             </div>
-            {lap > totalLaps && (
+            {!validRaceLap(lap) && (
               <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--accent)', marginTop: 1 }}>
                 Lap {lap} exceeds race length {totalLaps}
               </div>
@@ -459,10 +456,10 @@ function DataIntegrity({ lap, fuel, fuelValid, lapOk }: {
   lap: number; fuel: number; fuelValid: boolean; lapOk: boolean;
 }) {
   const checks = [
-    { label: 'Circuit selected',          ok: true, detail: 'Mugello' },
-    { label: 'Loaded comparison map',     ok: true, detail: 'Mugello' },
-    { label: 'Corner set',                ok: true, detail: `${MUGELLO_CORNERS.length} / 15 Mugello corners` },
-    { label: 'Lap state',                 ok: lapOk, detail: lapOk ? 'Valid' : `Lap ${lap} exceeds race length ${RACE_LAPS}` },
+    { label: 'Circuit selected',          ok: true, detail: MUGELLO_CIRCUIT.shortName },
+    { label: 'Loaded comparison map',     ok: true, detail: MUGELLO_CIRCUIT.shortName },
+    { label: 'Corner set',                ok: true, detail: `${MUGELLO_CORNERS.length} / ${MUGELLO_CIRCUIT.turns} Mugello corners` },
+    { label: 'Lap state',                 ok: lapOk, detail: lapOk ? 'Valid' : `Lap ${lap} exceeds race length ${MUGELLO_CIRCUIT.raceLaps}` },
     { label: 'Fuel channel',              ok: fuelValid && fuel >= 0.5, detail: fuelValid && fuel >= 0.5 ? 'Valid' : 'Sensor error' },
   ];
 
@@ -527,7 +524,7 @@ export function RiderComparisonPage() {
   const [selectedCorner, setSelectedCorner] = useState<number | null>(15);
   const [openCorners, setOpenCorners] = useState<Set<number>>(new Set([15]));
 
-  const lapOk = t.lapCount <= RACE_LAPS;
+  const lapOk = validRaceLap(t.lapCount);
   // Compute aggregates
   const { total, sectors, worst, best, cornersAhead } = useMemo(() => {
     const total = MUGELLO_CORNERS.reduce((a, c) => a + c.delta, 0);
@@ -582,7 +579,7 @@ export function RiderComparisonPage() {
       {/* ═══════════════════════════════════════════════════════════════════════ */}
       <RaceHeader
         lap={t.lapCount}
-        totalLaps={RACE_LAPS}
+        totalLaps={MUGELLO_CIRCUIT.raceLaps}
         pos={t.position}
         gap={t.gap}
         speed={t.speed}
@@ -755,7 +752,7 @@ export function RiderComparisonPage() {
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        {MUGELLO_CORNERS.map(c => (
+        {[...MUGELLO_CORNERS].sort((a, b) => b.delta - a.delta).map(c => (
           <CornerDetailCard
             key={c.n}
             corner={c}
@@ -800,7 +797,7 @@ export function RiderComparisonPage() {
           </span>
         </div>
         <div style={{ marginTop: 6, fontSize: 13, color: 'var(--text-dim)', lineHeight: 1.6 }}>
-          <p style={{ marginBottom: 8 }}>Real circuit geometry loaded · 15 turns</p>
+          <p style={{ marginBottom: 8 }}>{MUGELLO_CIRCUIT.assetStatusLabel} · {MUGELLO_CIRCUIT.turns} turns</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
             {['You', 'Rival', 'Ideal line', 'Brake markers', 'Throttle pickup', 'Apex', 'Rear slip events'].map(layer => (
               <span key={layer} style={{

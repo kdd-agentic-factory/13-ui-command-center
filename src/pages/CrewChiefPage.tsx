@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { renderHighlighted } from '../lib/richText';
+import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -860,7 +861,7 @@ export function CrewChiefPage() {
                   <div style={{ fontSize: 52, fontWeight: 800, color: '#FFFF00', lineHeight: 1, fontVariantNumeric: 'tabular-nums', textShadow: '0 0 20px rgba(255,255,0,0.25)' }}>
                     {t.lapCount}
                   </div>
-                  <div style={{ fontSize: 9, color: '#555', marginTop: 4 }}>of 23</div>
+                  <div style={{ fontSize: 9, color: '#555', marginTop: 4 }}>of {MUGELLO_CIRCUIT.raceLaps}</div>
                 </div>
                 <div>
                   <div style={{ fontSize: 9, color: '#444', letterSpacing: '0.15em', marginBottom: 4 }}>POS</div>

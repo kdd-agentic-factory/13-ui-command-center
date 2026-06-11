@@ -1,5 +1,5 @@
 import '../i18n'; // must be first — initialises i18next before any component renders
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, type CSSProperties, type ElementType } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard, Activity, Map, Circle, Sliders, Wrench,
@@ -16,6 +16,7 @@ import { useServiceData } from '../hooks/useServiceData';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { ToastProvider } from '../components/ToastProvider';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
+import { MUGELLO_CIRCUIT, RACE_SESSION, sessionDisplayState } from '../domain/sessionTruth';
 
 import { OverviewPage }            from '../pages/OverviewPage';
 import { LiveTelemetryPage }       from '../pages/LiveTelemetryPage';
@@ -46,7 +47,7 @@ import { SettingsPage }            from '../pages/SettingsPage';
 interface NavItemDef {
   id: TabId;
   labelKey: string;
-  icon: React.ElementType;
+  icon: ElementType;
   badge?: string;
   badgeColor?: string;
 }
@@ -57,7 +58,9 @@ interface NavSectionDef {
 }
 
 const ALL_NAV_SECTIONS: NavSectionDef[] = [
+  // Ordered to follow the pit-wall workflow: prepare → race → analyse → decide
   { section: 'nav.sections.race', items: [
+    { id: 'pre-gp',    labelKey: 'nav.preGp',     icon: CalendarDays },
     { id: 'overview',  labelKey: 'nav.overview',  icon: LayoutDashboard },
     { id: 'live',      labelKey: 'nav.live',      icon: MonitorPlay,      badge: 'LIVE', badgeColor: 'red' },
     { id: 'telemetry', labelKey: 'nav.telemetry', icon: Activity,         badge: '10Hz', badgeColor: 'green' },
@@ -65,9 +68,9 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'corners',   labelKey: 'nav.corners',   icon: Route, badge: 'AI', badgeColor: 'blue' },
     { id: 'replay',    labelKey: 'nav.replay',    icon: Film },
     { id: 'compare',   labelKey: 'nav.compare',   icon: GitCompare },
+    { id: 'tires',     labelKey: 'nav.tires',     icon: Circle },
     { id: 'risk',      labelKey: 'nav.risk',      icon: ShieldAlert },
     { id: 'predict',   labelKey: 'nav.predict',   icon: Sparkles, badge: 'AI', badgeColor: 'blue' },
-    { id: 'tires',     labelKey: 'nav.tires',     icon: Circle },
   ]},
   { section: 'nav.sections.engineering', items: [
     { id: 'setup',   labelKey: 'nav.setup',   icon: Sliders },
@@ -77,11 +80,10 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'history', labelKey: 'nav.history', icon: History },
   ]},
   { section: 'nav.sections.command', items: [
-    { id: 'pre-gp',  labelKey: 'nav.preGp',   icon: CalendarDays },
     { id: 'crew',    labelKey: 'nav.crew',     icon: Radio },
     { id: 'copilot', labelKey: 'nav.copilot',  icon: Bot, badge: 'AI', badgeColor: 'blue' },
-    { id: 'report',  labelKey: 'nav.report',   icon: FileText, badge: 'PDF', badgeColor: 'muted' },
     { id: 'ai-crew', labelKey: 'nav.aiCrew',   icon: Users, badge: 'AI', badgeColor: 'blue' },
+    { id: 'report',  labelKey: 'nav.report',   icon: FileText, badge: 'PDF', badgeColor: 'muted' },
     { id: 'style',   labelKey: 'nav.style',    icon: Fingerprint },
   ]},
   { section: 'nav.sections.system', items: [
@@ -144,6 +146,7 @@ function AppShell() {
   const [transitioning, setTransitioning] = useState(false);
   const prevTabRef = useRef<TabId>(tab);
   const telem = useLiveTelemetry();
+  const sessionState = sessionDisplayState(telem.lapCount);
   const clock = useClock();
   const live = useServiceData(); // real platform health via the Fly BFF
 
@@ -215,12 +218,12 @@ function AppShell() {
           <div className="sidebar-brand-icon"><Zap size={16} /></div>
           <div>
             <div className="sidebar-brand-name">KDD MOTO</div>
-            <div className="sidebar-brand-sub">Moto Intelligence</div>
+            <div className="sidebar-brand-sub">Intelligence</div>
           </div>
         </div>
 
         {/* Profile chip */}
-        <div className="sidebar-profile-chip" style={{ '--chip-color': profile.color } as React.CSSProperties}>
+        <div className="sidebar-profile-chip" style={{ '--chip-color': profile.color } as CSSProperties}>
           <span>{profile.icon}</span>
           <span style={{ fontSize: 12, fontWeight: 600 }}>{t(profile.nameKey)}</span>
         </div>
@@ -270,14 +273,19 @@ function AppShell() {
         {/* HEADER */}
         <header className="app-header">
           <div className="header-gp">
-            <span className="badge badge-red" style={{ fontSize: 10, letterSpacing: '0.1em' }}>{t('header.race', 'RACE')}</span>
-            <span className="header-gp-name">GP Mugello · Italy</span>
-            <span className="header-gp-round" style={{ color: 'var(--text-muted)', fontSize: 12 }}>Round 7 / 20 · 2026</span>
+            <span className={`badge ${sessionState.badgeClass}`} style={{ fontSize: 10, letterSpacing: '0.1em' }}>{sessionState.badgeLabel}</span>
+            <span className="header-gp-name">{RACE_SESSION.productName}</span>
+            <span className="header-gp-round" style={{ color: 'var(--text-muted)', fontSize: 12 }}>{RACE_SESSION.positioning}</span>
           </div>
           <div className="header-stats">
             <div className="header-stat">
-              <span className="header-stat-label">{t('common.lap', 'LAP').toUpperCase()}</span>
-              <span className="header-stat-val">{telem.lapCount}<span style={{ fontSize: 12, color: 'var(--text-muted)' }}>/23</span></span>
+              <span className="header-stat-label">{sessionState.lapLabel}</span>
+              <span className="header-stat-val">{sessionState.lapValue}</span>
+            </div>
+            <div className="header-stat-sep" />
+            <div className="header-stat">
+              <span className="header-stat-label">CIRCUIT</span>
+              <span className="header-stat-val" style={{ fontSize: 14 }}>{MUGELLO_CIRCUIT.shortName}</span>
             </div>
             <div className="header-stat-sep" />
             <div className="header-stat">
@@ -309,14 +317,15 @@ function AppShell() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <div style={{
                 width: 8, height: 8, borderRadius: '50%',
-                background: 'var(--green)',
-                boxShadow: '0 0 6px var(--green)',
+                background: sessionState.activeRace ? 'var(--green)' : 'var(--yellow)',
+                boxShadow: `0 0 6px ${sessionState.activeRace ? 'var(--green)' : 'var(--yellow)'}`,
                 animation: 'pulse 2s infinite',
               }} />
-              <span style={{ fontSize: 11, color: 'var(--green)', fontWeight: 700, letterSpacing: '0.08em' }}>
-                {t('header.greenFlag', 'GREEN FLAG')}
+              <span style={{ fontSize: 11, color: sessionState.activeRace ? 'var(--green)' : 'var(--yellow)', fontWeight: 700, letterSpacing: '0.08em' }}>
+                {sessionState.flagLabel}
               </span>
             </div>
+            <span className="badge badge-yellow" style={{ fontSize: 9 }}>{MUGELLO_CIRCUIT.assetStatusLabel}</span>
             <span className="header-clock">{clock}</span>
           </div>
         </header>

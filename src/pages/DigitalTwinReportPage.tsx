@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { useToast } from '../components/ToastProvider';
+import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 
 const RACE_MODES = {
   DRY_GP: 'dry-gp',
@@ -225,7 +226,7 @@ const SENSITIVITY_ROWS: SensitivityRow[] = [
 
 const INTEGRITY_CHECKS: IntegrityCheck[] = [
   { label: 'Track model', value: 'Mugello loaded', status: 'ok' },
-  { label: 'Race length', value: '23 laps', status: 'ok' },
+  { label: 'Race length', value: `${MUGELLO_CIRCUIT.raceLaps} laps`, status: 'ok' },
   { label: 'Scenario count', value: '4 loaded', status: 'ok' },
   { label: 'Feature extraction', value: '48 / 48 variables available', status: 'ok' },
   { label: 'Monte Carlo runs', value: '5,000 completed', status: 'ok' },
@@ -771,7 +772,7 @@ export function DigitalTwinReportPage() {
         <div className="card">
           <div className="card-header"><span className="card-title flex items-center gap-2"><Cpu size={13} />Race Pace Pipeline</span></div>
           <div className="card-body" style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.7 }}>
-            <strong style={{ color: 'var(--text)' }}>Simulation length:</strong> 23 laps<br />
+            <strong style={{ color: 'var(--text)' }}>Simulation length:</strong> {MUGELLO_CIRCUIT.raceLaps} laps<br />
             <strong style={{ color: 'var(--text)' }}>Runtime:</strong> 1.2s<br />
             <strong style={{ color: 'var(--text)' }}>Feature set:</strong> 48 variables<br />
             <strong style={{ color: 'var(--text)' }}>Model stack:</strong> GBM ensemble + tyre degradation surrogate + Monte Carlo outcome model<br />

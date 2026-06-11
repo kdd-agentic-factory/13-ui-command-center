@@ -19,6 +19,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { useNavigate } from '../context/NavContext';
+import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 
 interface Advisor {
   name: string;
@@ -199,7 +200,7 @@ export function AICrewPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">Oracle Pit Wall</h1>
-          <p className="page-subtitle">AI Council of Race Engineers · Mugello GP · 5.245 km · 15 turns</p>
+          <p className="page-subtitle">AI Council of Race Engineers · {MUGELLO_CIRCUIT.fullName} · {MUGELLO_CIRCUIT.lengthKm} km · {MUGELLO_CIRCUIT.turns} turns</p>
         </div>
         <div className="flex items-center gap-2" style={{ flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           <span className="badge badge-green">Council status · {activeAdvisors} / {ADVISORS.length} advisors active</span>

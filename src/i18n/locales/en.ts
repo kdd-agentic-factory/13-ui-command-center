@@ -19,7 +19,7 @@ const en = {
     crew: 'Crew Chief',
     copilot: 'AI Copilot',
     report: 'Session Report',
-    aiCrew: 'AI Crew',
+    aiCrew: 'Oracle Pit Wall',
     style: 'Riding Style',
     data: 'Connect Data',
     settings: 'Settings',

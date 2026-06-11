@@ -20,6 +20,7 @@ import {
   Upload,
   Wind,
 } from 'lucide-react';
+import { MUGELLO_CIRCUIT, RACE_SESSION } from '../domain/sessionTruth';
 
 const SESSION_STATUS = {
   COMPLETED: 'completed',
@@ -80,17 +81,23 @@ interface DataSource {
   quality: string;
 }
 
-const CIRCUIT_LIBRARY = [
-  'Mugello',
-  'Jarama',
-  'Jerez',
-  'Montmeló',
-  'Portimão',
-  'Misano',
-  'MotorLand Aragón',
-  'Valencia',
-  'Assen',
-  'Custom circuit',
+interface CircuitLibraryItem {
+  name: string;
+  id: string;
+  loaded: boolean;
+}
+
+const CIRCUIT_LIBRARY: CircuitLibraryItem[] = [
+  { name: 'Mugello', id: MUGELLO_CIRCUIT.id, loaded: true },
+  { name: 'Jarama', id: 'jarama', loaded: false },
+  { name: 'Jerez', id: 'jerez', loaded: false },
+  { name: 'Montmeló', id: 'montmelo', loaded: false },
+  { name: 'Portimão', id: 'portimao', loaded: false },
+  { name: 'Misano', id: 'misano', loaded: false },
+  { name: 'MotorLand Aragón', id: 'aragon', loaded: false },
+  { name: 'Valencia', id: 'valencia', loaded: false },
+  { name: 'Assen', id: 'assen', loaded: false },
+  { name: 'Custom circuit', id: 'custom', loaded: false },
 ];
 
 const VIEW_MODES = [
@@ -121,7 +128,7 @@ const WEEKEND_SCHEDULE: ScheduleSession[] = [
   { session: 'FP3', day: 'Sat', time: '09:30', status: SESSION_STATUS.COMPLETED, result: 'P4 · 1:43.612', dataQuality: '97%', note: 'Race pace simulation updated' },
   { session: 'Q1', day: 'Sat', time: '14:30', status: SESSION_STATUS.NOT_REQUIRED, result: 'Q2 direct', dataQuality: '—', note: 'No additional run required' },
   { session: 'Q2', day: 'Sat', time: '15:00', status: SESSION_STATUS.COMPLETED, result: 'P3 · 1:43.201', dataQuality: '98%', note: 'Grid row 1' },
-  { session: 'Race', day: 'Sun', time: '14:00', status: SESSION_STATUS.PENDING, result: 'Pending', dataQuality: 'ready', note: 'Grid P3 · planned race distance 23 laps' },
+  { session: 'Race', day: 'Sun', time: '14:00', status: SESSION_STATUS.PENDING, result: 'Pending', dataQuality: 'ready', note: `Grid P3 · planned race distance ${MUGELLO_CIRCUIT.raceLaps} laps` },
 ];
 
 const PACE_EVOLUTION: PaceEvolution[] = [
@@ -184,7 +191,7 @@ const RIVAL_PROFILES: RivalProfile[] = [
 ];
 
 const CHECKLIST: ChecklistItem[] = [
-  { label: 'Circuit model loaded', status: CHECK_STATUS.COMPLETE },
+  { label: 'Procedural Mugello map loaded', status: CHECK_STATUS.COMPLETE },
   { label: 'Telemetry baseline loaded', status: CHECK_STATUS.COMPLETE },
   { label: 'Weather forecast loaded', status: CHECK_STATUS.COMPLETE },
   { label: 'Tyre allocation loaded', status: CHECK_STATUS.COMPLETE },
@@ -197,8 +204,8 @@ const CHECKLIST: ChecklistItem[] = [
 ];
 
 const DATA_SOURCES: DataSource[] = [
-  { source: 'Circuit geometry', status: 'Mugello GP layout · validated', quality: '99.1%' },
-  { source: 'Elevation model', status: 'Loaded · 41.19 m variance', quality: 'active' },
+  { source: 'Circuit geometry', status: MUGELLO_CIRCUIT.assetStatusLabel, quality: 'procedural' },
+  { source: 'Elevation model', status: 'Procedural gradient brief · no real mesh asset loaded', quality: 'procedural' },
   { source: 'Historical telemetry', status: 'FP1 · FP2 · FP3 · Q2 loaded', quality: '96%' },
   { source: 'Rival data', status: 'Timing sheets + sector model', quality: '89%' },
   { source: 'Weather', status: 'Forecast + track sensors', quality: '91%' },
@@ -276,7 +283,7 @@ function PaceEvolutionChart() {
 }
 
 export function PreGrandPrixPage() {
-  const [selectedCircuit, setSelectedCircuit] = useState('Mugello');
+  const [selectedCircuit, setSelectedCircuit] = useState(MUGELLO_CIRCUIT.shortName);
   const [activeViewMode, setActiveViewMode] = useState('3D elevation');
   const [showRivalDetail, setShowRivalDetail] = useState(true);
   const completedChecks = CHECKLIST.filter(item => item.status === CHECK_STATUS.COMPLETE).length;
@@ -297,14 +304,14 @@ export function PreGrandPrixPage() {
 
       <div className="card mb-4" style={{ borderLeft: '4px solid var(--blue)' }}>
         <div className="card-header">
-          <span className="card-title">GP Mugello · Italy · 2026 Season</span>
+          <span className="card-title">GP {MUGELLO_CIRCUIT.shortName} · {MUGELLO_CIRCUIT.country} · {MUGELLO_CIRCUIT.season} Season</span>
           <span className="badge badge-yellow">Race not started · preparation phase</span>
         </div>
         <div className="card-body">
           <div className="grid-4" style={{ marginBottom: 18 }}>
             <StatTile label="Status" value="PRE-RACE" color="var(--green)" />
-            <StatTile label="Circuit" value="5.245 km · 15 turns" color="var(--blue)" />
-            <StatTile label="Race distance" value="23 laps" color="var(--text)" />
+            <StatTile label="Circuit" value={`${MUGELLO_CIRCUIT.lengthKm} km · ${MUGELLO_CIRCUIT.turns} turns`} color="var(--blue)" />
+            <StatTile label="Race distance" value={`${MUGELLO_CIRCUIT.raceLaps} laps`} color="var(--text)" />
             <StatTile label="Digital Twin" value="Ready · 4 scenarios" color="var(--yellow)" />
           </div>
           <PreparationProgress />
@@ -315,25 +322,28 @@ export function PreGrandPrixPage() {
         <div className="card">
           <div className="card-header">
             <span className="card-title flex items-center gap-2"><Database size={14} />Circuit Data Loader</span>
-            <span className="badge badge-green">Mugello GP Layout loaded</span>
+            <span className="badge badge-green">Mugello session truth active</span>
           </div>
           <div className="card-body">
             <div className="card-label" style={{ marginBottom: 8 }}>Circuit library</div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
               {CIRCUIT_LIBRARY.map(circuit => {
-                const active = selectedCircuit === circuit;
+                const active = selectedCircuit === circuit.name;
                 return (
-                  <button key={circuit} type="button" onClick={() => setSelectedCircuit(circuit)} style={{ border: `1px solid ${active ? 'var(--blue)' : 'var(--border)'}`, background: active ? 'rgba(59,130,246,0.12)' : 'rgba(255,255,255,0.03)', color: active ? 'var(--blue)' : 'var(--text-muted)', borderRadius: 999, padding: '6px 10px', fontSize: 10, fontFamily: 'JetBrains Mono,monospace', fontWeight: active ? 800 : 500, cursor: 'pointer' }}>
-                    {circuit}
+                  <button key={circuit.id} type="button" disabled={!circuit.loaded} onClick={() => setSelectedCircuit(circuit.name)} title={circuit.loaded ? 'Loaded for active Mugello session' : 'Not loaded — selecting would mismatch active Mugello session'} style={{ border: `1px solid ${active ? 'var(--blue)' : !circuit.loaded ? 'rgba(245,158,11,0.28)' : 'var(--border)'}`, background: active ? 'rgba(59,130,246,0.12)' : 'rgba(255,255,255,0.03)', color: active ? 'var(--blue)' : !circuit.loaded ? 'var(--yellow)' : 'var(--text-muted)', borderRadius: 999, padding: '6px 10px', fontSize: 10, fontFamily: 'JetBrains Mono,monospace', fontWeight: active ? 800 : 500, cursor: circuit.loaded ? 'pointer' : 'not-allowed', opacity: circuit.loaded ? 1 : 0.72 }}>
+                    {circuit.name}{!circuit.loaded ? ' · not loaded' : ''}
                   </button>
                 );
               })}
             </div>
+            <div style={{ marginBottom: 16, padding: '10px 12px', border: '1px solid rgba(245,158,11,0.22)', background: 'rgba(245,158,11,0.07)', borderRadius: 8, fontSize: 12, color: 'var(--text-muted)' }}>
+              <strong style={{ color: 'var(--yellow)' }}>Integrity guard:</strong> {RACE_SESSION.productName} is locked to Mugello for this batch. Jarama and other library entries are visible as not-loaded to prevent circuit/session mismatch.
+            </div>
             <div className="grid-2" style={{ marginBottom: 16 }}>
               <StatTile label="Selected circuit" value={`${selectedCircuit} GP Layout`} color="var(--blue)" />
-              <StatTile label="Geometry match" value="99.1%" color="var(--green)" />
+              <StatTile label="Geometry asset" value="Procedural" color="var(--yellow)" />
               <StatTile label="Corner set" value="15 / 15 loaded" color="var(--green)" />
-              <StatTile label="GPS alignment" value="±0.8 m" color="var(--yellow)" />
+              <StatTile label="Circuit mismatch" value="Guarded" color="var(--green)" />
             </div>
             <div className="card-label" style={{ marginBottom: 8 }}>Import circuit data</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 8 }}>
@@ -354,9 +364,9 @@ export function PreGrandPrixPage() {
           </div>
           <div className="card-body">
             <div className="grid-4" style={{ marginBottom: 16 }}>
-              <StatTile label="Length" value="5.245 km" />
-              <StatTile label="Turns" value="15 · 6L / 9R" />
-              <StatTile label="Main straight" value="1.141 km" color="var(--yellow)" />
+              <StatTile label="Length" value={`${MUGELLO_CIRCUIT.lengthKm} km`} />
+              <StatTile label="Turns" value={`${MUGELLO_CIRCUIT.turns} · ${MUGELLO_CIRCUIT.leftTurns}L / ${MUGELLO_CIRCUIT.rightTurns}R`} />
+              <StatTile label="Main straight" value={`${MUGELLO_CIRCUIT.mainStraightKm} km`} color="var(--yellow)" />
               <StatTile label="Elevation variance" value="41.19 m" color="var(--blue)" />
             </div>
             <div className="grid-2">
@@ -387,8 +397,8 @@ export function PreGrandPrixPage() {
       <div className="grid-2 mb-4">
         <div className="card">
           <div className="card-header">
-            <span className="card-title flex items-center gap-2"><Navigation size={14} />3D Circuit Model</span>
-            <span className="badge badge-green">Loaded</span>
+            <span className="card-title flex items-center gap-2"><Navigation size={14} />Procedural Circuit Model</span>
+            <span className="badge badge-yellow">No real mesh asset</span>
           </div>
           <div className="card-body">
             <div style={{ height: 220, border: '1px solid var(--border)', borderRadius: 12, background: 'radial-gradient(circle at 35% 40%, rgba(59,130,246,0.20), transparent 30%), radial-gradient(circle at 65% 55%, rgba(245,158,11,0.18), transparent 28%), rgba(255,255,255,0.03)', position: 'relative', overflow: 'hidden', marginBottom: 14 }}>
@@ -415,7 +425,7 @@ export function PreGrandPrixPage() {
         <div className="card">
           <div className="card-header">
             <span className="card-title flex items-center gap-2"><Gauge size={14} />Elevation & Gradient Brief</span>
-            <span className="badge badge-blue">gradient active</span>
+            <span className="badge badge-yellow">procedural gradient</span>
           </div>
           <div className="card-body">
             <div className="grid-2" style={{ marginBottom: 16 }}>
@@ -570,7 +580,7 @@ export function PreGrandPrixPage() {
             <div className="grid-3" style={{ marginBottom: 16 }}>
               <StatTile label="Qualifying" value="P3 · front row" color="var(--yellow)" />
               <StatTile label="Race projection" value="P2–P3" color="var(--green)" />
-              <StatTile label="Simulation" value="23 laps · 5k MC" color="var(--blue)" />
+              <StatTile label="Simulation" value={`${MUGELLO_CIRCUIT.raceLaps} laps · 5k MC`} color="var(--blue)" />
             </div>
             <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.6 }}>
               <strong style={{ color: 'var(--green)' }}>Main opportunity:</strong> Sector 2 and Bucine exit.<br />
@@ -733,7 +743,7 @@ export function PreGrandPrixPage() {
             <StatTile label="Priority 4" value="Wet plan from 16:00" color="var(--blue)" />
           </div>
           <div style={{ padding: '12px 14px', background: 'rgba(34,197,94,0.07)', border: '1px solid rgba(34,197,94,0.18)', borderRadius: 10, fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.55 }}>
-            <strong style={{ color: 'var(--green)' }}>Final call:</strong> race starts dry. Keep rain plan ready but do not compromise dry setup. Before competing, the team has loaded the circuit, validated geometry, integrated elevation, checked historical telemetry, selected setup, modelled rivals and locked a race operating plan.
+              <strong style={{ color: 'var(--green)' }}>Final call:</strong> race starts dry. Keep rain plan ready but do not compromise dry setup. Before competing, the team has locked Mugello session truth, exposed procedural geometry status, checked historical telemetry, selected setup, modelled rivals and locked a race operating plan.
           </div>
         </div>
       </div>

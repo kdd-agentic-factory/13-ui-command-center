@@ -19,6 +19,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { useToast } from '../components/ToastProvider';
+import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 
 interface MetricCard {
   label: string;
@@ -245,7 +246,7 @@ export function SessionReportPage() {
         <div className="card-body">
           <div className="grid-4">
             <div><div className="card-label">Conditions</div><div style={{ fontSize: 13, fontWeight: 800 }}>Dry · Air 24°C · Track 38°C · Wind 8 km/h</div></div>
-            <div><div className="card-label">Circuit</div><div style={{ fontSize: 13, fontWeight: 800 }}>Mugello · 5.245 km · 15 turns</div></div>
+            <div><div className="card-label">Circuit</div><div style={{ fontSize: 13, fontWeight: 800 }}>{MUGELLO_CIRCUIT.shortName} · {MUGELLO_CIRCUIT.lengthKm} km · {MUGELLO_CIRCUIT.turns} turns</div></div>
             <div><div className="card-label">Report mode</div><div style={{ fontSize: 13, fontWeight: 800 }}>Post-stint · rider + engineering summary</div></div>
             <div><div className="card-label">Generated</div><div style={{ fontSize: 13, fontWeight: 800 }}>Pit wall · 14:32:18</div></div>
           </div>

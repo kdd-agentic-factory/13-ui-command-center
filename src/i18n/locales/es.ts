@@ -19,7 +19,7 @@ const es = {
     crew: 'Jefe de Mecánicos',
     copilot: 'Copiloto IA',
     report: 'Informe de Sesión',
-    aiCrew: 'Equipo IA',
+    aiCrew: 'Oracle Pit Wall',
     style: 'Estilo de Pilotaje',
     data: 'Conectar Datos',
     settings: 'Configuración',
