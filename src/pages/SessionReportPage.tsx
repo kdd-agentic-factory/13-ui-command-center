@@ -62,19 +62,19 @@ interface DataSource {
 }
 
 const BEFORE = {
-  lap: '1:45.238',
+  lap: '1:59.238',
   loss: 'T15 Bucine · late throttle on exit',
 };
 
 const AFTER = {
-  lap: '1:43.912',
-  gain: '-1.326',
+  lap: '1:57.842',
+  gain: '-1.396',
   note: 'Throttle 0.3s earlier with lower lean on exit',
 };
 
 const KPIS: MetricCard[] = [
-  { label: 'Best lap', value: '1:43.912', detail: 'Best of stint', color: 'var(--green)' },
-  { label: 'Average lap', value: '1:44.386', detail: 'stint average', color: 'var(--text)' },
+  { label: 'Best lap', value: '1:57.842', detail: 'Best of stint', color: 'var(--green)' },
+  { label: 'Average lap', value: '1:58.386', detail: 'stint average', color: 'var(--text)' },
   { label: 'Consistency', value: '86%', detail: 'Target: >90%', color: 'var(--yellow)' },
   { label: 'Potential gain', value: '-1.284s', detail: 'Still available vs ideal lap', color: 'var(--green)' },
   { label: 'Risk index', value: 'Medium', detail: '58 / 100', color: 'var(--yellow)' },
