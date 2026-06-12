@@ -482,8 +482,8 @@ export function DigitalTwinReportPage() {
     <div className="page">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="page-title">Digital Twin Report</h1>
-          <p className="page-subtitle">{session.ctx.circuitName} race simulation · What-if scenarios · Lap-time model · KDD degradation prediction{session.ctx.dataMode !== 'live' ? ' · all outputs AI-estimated' : ''}{session.ctx.sessionMode === 'simulation' ? ` · circuit confidence ${Math.round(session.circuit.agentConfidence * 100)}%` : ''}</p>
+          <h1 className="page-title">{['race', 'simulation', 'demo'].includes(session.ctx.sessionMode) ? 'Digital Twin Report' : 'Session Digital Twin'}</h1>
+          <p className="page-subtitle">{session.ctx.circuitName} {['race', 'simulation', 'demo'].includes(session.ctx.sessionMode) ? 'race simulation' : 'session model — no race points or pit strategy in this mode'} · What-if scenarios · Lap-time model · KDD degradation prediction{session.ctx.dataMode !== 'live' ? ' · all outputs AI-estimated' : ''}{session.ctx.sessionMode === 'simulation' ? ` · circuit confidence ${Math.round(session.circuit.agentConfidence * 100)}%` : ''}</p>
         </div>
         <div className="flex items-center gap-2" style={{ flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           <span className="badge badge-blue">Digital Twin v2.1</span>

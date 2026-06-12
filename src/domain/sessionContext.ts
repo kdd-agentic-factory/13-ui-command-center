@@ -124,6 +124,27 @@ export function hiddenTabsForMode(mode: SessionMode): TabId[] {
   }
 }
 
+/** Human labels for dashboard modules (shared by Mode Gate + Launch Brief). */
+export const MODULE_LABELS: Partial<Record<TabId, string>> = {
+  overview: 'Race Overview', live: 'Track-Live', telemetry: 'Live Telemetry',
+  circuit: '3D Track Map', corners: 'Corner Intelligence', replay: 'Lap Replay',
+  compare: 'Rider Comparison', tires: 'Tyre & Grip', risk: 'Crash-Risk',
+  predict: 'Predictive Model', setup: 'Setup Management', advisor: 'Garage Setup Advisor',
+  parts: 'Garage Part Factory', twin: 'Digital Twin', history: 'Circuit History',
+  'pre-gp': 'Pre-GP Workspace', crew: 'Crew Chief', copilot: 'Rider Coach AI',
+  'ai-crew': 'Oracle Pit Wall', report: 'Session Report', style: 'Rider Style DNA',
+};
+
+/** What a mode activates vs hides — shown in the gate BEFORE opening (§2). */
+export function moduleVisibilityForMode(mode: SessionMode): { active: string[]; hidden: string[] } {
+  const hiddenIds = new Set(hiddenTabsForMode(mode));
+  const ids = Object.keys(MODULE_LABELS) as TabId[];
+  return {
+    active: ids.filter(id => !hiddenIds.has(id)).map(id => MODULE_LABELS[id]!),
+    hidden: ids.filter(id => hiddenIds.has(id)).map(id => MODULE_LABELS[id]!),
+  };
+}
+
 /** Tab the dashboard opens on for this mode (null → profile default). */
 export function defaultTabForMode(mode: SessionMode): TabId | null {
   switch (mode) {

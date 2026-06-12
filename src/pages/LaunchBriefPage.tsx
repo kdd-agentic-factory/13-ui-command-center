@@ -7,7 +7,7 @@
 import { ArrowLeft, Rocket, Bot, CheckCircle2 } from 'lucide-react';
 import { GateProgress } from '../components/GateProgress';
 import type { SessionContext } from '../domain/sessionContext';
-import { hiddenTabsForMode } from '../domain/sessionContext';
+import { hiddenTabsForMode, MODULE_LABELS } from '../domain/sessionContext';
 import type { CircuitRecord } from '../domain/circuits';
 import { STATUS_META } from '../domain/circuits';
 import type { TabId } from '../context/AuthContext';
@@ -20,16 +20,6 @@ interface Props {
 }
 
 const MONO = 'JetBrains Mono, monospace';
-
-const MODULE_LABELS: Partial<Record<TabId, string>> = {
-  overview: 'Race Overview', live: 'Track-Live', telemetry: 'Live Telemetry',
-  circuit: '3D Track Map', corners: 'Corner Intelligence', replay: 'Lap Replay',
-  compare: 'Rider Comparison', tires: 'Tyre & Grip', risk: 'Crash-Risk',
-  predict: 'Predictive Model', setup: 'Setup Management', advisor: 'Garage Setup Advisor',
-  parts: 'Garage Part Factory', twin: 'Digital Twin', history: 'Circuit History',
-  'pre-gp': 'Pre-GP Workspace', crew: 'Crew Chief', copilot: 'Rider Coach AI',
-  'ai-crew': 'Oracle Pit Wall', report: 'Session Report', style: 'Rider Style DNA',
-};
 
 export function LaunchBriefPage({ circuit, ctx, onBack, onLaunch }: Props) {
   const hidden = new Set(hiddenTabsForMode(ctx.sessionMode));
@@ -101,7 +91,7 @@ export function LaunchBriefPage({ circuit, ctx, onBack, onLaunch }: Props) {
             </span>
             <button className="btn-primary" onClick={onLaunch}
               style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8, padding: '10px 22px', fontSize: 13 }}>
-              <Rocket size={15} /> Launch Dashboard
+              <Rocket size={15} /> Launch Digital Pit-Wall
             </button>
           </div>
         </div>

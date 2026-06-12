@@ -515,10 +515,17 @@ export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Prop
 
                 {/* Mode + actions */}
                 <div className="card" style={{ padding: 16 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, flexWrap: 'wrap' }}>
                     <Gauge size={14} style={{ color: modeMeta.color }} />
-                    <span style={{ fontSize: 12.5, fontWeight: 700, color: modeMeta.color }}>{modeMeta.label}</span>
-                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{modeMeta.note}</span>
+                    <span style={{ fontSize: 12.5, fontWeight: 700, color: modeMeta.color }}>
+                      Dashboard access: {mode === 'full' ? 'FULL' : mode === 'blocked' ? 'BLOCKED' : mode.toUpperCase()}
+                    </span>
+                    {!allOk && (
+                      <span style={{ fontSize: 11, fontFamily: 'JetBrains Mono, monospace', color: 'var(--yellow)' }}>
+                        Reason: {checks.find(c => !c.ok)?.label.toLowerCase()} — {checks.find(c => !c.ok)?.desc}
+                      </span>
+                    )}
+                    <span style={{ fontSize: 11, color: 'var(--text-muted)', width: '100%' }}>{modeMeta.note}</span>
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                     <button className="btn-primary" disabled={mode === 'blocked'}

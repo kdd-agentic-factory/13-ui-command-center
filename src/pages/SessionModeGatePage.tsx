@@ -17,7 +17,7 @@ import type { CircuitRecord } from '../domain/circuits';
 import { STATUS_META } from '../domain/circuits';
 import {
   SessionMode, MODE_DEFS, modeDef, setupFieldsForMode, SetupField,
-  buildSessionContext, SessionContext, DEMO_PACKAGES,
+  buildSessionContext, SessionContext, DEMO_PACKAGES, moduleVisibilityForMode,
 } from '../domain/sessionContext';
 import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 
@@ -137,9 +137,26 @@ export function SessionModeGatePage({ circuit, onBack, onOpen }: Props) {
                 <span className="card-title" style={{ margin: 0 }}>{def.label} — SESSION SETUP</span>
                 <span className="badge" style={{ fontSize: 9.5, fontFamily: MONO, color: def.badgeColor, border: `1px solid ${def.badgeColor}`, background: 'transparent' }}>{def.badge}</span>
               </div>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 14 }}>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 10 }}>
                 Mode requirements: {def.requirements.join(' · ')}
               </div>
+
+              {/* What this mode activates vs hides — visible BEFORE opening */}
+              {(() => {
+                const vis = moduleVisibilityForMode(mode);
+                return (
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14, padding: '10px 12px', borderRadius: 8, background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border)' }}>
+                    <div>
+                      <div style={{ fontSize: 9.5, fontFamily: MONO, letterSpacing: '0.1em', color: 'var(--green)', textTransform: 'uppercase', marginBottom: 5 }}>Activates</div>
+                      <div style={{ fontSize: 10.5, color: 'var(--text)', lineHeight: 1.6 }}>{vis.active.join(' · ')}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 9.5, fontFamily: MONO, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 5 }}>Hides</div>
+                      <div style={{ fontSize: 10.5, color: 'var(--text-muted)', lineHeight: 1.6 }}>{vis.hidden.length ? vis.hidden.join(' · ') : 'Nothing — full dashboard'}</div>
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Demo: package selector */}
               {mode === 'demo' ? (

@@ -62,7 +62,7 @@ describe('LaunchBriefPage', () => {
     expect(screen.getByText('Rider Style DNA')).toBeInTheDocument();
     expect(screen.queryByText('Rider Comparison')).toBeNull();
 
-    fireEvent.click(screen.getByText('Launch Dashboard'));
+    fireEvent.click(screen.getByText('Launch Digital Pit-Wall'));
     expect(onLaunch).toHaveBeenCalledTimes(1);
   });
 });
