@@ -89,6 +89,14 @@ export function DecisionCenter({ lap }: { lap: number }) {
   useEffect(() => subscribeDecisions(() => force(x => x + 1)), []);
   useEffect(() => { void syncDecisionsFromBackend(); }, []);
 
+  // Dialog a11y: ESC closes the slide-over.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open]);
+
   const profileId = profile?.id ?? null;
   const all = decisionsFor(profileId);
   const pending = all.filter(d => d.status === 'pending');
@@ -132,7 +140,7 @@ export function DecisionCenter({ lap }: { lap: number }) {
               DECISION CENTER
             </span>
             <span style={{ fontSize: 10, fontFamily: MONO, color: 'var(--text-muted)' }}>{profile?.id}</span>
-            <button onClick={() => setOpen(false)} aria-label="Close" style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+            <button onClick={() => setOpen(false)} aria-label="Close" autoFocus style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
               <X size={16} />
             </button>
           </div>

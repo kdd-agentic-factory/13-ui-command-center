@@ -8,7 +8,7 @@
  * geometry). When any check fails the bar carries a warning and the panel
  * states that advanced predictions are degraded.
  */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CheckCircle2, XCircle, ShieldCheck, ChevronDown } from 'lucide-react';
 import { useSessionContext } from '../hooks/useSessionContext';
 import type { TelemetryFrame } from '../hooks/useLiveTelemetry';
@@ -21,6 +21,14 @@ interface Check { label: string; ok: boolean; desc: string }
 export function GlobalContextBar({ telem }: { telem: TelemetryFrame }) {
   const { ctx, circuit, datasetMismatch, badge, badgeColor } = useSessionContext();
   const [open, setOpen] = useState(false);
+
+  // ESC closes the integrity dropdown.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open]);
 
   const lapOk = telem.lapCount >= 0 && telem.lapCount <= MUGELLO_CIRCUIT.raceLaps && !telem.lapAnomaly;
   const checks: Check[] = [

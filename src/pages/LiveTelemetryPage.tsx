@@ -903,19 +903,19 @@ export function LiveTelemetryPage() {
                     <div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                         <span className="card-label">Front brake</span>
-                        <span className="telem-md text-mono" style={{ color: 'var(--accent)' }}>{t.brakePressureFront}%</span>
+                        <span className="telem-md text-mono" style={{ color: 'var(--accent)' }}>{(t.brakePressureFront * 0.11).toFixed(1)} bar</span>
                       </div>
                       <div className="bar-track" style={{ height: 14 }}>
-                        <div className="bar-fill" style={{ width: `${t.brakePressureFront}%`, background: 'var(--accent)', transition: 'width 0.1s' }} />
+                        <div className="bar-fill" style={{ width: `${(t.brakePressureFront * 0.11).toFixed(1)} bar`, background: 'var(--accent)', transition: 'width 0.1s' }} />
                       </div>
                     </div>
                     <div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                         <span className="card-label">Rear brake</span>
-                        <span className="telem-md text-mono" style={{ color: 'var(--orange)' }}>{t.brakePressureRear}%</span>
+                        <span className="telem-md text-mono" style={{ color: 'var(--orange)' }}>{(t.brakePressureRear * 0.05).toFixed(1)} bar</span>
                       </div>
                       <div className="bar-track" style={{ height: 14 }}>
-                        <div className="bar-fill" style={{ width: `${t.brakePressureRear}%`, background: 'var(--orange)', transition: 'width 0.1s' }} />
+                        <div className="bar-fill" style={{ width: `${(t.brakePressureRear * 0.05).toFixed(1)} bar`, background: 'var(--orange)', transition: 'width 0.1s' }} />
                       </div>
                     </div>
                   </div>

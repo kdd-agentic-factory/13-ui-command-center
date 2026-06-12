@@ -93,8 +93,8 @@ export function MotorbikeDiagnostics({ t }: { t: BikeTelemetry }) {
           <div className="grid-4" style={{ marginTop: 8 }}>
             <Stat label="F Press" value={frontPress.toFixed(2)} unit="bar" />
             <Stat label="R Press" value={rearPress.toFixed(2)} unit="bar" />
-            <Stat label="F Brake" value={frontBrake.toFixed(0)} unit="%" />
-            <Stat label="R Brake" value={rearBrake.toFixed(0)} unit="%" />
+            <Stat label="F Brake" value={(frontBrake * 0.11).toFixed(1)} unit="bar" />
+            <Stat label="R Brake" value={(rearBrake * 0.05).toFixed(1)} unit="bar" />
           </div>
         </div>
       </div>

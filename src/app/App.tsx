@@ -27,6 +27,7 @@ import { SessionModeGatePage } from '../pages/SessionModeGatePage';
 import { SessionContextStrip } from '../components/SessionContextStrip';
 import { GlobalContextBar } from '../components/GlobalContextBar';
 import { DecisionCenter } from '../components/DecisionCenter';
+import { CommandPalette } from '../components/CommandPalette';
 import { getActiveDemoSession } from '../domain/demoSessions';
 import {
   SessionContext, setSessionContext, clearSessionContext, getSessionContext,
@@ -367,6 +368,10 @@ function AppShell() {
             style={{ height: '100%' }}
           >
             <NavContext.Provider value={navigate}>
+              <CommandPalette
+                items={filteredSections.flatMap(sec => sec.items.map(item => ({ id: item.id, label: t(item.labelKey), section: t(sec.section) })))}
+                onNavigate={navigateTo}
+              />
               <SessionContextStrip />
               <PageContent tab={activeTab} />
             </NavContext.Provider>

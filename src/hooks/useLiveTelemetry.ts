@@ -199,8 +199,11 @@ export function computeFrame(
   const stintAge = lapCount; // fresh stint every race start
   const tirePressureFront = 1.86 + Math.min(0.18, lapCount * 0.006) + speedNorm * 0.03;
   const tirePressureRear = 1.70 + Math.min(0.20, lapCount * 0.008) + speedNorm * 0.04;
-  const tireWearFront = Math.min(100, Math.round((lapCount * 2.8 + leanAngle * 0.05) * 10) / 10);
-  const tireWearRear = Math.min(100, Math.round((lapCount * 4.1 + throttle * 0.04) * 10) / 10);
+  // Non-linear wear: slow early laps, accelerating toward the cliff
+  // (1 - e^(-lap/k)); rear wears faster than front. Calibrated so lap 18
+  // rear ≈ 72% (matches the tyre-deg demo scenario).
+  const tireWearFront = Math.min(100, Math.round((100 * (1 - Math.exp(-lapCount / 22)) + leanAngle * 0.05) * 10) / 10);
+  const tireWearRear = Math.min(100, Math.round((100 * (1 - Math.exp(-lapCount / 14)) + throttle * 0.04) * 10) / 10);
 
   return {
     speed:       Math.round(speed),

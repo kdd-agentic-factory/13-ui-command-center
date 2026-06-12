@@ -6,6 +6,8 @@
  * Colour + number + label (never colour alone) — WCAG-friendly.
  */
 
+import { sampleOutline } from '../domain/circuitDatasets';
+
 interface CornerMap {
   n: number; name: string; x: number; y: number;
   lossS: number; entry: number; exit: number; maxLean: number;
@@ -50,7 +52,17 @@ function smoothLoop(pts: CornerMap[]): string {
   return d + 'Z';
 }
 
-const PATH = smoothLoop(CORNERS);
+// Real traced Mugello layout fitted to this 400×290 viewBox; corner pins are
+// re-projected onto it (raw-outline index → fraction → nearest sample), so
+// the ribbon and the pins share the SAME real geometry.
+const SAMPLED = sampleOutline('mugello', 72, 400, 290, 28);
+// Raw REAL_OUTLINES indexes (of 36) for T1..T15 — from the traced comments.
+const CORNER_RAW_IDX = [6, 9, 11, 13, 16, 19, 20, 22, 25, 26, 28, 30, 33, 34, 35];
+CORNERS.forEach((c, i) => {
+  const pt = SAMPLED[Math.round((CORNER_RAW_IDX[i] / 36) * 72) % SAMPLED.length];
+  c.x = pt[0]; c.y = pt[1];
+});
+const PATH = `M ${SAMPLED.map(p => `${p[0]} ${p[1]}`).join(' L ')} Z`;
 
 export function InteractiveCircuitMap({ selected, onSelect }: { selected: number | null; onSelect: (n: number) => void }) {
   const sel = CORNERS.find(c => c.n === selected) ?? CORNERS.find(c => c.n === 15) ?? CORNERS[0];
