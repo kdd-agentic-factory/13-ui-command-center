@@ -58,7 +58,7 @@ function StepCard({ n, icon: Icon, title, desc, state, stateColor }: {
   n: string; icon: typeof MapPin; title: string; desc: string; state: string; stateColor: string;
 }) {
   return (
-    <div style={{ ...CARD, padding: '14px 16px', display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+    <div className="hover-lift" style={{ ...CARD, padding: '14px 16px', display: 'flex', gap: 12, alignItems: 'flex-start' }}>
       <span style={{ fontFamily: DISPLAY, fontSize: 26, fontWeight: 700, color: 'rgba(255,255,255,0.14)', lineHeight: 1 }}>{n}</span>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
@@ -81,7 +81,7 @@ function ActionCard({ icon: Icon, title, body, cta, onClick, accent }: {
   onClick: () => void; accent: string;
 }) {
   return (
-    <div style={{ ...CARD, padding: 18, display: 'flex', flexDirection: 'column', gap: 9 }}>
+    <div className="hover-lift" style={{ ...CARD, padding: 18, display: 'flex', flexDirection: 'column', gap: 9 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <Icon size={15} style={{ color: accent }} />
         <span style={{ fontFamily: DISPLAY, fontSize: 15, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--text)' }}>{title}</span>
@@ -105,7 +105,7 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
   const library = getCircuitLibrary();
 
   return (
-    <div style={{ position: 'fixed', inset: 0, overflowY: 'auto', background: '#050608', zIndex: 50 }}>
+    <div className="cockpit-bg" style={{ position: 'fixed', inset: 0, overflowY: 'auto', zIndex: 50 }}>
       {/* Backdrop: faint Mugello silhouette + risk dots */}
       <svg style={{ position: 'fixed', right: '-6%', top: '4%', width: '54%', height: '86%', opacity: 0.07, pointerEvents: 'none' }}
         viewBox="0 0 64 64" preserveAspectRatio="xMidYMid meet" aria-hidden>
@@ -124,7 +124,7 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
               <Radar size={20} style={{ color: 'var(--accent)' }} />
               <span style={{ ...LABEL, color: '#00B7FF' }}>Digital Pit-Wall Mission Control</span>
             </div>
-            <h1 style={{ fontFamily: DISPLAY, fontSize: 42, fontWeight: 800, letterSpacing: '0.05em', color: 'var(--text)', margin: '8px 0 0', lineHeight: 1.04 }}>
+            <h1 className="display-xxl" style={{ color: 'var(--text)', margin: '8px 0 0' }}>
               KDD MOTO INTELLIGENCE
             </h1>
             <p style={{ fontSize: 13.5, color: 'var(--text-muted)', margin: '12px 0 0', maxWidth: 540, lineHeight: 1.6 }}>
@@ -146,7 +146,7 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
           <div style={{ ...CARD, padding: '14px 16px' }} data-testid="system-status">
             <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}>
               <span style={{ width: 7, height: 7, borderRadius: 999, background: '#00E676', boxShadow: '0 0 7px #00E676' }} />
-              <span style={{ fontFamily: MONO, fontSize: 10.5, fontWeight: 700, letterSpacing: '0.12em', color: '#00E676' }}>SYSTEM READY</span>
+              <span className="live-sweep" style={{ fontFamily: MONO, fontSize: 10.5, fontWeight: 700, letterSpacing: '0.12em', color: '#00E676', padding: '1px 6px', borderRadius: 4 }}>SYSTEM READY</span>
             </div>
             {[
               ['Circuit DB', `${library.length} tracks`],
@@ -170,7 +170,7 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
           <Gauge size={11} style={{ verticalAlign: -2, marginRight: 6, color: 'var(--accent)' }} />
           START YOUR SESSION
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 24 }}>
+        <div className="stagger" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 24 }}>
           <StepCard n="01" icon={MapPin} title="CIRCUIT"
             desc="Selecciona un circuito validado o crea uno nuevo." state="NOT SELECTED" stateColor="#FFD600" />
           <StepCard n="02" icon={Gauge} title="MODE"
@@ -182,7 +182,7 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
         </div>
 
         {/* ═══ 3 · Primary action cards ═══════════════════════════════════ */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 24 }}>
+        <div className="stagger" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 24 }}>
           <ActionCard icon={MapPin} accent="#00B7FF" title="CIRCUIT INTELLIGENCE"
             body="Carga un circuito validado: trazado, curvas, sectores, elevación, mapa 3D y contexto de simulación."
             cta="Seleccionar circuito" onClick={onSelectCircuit} />
@@ -198,7 +198,7 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
         </div>
 
         {/* ═══ 4 · Lower bento ═════════════════════════════════════════════ */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1.15fr 1fr 1fr', gap: 12 }}>
+        <div className="stagger" style={{ display: 'grid', gridTemplateColumns: '1.15fr 1fr 1fr', gap: 12 }}>
 
           {/* Recent workspaces */}
           <div style={{ ...CARD, padding: 16 }}>

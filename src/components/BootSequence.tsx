@@ -34,7 +34,8 @@ export function BootSequence({ ctx, onDone }: Props) {
   }, []);
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 60, background: '#050608', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div className="cockpit-bg" style={{ position: 'fixed', inset: 0, zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="boot-scanline" aria-hidden />
       <div style={{ minWidth: 360 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
           <Bot size={16} style={{ color: 'var(--violet, #8B5CF6)' }} />

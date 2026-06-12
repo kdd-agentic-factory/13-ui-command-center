@@ -312,8 +312,8 @@ export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Prop
   const modeMeta = MODE_META[mode];
 
   return (
-    <div style={{ position: 'fixed', inset: 0, overflowY: 'auto', background: 'var(--bg, #0B0D12)', zIndex: 50 }}>
-      <div style={{ maxWidth: 1180, margin: '0 auto', padding: '32px 24px 60px' }}>
+    <div className="cockpit-bg" style={{ position: 'fixed', inset: 0, overflowY: 'auto', zIndex: 50 }}>
+      <div style={{ maxWidth: 1180, margin: '0 auto', padding: '32px 24px 60px' }} className="gate-enter">
 
         <GateProgress step={0} />
         {/* Header */}

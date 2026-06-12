@@ -12,7 +12,6 @@
   --font-display: 'Barlow Condensed', 'Rajdhani', 'Inter', system-ui, sans-serif;
   --font-metric:  'Rajdhani', 'Barlow Condensed', 'JetBrains Mono', monospace;
   /* ── 2026 cockpit palette tokens (additive — legacy tokens stay valid) */
-  --cyan:        #00B7FF;
   --violet:      #8B5CF6;
   --thermal:     #FF6A00;
   --grip:        #00E676;
@@ -49,8 +48,8 @@
   --orange-dim:  rgba(249,115,22,0.10);
   --purple:      #A855F7;
   --purple-dim:  rgba(168,85,247,0.10);
-  --cyan:        #06B6D4;
-  --cyan-dim:    rgba(6,182,212,0.10);
+  --cyan:        #00B7FF;  /* telemetry cyan (2026 cockpit palette) */
+  --cyan-dim:    rgba(0,183,255,0.10);
 
   /* ── Typography */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
@@ -1544,4 +1543,107 @@ textarea:focus-visible {
 .badge {
   /* badges that appear dynamically also get the animation */
   animation: fadeIn var(--dur-fast) var(--ease-out) both;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   DESIGN SYSTEM v2 — award-grade motion, depth and craft
+   Rules: motion has purpose, red means risk only, decisions stay legible,
+   everything honours prefers-reduced-motion.
+══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Craft details every juror checks ─────────────────────────────────────── */
+::selection { background: rgba(225,6,0,0.35); color: #fff; }
+
+* { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.14) transparent; }
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 99px; }
+*::-webkit-scrollbar-thumb:hover { background: rgba(0,183,255,0.35); }
+
+:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Fluid display type ───────────────────────────────────────────────────── */
+.display-xxl {
+  font-family: var(--font-display);
+  font-size: clamp(30px, 4.6vw, 46px);
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  line-height: 1.02;
+}
+.metric-num { font-variant-numeric: tabular-nums; }
+
+/* ── Depth: glass cards with hover lift ───────────────────────────────────── */
+.hover-lift {
+  transition: transform 0.22s var(--ease-out), border-color 0.22s var(--ease-out),
+              box-shadow 0.22s var(--ease-out);
+  will-change: transform;
+}
+.hover-lift:hover {
+  transform: translateY(-3px);
+  border-color: rgba(0,183,255,0.35) !important;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.45), 0 0 0 1px rgba(0,183,255,0.08);
+}
+
+/* Gate/cockpit ambience: radial glow + vignette behind content */
+.cockpit-bg {
+  background:
+    radial-gradient(900px 480px at 78% 8%, rgba(0,183,255,0.07), transparent 60%),
+    radial-gradient(700px 420px at 8% 92%, rgba(225,6,0,0.05), transparent 60%),
+    #050608;
+}
+
+/* ── Motion: staggered entrances ──────────────────────────────────────────── */
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+.stagger > * { animation: riseIn 0.5s var(--ease-out) both; }
+.stagger > *:nth-child(1) { animation-delay: 0.04s; }
+.stagger > *:nth-child(2) { animation-delay: 0.10s; }
+.stagger > *:nth-child(3) { animation-delay: 0.16s; }
+.stagger > *:nth-child(4) { animation-delay: 0.22s; }
+.stagger > *:nth-child(5) { animation-delay: 0.28s; }
+.stagger > *:nth-child(6) { animation-delay: 0.34s; }
+
+.gate-enter { animation: riseIn 0.45s var(--ease-out) both; }
+
+/* ── Primary button: lift + glow + press ──────────────────────────────────── */
+.btn-primary {
+  transition: transform 0.18s var(--ease-out), box-shadow 0.18s var(--ease-out),
+              background 0.18s var(--ease-out);
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(225,6,0,0.35);
+}
+.btn-primary:active { transform: translateY(0) scale(0.98); }
+
+/* ── LIVE shimmer: a slow telemetry sweep over live badges ────────────────── */
+@keyframes sweep { from { background-position: -200% 0; } to { background-position: 200% 0; } }
+.live-sweep {
+  background-image: linear-gradient(100deg, transparent 30%, rgba(0,183,255,0.18) 50%, transparent 70%);
+  background-size: 200% 100%;
+  animation: sweep 3.2s linear infinite;
+}
+
+/* Boot sequence scanline */
+@keyframes scan { from { transform: translateY(-100%);} to { transform: translateY(100vh);} }
+.boot-scanline {
+  position: fixed; left: 0; right: 0; height: 120px; pointer-events: none;
+  background: linear-gradient(180deg, transparent, rgba(0,183,255,0.05), transparent);
+  animation: scan 2.4s var(--ease-out) infinite;
+}
+
+/* ── Accessibility: motion off when the OS asks ───────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
