@@ -7,6 +7,7 @@
  * draws itself via the global .mini-track dash animation on hover/selection.
  */
 import { mulberry32 } from '../domain/demoSessions';
+import { REAL_OUTLINES } from '../domain/circuitDatasets';
 
 function seedFrom(id: string): number {
   let h = 2166136261;
@@ -15,6 +16,21 @@ function seedFrom(id: string): number {
 }
 
 export function miniTrackPath(id: string, size = 64): string {
+  // Real traced layout when we have one — the silhouette must BE the circuit.
+  const real = REAL_OUTLINES[id];
+  if (real) {
+    const k = size / 64;
+    const pts: Array<[number, number]> = real.map(([x, y]) => [x * k, y * k]);
+    const n = pts.length;
+    const mid = (a: [number, number], b: [number, number]): [number, number] =>
+      [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+    let d = `M ${mid(pts[n - 1], pts[0])[0].toFixed(1)} ${mid(pts[n - 1], pts[0])[1].toFixed(1)}`;
+    for (let i = 0; i < n; i++) {
+      const m = mid(pts[i], pts[(i + 1) % n]);
+      d += ` Q ${pts[i][0].toFixed(1)} ${pts[i][1].toFixed(1)} ${m[0].toFixed(1)} ${m[1].toFixed(1)}`;
+    }
+    return d + ' Z';
+  }
   const rand = mulberry32(seedFrom(id));
   const n = 9 + Math.floor(rand() * 4);            // 9–12 control points
   const cx = size / 2, cy = size / 2;

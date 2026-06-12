@@ -99,7 +99,7 @@ export const MUGELLO_CIRCUIT: MugelloCircuitTruth = {
   fuelCapacityKg: 22.0,
   fuelBurnKgPerLap: 0.95,
   assetStatus: CIRCUIT_ASSET_STATUS.PROCEDURAL_SIMPLIFIED,
-  assetStatusLabel: 'Procedural simplified map — no official SVG/mesh asset loaded',
+  assetStatusLabel: 'Traced 2D layout — no official survey mesh loaded',
 };
 
 export const RACE_SESSION: RaceSessionTruth = {

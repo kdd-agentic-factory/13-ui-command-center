@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Bike, ChevronRight, ChevronDown, Cpu, GitBranch, Satellite, Bot, Gauge, Radio, MapPin, User, CloudSun, CircleDot,
   MonitorPlay, Map as MapIcon, Route, Film, GitCompare, ShieldAlert, Sparkles, Circle, Lightbulb, FileText, Users, Fingerprint } from 'lucide-react';
 import { PROFILES, ProfileId } from '../../context/AuthContext';
+import { MUGELLO_CIRCUIT } from '../../domain/sessionTruth';
 import { LanguageSwitcher } from '../LanguageSwitcher';
 import { IntroSequence } from './IntroSequence';
 import { DigitalTwinViewer3D } from '../babylon/DigitalTwinViewer3D';
@@ -101,7 +102,7 @@ function LiveTicker() {
   const t = useLiveTelemetry();
   const items = [
     { k: 'POS', v: `P${t.position}`, c: 'var(--yellow)' },
-    { k: 'LAP', v: `${t.lapCount}/23`, c: 'var(--text-dim)' },
+    { k: 'LAP', v: `${t.lapCount}/${MUGELLO_CIRCUIT.raceLaps}`, c: 'var(--text-dim)' },
     { k: 'SPEED', v: `${t.speed}`, u: 'km/h', c: 'var(--blue)' },
     { k: 'LEAN', v: `${t.leanAngle}`, u: '°', c: 'var(--purple)' },
     { k: 'GAP', v: t.gap, c: t.gap.startsWith('–') || t.gap === 'leader' ? 'var(--green)' : 'var(--text-dim)' },

@@ -47,6 +47,42 @@ export function activeRaceLaps(circuit: Pick<CircuitRecord, 'id' | 'lengthKm'>):
   return Math.max(15, Math.round(105 / circuit.lengthKm));
 }
 
+
+// ── Real traced layouts (approximate, 64×64 plan view) ───────────────────────
+// Hand-traced from the published circuit maps — recognisably the REAL layout
+// (Mugello: bottom main straight → San Donato right → Luco/Poggio loop →
+// Materassi/Borgo → Casanova-Savelli esses → Arrabbiata 1-2 → Scarperia/
+// Palagio → Correntaio → Biondetti → Bucine back onto the straight).
+// Not survey data: meshLoaded stays false and the asset label says so.
+export const REAL_OUTLINES: Record<string, Array<[number, number]>> = {
+  mugello: [
+    [10, 52], [22, 52.5], [34, 53], [44, 53], [50, 52],          // main straight (S/F → east)
+    [55, 50], [58, 46], [58.5, 42],                               // T1 San Donato (right, climbing)
+    [56, 38], [55, 34], [56.5, 30], [59, 27],                     // T2 Luco → T3 Poggio Secco
+    [59.5, 23], [57, 20], [53, 18.5],                             // T4 Materassi
+    [49, 19], [46, 21], [43, 23],                                 // T5 Borgo San Lorenzo
+    [39, 23.5], [35, 21.5], [32, 18.5],                           // T6 Casanova → T7 Savelli (esses)
+    [28, 16], [24, 15], [20.5, 16.5],                             // T8 Arrabbiata 1
+    [17.5, 19], [15.5, 22.5],                                     // T9 Arrabbiata 2
+    [13, 24.5], [10, 24], [8, 21.5],                              // T10 Scarperia → T11 Palagio
+    [6, 24], [5, 28], [5.5, 32],                                  // T12 Correntaio (west loop)
+    [7, 35.5], [9, 38], [9.5, 41.5],                              // T13-T14 Biondetti
+    [8, 44.5], [7.5, 48], [8.5, 50.8],                            // T15 Bucine (long left onto straight)
+  ],
+  jarama: [
+    [10, 46], [22, 46.5], [34, 47], [44, 46.5],                   // main straight
+    [50, 44], [53, 40], [52, 36],                                 // T1 Nuvolari (right)
+    [49, 33], [49.5, 29], [52.5, 26],                             // T2 Varzi → T3 Le Mans
+    [55, 23], [54.5, 19.5], [51, 18],                             // T4 Farina
+    [47, 18.5], [44.5, 21], [42, 24],                             // T5 Pegaso
+    [38.5, 25.5], [35, 24], [33, 21],                             // T6 La Virgen → T7 Bugatti
+    [30, 18.5], [26, 18], [23, 20],                               // T8 Monza
+    [21, 23.5], [18, 25.5], [14.5, 25],                           // T9 Ascari → T10 Túnel
+    [11.5, 27], [10, 30.5], [10.5, 34],                           // T11 Horquilla
+    [12.5, 37], [12, 40.5], [10, 43.5],                           // T12 Rampa → T13 Portago
+  ],
+};
+
 // ── Deterministic corner metrics ─────────────────────────────────────────────
 
 export interface GeneratedCorner {
