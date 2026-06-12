@@ -102,10 +102,95 @@ export function pendingCount(profile: ProfileId | null): number {
 }
 
 export function decide(id: string, optionIdx: number, lap: number): void {
+  const target = decisions.find(d => d.id === id);
   decisions = decisions.map(d => d.id === id
     ? { ...d, status: 'decided', decidedOption: optionIdx, decidedAt: new Date().toISOString(), decidedLap: lap }
     : d);
   emit();
+  if (target) {
+    void persistDecisionLog(target, optionIdx, lap);
+    if (target.id.startsWith('approval_')) void pushApprovalDecision(target, optionIdx);
+  }
+}
+
+// ── Persistence: decision_log table (accountability trail) ──────────────────
+
+async function persistDecisionLog(d: Decision, optionIdx: number, lap: number): Promise<void> {
+  try {
+    const { insforge } = await import('../lib/insforge');
+    const { data: user } = await insforge.auth.getCurrentUser();
+    const uid = (user as { user?: { id?: string } } | null)?.user?.id;
+    if (!uid) return; // anonymous sessions stay local
+    const { getSessionContext } = await import('./sessionContext');
+    await insforge.database.from('decision_log').insert([{
+      decision_id: d.id, title: d.title, source: d.source,
+      chosen_option: d.options[optionIdx].label,
+      recommended_followed: optionIdx === d.recommended,
+      lap, circuit_id: getSessionContext().selectedCircuit,
+      profile: d.audience[0], created_by: uid,
+    }]);
+  } catch { /* non-blocking */ }
+}
+
+// ── Real backend feed: orchestrator approval queue ───────────────────────────
+
+const ORCH_BASE = (import.meta.env?.VITE_ORCHESTRATOR_URL as string | undefined) ?? '/api/orchestrator';
+
+interface BackendApproval {
+  approval_id: string;
+  action?: string;
+  required_level?: string;
+  status?: string;
+  context?: Record<string, string | number | boolean>;
+}
+
+function approvalToDecision(a: BackendApproval): Decision {
+  const action = a.action ?? a.approval_id.replace(/^approval_/, '').split('_-')[0];
+  const level = a.required_level ?? 'admin';
+  return {
+    id: a.approval_id,
+    title: `Approve: ${String(action).replace(/_/g, ' ')}`,
+    situation: `Orchestrator requests ${level.toUpperCase()}-level approval for "${action}"${a.context?.requested_by ? ` (requested by ${a.context.requested_by})` : ''}.`,
+    source: 'Oracle Pit Wall',
+    audience: ['race-engineer', 'team-principal'],
+    options: [
+      { label: 'Approve', gain: 'workflow proceeds', risk: level === 'admin' ? 'admin-level action executes' : 'user-level action executes' },
+      { label: 'Reject', gain: 'no side effects', risk: 'workflow blocked until re-requested' },
+    ],
+    recommended: level === 'admin' ? 1 : 0,
+    confidence: 0.7,
+    rationale: level === 'admin'
+      ? 'Admin-level actions default to reject unless the engineer confirms the context.'
+      : 'User-level action with no elevated risk flags — safe to approve.',
+    window: 'awaiting pit-wall', status: 'pending',
+  };
+}
+
+/** Pull pending approvals from the orchestrator (through the BFF) into the
+ *  queue. Silent no-op when the backend is unreachable. */
+export async function syncDecisionsFromBackend(): Promise<void> {
+  try {
+    const res = await fetch(`${ORCH_BASE}/api/v1/approvals`, { signal: AbortSignal.timeout(8000) });
+    if (!res.ok) return;
+    const body = await res.json() as { approvals?: BackendApproval[] };
+    for (const a of body.approvals ?? []) {
+      if (!a.approval_id || decisions.some(d => d.id === a.approval_id)) continue;
+      decisions = [approvalToDecision(a), ...decisions];
+    }
+    emit();
+  } catch { /* offline / BFF not configured */ }
+}
+
+/** Write the verdict back to the orchestrator for backend-fed approvals. */
+async function pushApprovalDecision(d: Decision, optionIdx: number): Promise<void> {
+  try {
+    await fetch(`${ORCH_BASE}/api/v1/approvals/${encodeURIComponent(d.id)}/decision`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ approved: d.options[optionIdx].label === 'Approve', decided_by: 'pit-wall-ui' }),
+      signal: AbortSignal.timeout(8000),
+    });
+  } catch { /* non-blocking */ }
 }
 
 export function defer(id: string): void {

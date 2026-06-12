@@ -17,6 +17,7 @@ import { useProfile } from '../context/AuthContext';
 import { useToast } from './ToastProvider';
 import {
   Decision, decisionsFor, pendingCount, decide, defer, reopen, subscribeDecisions,
+  syncDecisionsFromBackend,
 } from '../domain/decisions';
 
 const MONO = 'JetBrains Mono, monospace';
@@ -86,6 +87,7 @@ export function DecisionCenter({ lap }: { lap: number }) {
   const [, force] = useState(0);
 
   useEffect(() => subscribeDecisions(() => force(x => x + 1)), []);
+  useEffect(() => { void syncDecisionsFromBackend(); }, []);
 
   const profileId = profile?.id ?? null;
   const all = decisionsFor(profileId);
