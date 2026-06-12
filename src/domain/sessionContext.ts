@@ -113,10 +113,10 @@ export function modeDef(id: SessionMode): ModeDef {
 /** Tabs hidden from the nav while this session mode is active. */
 export function hiddenTabsForMode(mode: SessionMode): TabId[] {
   switch (mode) {
-    case 'race':       return ['report', 'style', 'parts'];
+    case 'race':       return ['report', 'style'];
     case 'test':       return ['compare', 'crew', 'style'];
-    case 'practice':   return ['parts'];
-    case 'trackday':   return ['overview', 'compare', 'crew', 'pre-gp', 'parts', 'twin'];
+    case 'practice':   return [];
+    case 'trackday':   return ['overview', 'compare', 'crew', 'pre-gp'];
     case 'replay':     return ['live', 'crew'];
     case 'demo':       return [];
     case 'pre-gp':     return ['live', 'overview'];
