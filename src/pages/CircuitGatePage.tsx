@@ -19,6 +19,7 @@ import {
   Loader2, ArrowLeft, Flag,
 } from 'lucide-react';
 import { GateProgress } from '../components/GateProgress';
+import { useToast } from '../components/ToastProvider';
 import { MiniTrackMap } from '../components/MiniTrackMap';
 import {
   CircuitRecord, CircuitStatus, getCircuitLibrary, addCircuit, syncCircuitLibrary,
@@ -285,6 +286,7 @@ function CreateCircuitWizard({ initialName, onCancel, onCreated }: {
 // ── Main gate ─────────────────────────────────────────────────────────────────
 
 export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Props) {
+  const { toast } = useToast();
   const [query, setQuery] = useState('');
   const [selectedId, setSelectedId] = useState<string>('mugello');
   const [creating, setCreating] = useState(startCreating ?? false);
@@ -528,8 +530,8 @@ export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Prop
                     {[
                       { label: showPreview ? 'Hide Track Preview' : 'Preview Track Map', icon: Eye, fn: () => setShowPreview(p => !p) },
                       { label: 'Run Pre-Session Simulation', icon: FlaskConical, fn: () => setShowPreview(true) },
-                      { label: 'Upload New Telemetry', icon: Upload, fn: () => undefined },
-                      { label: 'Edit Circuit Data', icon: Wrench, fn: () => undefined },
+                      { label: 'Upload New Telemetry', icon: Upload, fn: () => toast({ type: 'info', title: 'Upload queued', message: `Connect Data opens after launch with ${selected.name} locked as the session circuit.` }) },
+                      { label: 'Edit Circuit Data', icon: Wrench, fn: () => toast({ type: 'info', title: 'Edit requested', message: `${selected.name} geometry edit queued for engineer review — validation state frozen meanwhile.` }) },
                     ].map(({ label, icon: Icon, fn }) => (
                       <button key={label} onClick={fn}
                         style={{

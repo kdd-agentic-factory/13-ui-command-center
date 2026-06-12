@@ -1,5 +1,6 @@
 import { Bike, Search, TrendingDown, Wrench, Gauge, ShieldAlert, Eye, BookOpen, Flag } from 'lucide-react';
 import { useNavigate } from '../context/NavContext';
+import { useToast } from './ToastProvider';
 
 /**
  * RiderCoachInsight (engineer report v2 §4) — an AI Rider Coach recommendation in
@@ -34,6 +35,7 @@ const riskColor = (r: CoachInsight['risk']) => (r === 'Low' ? 'var(--green)' : r
 
 export function RiderCoachInsight({ insight = DEFAULT_INSIGHT, cornerName }: { insight?: CoachInsight; cornerName?: string }) {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const displayWhere = cornerName ?? insight.where;
   return (
     <div className="card" style={{ borderColor: 'color-mix(in srgb, var(--purple) 35%, transparent)' }}>
@@ -81,7 +83,8 @@ export function RiderCoachInsight({ insight = DEFAULT_INSIGHT, cornerName }: { i
           <button className="btn btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }} onClick={() => navigate('replay')}>
             <BookOpen size={11} /> Compare best lap
           </button>
-          <button className="btn btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: 'var(--accent-dim)', color: 'var(--accent)' }}>
+          <button className="btn btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: 'var(--accent-dim)', color: 'var(--accent)' }}
+            onClick={() => toast({ type: 'success', title: 'Marked for next lap', message: `${insight.corner} target queued on the rider's dash.` })}>
             <Flag size={11} /> Mark for next lap
           </button>
         </div>
