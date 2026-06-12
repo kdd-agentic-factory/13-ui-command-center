@@ -83,6 +83,46 @@ export const REAL_OUTLINES: Record<string, Array<[number, number]>> = {
   ],
 };
 
+
+/**
+ * Sample the smoothed real outline as a closed polyline fitted to a box.
+ * Returns n+1 points (last repeats the first) ready for SVG polylines or a
+ * 3D ribbon centerline. Pure function — same circuit, same polyline.
+ */
+export function sampleOutline(
+  circuitId: string, n: number, width: number, height: number, margin = 0,
+): Array<[number, number]> {
+  const raw = REAL_OUTLINES[circuitId];
+  if (!raw) return [];
+  const N = raw.length;
+  const mid = (a: [number, number], b: [number, number]): [number, number] =>
+    [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+  // Quadratic segments: mid(i-1,i) → ctrl raw[i] → mid(i,i+1)
+  const dense: Array<[number, number]> = [];
+  for (let i = 0; i < N; i++) {
+    const a = mid(raw[(i - 1 + N) % N], raw[i]);
+    const c = raw[i];
+    const b = mid(raw[i], raw[(i + 1) % N]);
+    for (const t of [0, 1 / 3, 2 / 3]) {
+      const u = 1 - t;
+      dense.push([u * u * a[0] + 2 * u * t * c[0] + t * t * b[0],
+                  u * u * a[1] + 2 * u * t * c[1] + t * t * b[1]]);
+    }
+  }
+  // Pick n points evenly, then fit to the box (uniform scale, centered).
+  const picked: Array<[number, number]> = Array.from({ length: n }, (_, i) =>
+    dense[Math.floor((i / n) * dense.length)]);
+  const xs = picked.map(p => p[0]), ys = picked.map(p => p[1]);
+  const minX = Math.min(...xs), maxX = Math.max(...xs);
+  const minY = Math.min(...ys), maxY = Math.max(...ys);
+  const k = Math.min((width - 2 * margin) / (maxX - minX), (height - 2 * margin) / (maxY - minY));
+  const ox = (width - k * (maxX - minX)) / 2, oy = (height - k * (maxY - minY)) / 2;
+  const out = picked.map(([x, y]): [number, number] =>
+    [Math.round((ox + (x - minX) * k) * 10) / 10, Math.round((oy + (y - minY) * k) * 10) / 10]);
+  out.push(out[0]); // close the loop
+  return out;
+}
+
 // ── Deterministic corner metrics ─────────────────────────────────────────────
 
 export interface GeneratedCorner {

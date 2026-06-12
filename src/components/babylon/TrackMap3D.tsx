@@ -5,6 +5,7 @@ import {
   Mesh,
 } from '@babylonjs/core';
 import { createSafeEngine } from './safeEngine';
+import { sampleOutline } from '../../domain/circuitDatasets';
 
 interface TrackMap3DProps {
   trackPos: number;   // 0–1
@@ -12,12 +13,10 @@ interface TrackMap3DProps {
 }
 
 // Mugello-inspired track path (normalized coordinates)
-const TRACK_POINTS = [
-  [0, 0], [1.2, 0.3], [2.1, 0.8], [2.8, 0.5], [3.2, -0.2],
-  [3.8, -0.8], [3.5, -1.5], [2.8, -1.8], [2.0, -1.6], [1.5, -2.2],
-  [1.0, -2.8], [0.2, -2.6], [-0.5, -2.0], [-1.2, -1.5], [-1.8, -0.8],
-  [-2.0, 0], [-1.5, 0.7], [-0.8, 1.0], [0, 0],
-];
+// Centerline from the REAL traced Mugello layout (sampleOutline), mapped to
+// 3D: screen-y becomes -z so the plan view keeps north up.
+const TRACK_POINTS: Array<[number, number]> = sampleOutline('mugello', 56, 64, 64)
+  .map(([x, y]) => [(x - 32) / 6.4, -(y - 32) / 6.4]);
 
 // Vertical profile (desniveles / peraltes) — Mugello drops and climbs ~40 m a lap.
 // Closed-loop: harmonics of the full lap so elevation at u=0 and u=1 match.

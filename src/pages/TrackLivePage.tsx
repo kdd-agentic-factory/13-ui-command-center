@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { MUGELLO_CIRCUIT, sessionDisplayState } from '../domain/sessionTruth';
 import { useSessionContext } from '../hooks/useSessionContext';
-import { activeRaceLaps } from '../domain/circuitDatasets';
+import { activeRaceLaps, sampleOutline } from '../domain/circuitDatasets';
 
 // ── Mugello circuit data ────────────────────────────────────────────────────
 
@@ -134,14 +134,8 @@ function Bar({ label, pct, color, sub }: { label: string; pct: number; color: st
 // ── Mini Mugello track map ──────────────────────────────────────────────────
 
 function MiniTrackMap({ trackPos, anomalyFlag }: { trackPos: number; anomalyFlag: boolean }) {
-  // Simplified Mugello shape (matching OverviewPage's MUGELLO_PTS but smaller)
-  const PTS: [number, number][] = [
-    [30,118],[55,120],[80,119],[105,117],[128,112],
-    [147,104],[162,92],[172,78],[176,62],[175,46],
-    [168,32],[156,22],[140,16],[122,14],[104,16],
-    [86,22],[70,32],[58,46],[50,62],[46,80],
-    [44,98],[38,114],[30,118],
-  ];
+  // REAL traced Mugello layout fitted to this panel's 200×130 viewBox.
+  const PTS: [number, number][] = sampleOutline('mugello', 22, 200, 130, 12);
 
   function interpolate(pts: [number, number][], frac: number): [number, number] {
     const norm = ((frac % 1) + 1) % 1;

@@ -17,6 +17,7 @@ import { renderRichText } from '../lib/richText';
 import { Tabs } from '../components/Tabs';
 import { MotorbikeDiagnostics, type BikeTelemetry } from '../components/MotorbikeDiagnostics';
 import { useSessionContext } from '../hooks/useSessionContext';
+import { sampleOutline } from '../domain/circuitDatasets';
 import {
   MUGELLO_CIRCUIT,
   RACE_SESSION,
@@ -145,13 +146,9 @@ function SectorBar({ sector, delta, base }: { sector: string; delta: number; bas
 // ── Mugello circuit map — full SVG with 15 named corners, DRS zones ─────────
 
 /** Mugello track control points (GP line). Coordinates in 320×200 viewBox. */
-const MUGELLO_PTS: [number, number][] = [
-  [45,178],[75,180],[108,179],[140,177],[168,171],  // Start/finish → San Donato entry
-  [192,160],[210,145],[222,124],[228,104],[226,84],  // San Donato → Luco → Poggio Secco
-  [216,66],[200,52],[180,43],[158,39],[136,40],      // Biondetti → Casanova
-  [114,44],[94,52],[76,64],[62,80],[52,98],          // Savelli → Arrabbiata 1
-  [46,118],[44,138],[48,156],[55,170],[45,178],      // Arrabbiata 2 → Scarperia → Palagio → S/F
-];
+// REAL traced Mugello layout (sampleOutline), 23 points in the 320×200 viewBox.
+// Sector polyline slices below assume ~thirds of this list.
+const MUGELLO_PTS: [number, number][] = sampleOutline('mugello', 22, 320, 200, 18);
 
 /** Mugello corner names with approximate track positions (0-1). */
 const CORNERS: { name: string; pos: number; tag: string }[] = [

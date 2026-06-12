@@ -15,11 +15,11 @@ interface Session {
 }
 
 const SESSIONS: Session[] = [
-  { date: '2026-02-14', type: 'Track Day', weather: 'Damp', tempC: 12, bestLap: '1:47.902', laps: 38 },
-  { date: '2026-03-09', type: 'Track Day', weather: 'Dry', tempC: 18, bestLap: '1:45.238', laps: 52 },
-  { date: '2026-04-20', type: 'Race', weather: 'Dry', tempC: 22, bestLap: '1:44.611', laps: 61 },
-  { date: '2026-05-18', type: 'Qualifying', weather: 'Dry', tempC: 26, bestLap: '1:44.087', laps: 24 },
-  { date: '2026-06-07', type: 'Track Day', weather: 'Dry', tempC: 24, bestLap: '1:43.912', laps: 23 },
+  { date: '2026-02-14', type: 'Track Day', weather: 'Damp', tempC: 12, bestLap: '2:01.902', laps: 38 },
+  { date: '2026-03-09', type: 'Track Day', weather: 'Dry', tempC: 18, bestLap: '1:59.238', laps: 52 },
+  { date: '2026-04-20', type: 'Race', weather: 'Dry', tempC: 22, bestLap: '1:58.611', laps: 61 },
+  { date: '2026-05-18', type: 'Qualifying', weather: 'Dry', tempC: 26, bestLap: '1:58.087', laps: 24 },
+  { date: '2026-06-07', type: 'Track Day', weather: 'Dry', tempC: 24, bestLap: '1:57.842', laps: 23 },
 ];
 
 function lapToS(s: string): number {
@@ -125,7 +125,7 @@ export function CircuitHistoryPage() {
             Your pace tracks <strong style={{ color: 'var(--text)' }}>track temperature</strong> strongly: every session above 18°C beat the one before. The damp February day cost ~4 s — wet-weather craft is the biggest untapped gain.
           </p>
           <div className="grid-3">
-            <div className="stat-tile"><div className="stat-tile__label">Best (dry)</div><span className="stat-tile__value" style={{ fontSize: 16 }}>1:43.912</span></div>
+            <div className="stat-tile"><div className="stat-tile__label">Best (dry)</div><span className="stat-tile__value" style={{ fontSize: 16 }}>1:57.842</span></div>
             <div className="stat-tile"><div className="stat-tile__label">Best (damp)</div><span className="stat-tile__value" style={{ fontSize: 16, color: 'var(--blue)' }}>1:47.902</span></div>
             <div className="stat-tile"><div className="stat-tile__label">Optimal T°</div><span className="stat-tile__value" style={{ fontSize: 16 }}>24–26°C</span></div>
           </div>

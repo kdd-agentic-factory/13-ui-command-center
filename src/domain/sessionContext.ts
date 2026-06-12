@@ -306,7 +306,7 @@ export const DEMO_PACKAGES: DemoPackage[] = [
     id: 'trackday', title: 'Yamaha R1 track day · Stint 03 · rider coaching',
     dataType: 'Historical sample · GPS 10 Hz · IMU · ECU · tyre model',
     modules: ['Telemetry', 'Corner intelligence', 'Session report', 'Rider Style DNA'],
-    highlights: ['Best lap 1:43.912', 'Potential gain -1.284s', 'Critical corner T15 Bucine', 'Rear grip drop 12%'],
+    highlights: ['Best lap 1:57.842', 'Potential gain -1.284s', 'Critical corner T15 Bucine', 'Rear grip drop 12%'],
   },
   {
     id: 'qualifying', title: 'Qualifying lap analysis · best lap comparison',

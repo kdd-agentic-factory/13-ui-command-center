@@ -13,8 +13,8 @@ import { getSessionContext } from '../domain/sessionContext';
  * Class: KDD Prototype / AI Racing Simulation
  */
 
-const CURRENT_S = 103.912; // 1:43.912
-const OPTIMAL_S = 102.05;  // 1:42.050 theoretical best
+const CURRENT_S = 117.842; // 1:57.842 — club-level R1, not a MotoGP prototype
+const OPTIMAL_S = 116.05;  // 1:56.050 theoretical best for this rider/bike
 
 const MODE_PRESETS = {
   'fastest-lap':  { selected: ['t15-open','t1-brake','t15-pickup','t12-square'], gain: 0.512, risk: 'High'       },

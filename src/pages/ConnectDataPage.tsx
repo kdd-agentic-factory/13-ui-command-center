@@ -79,7 +79,7 @@ export function ConnectDataPage() {
           {stage === 'ready' && <>
             <Check size={34} style={{ color: 'var(--green)' }} />
             <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--green)' }}>{file} ready · {MUGELLO_CIRCUIT.raceLaps} laps · 142 channels</div>
-            <div style={{ fontSize: 12, color: 'var(--text-dim)' }}>Best lap 1:43.912 detected — open the Session Report to analyse it.</div>
+            <div style={{ fontSize: 12, color: 'var(--text-dim)' }}>Best lap 1:57.842 detected — open the Session Report to analyse it.</div>
           </>}
           <input id="telemetry-upload" type="file" accept=".csv,.xrk,.drk,.gpx" style={{ display: 'none' }} onChange={onPick} />
         </label>

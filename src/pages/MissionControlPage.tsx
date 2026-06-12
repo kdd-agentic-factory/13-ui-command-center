@@ -187,7 +187,7 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
             body="Carga un circuito validado: trazado, curvas, sectores, elevación, mapa 3D y contexto de simulación."
             cta="Seleccionar circuito" onClick={onSelectCircuit} />
           <ActionCard icon={History} accent="#00E676" title="LATEST SESSION"
-            body="Retoma Mugello · Stint 03 (Yamaha R1 · best 1:43.912 · gain −1.284s) en modo replay con telemetría y reporte."
+            body="Retoma Mugello · Stint 03 (Yamaha R1 · best 1:57.842 · gain −1.284s) en modo replay con telemetría y reporte."
             cta="Cargar última sesión" onClick={onLoadLatest} />
           <ActionCard icon={Plus} accent="#FFD600" title="CREATE NEW CIRCUIT"
             body="Sube GPX, KML, GeoJSON, CSV o vídeo onboard. Los agentes reconstruyen el trazado y generan la simulación inicial."
@@ -207,7 +207,7 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
             </div>
             {[
               ['Mugello · GP Race Simulation', 'Last opened today · ready', '#00E676'],
-              ['Mugello · Yamaha R1 · Stint 03', 'Report generated · best 1:43.912', '#00B7FF'],
+              ['Mugello · Yamaha R1 · Stint 03', 'Report generated · best 1:57.842', '#00B7FF'],
               ['Jarama · Setup Test', 'Needs telemetry sync', '#FFD600'],
               ['Custom Track 01', 'SIMULATED · needs validation', '#8B5CF6'],
             ].map(([title, sub, c]) => (

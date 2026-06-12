@@ -52,10 +52,10 @@ export const DEMO_SESSIONS: DemoSessionSpec[] = [
   },
   {
     id: 'trackday', seed: 470202, startLap: 6,
-    bestLap: 103.912, lastLap: 104.31, fuelStart: 14.2,
+    bestLap: 117.842, lastLap: 118.31, fuelStart: 14.2,
     frontCompound: 'MEDIUM', rearCompound: 'SOFT', anomalyLaps: [],
     focusTab: 'telemetry',
-    script: 'Stint 03 · Yamaha R1 · best 1:43.912, coaching focus on T15 throttle pickup.',
+    script: 'Stint 03 · Yamaha R1 · best 1:57.842, coaching focus on T15 throttle pickup.',
   },
   {
     id: 'qualifying', seed: 470303, startLap: 2,
