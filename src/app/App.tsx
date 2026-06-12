@@ -26,6 +26,7 @@ import { CircuitRecord, setActiveCircuit, dashboardMode, MODE_META, getCircuitLi
 import { SessionModeGatePage } from '../pages/SessionModeGatePage';
 import { SessionContextStrip } from '../components/SessionContextStrip';
 import { GlobalContextBar } from '../components/GlobalContextBar';
+import { DecisionCenter } from '../components/DecisionCenter';
 import { getActiveDemoSession } from '../domain/demoSessions';
 import {
   SessionContext, setSessionContext, clearSessionContext, getSessionContext,
@@ -352,6 +353,7 @@ function AppShell() {
                 {sessionState.flagLabel}
               </span>
             </div>
+            <DecisionCenter lap={telem.lapCount} />
             <GlobalContextBar telem={telem} />
             <span className="header-clock">{clock}</span>
           </div>
