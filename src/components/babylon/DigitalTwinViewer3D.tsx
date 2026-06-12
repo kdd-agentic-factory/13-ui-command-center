@@ -3,6 +3,7 @@ import {
   Engine, Scene, ArcRotateCamera, HemisphericLight, Vector3,
   MeshBuilder, StandardMaterial, Color3, Color4, PointLight, Axis, Space, TransformNode,
 } from '@babylonjs/core';
+import { createSafeEngine } from './safeEngine';
 
 interface DigitalTwinViewer3DProps {
   leanAngle: number;   // degrees, positive = lean right (roll about the forward axis)
@@ -18,7 +19,8 @@ export function DigitalTwinViewer3D({ leanAngle, pitchAngle = 0, height = 320 }:
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    const engine = new Engine(canvasRef.current, true, { preserveDrawingBuffer: true, stencil: true });
+    const engine = createSafeEngine(canvasRef.current, true, { preserveDrawingBuffer: true, stencil: true });
+    if (!engine) return; // WebGL unavailable — keep the page alive
     const scene  = new Scene(engine);
     scene.clearColor = new Color4(0.03, 0.04, 0.07, 1);
 

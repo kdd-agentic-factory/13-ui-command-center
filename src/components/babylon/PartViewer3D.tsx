@@ -3,6 +3,7 @@ import {
   Engine, Scene, ArcRotateCamera, HemisphericLight, DirectionalLight, Vector3,
   MeshBuilder, StandardMaterial, Color3, Color4, VertexBuffer, VertexData, Mesh,
 } from '@babylonjs/core';
+import { createSafeEngine } from './safeEngine';
 import { parseStl, meshBounds } from '../../lib/stl';
 
 /**
@@ -129,7 +130,8 @@ export function PartViewer3D({
   // Engine + scene (created once).
   useEffect(() => {
     if (!canvasRef.current) return;
-    const engine = new Engine(canvasRef.current, true);
+    const engine = createSafeEngine(canvasRef.current, true);
+    if (!engine) return; // WebGL unavailable — keep the page alive
     const scene = new Scene(engine);
     scene.clearColor = new Color4(0.04, 0.05, 0.08, 1);
     sceneRef.current = scene;

@@ -4,6 +4,7 @@ import {
   MeshBuilder, StandardMaterial, Color3, Color4, PointLight,
   Mesh,
 } from '@babylonjs/core';
+import { createSafeEngine } from './safeEngine';
 
 interface TrackMap3DProps {
   trackPos: number;   // 0–1
@@ -34,7 +35,8 @@ export function TrackMap3D({ trackPos, height = 300 }: TrackMap3DProps) {
 
   useEffect(() => {
     if (!canvasRef.current) return;
-    const engine = new Engine(canvasRef.current, true, { preserveDrawingBuffer: true, stencil: true });
+    const engine = createSafeEngine(canvasRef.current, true, { preserveDrawingBuffer: true, stencil: true });
+    if (!engine) return; // WebGL unavailable — keep the page alive
     const scene  = new Scene(engine);
     scene.clearColor = new Color4(0.02, 0.03, 0.06, 1);
 

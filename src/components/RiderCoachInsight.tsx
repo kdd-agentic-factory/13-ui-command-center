@@ -84,7 +84,7 @@ export function RiderCoachInsight({ insight = DEFAULT_INSIGHT, cornerName }: { i
             <BookOpen size={11} /> Compare best lap
           </button>
           <button className="btn btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: 'var(--accent-dim)', color: 'var(--accent)' }}
-            onClick={() => toast({ type: 'success', title: 'Marked for next lap', message: `${insight.corner} target queued on the rider's dash.` })}>
+            onClick={() => toast({ type: 'success', title: 'Marked for next lap', message: `${cornerName ?? insight.where} target queued on the rider's dash.` })}>
             <Flag size={11} /> Mark for next lap
           </button>
         </div>
