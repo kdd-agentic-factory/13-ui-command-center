@@ -160,6 +160,14 @@ export function IntroExperience({ onEnter }: IntroExperienceProps) {
     sectionRefs.current[idx]?.scrollIntoView({ behavior: 'smooth' });
   }
 
+  // Land directly on role selection: the entry should be one decision, not a
+  // scroll story. The cinematic sections stay above for whoever scrolls up /
+  // uses the progress rail ("two consecutive homes" feedback).
+  useEffect(() => {
+    sectionRefs.current[TOTAL - 1]?.scrollIntoView?.({ behavior: 'auto' }); // optional: jsdom lacks scrollIntoView
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const setRef = (i: number) => (el: HTMLElement | null) => { sectionRefs.current[i] = el; };
 
   const selectedProfile = PROFILES.find(p => p.id === selected) ?? PROFILES[0];
@@ -374,6 +382,9 @@ export function IntroExperience({ onEnter }: IntroExperienceProps) {
           <div className="intro-roles-inner">
             <span className="intro-eyebrow center">{t('intro.roles.eyebrow', 'Un panel, cada especialista su vista')}</span>
             <h2 className="intro-roles-title">{t('intro.roles.title', 'Elige tu rol para entrar')}</h2>
+            <button className="intro-scroll-hint" onClick={() => scrollToIdx(0)} style={{ margin: '0 auto 10px', display: 'block' }}>
+              ↑ {t('intro.roles.explore', 'Conoce la plataforma')}
+            </button>
             <div className="intro-role-cards">
               {PROFILES.map(p => {
                 const mods = PROFILE_MODULES[p.id] ?? [];
