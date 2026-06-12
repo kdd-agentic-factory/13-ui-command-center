@@ -17,10 +17,11 @@ import {
 } from 'lucide-react';
 import { MUGELLO_CIRCUIT, sessionDisplayState } from '../domain/sessionTruth';
 import { useSessionContext } from '../hooks/useSessionContext';
+import { activeRaceLaps } from '../domain/circuitDatasets';
 
 // ── Mugello circuit data ────────────────────────────────────────────────────
 
-const RACE_LAPS = MUGELLO_CIRCUIT.raceLaps;
+const RACE_LAPS = MUGELLO_CIRCUIT.raceLaps; // Mugello default; header uses the active circuit
 const MUGELLO_TRACK_KM = MUGELLO_CIRCUIT.lengthKm;
 const MUGELLO_TURNS = MUGELLO_CIRCUIT.turns;
 const MUGELLO_MAIN_STRAIGHT_M = MUGELLO_CIRCUIT.mainStraightKm * 1000;
@@ -248,7 +249,7 @@ export function TrackLivePage() {
         <div>
           <h1 className="page-title">Track-Live</h1>
           <p className="page-subtitle">
-            {session.ctx.circuitName} · {sessionState.activeRace ? `Race Lap ${t.lapCount}/${RACE_LAPS}` : 'Pre-race/test telemetry'} · {session.ctx.sessionMode === 'trackday' ? `${session.ctx.setup.rider ?? 'rider'} · ${session.ctx.setup.bike ?? 'bike'} · ${session.ctx.setup.stint ?? 'stint'}` : 'live pit-wall view'}
+            {session.ctx.circuitName} · {sessionState.activeRace ? `Race Lap ${t.lapCount}/${activeRaceLaps(session.circuit)}` : 'Pre-race/test telemetry'} · {session.ctx.sessionMode === 'trackday' ? `${session.ctx.setup.rider ?? 'rider'} · ${session.ctx.setup.bike ?? 'bike'} · ${session.ctx.setup.stint ?? 'stint'}` : 'live pit-wall view'}
             <span style={{ fontSize: 10, color: 'var(--text-dim)', marginLeft: 8 }}>
               · {MUGELLO_TRACK_KM} km · Main straight {MUGELLO_MAIN_STRAIGHT_M} m · procedural map
             </span>

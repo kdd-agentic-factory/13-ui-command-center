@@ -27,6 +27,7 @@ import { useToast } from '../components/ToastProvider';
 import { InteractiveCircuitMap } from '../components/InteractiveCircuitMap';
 import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 import { getActiveCircuit } from '../domain/circuits';
+import { CORNER_SETS, generateCorners } from '../domain/circuitDatasets';
 
 // ── Mugello circuit constants ─────────────────────────────────────────────────
 
@@ -251,10 +252,15 @@ export function CornerIntelligencePage() {
 
   // Derived data
   const { totalGain, critical, sorted } = useMemo(() => {
-    const totalGain = CORNERS.reduce((a, c) => a + c.lossS, 0);
-    const critical = CORNERS.reduce((m, c) => (c.lossS > m.lossS ? c : m), CORNERS[0]);
+    // Circuits with their own named dataset (e.g. Jarama) replace the curated
+    // Mugello corners with deterministic generated metrics.
+    const ACTIVE_CORNERS: Corner[] = getActiveCircuit().id in CORNER_SETS
+      ? (generateCorners(getActiveCircuit().id) as Corner[])
+      : CORNERS;
+    const totalGain = ACTIVE_CORNERS.reduce((a, c) => a + c.lossS, 0);
+    const critical = ACTIVE_CORNERS.reduce((m, c) => (c.lossS > m.lossS ? c : m), ACTIVE_CORNERS[0]);
 
-    let filtered = [...CORNERS];
+    let filtered = [...ACTIVE_CORNERS];
     if (filter === 'critical') filtered = filtered.filter(c => c.lossS >= 0.07);
     if (filter === 'left') filtered = filtered.filter(c => c.dir === 'L');
     if (filter === 'right') filtered = filtered.filter(c => c.dir === 'R');

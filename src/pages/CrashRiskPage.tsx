@@ -18,6 +18,7 @@ import { useNavigate } from '../context/NavContext';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 import { getActiveCircuit } from '../domain/circuits';
+import { activeRaceLaps } from '../domain/circuitDatasets';
 
 // ── Risk factors ───────────────────────────────────────────────────────────────
 
@@ -151,7 +152,7 @@ export function CrashRiskPage() {
         <div>
           <h1 className="page-title">Crash-Risk Index</h1>
           <p className="page-subtitle">
-            {getActiveCircuit().name} {getActiveCircuit().layout} · Race Lap {t.lapCount}/{MUGELLO_CIRCUIT.raceLaps} · Safety Guardian AI
+            {getActiveCircuit().name} {getActiveCircuit().layout} · Race Lap {t.lapCount}/{activeRaceLaps(getActiveCircuit())} · Safety Guardian AI
           </p>
           <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', marginTop: 2 }}>
             {getActiveCircuit().lengthKm} km · {getActiveCircuit().turns} turns · {MUGELLO_CIRCUIT.assetStatusLabel}

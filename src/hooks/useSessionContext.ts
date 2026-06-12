@@ -8,6 +8,7 @@
  */
 import { getSessionContext, SessionContext } from '../domain/sessionContext';
 import { getActiveCircuit } from '../domain/circuits';
+import { hasDataset } from '../domain/circuitDatasets';
 import type { CircuitRecord } from '../domain/circuits';
 
 export interface SessionView {
@@ -27,7 +28,7 @@ export function useSessionContext(): SessionView {
   return {
     ctx,
     circuit,
-    datasetMismatch: ctx.selectedCircuit !== 'mugello',
+    datasetMismatch: !hasDataset(ctx.selectedCircuit),
     badge: ctx.badge,
     badgeColor: ctx.badgeColor,
   };
