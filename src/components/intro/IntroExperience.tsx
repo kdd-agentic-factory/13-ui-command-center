@@ -4,6 +4,7 @@ import { Bike, ChevronRight, ChevronDown, Cpu, GitBranch, Satellite, Bot, Gauge,
   MonitorPlay, Map as MapIcon, Route, Film, GitCompare, ShieldAlert, Sparkles, Circle, Lightbulb, FileText, Users, Fingerprint } from 'lucide-react';
 import { PROFILES, ProfileId } from '../../context/AuthContext';
 import { LanguageSwitcher } from '../LanguageSwitcher';
+import { IntroSequence } from './IntroSequence';
 import { DigitalTwinViewer3D } from '../babylon/DigitalTwinViewer3D';
 import { useLiveTelemetry } from '../../hooks/useLiveTelemetry';
 import { useAnimeCount } from '../../hooks/useAnimeCount';
@@ -174,6 +175,7 @@ export function IntroExperience({ onEnter }: IntroExperienceProps) {
 
   return (
     <div className="intro-root" style={{ '--active-color': active === 0 ? 'var(--accent)' : (ADVANTAGES[active - 1]?.color ?? 'var(--accent)') } as React.CSSProperties}>
+      <IntroSequence />
       <div className="intro-bg" aria-hidden="true" />
       <div className="intro-bg-glow" aria-hidden="true" />
 

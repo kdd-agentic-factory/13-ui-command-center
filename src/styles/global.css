@@ -1647,3 +1647,54 @@ textarea:focus-visible {
     scroll-behavior: auto !important;
   }
 }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   INTRO SEQUENCE — "the telemetry lap" (award entry)
+   One cinematic beat chain: track draws itself → rider dot laps it → title
+   sweeps in → data chips arrive → settles into role select. ~4.5s, skippable,
+   plays once per session, instant under prefers-reduced-motion.
+══════════════════════════════════════════════════════════════════════════════ */
+@keyframes iseqDraw   { to { stroke-dashoffset: 0; } }
+@keyframes iseqRide   { from { offset-distance: 0%; } to { offset-distance: 100%; } }
+@keyframes iseqMask   { from { transform: translateY(110%); } to { transform: none; } }
+@keyframes iseqLine   { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes iseqFade   { from { opacity: 0; } to { opacity: 1; } }
+@keyframes iseqStreak { from { transform: translateX(-120%) skewX(-18deg); } to { transform: translateX(220%) skewX(-18deg); } }
+
+.iseq-root {
+  position: fixed; inset: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  background:
+    radial-gradient(820px 480px at 50% 38%, rgba(0,183,255,0.06), transparent 60%),
+    #050608;
+  transition: opacity 0.6s var(--ease-out);
+}
+.iseq-root.iseq-done { opacity: 0; pointer-events: none; }
+
+.iseq-track path.iseq-line {
+  stroke-dasharray: 320; stroke-dashoffset: 320;
+  animation: iseqDraw 2.1s var(--ease-out) 0.25s forwards;
+}
+.iseq-rider {
+  animation: iseqRide 2.1s var(--ease-out) 0.25s both;
+  offset-rotate: 0deg;
+}
+.iseq-title-mask { overflow: hidden; display: block; }
+.iseq-title-mask > span { display: block; animation: iseqMask 0.7s var(--ease-out) 2.15s both; }
+.iseq-underline {
+  height: 3px; background: var(--accent); transform-origin: left;
+  animation: iseqLine 0.5s var(--ease-out) 2.7s both;
+}
+.iseq-sub   { animation: iseqFade 0.6s var(--ease-out) 2.85s both; }
+.iseq-chips > * { animation: iseqFade 0.45s var(--ease-out) both; }
+.iseq-chips > *:nth-child(1) { animation-delay: 3.05s; }
+.iseq-chips > *:nth-child(2) { animation-delay: 3.18s; }
+.iseq-chips > *:nth-child(3) { animation-delay: 3.31s; }
+.iseq-chips > *:nth-child(4) { animation-delay: 3.44s; }
+.iseq-skip  { animation: iseqFade 0.4s var(--ease-out) 0.8s both; }
+.iseq-streak {
+  position: absolute; top: 0; bottom: 0; width: 22%;
+  background: linear-gradient(90deg, transparent, rgba(0,183,255,0.05), transparent);
+  animation: iseqStreak 2.4s var(--ease-out) 0.4s both;
+  pointer-events: none;
+}
