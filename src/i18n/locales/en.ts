@@ -14,6 +14,8 @@ const en = {
     ctaCircuit: 'Select circuit', ctaLatest: 'Load latest session', ctaCreate: 'Create circuit', ctaDemo: 'Open guided demo',
   },
   gates: {
+    garageSubtitle: 'Configure rider, bike, setup and tyres before opening the digital pit-box — KDD interprets a concrete combination, not a generic lap.',
+    garageContinue: 'Continue to Session Mode',
     circuitSubtitle: 'Select, validate or create the circuit before opening the digital pit-box — the dashboard will not open until the session knows which track it is on.',
     searchCircuit: 'Search circuit…',
     namePlaceholder: 'Albacete Circuit',

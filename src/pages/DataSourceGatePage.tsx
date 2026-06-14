@@ -37,7 +37,7 @@ export function DataSourceGatePage({ ctx, onBack, onContinue }: Props) {
   return (
     <div className="cockpit-bg" style={{ position: 'fixed', inset: 0, overflowY: 'auto', zIndex: 50 }}>
       <div style={{ maxWidth: 920, margin: '0 auto', padding: '32px 24px 60px' }} className="gate-enter">
-        <GateProgress step={2} />
+        <GateProgress step={3} />
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
           <button onClick={onBack} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: 11 }}>
             <ArrowLeft size={13} /> Mode

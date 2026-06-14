@@ -77,7 +77,7 @@ export function SessionModeGatePage({ circuit, onBack, onOpen }: Props) {
   return (
     <div className="cockpit-bg" style={{ position: 'fixed', inset: 0, overflowY: 'auto', zIndex: 50 }}>
       <div style={{ maxWidth: 1180, margin: '0 auto', padding: '32px 24px 60px' }} className="gate-enter">
-        <GateProgress step={1} />
+        <GateProgress step={2} />
 
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, marginBottom: 20 }}>

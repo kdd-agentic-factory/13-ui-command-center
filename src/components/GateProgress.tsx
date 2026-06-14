@@ -1,11 +1,11 @@
 /**
  * GateProgress — the entry-workflow strip shown on every gate screen:
- *   Circuit → Mode → Data → Launch
+ *   Circuit → Garage → Mode → Data → Launch
  * Makes the pit-wall boot sequence legible from the first second.
  */
-const STEPS = ['Circuit', 'Mode', 'Data', 'Launch'] as const;
+const STEPS = ['Circuit', 'Garage', 'Mode', 'Data', 'Launch'] as const;
 
-export function GateProgress({ step }: { step: 0 | 1 | 2 | 3 }) {
+export function GateProgress({ step }: { step: 0 | 1 | 2 | 3 | 4 }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 18 }}>
       {STEPS.map((label, i) => (

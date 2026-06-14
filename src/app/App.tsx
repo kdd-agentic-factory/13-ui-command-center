@@ -21,6 +21,8 @@ import { CircuitGatePage } from '../pages/CircuitGatePage';
 import { MissionControlPage } from '../pages/MissionControlPage';
 import { DataSourceGatePage } from '../pages/DataSourceGatePage';
 import { LaunchBriefPage } from '../pages/LaunchBriefPage';
+import { GarageProfileGatePage } from '../pages/GarageProfileGatePage';
+import { setGarageProfile, getGarageProfile, buildGarageProfile, RIDERS, BIKES } from '../domain/garageProfile';
 import { BootSequence } from '../components/BootSequence';
 import { CircuitRecord, setActiveCircuit, dashboardMode, MODE_META, getCircuitLibrary } from '../domain/circuits';
 import { SessionModeGatePage } from '../pages/SessionModeGatePage';
@@ -390,7 +392,7 @@ function AppWithAuth() {
   // Entry workflow (pit-wall boot sequence): Mission Control → Circuit →
   // Mode → Data → Launch Brief → Dashboard. Each stage feeds the global
   // context object; quick actions on Mission Control can pre-fill and jump.
-  type Stage = 'mission' | 'circuit' | 'mode' | 'data' | 'launch' | 'booting' | 'dashboard';
+  type Stage = 'mission' | 'circuit' | 'garage' | 'mode' | 'data' | 'launch' | 'booting' | 'dashboard';
   const [stage, setStage] = useState<Stage>('mission');
   const [createOnOpen, setCreateOnOpen] = useState(false);
   const [gateCircuit, setGateCircuit] = useState<CircuitRecord | null>(null);
@@ -404,6 +406,7 @@ function AppWithAuth() {
       channels: 'GPS · IMU · ECU · Video · CSV', analysis: 'Full session',
       rider: 'Rubén Juárez', bike: 'Yamaha R1', dataSource: 'upload',
     });
+    setGarageProfile(buildGarageProfile(RIDERS[0], BIKES[0], 'mugello'));
     setSessionContext(ctx); setSessionCtx(ctx); setStage('launch');
   }
 
@@ -414,6 +417,7 @@ function AppWithAuth() {
     const ctx = buildSessionContext('mugello', 'Mugello', 'demo', {
       demoId: pkg.id, demoPackage: pkg.title, dataType: pkg.dataType, dataSource: 'demo',
     });
+    setGarageProfile(buildGarageProfile(RIDERS[0], BIKES[0], 'mugello'));
     setSessionContext(ctx); setSessionCtx(ctx); setStage('launch');
   }
 
@@ -478,7 +482,16 @@ function AppWithAuth() {
       <CircuitGatePage
         startCreating={createOnOpen}
         onBack={() => setStage('mission')}
-        onOpenDashboard={(c) => { setActiveCircuit(c); setGateCircuit(c); setStage('mode'); }}
+        onOpenDashboard={(c) => { setActiveCircuit(c); setGateCircuit(c); setStage('garage'); }}
+      />
+    );
+  }
+  if (stage === 'garage') {
+    return (
+      <GarageProfileGatePage
+        circuit={gateCircuit}
+        onBack={() => setStage('circuit')}
+        onContinue={() => setStage('mode')}
       />
     );
   }
@@ -486,8 +499,14 @@ function AppWithAuth() {
     return (
       <SessionModeGatePage
         circuit={gateCircuit}
-        onBack={() => { clearSessionContext(); setSessionCtx(null); setStage('circuit'); }}
-        onOpen={(ctx) => { setSessionContext(ctx); setSessionCtx(ctx); setStage('data'); }}
+        onBack={() => { clearSessionContext(); setSessionCtx(null); setStage('garage'); }}
+        onOpen={(ctx) => {
+          const gp = getGarageProfile();
+          const merged = gp
+            ? { ...ctx, setup: { rider: gp.rider.name, bike: `${gp.bike.brand} ${gp.bike.model}`, ...ctx.setup } }
+            : ctx;
+          setSessionContext(merged); setSessionCtx(merged); setStage('data');
+        }}
       />
     );
   }

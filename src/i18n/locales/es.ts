@@ -14,6 +14,8 @@ const es = {
     ctaCircuit: 'Seleccionar circuito', ctaLatest: 'Cargar última sesión', ctaCreate: 'Crear circuito', ctaDemo: 'Abrir demo guiada',
   },
   gates: {
+    garageSubtitle: 'Configura piloto, moto, setup y neumáticos antes de abrir el box digital — KDD interpreta una combinación concreta, no una vuelta genérica.',
+    garageContinue: 'Continuar al modo de sesión',
     circuitSubtitle: 'Selecciona, valida o crea el circuito antes de abrir el box digital — el dashboard no se abre hasta saber en qué circuito estamos.',
     searchCircuit: 'Buscar circuito…',
     namePlaceholder: 'Circuito de Albacete',
