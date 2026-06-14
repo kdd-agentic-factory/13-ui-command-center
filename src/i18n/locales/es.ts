@@ -28,6 +28,7 @@ const es = {
     circuit: 'Inteligencia de Circuito',
     corners: 'Inteligencia de Curva',
     replay: 'Repetición de Vuelta',
+    studio: 'Estudio de Vídeo',
     compare: 'Comparativa de Pilotos',
     ghostLap: 'Vuelta Fantasma',
     risk: 'Índice de Riesgo',

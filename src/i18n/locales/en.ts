@@ -28,6 +28,7 @@ const en = {
     circuit: 'Circuit Intelligence',
     corners: 'Corner Intelligence',
     replay: 'Lap Replay',
+    studio: 'Video Studio',
     compare: 'Rider Comparison',
     ghostLap: 'Ghost Lap',
     risk: 'Crash-Risk Index',

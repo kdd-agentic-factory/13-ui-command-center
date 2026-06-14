@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Activity, Map, Circle, Sliders, Wrench,
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
-  Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical, CircleDot, Network, Ghost, GraduationCap, TestTubes,
+  Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical, CircleDot, Network, Ghost, GraduationCap, TestTubes, Video,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, PROFILES, TabId, ProfileId } from '../context/AuthContext';
@@ -60,6 +60,7 @@ import { KnowledgeGraphPage }     from '../pages/KnowledgeGraphPage';
 import { GhostLapPage }           from '../pages/GhostLapPage';
 import { RiderLearningPathPage }  from '../pages/RiderLearningPathPage';
 import { ExperimentEnginePage }   from '../pages/ExperimentEnginePage';
+import { VideoStudioPage }        from '../pages/VideoStudioPage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -95,6 +96,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'circuit',   labelKey: 'nav.circuit',   icon: Map },
     { id: 'corners',   labelKey: 'nav.corners',   icon: Route, badge: 'AI', badgeColor: 'blue' },
     { id: 'replay',    labelKey: 'nav.replay',    icon: Film },
+    { id: 'studio',    labelKey: 'nav.studio',    icon: Video, badge: 'AI', badgeColor: 'blue' },
     { id: 'compare',   labelKey: 'nav.compare',   icon: GitCompare },
     { id: 'ghost-lap', labelKey: 'nav.ghostLap',  icon: Ghost, badge: 'AI', badgeColor: 'blue' },
     { id: 'tires',     labelKey: 'nav.tires',     icon: Circle },
@@ -153,6 +155,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'circuit':   return <CircuitIntelligencePage />;
     case 'corners':   return <CornerIntelligencePage />;
     case 'replay':    return <LapReplayPage />;
+    case 'studio':    return <VideoStudioPage />;
     case 'compare':   return <RiderComparisonPage />;
     case 'ghost-lap': return <GhostLapPage />;
     case 'risk':      return <CrashRiskPage />;
