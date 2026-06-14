@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Activity, Map, Circle, Sliders, Wrench,
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
-  Sparkles, Fingerprint, Loader2,
+  Sparkles, Fingerprint, Loader2, MessagesSquare,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, PROFILES, TabId, ProfileId } from '../context/AuthContext';
@@ -53,6 +53,7 @@ import { CrewChiefPage }           from '../pages/CrewChiefPage';
 import { AICopilotPage }           from '../pages/AICopilotPage';
 import { DigitalTwinReportPage }   from '../pages/DigitalTwinReportPage';
 import { SessionReportPage }       from '../pages/SessionReportPage';
+import { DebriefRoomPage }        from '../pages/DebriefRoomPage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -107,6 +108,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'copilot', labelKey: 'nav.copilot',  icon: Bot, badge: 'AI', badgeColor: 'blue' },
     { id: 'ai-crew', labelKey: 'nav.aiCrew',   icon: Users, badge: 'AI', badgeColor: 'blue' },
     { id: 'report',  labelKey: 'nav.report',   icon: FileText, badge: 'PDF', badgeColor: 'muted' },
+    { id: 'debrief', labelKey: 'nav.debrief',  icon: MessagesSquare, badge: 'AI', badgeColor: 'blue' },
     { id: 'style',   labelKey: 'nav.style',    icon: Fingerprint },
   ]},
   { section: 'nav.sections.system', items: [
@@ -152,6 +154,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'crew':      return <CrewChiefPage />;
     case 'copilot':   return <AICopilotPage />;
     case 'report':    return <SessionReportPage />;
+    case 'debrief':   return <DebriefRoomPage />;
     case 'ai-crew':   return <AICrewPage />;
     case 'style':     return <RidingStylePage />;
     case 'data':      return <ConnectDataPage />;

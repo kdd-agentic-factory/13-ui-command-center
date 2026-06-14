@@ -43,6 +43,7 @@ const en = {
     crew: 'Crew Chief',
     copilot: 'AI Copilot',
     report: 'Session Report',
+    debrief: 'Debrief Room',
     aiCrew: 'Oracle Pit Wall',
     style: 'Riding Style',
     data: 'Connect Data',
