@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Activity, Map, Circle, Sliders, Wrench,
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
-  Sparkles, Fingerprint, Loader2, MessagesSquare,
+  Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, PROFILES, TabId, ProfileId } from '../context/AuthContext';
@@ -52,6 +52,7 @@ import { PreGrandPrixPage }        from '../pages/PreGrandPrixPage';
 import { CrewChiefPage }           from '../pages/CrewChiefPage';
 import { AICopilotPage }           from '../pages/AICopilotPage';
 import { DigitalTwinReportPage }   from '../pages/DigitalTwinReportPage';
+import { ScenarioSandboxPage }    from '../pages/ScenarioSandboxPage';
 import { SessionReportPage }       from '../pages/SessionReportPage';
 import { DebriefRoomPage }        from '../pages/DebriefRoomPage';
 import { AICrewPage }               from '../pages/AICrewPage';
@@ -101,6 +102,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'parts',   labelKey: 'nav.parts',   icon: Wrench },
     { id: 'bike-compare', labelKey: 'nav.bikeCompare', icon: GitCompare },
     { id: 'twin',    labelKey: 'nav.twin',    icon: GitBranch },
+    { id: 'sandbox', labelKey: 'nav.sandbox', icon: FlaskConical, badge: 'AI', badgeColor: 'blue' },
     { id: 'history', labelKey: 'nav.history', icon: History },
   ]},
   { section: 'nav.sections.command', items: [
@@ -159,6 +161,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'style':     return <RidingStylePage />;
     case 'data':      return <ConnectDataPage />;
     case 'twin':      return <DigitalTwinReportPage />;
+    case 'sandbox':   return <ScenarioSandboxPage />;
     case 'history':   return <CircuitHistoryPage />;
     case 'settings':  return <SettingsPage />;
     default:          return <OverviewPage />;

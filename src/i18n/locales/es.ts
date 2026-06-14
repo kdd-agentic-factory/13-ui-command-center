@@ -34,6 +34,7 @@ const es = {
     tires: 'Degradación de Neumáticos',
     setup: 'Gestión de Setup',
     advisor: 'Asesor de Reglajes',
+    sandbox: 'Simulador Escenarios',
     setupLab: 'Laboratorio Setup',
     bikeCompare: 'Comparar Motos',
     parts: 'Diseño de Piezas',
