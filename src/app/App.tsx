@@ -6,7 +6,7 @@ import {
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
   Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical, CircleDot, Network, Ghost, GraduationCap, TestTubes, Video,
-  LayoutGrid, TrendingUp, Mic,
+  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, PROFILES, TabId, ProfileId } from '../context/AuthContext';
@@ -66,6 +66,8 @@ import { TrackEvolutionPage }     from '../pages/TrackEvolutionPage';
 import { PitRadioPage }           from '../pages/PitRadioPage';
 import { TeamWorkspacePage }      from '../pages/TeamWorkspacePage';
 import { CockpitPage }            from '../pages/CockpitPage';
+import { DataTrustPage }          from '../pages/DataTrustPage';
+import { DataCubePage }           from '../pages/DataCubePage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -121,6 +123,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'experiments', labelKey: 'nav.experiments', icon: TestTubes, badge: 'AI', badgeColor: 'blue' },
     { id: 'history', labelKey: 'nav.history', icon: History },
     { id: 'knowledge', labelKey: 'nav.knowledge', icon: Network },
+    { id: 'cube',    labelKey: 'nav.cube',    icon: Boxes, badge: 'AI', badgeColor: 'blue' },
   ]},
   { section: 'nav.sections.command', items: [
     { id: 'crew',    labelKey: 'nav.crew',     icon: Radio },
@@ -135,6 +138,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'style',   labelKey: 'nav.style',    icon: Fingerprint },
   ]},
   { section: 'nav.sections.system', items: [
+    { id: 'trust',    labelKey: 'nav.trust',    icon: ShieldCheck },
     { id: 'data',     labelKey: 'nav.data',     icon: Database },
     { id: 'settings', labelKey: 'nav.settings', icon: Settings },
   ]},
@@ -181,6 +185,8 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'pit-radio': return <PitRadioPage />;
     case 'team':      return <TeamWorkspacePage />;
     case 'cockpit':   return <CockpitPage />;
+    case 'trust':     return <DataTrustPage />;
+    case 'cube':      return <DataCubePage />;
     case 'copilot':   return <AICopilotPage />;
     case 'learning-path': return <RiderLearningPathPage />;
     case 'report':    return <SessionReportPage />;

@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { insforge } from '../lib/insforge';
 
-export type TabId = 'cockpit' | 'overview' | 'live' | 'telemetry' | 'circuit' | 'corners' | 'replay' | 'compare' | 'ghost-lap' | 'studio' | 'track-evo' | 'risk' | 'predict' | 'tires' | 'setup' | 'advisor' | 'setup-lab' | 'parts' | 'bike-compare' | 'twin' | 'sandbox' | 'experiments' | 'history' | 'pre-gp' | 'crew' | 'copilot' | 'learning-path' | 'pit-radio' | 'team' | 'report' | 'debrief' | 'black-box' | 'knowledge' | 'ai-crew' | 'style' | 'data' | 'settings';
+export type TabId = 'cockpit' | 'overview' | 'live' | 'telemetry' | 'circuit' | 'corners' | 'replay' | 'compare' | 'ghost-lap' | 'studio' | 'track-evo' | 'risk' | 'predict' | 'tires' | 'setup' | 'advisor' | 'setup-lab' | 'parts' | 'bike-compare' | 'twin' | 'sandbox' | 'experiments' | 'history' | 'pre-gp' | 'crew' | 'copilot' | 'learning-path' | 'pit-radio' | 'team' | 'report' | 'debrief' | 'black-box' | 'knowledge' | 'ai-crew' | 'style' | 'cube' | 'trust' | 'data' | 'settings';
 export type ProfileId = 'race-engineer' | 'team-principal' | 'data-analyst' | 'mechanic' | 'spectator';
 
 export interface Profile {
@@ -25,7 +25,7 @@ export const PROFILES: Profile[] = [
     color: '#E03737',
     icon: '⚙️',
     accessCount: '23',
-    allowedTabs: ['cockpit','overview','live','telemetry','circuit','corners','replay','compare','ghost-lap','studio','track-evo','risk','predict','tires','setup','advisor','setup-lab','parts','bike-compare','twin','sandbox','experiments','history','pre-gp','crew','copilot','learning-path','pit-radio','team','report','ai-crew','style','data','settings'],
+    allowedTabs: ['cockpit','overview','live','telemetry','circuit','corners','replay','compare','ghost-lap','studio','track-evo','risk','predict','tires','setup','advisor','setup-lab','parts','bike-compare','twin','sandbox','experiments','history','pre-gp','crew','copilot','learning-path','pit-radio','team','report','ai-crew','style','cube','trust','data','settings'],
     defaultTab: 'overview',
     requiresAuth: true,
   },
@@ -36,7 +36,7 @@ export const PROFILES: Profile[] = [
     color: '#F59E0B',
     icon: '👔',
     accessCount: '14',
-    allowedTabs: ['cockpit','overview','live','corners','compare','ghost-lap','track-evo','risk','predict','report','debrief','black-box','experiments','history','pre-gp','copilot','learning-path','pit-radio','team','ai-crew','circuit','tires','settings'],
+    allowedTabs: ['cockpit','overview','live','corners','compare','ghost-lap','track-evo','risk','predict','report','debrief','black-box','experiments','history','pre-gp','copilot','learning-path','pit-radio','team','ai-crew','circuit','tires','cube','trust','settings'],
     defaultTab: 'overview',
     requiresAuth: true,
   },
@@ -47,7 +47,7 @@ export const PROFILES: Profile[] = [
     color: '#3B82F6',
     icon: '📊',
     accessCount: '14',
-    allowedTabs: ['cockpit','telemetry','corners','replay','compare','ghost-lap','studio','track-evo','predict','tires','circuit','twin','sandbox','experiments','history','report','debrief','black-box','knowledge','learning-path','team','ai-crew','style','bike-compare','setup-lab','data','settings'],
+    allowedTabs: ['cockpit','telemetry','corners','replay','compare','ghost-lap','studio','track-evo','predict','tires','circuit','twin','sandbox','experiments','history','report','debrief','black-box','knowledge','learning-path','team','ai-crew','style','bike-compare','setup-lab','cube','trust','data','settings'],
     defaultTab: 'telemetry',
     requiresAuth: true,
   },
@@ -58,7 +58,7 @@ export const PROFILES: Profile[] = [
     color: '#22C55E',
     icon: '🔧',
     accessCount: '7',
-    allowedTabs: ['setup','advisor','setup-lab','parts','bike-compare','pre-gp','tires','track-evo','team','data','settings'],
+    allowedTabs: ['setup','advisor','setup-lab','parts','bike-compare','pre-gp','tires','track-evo','team','trust','data','settings'],
     defaultTab: 'setup',
     requiresAuth: true,
   },

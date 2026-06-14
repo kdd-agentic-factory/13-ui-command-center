@@ -57,6 +57,8 @@ const es = {
     debrief: 'Sala de Debrief',
     aiCrew: 'Oracle Pit Wall',
     style: 'Estilo de Pilotaje',
+    cube: 'Cubo de Datos',
+    trust: 'Confianza de Datos',
     data: 'Conectar Datos',
     settings: 'Configuración',
     sections: {

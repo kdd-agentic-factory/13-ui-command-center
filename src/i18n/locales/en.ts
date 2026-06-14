@@ -57,6 +57,8 @@ const en = {
     debrief: 'Debrief Room',
     aiCrew: 'Oracle Pit Wall',
     style: 'Riding Style',
+    cube: 'Data Cube',
+    trust: 'Data Trust',
     data: 'Connect Data',
     settings: 'Settings',
     sections: {
