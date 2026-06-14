@@ -16,7 +16,7 @@ import { GateProgress } from '../components/GateProgress';
 import type { CircuitRecord } from '../domain/circuits';
 import {
   RIDERS, BIKES, RiderProfile, BikeProfile, buildGarageProfile, GarageProfile,
-  READINESS_META, setGarageProfile,
+  READINESS_META, setGarageProfile, persistGarageProfile, addRider, addBike,
 } from '../domain/garageProfile';
 
 interface Props {
@@ -55,13 +55,28 @@ export function GarageProfileGatePage({ circuit, onBack, onContinue }: Props) {
   const { t } = useTranslation();
   const [riderId, setRiderId] = useState(RIDERS[0].id);
   const [bikeId, setBikeId] = useState(BIKES[0].id);
+  const [, force] = useState(0);
+  const [newRider, setNewRider] = useState('');
+  const [newBikeBrand, setNewBikeBrand] = useState('');
+  const [newBikeModel, setNewBikeModel] = useState('');
+
+  function createRider() {
+    if (!newRider.trim()) return;
+    const r = addRider(newRider, 'Track day', 'Medium');
+    setRiderId(r.id); setNewRider(''); force(x => x + 1);
+  }
+  function createBike() {
+    if (!newBikeBrand.trim() && !newBikeModel.trim()) return;
+    const b = addBike(newBikeBrand, newBikeModel, 'full');
+    setBikeId(b.id); setNewBikeBrand(''); setNewBikeModel(''); force(x => x + 1);
+  }
 
   const rider = RIDERS.find(r => r.id === riderId)!;
   const bike = BIKES.find(b => b.id === bikeId)!;
   const profile = useMemo(() => buildGarageProfile(rider, bike, circuit.id), [rider, bike, circuit.id]);
   const meta = READINESS_META[profile.status];
 
-  function go() { setGarageProfile(profile); onContinue(profile); }
+  function go() { setGarageProfile(profile); void persistGarageProfile(profile); onContinue(profile); }
 
   return (
     <div className="cockpit-bg" style={{ position: 'fixed', inset: 0, overflowY: 'auto', zIndex: 50 }}>
@@ -92,6 +107,12 @@ export function GarageProfileGatePage({ circuit, onBack, onContinue }: Props) {
                 <div style={{ fontSize: 10, fontFamily: MONO, color: 'var(--text-muted)' }}>consistency {r.consistency}% · risk {r.riskTendency}</div>
               </>
             )} />
+            <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+              <input value={newRider} onChange={e => setNewRider(e.target.value)} placeholder="New rider name"
+                onKeyDown={e => { if (e.key === 'Enter') createRider(); }}
+                style={{ flex: 1, background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', borderRadius: 6, padding: '5px 8px', color: 'var(--text)', fontSize: 11 }} />
+              <button onClick={createRider} style={{ fontSize: 16, lineHeight: 1, padding: '0 10px', borderRadius: 6, cursor: 'pointer', background: 'rgba(0,183,255,0.1)', border: '1px solid var(--cyan)', color: 'var(--cyan)' }}>+</button>
+            </div>
           </div>
 
           {/* Bike */}
@@ -109,6 +130,14 @@ export function GarageProfileGatePage({ circuit, onBack, onContinue }: Props) {
                 <div style={{ fontSize: 10, fontFamily: MONO, color: 'var(--text-muted)' }}>{b.hasSetupBaseline ? 'setup baseline ✓' : 'generic setup'}</div>
               </>
             )} />
+            <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+              <input value={newBikeBrand} onChange={e => setNewBikeBrand(e.target.value)} placeholder="Brand"
+                style={{ width: 70, background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', borderRadius: 6, padding: '5px 8px', color: 'var(--text)', fontSize: 11 }} />
+              <input value={newBikeModel} onChange={e => setNewBikeModel(e.target.value)} placeholder="Model"
+                onKeyDown={e => { if (e.key === 'Enter') createBike(); }}
+                style={{ flex: 1, background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', borderRadius: 6, padding: '5px 8px', color: 'var(--text)', fontSize: 11 }} />
+              <button onClick={createBike} style={{ fontSize: 16, lineHeight: 1, padding: '0 10px', borderRadius: 6, cursor: 'pointer', background: 'rgba(0,183,255,0.1)', border: '1px solid var(--cyan)', color: 'var(--cyan)' }}>+</button>
+            </div>
           </div>
 
           {/* Readiness */}

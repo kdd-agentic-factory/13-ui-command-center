@@ -53,3 +53,23 @@ describe('GarageProfileGatePage', () => {
     expect(onContinue.mock.calls[0][0].bike.id).toBe('yamaha_r1_2024');
   });
 });
+
+import { addRider, addBike } from '../src/domain/garageProfile';
+
+describe('garage create rider/bike (phase 3)', () => {
+  it('a new rider has no Style DNA → NEW readiness', () => {
+    const r = addRider('Test Rider', 'Track day', 'Medium');
+    expect(r.hasStyleDNA).toBe(false);
+    const p = buildGarageProfile(r, BIKES[0], 'mugello');
+    expect(p.status).toBe('NEW');
+    expect(p.reason).toMatch(/calibration stint/);
+  });
+
+  it('a new bike is generic → GENERIC readiness with a known rider', () => {
+    const b = addBike('Aprilia', 'RSV4', 'full');
+    expect(b.generic).toBe(true);
+    const p = buildGarageProfile(RIDERS[0], b, 'mugello');
+    expect(p.status).toBe('GENERIC');
+    expect(p.setup.available).toBe(false);
+  });
+});

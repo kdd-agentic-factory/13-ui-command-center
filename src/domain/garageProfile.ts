@@ -127,6 +127,32 @@ function baselineFor(bike: BikeProfile, circuitId: string): SetupBaseline {
   };
 }
 
+// ── Create rider / bike (no history → NEW / GENERIC by design) ───────────────
+
+export function addRider(name: string, level: string, risk: RiderProfile['riskTendency']): RiderProfile {
+  const r: RiderProfile = {
+    id: `rider-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${Date.now() % 100000}`,
+    name: name.trim() || 'New rider', level,
+    archetype: 'Style not yet inferred — calibration pending',
+    consistency: 0, riskTendency: risk, hasStyleDNA: false,
+    limiters: ['Run a calibration stint to build the rider profile'],
+  };
+  RIDERS.unshift(r);
+  return r;
+}
+
+export function addBike(brand: string, model: string, telemetry: BikeProfile['telemetry']): BikeProfile {
+  const b: BikeProfile = {
+    id: `bike-${(brand + '-' + model).toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${Date.now() % 100000}`,
+    brand: brand.trim() || 'Custom', model: model.trim() || 'Bike', category: 'Custom',
+    engine: 'Generic category model',
+    electronics: ['TC', 'Engine Brake'], telemetry,
+    hasSetupBaseline: false, generic: true,
+  };
+  BIKES.unshift(b);
+  return b;
+}
+
 // ── Compatibility / readiness ─────────────────────────────────────────────────
 
 /** How trustworthy is analysis for this rider+bike+circuit combination. */
@@ -179,3 +205,20 @@ export const READINESS_META: Record<ReadinessStatus, { color: string; label: str
 let active: GarageProfile | null = null;
 export function setGarageProfile(p: GarageProfile): void { active = p; }
 export function getGarageProfile(): GarageProfile | null { return active; }
+
+/** Persist the chosen garage profile to InsForge (audit of the combination
+ *  the session opened on). Anonymous sessions stay local — RLS rejects them. */
+export async function persistGarageProfile(p: GarageProfile): Promise<void> {
+  try {
+    const { insforge } = await import('../lib/insforge');
+    const { data: user } = await insforge.auth.getCurrentUser();
+    const uid = (user as { user?: { id?: string } } | null)?.user?.id;
+    if (!uid) return;
+    await insforge.database.from('garage_profiles').insert([{
+      rider_id: p.rider.id, rider_name: p.rider.name,
+      bike_id: p.bike.id, bike_label: `${p.bike.brand} ${p.bike.model}`,
+      circuit_id: p.circuitId, status: p.status,
+      compatibility: p.compatibility, sessions_known: p.sessionsKnown, created_by: uid,
+    }]);
+  } catch { /* non-blocking */ }
+}

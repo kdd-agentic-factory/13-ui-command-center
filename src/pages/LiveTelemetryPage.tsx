@@ -712,9 +712,13 @@ export function LiveTelemetryPage() {
     return sm.map((_, i) => sm[Math.max(0, i - 4)]);
   }
 
+  // ECU-sourced channels become "estimated" on a GPS-only bike (the garage
+  // tells us the bike has no ECU/IMU link); GPS/IMU channels stay measured.
+  const ECU_CHANNELS = new Set(['rpm', 'thr', 'brake', 'gear']);
   const allChannels = CHANNEL_DEFS.map((def, i) => {
     const data = displaySnapshot[i] ?? [];
-    return { ...def, data, refData: def.id === 'gear' ? undefined : refSeries(data) };
+    const quality = garage.telemetryLimited && ECU_CHANNELS.has(def.id) ? 'est' : def.quality;
+    return { ...def, quality, data, refData: def.id === 'gear' ? undefined : refSeries(data) };
   });
   const channels: Channel[] = allChannels.filter(c => visibleCh.has(c.id))
     .map(({ id, name, unit, color, range, panelHeight, data }) => ({ id, name, unit, color, range, panelHeight, data }));
