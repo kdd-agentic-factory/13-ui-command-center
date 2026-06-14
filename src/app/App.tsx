@@ -46,6 +46,7 @@ import { TireDegradationPage }     from '../pages/TireDegradationPage';
 import { SetupManagementPage }     from '../pages/SetupManagementPage';
 import { GarageSetupAdvisorPage }  from '../pages/GarageSetupAdvisorPage';
 import { PartDesignPage }          from '../pages/PartDesignPage';
+import { BikeComparisonPage }     from '../pages/BikeComparisonPage';
 import { PreGrandPrixPage }        from '../pages/PreGrandPrixPage';
 import { CrewChiefPage }           from '../pages/CrewChiefPage';
 import { AICopilotPage }           from '../pages/AICopilotPage';
@@ -95,6 +96,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'setup',   labelKey: 'nav.setup',   icon: Sliders },
     { id: 'advisor', labelKey: 'nav.advisor', icon: Lightbulb, badge: 'AI', badgeColor: 'blue' },
     { id: 'parts',   labelKey: 'nav.parts',   icon: Wrench },
+    { id: 'bike-compare', labelKey: 'nav.bikeCompare', icon: GitCompare },
     { id: 'twin',    labelKey: 'nav.twin',    icon: GitBranch },
     { id: 'history', labelKey: 'nav.history', icon: History },
   ]},
@@ -142,6 +144,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'setup':     return <SetupManagementPage />;
     case 'advisor':   return <GarageSetupAdvisorPage />;
     case 'parts':     return <PartDesignPage />;
+    case 'bike-compare': return <BikeComparisonPage />;
     case 'pre-gp':    return <PreGrandPrixPage />;
     case 'crew':      return <CrewChiefPage />;
     case 'copilot':   return <AICopilotPage />;

@@ -19,7 +19,7 @@
 import { useState, useMemo } from 'react';
 import {
   AlertTriangle, Thermometer, Target, TrendingDown,
-  ChevronDown, ChevronUp,
+  ChevronDown, ChevronUp, Circle,
 } from 'lucide-react';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { TireModel3D } from '../components/babylon/TireModel3D';
@@ -719,6 +719,32 @@ export function TireDegradationPage() {
             {show3D ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
             3D
           </button>
+        </div>
+      </div>
+
+      {/* ── TYRE PASSPORT — life history of the current set ───────────────── */}
+      <div className="card mb-4">
+        <div className="card-header">
+          <span className="card-title flex items-center gap-2"><Circle size={14} style={{ color: 'var(--orange)' }} /> Tyre Passport</span>
+          <span className="badge" style={{ fontSize: 9, fontFamily: 'JetBrains Mono,monospace', color: 'var(--text-muted)' }}>Rear Soft · Set R03</span>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 10, marginTop: 6 }}>
+          {[
+            ['Stint history', '01·5 / 02·6 / 03·8'],
+            ['Total laps', String(5 + 6 + Math.max(0, t.lapCount))],
+            ['Peak temp', '124°C'],
+            ['Grip trend', `-${Math.min(40, Math.round(t.lapCount * 1.3))}%`],
+            ['Cliff prediction', 'L16-equiv'],
+            ['Status', t.lapCount > 13 ? 'Warm-up only' : 'Race-usable'],
+          ].map(([k, v]) => (
+            <div key={k}>
+              <div style={{ fontSize: 9, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{k}</div>
+              <div style={{ fontSize: 15, fontFamily: 'JetBrains Mono,monospace', fontWeight: 700, color: k === 'Status' && t.lapCount > 13 ? 'var(--accent)' : 'var(--text)' }}>{v}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 8 }}>
+          A tyre's life follows the set across stints — total laps, peak temperature and grip trend decide whether it goes back on for the race or is retired to warm-up duty.
         </div>
       </div>
 

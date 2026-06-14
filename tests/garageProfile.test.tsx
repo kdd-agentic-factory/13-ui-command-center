@@ -73,3 +73,24 @@ describe('garage create rider/bike (phase 3)', () => {
     expect(p.setup.available).toBe(false);
   });
 });
+
+import { compareBikes } from '../src/domain/garageProfile';
+
+describe('bike comparison (side-by-side)', () => {
+  it('lists every bike with real data flagged and unknowns as —', () => {
+    const rows = compareBikes('mugello');
+    expect(rows.length).toBe(BIKES.length);
+    const r1 = rows.find(r => r.bikeId === 'yamaha_r1_2024')!;
+    expect(r1.hasData).toBe(true);
+    expect(r1.bestLap).toBe('1:57.842');
+    const zx = rows.find(r => r.bikeId === 'kawasaki_zx10r_2023')!;
+    expect(zx.hasData).toBe(false);
+    expect(zx.bestLap).toBe('—');
+    expect(zx.telemetry).toBe('GPS only');
+  });
+
+  it('the V4 is Very high power', () => {
+    const v4 = compareBikes('mugello').find(r => r.bikeId === 'ducati_v4_2024')!;
+    expect(v4.powerClass).toBe('Very high');
+  });
+});

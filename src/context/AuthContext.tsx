@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { insforge } from '../lib/insforge';
 
-export type TabId = 'overview' | 'live' | 'telemetry' | 'circuit' | 'corners' | 'replay' | 'compare' | 'risk' | 'predict' | 'tires' | 'setup' | 'advisor' | 'parts' | 'twin' | 'history' | 'pre-gp' | 'crew' | 'copilot' | 'report' | 'ai-crew' | 'style' | 'data' | 'settings';
+export type TabId = 'overview' | 'live' | 'telemetry' | 'circuit' | 'corners' | 'replay' | 'compare' | 'risk' | 'predict' | 'tires' | 'setup' | 'advisor' | 'parts' | 'bike-compare' | 'twin' | 'history' | 'pre-gp' | 'crew' | 'copilot' | 'report' | 'ai-crew' | 'style' | 'data' | 'settings';
 export type ProfileId = 'race-engineer' | 'team-principal' | 'data-analyst' | 'mechanic' | 'spectator';
 
 export interface Profile {
@@ -25,7 +25,7 @@ export const PROFILES: Profile[] = [
     color: '#E03737',
     icon: '⚙️',
     accessCount: '23',
-    allowedTabs: ['overview','live','telemetry','circuit','corners','replay','compare','risk','predict','tires','setup','advisor','parts','twin','history','pre-gp','crew','copilot','report','ai-crew','style','data','settings'],
+    allowedTabs: ['overview','live','telemetry','circuit','corners','replay','compare','risk','predict','tires','setup','advisor','parts','bike-compare','twin','history','pre-gp','crew','copilot','report','ai-crew','style','data','settings'],
     defaultTab: 'overview',
     requiresAuth: true,
   },
@@ -47,7 +47,7 @@ export const PROFILES: Profile[] = [
     color: '#3B82F6',
     icon: '📊',
     accessCount: '14',
-    allowedTabs: ['telemetry','corners','replay','compare','predict','tires','circuit','twin','history','report','ai-crew','style','data','settings'],
+    allowedTabs: ['telemetry','corners','replay','compare','predict','tires','circuit','twin','history','report','ai-crew','style','bike-compare','data','settings'],
     defaultTab: 'telemetry',
     requiresAuth: true,
   },
@@ -58,7 +58,7 @@ export const PROFILES: Profile[] = [
     color: '#22C55E',
     icon: '🔧',
     accessCount: '7',
-    allowedTabs: ['setup','advisor','parts','pre-gp','tires','data','settings'],
+    allowedTabs: ['setup','advisor','parts','bike-compare','pre-gp','tires','data','settings'],
     defaultTab: 'setup',
     requiresAuth: true,
   },

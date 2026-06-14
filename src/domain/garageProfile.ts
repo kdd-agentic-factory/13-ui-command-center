@@ -200,6 +200,43 @@ export const READINESS_META: Record<ReadinessStatus, { color: string; label: str
   'GPS-ONLY': { color: 'var(--accent)', label: 'GPS-only telemetry' },
 };
 
+// ── Bike comparison (side-by-side) ───────────────────────────────────────────
+
+export interface BikeCompareRow {
+  bikeId: string; label: string;
+  bestLap: string;          // at the given circuit (— if no data)
+  rearGripDrop: string;     // % over a race stint
+  topSpeed: number;         // km/h on the main straight
+  powerClass: string;
+  telemetry: string;
+  hasData: boolean;
+}
+
+// Known best laps per bike+circuit (— when no real session exists).
+const BIKE_BEST: Record<string, string> = {
+  'yamaha_r1_2024|mugello': '1:57.842',
+  'ducati_v4_2024|mugello': '1:57.420',
+};
+const BIKE_TOPSPEED: Record<string, number> = {
+  yamaha_r1_2024: 299, ducati_v4_2024: 305, kawasaki_zx10r_2023: 297,
+};
+
+export function compareBikes(circuitId: string): BikeCompareRow[] {
+  return BIKES.map(b => {
+    const key = `${b.id}|${circuitId}`;
+    const best = BIKE_BEST[key];
+    return {
+      bikeId: b.id, label: `${b.brand} ${b.model}`,
+      bestLap: best ?? '—',
+      rearGripDrop: best ? (b.engine.includes('V4') ? '15%' : '12%') : '—',
+      topSpeed: BIKE_TOPSPEED[b.id] ?? 0,
+      powerClass: b.engine.includes('V4') ? 'Very high' : 'High',
+      telemetry: b.telemetry === 'full' ? 'ECU·IMU·GPS' : 'GPS only',
+      hasData: Boolean(best),
+    };
+  });
+}
+
 // ── Active garage profile store (single source of truth) ─────────────────────
 
 let active: GarageProfile | null = null;
