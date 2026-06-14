@@ -36,6 +36,7 @@ const es = {
     setup: 'Gestión de Setup',
     advisor: 'Asesor de Reglajes',
     sandbox: 'Simulador Escenarios',
+    experiments: 'Motor de Experimentos',
     setupLab: 'Laboratorio Setup',
     bikeCompare: 'Comparar Motos',
     parts: 'Diseño de Piezas',

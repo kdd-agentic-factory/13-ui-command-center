@@ -36,6 +36,7 @@ const en = {
     setup: 'Setup Management',
     advisor: 'Garage Setup Advisor',
     sandbox: 'Scenario Sandbox',
+    experiments: 'Experiment Engine',
     setupLab: 'Setup Lab',
     bikeCompare: 'Bike Comparison',
     parts: 'Part Design',

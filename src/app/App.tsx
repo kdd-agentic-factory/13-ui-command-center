@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Activity, Map, Circle, Sliders, Wrench,
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
-  Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical, CircleDot, Network, Ghost, GraduationCap,
+  Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical, CircleDot, Network, Ghost, GraduationCap, TestTubes,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, PROFILES, TabId, ProfileId } from '../context/AuthContext';
@@ -59,6 +59,7 @@ import { BlackBoxPage }           from '../pages/BlackBoxPage';
 import { KnowledgeGraphPage }     from '../pages/KnowledgeGraphPage';
 import { GhostLapPage }           from '../pages/GhostLapPage';
 import { RiderLearningPathPage }  from '../pages/RiderLearningPathPage';
+import { ExperimentEnginePage }   from '../pages/ExperimentEnginePage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -108,6 +109,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'bike-compare', labelKey: 'nav.bikeCompare', icon: GitCompare },
     { id: 'twin',    labelKey: 'nav.twin',    icon: GitBranch },
     { id: 'sandbox', labelKey: 'nav.sandbox', icon: FlaskConical, badge: 'AI', badgeColor: 'blue' },
+    { id: 'experiments', labelKey: 'nav.experiments', icon: TestTubes, badge: 'AI', badgeColor: 'blue' },
     { id: 'history', labelKey: 'nav.history', icon: History },
     { id: 'knowledge', labelKey: 'nav.knowledge', icon: Network },
   ]},
@@ -174,6 +176,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'data':      return <ConnectDataPage />;
     case 'twin':      return <DigitalTwinReportPage />;
     case 'sandbox':   return <ScenarioSandboxPage />;
+    case 'experiments': return <ExperimentEnginePage />;
     case 'history':   return <CircuitHistoryPage />;
     case 'settings':  return <SettingsPage />;
     default:          return <OverviewPage />;
