@@ -1,4 +1,24 @@
 const es = {
+  mc: {
+    eyebrow: 'Mission Control del muro digital',
+    tagline: 'Tu box digital inteligente para analizar circuitos, tandas, telemetría, setup, neumáticos, riesgo y rendimiento del piloto. Antes de analizar una vuelta, KDD entiende el circuito, el modo de trabajo y los datos disponibles.',
+    start: 'Iniciar misión', demo: 'Ver demo', create: 'Crear circuito',
+    stepCircuit: 'Selecciona un circuito validado o crea uno nuevo.',
+    stepMode: 'Carrera, test, entrenos, tanda, replay, demo o simulación.',
+    stepData: 'GPS, IMU, ECU, logger, CSV, vídeo o datos simulados.',
+    stepLaunch: 'Abre un dashboard adaptado al contexto de la sesión.',
+    cardCircuit: 'Carga un circuito validado: trazado, curvas, sectores, elevación, mapa 3D y contexto de simulación.',
+    cardLatest: 'Retoma Mugello · Stint 03 (Yamaha R1 · best 1:57.842 · gain −1.284s) en modo replay con telemetría y reporte.',
+    cardCreate: 'Sube GPX, KML, GeoJSON, CSV o vídeo onboard. Los agentes reconstruyen el trazado y generan la simulación inicial.',
+    cardDemo: 'Sesión reproducible de ejemplo: telemetría, 3D, curvas críticas, twin y oráculo. DEMO DATA · sample.',
+    ctaCircuit: 'Seleccionar circuito', ctaLatest: 'Cargar última sesión', ctaCreate: 'Crear circuito', ctaDemo: 'Abrir demo guiada',
+  },
+  gates: {
+    circuitSubtitle: 'Selecciona, valida o crea el circuito antes de abrir el box digital — el dashboard no se abre hasta saber en qué circuito estamos.',
+    searchCircuit: 'Buscar circuito…',
+    namePlaceholder: 'Circuito de Albacete',
+    modeSubtitle: 'Define cómo vas a trabajar con el circuito seleccionado — el dashboard se adapta al modo elegido.',
+  },
   nav: {
     overview: 'Vista General',
     live: 'Pista en Vivo',

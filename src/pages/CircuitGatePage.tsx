@@ -13,6 +13,7 @@
  *     reconstruction agents → initial simulation → SIMULATED status
  */
 import { useMemo, useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Search, MapPin, CheckCircle2, XCircle, ChevronRight, Plus, Bot, Gauge,
   Mountain, Route, Radar, ShieldAlert, Wrench, Upload, Eye, FlaskConical,
@@ -149,7 +150,7 @@ function CreateCircuitWizard({ initialName, onCancel, onCreated }: {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           <div>
             <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Circuit name</div>
-            <input style={inputStyle} value={name} onChange={e => setName(e.target.value)} placeholder="Circuito de Albacete" />
+            <input style={inputStyle} value={name} onChange={e => setName(e.target.value)} placeholder="Albacete Circuit" />
           </div>
           <div>
             <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Country</div>
@@ -286,6 +287,7 @@ function CreateCircuitWizard({ initialName, onCancel, onCreated }: {
 // ── Main gate ─────────────────────────────────────────────────────────────────
 
 export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [query, setQuery] = useState('');
   const [selectedId, setSelectedId] = useState<string>('mugello');
@@ -330,7 +332,7 @@ export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Prop
             </h1>
           </div>
           <div style={{ fontSize: 12.5, color: 'var(--text-muted)', marginTop: 4 }}>
-            Selecciona, valida o crea el circuito antes de abrir el box digital — the dashboard will not open until the session knows which track it is on.
+            {t('gates.circuitSubtitle', 'Select, validate or create the circuit before opening the digital pit-box — the dashboard will not open until the session knows which track it is on.')}
           </div>
         </div>
 
@@ -350,7 +352,7 @@ export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Prop
                 <input
                   value={query}
                   onChange={e => setQuery(e.target.value)}
-                  placeholder="Buscar circuito…"
+                  placeholder={t('gates.searchCircuit', 'Search circuit…')}
                   style={{
                     width: '100%', background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)',
                     borderRadius: 8, padding: '7px 10px 7px 30px', color: 'var(--text)', fontSize: 12.5,

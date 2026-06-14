@@ -9,6 +9,7 @@
  * Backdrop: faint Mugello silhouette (the same deterministic geometry the
  * circuit cards use) instead of abstract curves — circuit map, not decoration.
  */
+import { useTranslation } from 'react-i18next';
 import {
   Radar, MapPin, History, PlayCircle, Plus, ChevronRight, Bot,
   Activity, Database, Gauge, Wifi, Rocket, Lock,
@@ -102,6 +103,7 @@ function ActionCard({ icon: Icon, title, body, cta, onClick, accent }: {
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLatest, onDemo }: Props) {
+  const { t } = useTranslation();
   const library = getCircuitLibrary();
 
   return (
@@ -122,23 +124,21 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <Radar size={20} style={{ color: 'var(--accent)' }} />
-              <span style={{ ...LABEL, color: '#00B7FF' }}>Digital Pit-Wall Mission Control</span>
+              <span style={{ ...LABEL, color: '#00B7FF' }}>{t('mc.eyebrow', 'Digital Pit-Wall Mission Control')}</span>
             </div>
             <h1 className="display-xxl" style={{ color: 'var(--text)', margin: '8px 0 0' }}>
               KDD MOTO INTELLIGENCE
             </h1>
             <p style={{ fontSize: 13.5, color: 'var(--text-muted)', margin: '12px 0 0', maxWidth: 540, lineHeight: 1.6 }}>
-              Tu box digital inteligente para analizar circuitos, tandas, telemetría, setup, neumáticos,
-              riesgo y rendimiento del piloto. Antes de analizar una vuelta, KDD entiende el circuito,
-              el modo de trabajo y los datos disponibles.
+{t('mc.tagline', 'Your intelligent digital pit-box for analysing circuits, stints, telemetry, setup, tyres, risk and rider performance. Before analysing a lap, KDD understands the circuit, the working mode and the available data.')}
             </p>
             <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>
               <button className="btn-primary" onClick={onSelectCircuit}
                 style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '10px 20px', fontSize: 13.5, fontWeight: 700 }}>
-                <Rocket size={15} /> Iniciar misión
+                <Rocket size={15} /> {t('mc.start', 'Start mission')}
               </button>
-              <SecondaryButton onClick={onDemo} accent="#8B5CF6">Ver demo</SecondaryButton>
-              <SecondaryButton onClick={onCreateCircuit}>Crear circuito</SecondaryButton>
+              <SecondaryButton onClick={onDemo} accent="#8B5CF6">{t('mc.demo', 'View demo')}</SecondaryButton>
+              <SecondaryButton onClick={onCreateCircuit}>{t('mc.create', 'Create circuit')}</SecondaryButton>
             </div>
           </div>
 
@@ -172,29 +172,29 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
         </div>
         <div className="stagger" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 24 }}>
           <StepCard n="01" icon={MapPin} title="CIRCUIT"
-            desc="Selecciona un circuito validado o crea uno nuevo." state="NOT SELECTED" stateColor="#FFD600" />
+            desc={t('mc.stepCircuit', 'Select a validated circuit or create a new one.')} state="NOT SELECTED" stateColor="#FFD600" />
           <StepCard n="02" icon={Gauge} title="MODE"
-            desc="Carrera, test, entrenos, tanda, replay, demo o simulación." state="PENDING" stateColor="var(--text-muted)" />
+            desc={t('mc.stepMode', 'Race, test, practice, stint, replay, demo or simulation.')} state="PENDING" stateColor="var(--text-muted)" />
           <StepCard n="03" icon={Wifi} title="DATA"
-            desc="GPS, IMU, ECU, logger, CSV, vídeo o datos simulados." state="PENDING" stateColor="var(--text-muted)" />
+            desc={t('mc.stepData', 'GPS, IMU, ECU, logger, CSV, video or simulated data.')} state="PENDING" stateColor="var(--text-muted)" />
           <StepCard n="04" icon={Lock} title="LAUNCH"
-            desc="Abre un dashboard adaptado al contexto de la sesión." state="LOCKED" stateColor="var(--text-muted)" />
+            desc={t('mc.stepLaunch', 'Opens a dashboard adapted to the session context.')} state="LOCKED" stateColor="var(--text-muted)" />
         </div>
 
         {/* ═══ 3 · Primary action cards ═══════════════════════════════════ */}
         <div className="stagger" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 24 }}>
           <ActionCard icon={MapPin} accent="#00B7FF" title="CIRCUIT INTELLIGENCE"
-            body="Carga un circuito validado: trazado, curvas, sectores, elevación, mapa 3D y contexto de simulación."
-            cta="Seleccionar circuito" onClick={onSelectCircuit} />
+            body={t('mc.cardCircuit', 'Load a validated circuit: layout, corners, sectors, elevation, 3D map and simulation context.')}
+            cta={t('mc.ctaCircuit', 'Select circuit')} onClick={onSelectCircuit} />
           <ActionCard icon={History} accent="#00E676" title="LATEST SESSION"
-            body="Retoma Mugello · Stint 03 (Yamaha R1 · best 1:57.842 · gain −1.284s) en modo replay con telemetría y reporte."
-            cta="Cargar última sesión" onClick={onLoadLatest} />
+            body={t('mc.cardLatest', 'Resume Mugello · Stint 03 (Yamaha R1 · best 1:57.842 · gain −1.284s) in replay mode with telemetry and report.')}
+            cta={t('mc.ctaLatest', 'Load latest session')} onClick={onLoadLatest} />
           <ActionCard icon={Plus} accent="#FFD600" title="CREATE NEW CIRCUIT"
-            body="Sube GPX, KML, GeoJSON, CSV o vídeo onboard. Los agentes reconstruyen el trazado y generan la simulación inicial."
-            cta="Crear circuito" onClick={onCreateCircuit} />
+            body={t('mc.cardCreate', 'Upload GPX, KML, GeoJSON, CSV or onboard video. The agents rebuild the layout and generate the initial simulation.')}
+            cta={t('mc.ctaCreate', 'Create circuit')} onClick={onCreateCircuit} />
           <ActionCard icon={PlayCircle} accent="#8B5CF6" title="GUIDED DEMO"
-            body="Sesión reproducible de ejemplo: telemetría, 3D, curvas críticas, twin y oráculo. DEMO DATA · sample."
-            cta="Abrir demo guiada" onClick={onDemo} />
+            body={t('mc.cardDemo', 'Reproducible sample session: telemetry, 3D, critical corners, twin and oracle. DEMO DATA · sample.')}
+            cta={t('mc.ctaDemo', 'Open guided demo')} onClick={onDemo} />
         </div>
 
         {/* ═══ 4 · Lower bento ═════════════════════════════════════════════ */}

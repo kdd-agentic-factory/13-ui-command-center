@@ -8,6 +8,7 @@
  * the global Context Object every dashboard module shares.
  */
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Flag, Wrench, Timer, Bike, Film, PlayCircle, CalendarDays, FlaskConical,
   ChevronRight, ArrowLeft, CheckCircle2, Database, AlertTriangle,
@@ -35,6 +36,7 @@ const MODE_ICONS: Record<SessionMode, typeof Flag> = {
 };
 
 export function SessionModeGatePage({ circuit, onBack, onOpen }: Props) {
+  const { t } = useTranslation();
   // Circuits built by AI start in simulation mode by suggestion.
   const [mode, setMode] = useState<SessionMode>(circuit.status === 'SIMULATED' ? 'simulation' : 'race');
   const [demoId, setDemoId] = useState<string>(DEMO_PACKAGES[0].id);
@@ -87,7 +89,7 @@ export function SessionModeGatePage({ circuit, onBack, onOpen }: Props) {
               SESSION MODE GATE
             </h1>
             <div style={{ fontSize: 12.5, color: 'var(--text-muted)', marginTop: 4 }}>
-              Define cómo vas a trabajar con el circuito seleccionado — the dashboard adapts to the chosen mode.
+              {t('gates.modeSubtitle', 'Define how you will work with the selected circuit — the dashboard adapts to the chosen mode.')}
             </div>
           </div>
           {/* Selected circuit recap */}

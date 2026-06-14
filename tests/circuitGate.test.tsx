@@ -31,12 +31,12 @@ describe('CircuitGatePage', () => {
   it('offers circuit creation when the search has no match', () => {
     render(<CircuitGatePage onOpenDashboard={() => undefined} />);
 
-    fireEvent.change(screen.getByPlaceholderText('Buscar circuito…'), { target: { value: 'Albacete' } });
+    fireEvent.change(screen.getByPlaceholderText('Search circuit…'), { target: { value: 'Albacete' } });
     expect(screen.getByText('Circuit not found')).toBeInTheDocument();
     expect(screen.getByText(/No circuit named “Albacete”/)).toBeInTheDocument();
 
     fireEvent.click(screen.getByText('Create new circuit'));
     expect(screen.getByText('CREATE NEW CIRCUIT')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Circuito de Albacete')).toHaveValue('Albacete');
+    expect(screen.getByPlaceholderText('Albacete Circuit')).toHaveValue('Albacete');
   });
 });

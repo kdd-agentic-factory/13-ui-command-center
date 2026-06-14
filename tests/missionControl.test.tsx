@@ -20,9 +20,9 @@ describe('MissionControlPage', () => {
     expect(screen.getByText('KDD MOTO INTELLIGENCE')).toBeInTheDocument();
     expect(screen.getByText('SYSTEM READY')).toBeInTheDocument();
     expect(screen.getByText('START YOUR SESSION')).toBeInTheDocument();
-    expect(screen.getByText('Iniciar misión')).toBeInTheDocument(); // hero CTA
+    expect(screen.getByText('Start mission')).toBeInTheDocument(); // hero CTA (EN governing language)
     // 'Crear circuito' appears in the hero AND its action card — presence, not uniqueness
-    for (const cta of ['Seleccionar circuito', 'Cargar última sesión', 'Crear circuito', 'Abrir demo guiada']) {
+    for (const cta of ['Select circuit', 'Load latest session', 'Create circuit', 'Open guided demo']) {
       expect(screen.getAllByText(cta).length).toBeGreaterThan(0);
     }
     expect(screen.getByText('ORACLE QUICK BRIEF')).toBeInTheDocument();
@@ -33,12 +33,12 @@ describe('MissionControlPage', () => {
     const select = vi.fn(); const create = vi.fn(); const latest = vi.fn(); const demo = vi.fn();
     render(<MissionControlPage onSelectCircuit={select} onCreateCircuit={create} onLoadLatest={latest} onDemo={demo} />);
 
-    fireEvent.click(screen.getByText('Iniciar misión'));
-    fireEvent.click(screen.getByText('Seleccionar circuito'));
-    fireEvent.click(screen.getAllByText('Crear circuito')[0]);
-    fireEvent.click(screen.getByText('Cargar última sesión'));
-    fireEvent.click(screen.getByText('Abrir demo guiada'));
-    expect(select).toHaveBeenCalledTimes(2); // hero "Iniciar misión" + card
+    fireEvent.click(screen.getByText('Start mission'));
+    fireEvent.click(screen.getByText('Select circuit'));
+    fireEvent.click(screen.getAllByText('Create circuit')[0]);
+    fireEvent.click(screen.getByText('Load latest session'));
+    fireEvent.click(screen.getByText('Open guided demo'));
+    expect(select).toHaveBeenCalledTimes(2); // hero 'Start mission' + card
     expect(create).toHaveBeenCalledTimes(1);
     expect(latest).toHaveBeenCalledTimes(1);
     expect(demo).toHaveBeenCalledTimes(1);

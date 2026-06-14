@@ -1,4 +1,24 @@
 const en = {
+  mc: {
+    eyebrow: 'Digital Pit-Wall Mission Control',
+    tagline: 'Your intelligent digital pit-box for analysing circuits, stints, telemetry, setup, tyres, risk and rider performance. Before analysing a lap, KDD understands the circuit, the working mode and the available data.',
+    start: 'Start mission', demo: 'View demo', create: 'Create circuit',
+    stepCircuit: 'Select a validated circuit or create a new one.',
+    stepMode: 'Race, test, practice, stint, replay, demo or simulation.',
+    stepData: 'GPS, IMU, ECU, logger, CSV, video or simulated data.',
+    stepLaunch: 'Opens a dashboard adapted to the session context.',
+    cardCircuit: 'Load a validated circuit: layout, corners, sectors, elevation, 3D map and simulation context.',
+    cardLatest: 'Resume Mugello · Stint 03 (Yamaha R1 · best 1:57.842 · gain −1.284s) in replay mode with telemetry and report.',
+    cardCreate: 'Upload GPX, KML, GeoJSON, CSV or onboard video. The agents rebuild the layout and generate the initial simulation.',
+    cardDemo: 'Reproducible sample session: telemetry, 3D, critical corners, twin and oracle. DEMO DATA · sample.',
+    ctaCircuit: 'Select circuit', ctaLatest: 'Load latest session', ctaCreate: 'Create circuit', ctaDemo: 'Open guided demo',
+  },
+  gates: {
+    circuitSubtitle: 'Select, validate or create the circuit before opening the digital pit-box — the dashboard will not open until the session knows which track it is on.',
+    searchCircuit: 'Search circuit…',
+    namePlaceholder: 'Albacete Circuit',
+    modeSubtitle: 'Define how you will work with the selected circuit — the dashboard adapts to the chosen mode.',
+  },
   nav: {
     overview: 'Overview',
     live: 'Track-Live',
