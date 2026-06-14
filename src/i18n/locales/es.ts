@@ -44,6 +44,8 @@ const es = {
     crew: 'Jefe de Mecánicos',
     copilot: 'Copiloto IA',
     report: 'Informe de Sesión',
+    blackBox: 'Caja Negra',
+    knowledge: 'Grafo de Conocimiento',
     debrief: 'Sala de Debrief',
     aiCrew: 'Oracle Pit Wall',
     style: 'Estilo de Pilotaje',

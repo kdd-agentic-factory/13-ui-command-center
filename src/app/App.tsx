@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Activity, Map, Circle, Sliders, Wrench,
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
-  Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical,
+  Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical, CircleDot, Network,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, PROFILES, TabId, ProfileId } from '../context/AuthContext';
@@ -55,6 +55,8 @@ import { DigitalTwinReportPage }   from '../pages/DigitalTwinReportPage';
 import { ScenarioSandboxPage }    from '../pages/ScenarioSandboxPage';
 import { SessionReportPage }       from '../pages/SessionReportPage';
 import { DebriefRoomPage }        from '../pages/DebriefRoomPage';
+import { BlackBoxPage }           from '../pages/BlackBoxPage';
+import { KnowledgeGraphPage }     from '../pages/KnowledgeGraphPage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -104,6 +106,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'twin',    labelKey: 'nav.twin',    icon: GitBranch },
     { id: 'sandbox', labelKey: 'nav.sandbox', icon: FlaskConical, badge: 'AI', badgeColor: 'blue' },
     { id: 'history', labelKey: 'nav.history', icon: History },
+    { id: 'knowledge', labelKey: 'nav.knowledge', icon: Network },
   ]},
   { section: 'nav.sections.command', items: [
     { id: 'crew',    labelKey: 'nav.crew',     icon: Radio },
@@ -111,6 +114,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'ai-crew', labelKey: 'nav.aiCrew',   icon: Users, badge: 'AI', badgeColor: 'blue' },
     { id: 'report',  labelKey: 'nav.report',   icon: FileText, badge: 'PDF', badgeColor: 'muted' },
     { id: 'debrief', labelKey: 'nav.debrief',  icon: MessagesSquare, badge: 'AI', badgeColor: 'blue' },
+    { id: 'black-box', labelKey: 'nav.blackBox', icon: CircleDot },
     { id: 'style',   labelKey: 'nav.style',    icon: Fingerprint },
   ]},
   { section: 'nav.sections.system', items: [
@@ -157,6 +161,8 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'copilot':   return <AICopilotPage />;
     case 'report':    return <SessionReportPage />;
     case 'debrief':   return <DebriefRoomPage />;
+    case 'black-box': return <BlackBoxPage />;
+    case 'knowledge': return <KnowledgeGraphPage />;
     case 'ai-crew':   return <AICrewPage />;
     case 'style':     return <RidingStylePage />;
     case 'data':      return <ConnectDataPage />;

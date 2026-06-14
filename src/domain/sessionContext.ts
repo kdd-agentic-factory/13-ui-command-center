@@ -132,7 +132,7 @@ export const MODULE_LABELS: Partial<Record<TabId, string>> = {
   predict: 'Predictive Model', setup: 'Setup Management', advisor: 'Garage Setup Advisor', 'setup-lab': 'Setup Lab',
   parts: 'Garage Part Factory', 'bike-compare': 'Bike Comparison', twin: 'Digital Twin', sandbox: 'Scenario Sandbox', history: 'Circuit History',
   'pre-gp': 'Pre-GP Workspace', crew: 'Crew Chief', copilot: 'Rider Coach AI',
-  'ai-crew': 'Oracle Pit Wall', report: 'Session Report', debrief: 'AI Debrief Room', style: 'Rider Style DNA',
+  'ai-crew': 'Oracle Pit Wall', report: 'Session Report', debrief: 'AI Debrief Room', 'black-box': 'KDD Black Box', knowledge: 'Knowledge Graph', style: 'Rider Style DNA',
 };
 
 /** What a mode activates vs hides — shown in the gate BEFORE opening (§2). */

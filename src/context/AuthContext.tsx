@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { insforge } from '../lib/insforge';
 
-export type TabId = 'overview' | 'live' | 'telemetry' | 'circuit' | 'corners' | 'replay' | 'compare' | 'risk' | 'predict' | 'tires' | 'setup' | 'advisor' | 'setup-lab' | 'parts' | 'bike-compare' | 'twin' | 'sandbox' | 'history' | 'pre-gp' | 'crew' | 'copilot' | 'report' | 'debrief' | 'ai-crew' | 'style' | 'data' | 'settings';
+export type TabId = 'overview' | 'live' | 'telemetry' | 'circuit' | 'corners' | 'replay' | 'compare' | 'risk' | 'predict' | 'tires' | 'setup' | 'advisor' | 'setup-lab' | 'parts' | 'bike-compare' | 'twin' | 'sandbox' | 'history' | 'pre-gp' | 'crew' | 'copilot' | 'report' | 'debrief' | 'black-box' | 'knowledge' | 'ai-crew' | 'style' | 'data' | 'settings';
 export type ProfileId = 'race-engineer' | 'team-principal' | 'data-analyst' | 'mechanic' | 'spectator';
 
 export interface Profile {
@@ -36,7 +36,7 @@ export const PROFILES: Profile[] = [
     color: '#F59E0B',
     icon: '👔',
     accessCount: '14',
-    allowedTabs: ['overview','live','corners','compare','risk','predict','report','debrief','history','pre-gp','copilot','ai-crew','circuit','tires','settings'],
+    allowedTabs: ['overview','live','corners','compare','risk','predict','report','debrief','black-box','history','pre-gp','copilot','ai-crew','circuit','tires','settings'],
     defaultTab: 'overview',
     requiresAuth: true,
   },
@@ -47,7 +47,7 @@ export const PROFILES: Profile[] = [
     color: '#3B82F6',
     icon: '📊',
     accessCount: '14',
-    allowedTabs: ['telemetry','corners','replay','compare','predict','tires','circuit','twin','sandbox','history','report','debrief','ai-crew','style','bike-compare','setup-lab','data','settings'],
+    allowedTabs: ['telemetry','corners','replay','compare','predict','tires','circuit','twin','sandbox','history','report','debrief','black-box','knowledge','ai-crew','style','bike-compare','setup-lab','data','settings'],
     defaultTab: 'telemetry',
     requiresAuth: true,
   },
