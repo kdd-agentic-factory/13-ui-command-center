@@ -134,6 +134,7 @@ export const MODULE_LABELS: Partial<Record<TabId, string>> = {
   'pre-gp': 'Pre-GP Workspace', crew: 'Crew Chief', copilot: 'Rider Coach AI',
   'ai-crew': 'Oracle Pit Wall', report: 'Session Report', debrief: 'AI Debrief Room', 'black-box': 'KDD Black Box', knowledge: 'Knowledge Graph', style: 'Rider Style DNA',
   'ghost-lap': 'Ghost Lap Simulator', 'learning-path': 'Rider Learning Path', experiments: 'Experiment Engine', studio: 'Video Studio',
+  cockpit: 'Adaptive Cockpit', 'track-evo': 'Track Evolution', 'pit-radio': 'Pit-Radio', team: 'Team Workspace',
 };
 
 /** What a mode activates vs hides — shown in the gate BEFORE opening (§2). */

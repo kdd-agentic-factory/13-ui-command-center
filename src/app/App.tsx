@@ -6,6 +6,7 @@ import {
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
   Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical, CircleDot, Network, Ghost, GraduationCap, TestTubes, Video,
+  LayoutGrid, TrendingUp, Mic,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, PROFILES, TabId, ProfileId } from '../context/AuthContext';
@@ -61,6 +62,10 @@ import { GhostLapPage }           from '../pages/GhostLapPage';
 import { RiderLearningPathPage }  from '../pages/RiderLearningPathPage';
 import { ExperimentEnginePage }   from '../pages/ExperimentEnginePage';
 import { VideoStudioPage }        from '../pages/VideoStudioPage';
+import { TrackEvolutionPage }     from '../pages/TrackEvolutionPage';
+import { PitRadioPage }           from '../pages/PitRadioPage';
+import { TeamWorkspacePage }      from '../pages/TeamWorkspacePage';
+import { CockpitPage }            from '../pages/CockpitPage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -89,6 +94,7 @@ interface NavSectionDef {
 const ALL_NAV_SECTIONS: NavSectionDef[] = [
   // Ordered to follow the pit-wall workflow: prepare → race → analyse → decide
   { section: 'nav.sections.race', items: [
+    { id: 'cockpit',   labelKey: 'nav.cockpit',   icon: LayoutGrid, badge: 'AI', badgeColor: 'blue' },
     { id: 'pre-gp',    labelKey: 'nav.preGp',     icon: CalendarDays },
     { id: 'overview',  labelKey: 'nav.overview',  icon: LayoutDashboard },
     { id: 'live',      labelKey: 'nav.live',      icon: MonitorPlay,      badge: 'LIVE', badgeColor: 'red' },
@@ -100,6 +106,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'compare',   labelKey: 'nav.compare',   icon: GitCompare },
     { id: 'ghost-lap', labelKey: 'nav.ghostLap',  icon: Ghost, badge: 'AI', badgeColor: 'blue' },
     { id: 'tires',     labelKey: 'nav.tires',     icon: Circle },
+    { id: 'track-evo', labelKey: 'nav.trackEvo',  icon: TrendingUp },
     { id: 'risk',      labelKey: 'nav.risk',      icon: ShieldAlert },
     { id: 'predict',   labelKey: 'nav.predict',   icon: Sparkles, badge: 'AI', badgeColor: 'blue' },
   ]},
@@ -117,6 +124,8 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
   ]},
   { section: 'nav.sections.command', items: [
     { id: 'crew',    labelKey: 'nav.crew',     icon: Radio },
+    { id: 'pit-radio', labelKey: 'nav.pitRadio', icon: Mic },
+    { id: 'team',    labelKey: 'nav.team',     icon: Users },
     { id: 'copilot', labelKey: 'nav.copilot',  icon: Bot, badge: 'AI', badgeColor: 'blue' },
     { id: 'learning-path', labelKey: 'nav.learningPath', icon: GraduationCap },
     { id: 'ai-crew', labelKey: 'nav.aiCrew',   icon: Users, badge: 'AI', badgeColor: 'blue' },
@@ -156,6 +165,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'corners':   return <CornerIntelligencePage />;
     case 'replay':    return <LapReplayPage />;
     case 'studio':    return <VideoStudioPage />;
+    case 'track-evo': return <TrackEvolutionPage />;
     case 'compare':   return <RiderComparisonPage />;
     case 'ghost-lap': return <GhostLapPage />;
     case 'risk':      return <CrashRiskPage />;
@@ -168,6 +178,9 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'bike-compare': return <BikeComparisonPage />;
     case 'pre-gp':    return <PreGrandPrixPage />;
     case 'crew':      return <CrewChiefPage />;
+    case 'pit-radio': return <PitRadioPage />;
+    case 'team':      return <TeamWorkspacePage />;
+    case 'cockpit':   return <CockpitPage />;
     case 'copilot':   return <AICopilotPage />;
     case 'learning-path': return <RiderLearningPathPage />;
     case 'report':    return <SessionReportPage />;

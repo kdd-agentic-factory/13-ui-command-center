@@ -22,6 +22,10 @@ const en = {
     modeSubtitle: 'Define how you will work with the selected circuit — the dashboard adapts to the chosen mode.',
   },
   nav: {
+    cockpit: 'Adaptive Cockpit',
+    trackEvo: 'Track Evolution',
+    pitRadio: 'Pit-Radio',
+    team: 'Team Workspace',
     overview: 'Overview',
     live: 'Track-Live',
     telemetry: 'Live Telemetry',

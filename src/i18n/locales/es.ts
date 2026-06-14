@@ -22,6 +22,10 @@ const es = {
     modeSubtitle: 'Define cómo vas a trabajar con el circuito seleccionado — el dashboard se adapta al modo elegido.',
   },
   nav: {
+    cockpit: 'Cockpit Adaptativo',
+    trackEvo: 'Evolución de Pista',
+    pitRadio: 'Radio de Box',
+    team: 'Espacio de Equipo',
     overview: 'Vista General',
     live: 'Pista en Vivo',
     telemetry: 'Telemetría en Vivo',
