@@ -19,6 +19,7 @@ import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 import { getActiveCircuit } from '../domain/circuits';
 import { activeRaceLaps } from '../domain/circuitDatasets';
+import { useGarage } from '../hooks/useGarage';
 
 // ── Risk factors ───────────────────────────────────────────────────────────────
 
@@ -130,6 +131,7 @@ const PHASE_RISKS: PhaseRisk[] = [
 // ── Main component ────────────────────────────────────────────────────────────
 
 export function CrashRiskPage() {
+  const garage = useGarage();
   const navigate = useNavigate();
   const t = useLiveTelemetry();
 
@@ -155,7 +157,7 @@ export function CrashRiskPage() {
             {getActiveCircuit().name} {getActiveCircuit().layout} · Race Lap {t.lapCount}/{activeRaceLaps(getActiveCircuit())} · Safety Guardian AI
           </p>
           <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', marginTop: 2 }}>
-            {getActiveCircuit().lengthKm} km · {getActiveCircuit().turns} turns · {MUGELLO_CIRCUIT.assetStatusLabel}
+            {getActiveCircuit().lengthKm} km · {getActiveCircuit().turns} turns · bike power {garage.powerClass} · rider risk {garage.profile.rider.riskTendency} · lean+throttle thresholds adjusted
           </div>
         </div>
         <span className="badge" style={{

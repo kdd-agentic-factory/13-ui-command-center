@@ -19,6 +19,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { useNavigate } from '../context/NavContext';
+import { useGarage } from '../hooks/useGarage';
 import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 import { getActiveCircuit } from '../domain/circuits';
 
@@ -189,6 +190,7 @@ function ConsensusBar({ value }: { value: number }) {
 }
 
 export function AICrewPage() {
+  const garage = useGarage();
   const navigate = useNavigate();
   const activeAdvisors = ADVISORS.filter(advisor => advisor.status === 'active').length;
 
@@ -201,7 +203,7 @@ export function AICrewPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">Oracle Pit Wall</h1>
-          <p className="page-subtitle">AI Council of Race Engineers · {getActiveCircuit().name} {getActiveCircuit().layout} · {getActiveCircuit().lengthKm} km · {getActiveCircuit().turns} turns</p>
+          <p className="page-subtitle">AI Council of Race Engineers · {garage.profile.rider.name} · {garage.profile.bike.brand} {garage.profile.bike.model} · {getActiveCircuit().name} {getActiveCircuit().layout}</p>
         </div>
         <div className="flex items-center gap-2" style={{ flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           <span className="badge badge-green">Council status · {activeAdvisors} / {ADVISORS.length} advisors active</span>

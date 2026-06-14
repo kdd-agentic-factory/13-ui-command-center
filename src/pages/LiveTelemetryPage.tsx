@@ -18,6 +18,7 @@ import { MultiChannelChart, Channel, XAxisMode, ScaleMode } from '../components/
 import { WiFiDevicePanel } from '../components/WiFiDevicePanel';
 import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 import { useSessionContext } from '../hooks/useSessionContext';
+import { useGarage } from '../hooks/useGarage';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -561,6 +562,7 @@ function ChannelStatsStrip({ channels }: { channels: Channel[] }) {
 
 export function LiveTelemetryPage() {
   const session = useSessionContext();
+  const garage = useGarage();
   const t = useLiveTelemetry();
   const [mode, setMode]         = useState<Mode>('live');
   const [showWifi, setShowWifi] = useState(false);
@@ -760,6 +762,13 @@ export function LiveTelemetryPage() {
 
       {/* DATA LINK STATUS */}
       <DataLinkStatus showWifi={showWifi} onToggleWifi={() => setShowWifi(v => !v)} />
+      {garage.telemetryLimited && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 12px', borderRadius: 8, margin: '0 0 10px', background: 'rgba(225,6,0,0.06)', border: '1px solid var(--accent)', fontSize: 11, color: 'var(--text)' }}>
+          <Zap size={12} style={{ color: 'var(--accent)' }} />
+          <strong style={{ color: 'var(--accent)', fontFamily: 'JetBrains Mono,monospace' }}>LIMITED TELEMETRY</strong>
+          <span>{garage.profile.bike.brand} {garage.profile.bike.model} provides GPS only — ECU channels (throttle, RPM, gear, TC) are estimated from GPS/IMU, not measured.</span>
+        </div>
+      )}
 
       {/* Wi-Fi device panel */}
       {showWifi && (

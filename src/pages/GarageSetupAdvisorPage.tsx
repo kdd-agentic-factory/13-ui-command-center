@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useGarage } from '../hooks/useGarage';
 import { Wrench, AlertTriangle, Lightbulb, ChevronRight, Activity, TrendingDown, Gauge, Thermometer, Shield, Ban, Target, User, Settings } from 'lucide-react';
 import { useNavigate } from '../context/NavContext';
 import { useToast } from '../components/ToastProvider';
@@ -212,6 +213,7 @@ const pctBar = (pct: number, color: string, size = 60) => (
 /* ── Page component ─────────────────────────────────────────────────────── */
 
 export function GarageSetupAdvisorPage() {
+  const garage = useGarage();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [selected, setSelected] = useState<string>(FINDINGS[0].id);
@@ -232,8 +234,11 @@ export function GarageSetupAdvisorPage() {
           <div>
             <h1 className="page-title" style={{ fontSize: 20, letterSpacing: '-0.02em' }}>GARAGE SETUP ADVISOR</h1>
             <p className="page-subtitle" style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-              Performance issue → setup hypothesis → next-stint change
+              {garage.profile.bike.brand} {garage.profile.bike.model} · Performance issue → setup hypothesis → next-stint change
             </p>
+            <div style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', marginTop: 2 }}>
+              Setup range: {garage.profile.setup.available ? `${garage.profile.bike.electronics.join(' · ')}` : 'generic category model — manufacturer electronics unavailable'}
+            </div>
           </div>
           <div style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-dim)' }}>
             <div>Stint 03</div>

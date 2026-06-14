@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 
 import { getSessionContext } from '../domain/sessionContext';
+import { useGarage } from '../hooks/useGarage';
 const TRAIT_STATUS = {
   BELOW: 'below ideal',
   ABOVE: 'above ideal',
@@ -253,6 +254,8 @@ function StatTile({ label, value, detail, color }: { label: string; value: strin
 }
 
 export function RidingStylePage() {
+  const garage = useGarage();
+  const rider = garage.profile.rider;
   return (
     <div className="page">
       <div className="flex items-center justify-between mb-6">
@@ -274,13 +277,13 @@ export function RidingStylePage() {
             </div>
             <div style={{ flex: 1, minWidth: 280 }}>
               <div style={{ fontSize: 10, letterSpacing: '0.14em', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>YOUR ARCHETYPE</div>
-              <div style={{ fontSize: 23, fontWeight: 900 }}>Point-and-shoot rider · aggressive entry · lean-dependent rotation</div>
+              <div style={{ fontSize: 23, fontWeight: 900 }}>{rider.archetype}</div>
               <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 6, lineHeight: 1.55 }}>
                 You brake hard and deep, rotate the bike late and rely on lean angle to finish the corner. Fast in stop-go corners and heavy braking zones, but throttle pickup is delayed because the bike stays leaned over too long.
               </div>
             </div>
             <div style={{ minWidth: 220 }}>
-              <StatTile label="Mugello style fit" value="72 / 100" detail="needs more flow-and-drive" color="var(--yellow)" />
+              <StatTile label="Style fit" value={`${rider.consistency} / 100`} detail={`risk tendency ${rider.riskTendency.toLowerCase()}`} color={rider.consistency >= 90 ? 'var(--green)' : 'var(--yellow)'} />
             </div>
           </div>
         </div>
