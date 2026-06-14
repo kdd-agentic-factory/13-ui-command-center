@@ -47,6 +47,7 @@ import { SetupManagementPage }     from '../pages/SetupManagementPage';
 import { GarageSetupAdvisorPage }  from '../pages/GarageSetupAdvisorPage';
 import { PartDesignPage }          from '../pages/PartDesignPage';
 import { BikeComparisonPage }     from '../pages/BikeComparisonPage';
+import { SetupLabPage }           from '../pages/SetupLabPage';
 import { PreGrandPrixPage }        from '../pages/PreGrandPrixPage';
 import { CrewChiefPage }           from '../pages/CrewChiefPage';
 import { AICopilotPage }           from '../pages/AICopilotPage';
@@ -95,6 +96,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
   { section: 'nav.sections.engineering', items: [
     { id: 'setup',   labelKey: 'nav.setup',   icon: Sliders },
     { id: 'advisor', labelKey: 'nav.advisor', icon: Lightbulb, badge: 'AI', badgeColor: 'blue' },
+    { id: 'setup-lab', labelKey: 'nav.setupLab', icon: GitBranch },
     { id: 'parts',   labelKey: 'nav.parts',   icon: Wrench },
     { id: 'bike-compare', labelKey: 'nav.bikeCompare', icon: GitCompare },
     { id: 'twin',    labelKey: 'nav.twin',    icon: GitBranch },
@@ -143,6 +145,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'tires':     return <TireDegradationPage />;
     case 'setup':     return <SetupManagementPage />;
     case 'advisor':   return <GarageSetupAdvisorPage />;
+    case 'setup-lab': return <SetupLabPage />;
     case 'parts':     return <PartDesignPage />;
     case 'bike-compare': return <BikeComparisonPage />;
     case 'pre-gp':    return <PreGrandPrixPage />;

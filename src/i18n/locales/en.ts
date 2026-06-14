@@ -34,6 +34,7 @@ const en = {
     tires: 'Tyre Degradation',
     setup: 'Setup Management',
     advisor: 'Garage Setup Advisor',
+    setupLab: 'Setup Lab',
     bikeCompare: 'Bike Comparison',
     parts: 'Part Design',
     twin: 'Digital Twin',
