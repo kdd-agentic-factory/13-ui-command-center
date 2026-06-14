@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Activity, Map, Circle, Sliders, Wrench,
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
-  Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical, CircleDot, Network,
+  Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical, CircleDot, Network, Ghost, GraduationCap,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, PROFILES, TabId, ProfileId } from '../context/AuthContext';
@@ -57,6 +57,8 @@ import { SessionReportPage }       from '../pages/SessionReportPage';
 import { DebriefRoomPage }        from '../pages/DebriefRoomPage';
 import { BlackBoxPage }           from '../pages/BlackBoxPage';
 import { KnowledgeGraphPage }     from '../pages/KnowledgeGraphPage';
+import { GhostLapPage }           from '../pages/GhostLapPage';
+import { RiderLearningPathPage }  from '../pages/RiderLearningPathPage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -93,6 +95,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'corners',   labelKey: 'nav.corners',   icon: Route, badge: 'AI', badgeColor: 'blue' },
     { id: 'replay',    labelKey: 'nav.replay',    icon: Film },
     { id: 'compare',   labelKey: 'nav.compare',   icon: GitCompare },
+    { id: 'ghost-lap', labelKey: 'nav.ghostLap',  icon: Ghost, badge: 'AI', badgeColor: 'blue' },
     { id: 'tires',     labelKey: 'nav.tires',     icon: Circle },
     { id: 'risk',      labelKey: 'nav.risk',      icon: ShieldAlert },
     { id: 'predict',   labelKey: 'nav.predict',   icon: Sparkles, badge: 'AI', badgeColor: 'blue' },
@@ -111,6 +114,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
   { section: 'nav.sections.command', items: [
     { id: 'crew',    labelKey: 'nav.crew',     icon: Radio },
     { id: 'copilot', labelKey: 'nav.copilot',  icon: Bot, badge: 'AI', badgeColor: 'blue' },
+    { id: 'learning-path', labelKey: 'nav.learningPath', icon: GraduationCap },
     { id: 'ai-crew', labelKey: 'nav.aiCrew',   icon: Users, badge: 'AI', badgeColor: 'blue' },
     { id: 'report',  labelKey: 'nav.report',   icon: FileText, badge: 'PDF', badgeColor: 'muted' },
     { id: 'debrief', labelKey: 'nav.debrief',  icon: MessagesSquare, badge: 'AI', badgeColor: 'blue' },
@@ -148,6 +152,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'corners':   return <CornerIntelligencePage />;
     case 'replay':    return <LapReplayPage />;
     case 'compare':   return <RiderComparisonPage />;
+    case 'ghost-lap': return <GhostLapPage />;
     case 'risk':      return <CrashRiskPage />;
     case 'predict':   return <PredictiveModelPage />;
     case 'tires':     return <TireDegradationPage />;
@@ -159,6 +164,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'pre-gp':    return <PreGrandPrixPage />;
     case 'crew':      return <CrewChiefPage />;
     case 'copilot':   return <AICopilotPage />;
+    case 'learning-path': return <RiderLearningPathPage />;
     case 'report':    return <SessionReportPage />;
     case 'debrief':   return <DebriefRoomPage />;
     case 'black-box': return <BlackBoxPage />;
