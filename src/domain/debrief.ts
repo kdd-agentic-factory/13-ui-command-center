@@ -75,11 +75,13 @@ export async function groundDebrief(
     // reached + authenticated (401 via direct, or 5xx with no index) → reachable;
     // only a true no-response (network/timeout) is 'unavailable'.
     if (!out.ok) return { state: out.reason === 'unreachable' ? 'unavailable' : 'reachable', sources: [] };
-    const ev: RagEvidenceLike[] = (out.data.evidence && out.data.evidence.length
-      ? out.data.evidence
-      : (out.data.results ?? []).map(r => ({ source_id: r.source_id, text: r.text, score: r.score })));
-    const sources: GroundingSource[] = ev
-      .map(e => ({ sourceId: e.source_id, excerpt: (e.text_excerpt ?? e.text ?? '').trim().slice(0, 240), score: e.score ?? 0 }))
+    // Prefer results[] (they carry the chunk text + score); evidence[] often has
+    // only source_id + score, so it can't fill an excerpt on its own.
+    const items: RagEvidenceLike[] = (out.data.results && out.data.results.length
+      ? out.data.results.map(r => ({ source_id: r.source_id, text: r.text, score: r.score }))
+      : (out.data.evidence ?? []));
+    const sources: GroundingSource[] = items
+      .map(e => ({ sourceId: e.source_id, excerpt: (e.text ?? e.text_excerpt ?? '').trim().slice(0, 240), score: e.score ?? 0 }))
       .filter(s => s.excerpt.length > 0)
       .slice(0, 4);
     return sources.length ? { state: 'grounded', sources } : { state: 'reachable', sources: [] };
