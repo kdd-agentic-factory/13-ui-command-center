@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '../components/ToastProvider';
 import { PartGeneratorPanel } from '../components/PartGeneratorPanel';
-import { PartViewer3D } from '../components/babylon/PartViewer3D';
+import { PartViewer3D } from '../components/babylon/lazy';
 import { usePartStorage } from '../hooks/usePartStorage';
 
 /**

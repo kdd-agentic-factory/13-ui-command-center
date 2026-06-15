@@ -5,7 +5,7 @@ import {
 } from '@babylonjs/core';
 import { createSafeEngine } from './safeEngine';
 
-interface DigitalTwinViewer3DProps {
+export interface DigitalTwinViewer3DProps {
   leanAngle: number;   // degrees, positive = lean right (roll about the forward axis)
   pitchAngle?: number; // degrees, positive = nose-down dive (braking); negative = squat (accel)
   height?: number;

@@ -7,8 +7,7 @@
  * incorrect — this is GP Mugello, Round 7 of 20, 2026 season.
  */
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
-import { DigitalTwinViewer3D } from '../components/babylon/DigitalTwinViewer3D';
-import { TrackMap3D } from '../components/babylon/TrackMap3D';
+import { DigitalTwinViewer3D, TrackMap3D } from '../components/babylon/lazy';
 import { LeanAngleHUD } from '../components/LeanAngleHUD';
 import { RiderCoachInsight } from '../components/RiderCoachInsight';
 import {

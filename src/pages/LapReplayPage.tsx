@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Play, Pause, RotateCcw, Flag, AlertTriangle, Gauge, Activity, ChevronRight } from 'lucide-react';
 import { useToast } from '../components/ToastProvider';
-import { TrackMap3D } from '../components/babylon/TrackMap3D';
-import { DigitalTwinViewer3D } from '../components/babylon/DigitalTwinViewer3D';
+import { TrackMap3D, DigitalTwinViewer3D } from '../components/babylon/lazy';
 import { trackSpeed } from '../hooks/useLiveTelemetry';
 import { getSessionContext } from '../domain/sessionContext';
 

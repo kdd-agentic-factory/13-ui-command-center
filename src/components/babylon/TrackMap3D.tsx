@@ -7,7 +7,7 @@ import {
 import { createSafeEngine } from './safeEngine';
 import { sampleOutline } from '../../domain/circuitDatasets';
 
-interface TrackMap3DProps {
+export interface TrackMap3DProps {
   trackPos: number;   // 0–1
   height?: number;
 }

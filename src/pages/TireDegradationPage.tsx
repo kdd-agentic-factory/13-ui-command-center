@@ -22,7 +22,7 @@ import {
   ChevronDown, ChevronUp, Circle,
 } from 'lucide-react';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
-import { TireModel3D } from '../components/babylon/TireModel3D';
+import { TireModel3D } from '../components/babylon/lazy';
 import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 import { useSessionContext } from '../hooks/useSessionContext';
 

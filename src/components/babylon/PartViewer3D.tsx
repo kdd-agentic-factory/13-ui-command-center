@@ -14,7 +14,7 @@ import { parseStl, meshBounds } from '../../lib/stl';
  * inspection, and the manufacturing tolerance. A real CAD part can be supplied
  * via `meshUrl` (STL); otherwise a representative procedural bracket is shown.
  */
-interface PartViewer3DProps {
+export interface PartViewer3DProps {
   partName: string;
   materialColor?: string;
   stressLevel?: number;

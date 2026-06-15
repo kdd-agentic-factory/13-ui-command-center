@@ -26,7 +26,7 @@ import {
   AlertTriangle, Layers,
 } from 'lucide-react';
 import { useLiveTelemetry, trackSpeed } from '../hooks/useLiveTelemetry';
-import { TrackMap3D } from '../components/babylon/TrackMap3D';
+import { TrackMap3D } from '../components/babylon/lazy';
 import { MUGELLO_CIRCUIT, sessionDisplayState } from '../domain/sessionTruth';
 import { getActiveCircuit } from '../domain/circuits';
 

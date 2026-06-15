@@ -5,7 +5,7 @@ import {
 } from '@babylonjs/core';
 import { createSafeEngine } from './safeEngine';
 
-interface TireModel3DProps {
+export interface TireModel3DProps {
   temperature: number;
   compound: 'SOFT' | 'MEDIUM' | 'HARD';
   label: string;

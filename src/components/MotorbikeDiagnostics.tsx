@@ -1,6 +1,5 @@
 import { Thermometer, Gauge, Activity } from 'lucide-react';
-import { DigitalTwinViewer3D } from './babylon/DigitalTwinViewer3D';
-import { TireModel3D } from './babylon/TireModel3D';
+import { DigitalTwinViewer3D, TireModel3D } from './babylon/lazy';
 import { LeanAngleHUD } from './LeanAngleHUD';
 
 /**

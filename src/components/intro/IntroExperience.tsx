@@ -6,7 +6,7 @@ import { PROFILES, ProfileId } from '../../context/AuthContext';
 import { MUGELLO_CIRCUIT } from '../../domain/sessionTruth';
 import { LanguageSwitcher } from '../LanguageSwitcher';
 import { IntroSequence } from './IntroSequence';
-import { DigitalTwinViewer3D } from '../babylon/DigitalTwinViewer3D';
+import { DigitalTwinViewer3D } from '../babylon/lazy';
 import { useLiveTelemetry } from '../../hooks/useLiveTelemetry';
 import { useAnimeCount } from '../../hooks/useAnimeCount';
 import '../../styles/intro.css';
