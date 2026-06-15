@@ -43,6 +43,7 @@ const es = {
     setup: 'Gestión de Setup',
     advisor: 'Asesor de Reglajes',
     sandbox: 'Simulador Escenarios',
+    simLab: 'Lab Sim-a-Real',
     experiments: 'Motor de Experimentos',
     events: 'Motor de Eventos',
     setupLab: 'Laboratorio Setup',

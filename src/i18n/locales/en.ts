@@ -43,6 +43,7 @@ const en = {
     setup: 'Setup Management',
     advisor: 'Garage Setup Advisor',
     sandbox: 'Scenario Sandbox',
+    simLab: 'Sim-to-Real Lab',
     experiments: 'Experiment Engine',
     events: 'Event Engine',
     setupLab: 'Setup Lab',

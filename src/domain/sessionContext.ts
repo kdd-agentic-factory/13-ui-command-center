@@ -133,7 +133,7 @@ export const MODULE_LABELS: Partial<Record<TabId, string>> = {
   parts: 'Garage Part Factory', 'bike-compare': 'Bike Comparison', twin: 'Digital Twin', sandbox: 'Scenario Sandbox', history: 'Circuit History',
   'pre-gp': 'Pre-GP Workspace', crew: 'Crew Chief', copilot: 'Rider Coach AI',
   'ai-crew': 'Oracle Pit Wall', report: 'Session Report', debrief: 'AI Debrief Room', 'black-box': 'KDD Black Box', knowledge: 'Knowledge Graph', style: 'Rider Style DNA',
-  'ghost-lap': 'Ghost Lap Simulator', 'learning-path': 'Rider Learning Path', experiments: 'Experiment Engine', studio: 'Video Studio',
+  'ghost-lap': 'Ghost Lap Simulator', 'learning-path': 'Rider Learning Path', experiments: 'Experiment Engine', studio: 'Video Studio', 'sim-lab': 'Sim-to-Real Lab',
   cockpit: 'Adaptive Cockpit', 'track-evo': 'Track Evolution', surface: 'Track Surface', 'pit-radio': 'Pit-Radio', team: 'Team Workspace',
   trust: 'Data Trust Center', cube: 'Telemetry Data Cube', platform: 'Platform Console', patterns: 'Pattern Miner', events: 'Event Engine', workbench: 'Visualization OS', federated: 'Federated Intelligence', orchestrator: 'Autonomous Race Engineer', human: 'Human Performance',
 };

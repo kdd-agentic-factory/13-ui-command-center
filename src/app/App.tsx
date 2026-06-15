@@ -6,7 +6,7 @@ import {
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
   Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical, CircleDot, Network, Ghost, GraduationCap, TestTubes, Video,
-  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse, Globe2,
+  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse, Globe2, FlaskRound,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, PROFILES, TabId, ProfileId } from '../context/AuthContext';
@@ -76,6 +76,7 @@ import { VisualWorkbenchPage }    from '../pages/VisualWorkbenchPage';
 import { OrchestratorPage }       from '../pages/OrchestratorPage';
 import { HumanPerformancePage }   from '../pages/HumanPerformancePage';
 import { FederatedPage }          from '../pages/FederatedPage';
+import { SimLabPage }             from '../pages/SimLabPage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -129,6 +130,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'bike-compare', labelKey: 'nav.bikeCompare', icon: GitCompare },
     { id: 'twin',    labelKey: 'nav.twin',    icon: GitBranch },
     { id: 'sandbox', labelKey: 'nav.sandbox', icon: FlaskConical, badge: 'AI', badgeColor: 'blue' },
+    { id: 'sim-lab', labelKey: 'nav.simLab',  icon: FlaskRound, badge: 'AI', badgeColor: 'blue' },
     { id: 'experiments', labelKey: 'nav.experiments', icon: TestTubes, badge: 'AI', badgeColor: 'blue' },
     { id: 'events',  labelKey: 'nav.events',  icon: Zap, badge: 'AI', badgeColor: 'blue' },
     { id: 'history', labelKey: 'nav.history', icon: History },
@@ -222,6 +224,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'data':      return <ConnectDataPage />;
     case 'twin':      return <DigitalTwinReportPage />;
     case 'sandbox':   return <ScenarioSandboxPage />;
+    case 'sim-lab':   return <SimLabPage />;
     case 'experiments': return <ExperimentEnginePage />;
     case 'history':   return <CircuitHistoryPage />;
     case 'settings':  return <SettingsPage />;
