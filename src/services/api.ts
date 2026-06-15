@@ -20,6 +20,10 @@ const BASE = {
   mcp:          import.meta.env.VITE_MCP_URL          ?? '/api/mcp',
 } as const;
 
+// Telemetry dataset service is consumed by specific modules (Data Cube), not the
+// 6-service health panel, so it lives outside BASE to keep HealthMap unchanged.
+const TELEMETRY_BASE = import.meta.env.VITE_TELEMETRY_URL ?? '/api/telemetry';
+
 const V1 = '/api/v1';
 
 type ServiceKey = keyof typeof BASE;
@@ -134,4 +138,29 @@ export async function fetchMcpTools(): Promise<McpTool[] | null> {
   );
   if (!data) return null;
   return Array.isArray(data) ? data : data.tools;
+}
+
+// ── Telemetry dataset (18-telemetry-dataset) ──────────────────────────────────
+// Real session catalogue from the FastAPI telemetry service. Used to drive the
+// Data Cube from live data, with a deterministic fallback when the service is
+// asleep / unreachable. Endpoint: GET /api/v1/sessions (open in dev mode; the
+// BFF injects X-API-Key when the service is key-protected).
+
+export interface TelemetrySession {
+  session_id: string;
+  circuit_id: string;
+  total_laps: number;
+  classification?: string;
+  session_type?: string;
+  status?: string;
+  best_lap_time_s?: number | null;
+  quality_score?: number | null;
+}
+
+export async function fetchTelemetrySessions(): Promise<TelemetrySession[] | null> {
+  const data = await safeFetch<TelemetrySession[] | { sessions: TelemetrySession[] }>(
+    `${TELEMETRY_BASE}${V1}/sessions`
+  );
+  if (!data) return null;
+  return Array.isArray(data) ? data : data.sessions ?? null;
 }

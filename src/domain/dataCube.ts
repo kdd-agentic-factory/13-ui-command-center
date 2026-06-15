@@ -77,6 +77,15 @@ export interface CubeViews {
   channel: { throttle: string; lean: string; rearSlip: string; gear: string; rpm: string };
 }
 
+export interface LiveSessionInfo {
+  sessionId: string;
+  circuitId: string;
+  totalLaps: number;
+  classification?: string;
+  bestLapS?: number | null;
+  qualityScore?: number | null;
+}
+
 export interface DataCube {
   combo: string;
   cells: CubeCell[];
@@ -86,6 +95,16 @@ export interface DataCube {
   causeEffect: CauseEffectStep[];
   beforeAfter: BeforeAfter;
   dataStory: string;
+  /** Provenance of the session header:
+   *  - 'live'      → a real session for THIS circuit overlaid the header
+   *  - 'connected' → telemetry service reached, but no session for this circuit
+   *  - 'simulated' → service unreachable/asleep; deterministic model only
+   *  The per-corner matrix stays modelled until the service exposes per-corner
+   *  deltas — honest about what is actually measured. */
+  source: 'live' | 'connected' | 'simulated';
+  live?: LiveSessionInfo;
+  /** Catalogue summary whenever the service answered (matched or not). */
+  catalogue?: { sessions: number; circuits: string[] };
 }
 
 export function buildDataCube(rider: string, bike: string, circuit: string): DataCube {
@@ -138,5 +157,79 @@ export function buildDataCube(rider: string, bike: string, circuit: string): Dat
       'The lap still lost 0.284s at T15 Bucine, created on the exit: lean stayed above 57°, ' +
       'throttle pickup was 0.40s late and rear slip reached 14%. ' +
       'Primary recommendation: pick the bike up earlier before applying throttle.',
+    source: 'simulated',
   };
+}
+
+function lapFromSeconds(sec: number): string {
+  const m = Math.floor(sec / 60);
+  const s = (sec - m * 60).toFixed(3).padStart(6, '0');
+  return `${m}:${s}`;
+}
+
+const normCircuit = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+/** Minimal shape the cube needs from a telemetry session (decoupled from the API). */
+export interface TelemetrySessionLike {
+  session_id: string;
+  circuit_id: string;
+  total_laps: number;
+  classification?: string;
+  best_lap_time_s?: number | null;
+  quality_score?: number | null;
+}
+
+/**
+ * Live-with-fallback Data Cube. Starts from the deterministic model, then tries
+ * the 18-telemetry-dataset service: if a real session for this circuit is found,
+ * the session header (best lap, consistency) is overlaid from live telemetry and
+ * `source` becomes 'live'. Any failure / asleep service / no match returns the
+ * deterministic cube unchanged (`source: 'simulated'`), so the demo never breaks.
+ * The per-corner matrix stays modelled until the service exposes per-corner deltas.
+ */
+export async function loadDataCube(
+  rider: string,
+  bike: string,
+  circuit: string,
+  deps: { fetchSessions: () => Promise<TelemetrySessionLike[] | null> },
+): Promise<DataCube> {
+  const base = buildDataCube(rider, bike, circuit);
+  try {
+    const sessions = await deps.fetchSessions();
+    if (!sessions || sessions.length === 0) return base; // unreachable / asleep → simulated
+    const catalogue = {
+      sessions: sessions.length,
+      circuits: [...new Set(sessions.map(s => s.circuit_id).filter(Boolean))],
+    };
+    const match = sessions.find(s => normCircuit(s.circuit_id ?? '').includes(normCircuit(circuit)));
+    if (!match) {
+      // Service is live but has no session for this circuit — connected, header
+      // stays modelled (we never overlay another circuit's numbers).
+      return { ...base, source: 'connected', catalogue };
+    }
+    const live: LiveSessionInfo = {
+      sessionId: match.session_id,
+      circuitId: match.circuit_id,
+      totalLaps: match.total_laps,
+      classification: match.classification,
+      bestLapS: match.best_lap_time_s ?? null,
+      qualityScore: match.quality_score ?? null,
+    };
+    return {
+      ...base,
+      source: 'live',
+      live,
+      catalogue,
+      views: {
+        ...base.views,
+        session: {
+          ...base.views.session,
+          bestLap: live.bestLapS != null ? lapFromSeconds(live.bestLapS) : base.views.session.bestLap,
+          consistency: live.qualityScore != null ? `${Math.round(live.qualityScore * 100)}%` : base.views.session.consistency,
+        },
+      },
+    };
+  } catch {
+    return base;
+  }
 }

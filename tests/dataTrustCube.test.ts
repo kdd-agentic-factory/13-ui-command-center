@@ -5,7 +5,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import { buildDataTrust } from '../src/domain/dataTrust';
-import { buildDataCube, cellState, CUBE_LAPS, CUBE_CORNERS, heatmapTopIssue } from '../src/domain/dataCube';
+import { buildDataCube, loadDataCube, cellState, CUBE_LAPS, CUBE_CORNERS, heatmapTopIssue } from '../src/domain/dataCube';
 
 describe('data trust center', () => {
   it('full telemetry scores higher than GPS-only and lists sources/channels/modules', () => {
@@ -68,5 +68,49 @@ describe('telemetry data cube', () => {
     expect(c.causeEffect[c.causeEffect.length - 1].label).toMatch(/lap time/i);
     expect(c.beforeAfter.improvement.startsWith('-')).toBe(true);
     expect(heatmapTopIssue('Time loss')).toContain('Bucine');
+  });
+
+  it('the built cube defaults to the simulated source', () => {
+    expect(buildDataCube('Rubén Juárez', 'Yamaha R1', 'Mugello').source).toBe('simulated');
+  });
+});
+
+describe('telemetry → data cube (live with fallback)', () => {
+  it('overlays the session header from a matching live session', async () => {
+    const c = await loadDataCube('Rubén Juárez', 'Yamaha R1', 'Mugello', {
+      fetchSessions: async () => [
+        { session_id: 'JAR-2026-01', circuit_id: 'jarama', total_laps: 20 },
+        { session_id: 'MUG-2026-07', circuit_id: 'mugello_gp', total_laps: 23, best_lap_time_s: 117.511, quality_score: 0.92 },
+      ],
+    });
+    expect(c.source).toBe('live');
+    expect(c.live?.sessionId).toBe('MUG-2026-07');   // matched by circuit, not first
+    expect(c.live?.totalLaps).toBe(23);
+    expect(c.views.session.bestLap).toBe('1:57.511'); // mapped from best_lap_time_s
+    expect(c.views.session.consistency).toBe('92%');  // mapped from quality_score
+  });
+
+  it('marks CONNECTED (not live) when the service answers but has no session for this circuit', async () => {
+    const c = await loadDataCube('Rubén Juárez', 'Yamaha R1', 'Mugello', {
+      fetchSessions: async () => [
+        { session_id: 'NAV-1', circuit_id: 'navarra', total_laps: 15, best_lap_time_s: 97.234 },
+        { session_id: 'ASP-1', circuit_id: 'aspar_circuit', total_laps: 45, best_lap_time_s: 98.567 },
+      ],
+    });
+    expect(c.source).toBe('connected');
+    expect(c.live).toBeUndefined();
+    expect(c.catalogue?.sessions).toBe(2);
+    expect(c.catalogue?.circuits).toContain('navarra');
+    expect(c.views.session.bestLap).toBe('1:57.842'); // never overlays another circuit's time
+  });
+
+  it('falls back to the deterministic model when the service is unreachable', async () => {
+    const offline = await loadDataCube('Rubén Juárez', 'Yamaha R1', 'Mugello', { fetchSessions: async () => null });
+    const empty = await loadDataCube('Rubén Juárez', 'Yamaha R1', 'Mugello', { fetchSessions: async () => [] });
+    const threw = await loadDataCube('Rubén Juárez', 'Yamaha R1', 'Mugello', { fetchSessions: async () => { throw new Error('asleep'); } });
+    for (const c of [offline, empty, threw]) {
+      expect(c.source).toBe('simulated');
+      expect(c.views.session.bestLap).toBe('1:57.842'); // unchanged deterministic header
+    }
   });
 });

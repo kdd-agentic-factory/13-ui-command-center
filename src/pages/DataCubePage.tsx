@@ -6,11 +6,12 @@
  * Corner → Phase → Channel), performance lenses, heatmap filters, a cause→
  * effect chain, before/after and an automatic data story.
  */
-import { useState } from 'react';
-import { Boxes, ChevronRight, ArrowDown } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Boxes, ChevronRight, ArrowDown, Wifi, WifiOff } from 'lucide-react';
 import { useGarage } from '../hooks/useGarage';
 import { useSessionContext } from '../hooks/useSessionContext';
-import { buildDataCube, cellColor, CUBE_LAPS, CUBE_CORNERS, heatmapTopIssue, CubeCell } from '../domain/dataCube';
+import { buildDataCube, loadDataCube, cellColor, CUBE_LAPS, CUBE_CORNERS, heatmapTopIssue, CubeCell, DataCube } from '../domain/dataCube';
+import { fetchTelemetrySessions } from '../services/api';
 
 const MONO = 'JetBrains Mono, monospace';
 const LEVELS = ['Session', 'Lap', 'Corner', 'Phase', 'Channel'] as const;
@@ -18,7 +19,20 @@ const LEVELS = ['Session', 'Lap', 'Corner', 'Phase', 'Channel'] as const;
 export function DataCubePage() {
   const garage = useGarage();
   const { ctx } = useSessionContext();
-  const cube = buildDataCube(garage.profile.rider.name, `${garage.profile.bike.brand} ${garage.profile.bike.model}`, ctx.circuitName);
+  const rider = garage.profile.rider.name;
+  const bike = `${garage.profile.bike.brand} ${garage.profile.bike.model}`;
+
+  // Start from the deterministic model for an instant, jank-free render, then
+  // upgrade to live telemetry (18-telemetry-dataset) if the service answers.
+  const [cube, setCube] = useState<DataCube>(() => buildDataCube(rider, bike, ctx.circuitName));
+  useEffect(() => {
+    let alive = true;
+    setCube(buildDataCube(rider, bike, ctx.circuitName)); // reset on combo change
+    loadDataCube(rider, bike, ctx.circuitName, { fetchSessions: fetchTelemetrySessions })
+      .then(c => { if (alive) setCube(c); })
+      .catch(() => { /* keep deterministic */ });
+    return () => { alive = false; };
+  }, [rider, bike, ctx.circuitName]);
 
   const [level, setLevel] = useState(0);
   const [lap, setLap] = useState(4);
@@ -43,6 +57,34 @@ export function DataCubePage() {
         <div>
           <h1 className="page-title flex items-center gap-2"><Boxes size={18} /> Telemetry Data Cube</h1>
           <p className="page-subtitle">Semantic zoom · heatmaps · cause→effect · synced traces — {cube.combo}</p>
+        </div>
+        <div style={{ textAlign: 'right' }}>
+          {cube.source === 'live' ? (
+            <span title={cube.live ? `${cube.live.sessionId} · ${cube.live.totalLaps} laps${cube.live.classification ? ` · ${cube.live.classification}` : ''}` : ''}
+              style={badgeStyle('var(--green)', 'rgba(0,230,118,0.4)')}>
+              <Wifi size={11} /> LIVE TELEMETRY
+            </span>
+          ) : cube.source === 'connected' ? (
+            <span title={`18-telemetry-dataset reachable · ${cube.catalogue?.sessions ?? 0} sessions for ${cube.catalogue?.circuits.join(', ')} — none for this circuit, header modelled`}
+              style={badgeStyle('var(--cyan)', 'rgba(0,183,255,0.4)')}>
+              <Wifi size={11} /> TELEMETRY CONNECTED
+            </span>
+          ) : (
+            <span title="18-telemetry-dataset unreachable / asleep — showing the deterministic model"
+              style={badgeStyle('var(--text-muted)', 'var(--border)')}>
+              <WifiOff size={11} /> SIMULATED
+            </span>
+          )}
+          {cube.source === 'live' && cube.live && (
+            <div style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--text-muted)', marginTop: 3 }}>
+              {cube.live.sessionId} · {cube.live.totalLaps} laps
+            </div>
+          )}
+          {cube.source === 'connected' && cube.catalogue && (
+            <div style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--text-muted)', marginTop: 3 }}>
+              {cube.catalogue.sessions} real sessions · {cube.catalogue.circuits.join(', ')}
+            </div>
+          )}
         </div>
       </div>
 
@@ -76,6 +118,13 @@ export function DataCubePage() {
         {/* matrix */}
         <div className="card" style={{ padding: 16 }}>
           <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 12 }}>Laps × corners · time-loss matrix (click a cell to zoom)</div>
+          {cube.source !== 'simulated' && (
+            <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 10 }}>
+              {cube.source === 'live'
+                ? 'Session header is live from telemetry; the per-corner matrix is modelled until the service exposes per-corner deltas.'
+                : 'Telemetry service connected (real session catalogue), but no session for this circuit — header and matrix are modelled.'}
+            </div>
+          )}
           <div style={{ display: 'grid', gridTemplateColumns: `48px repeat(${CUBE_CORNERS.length}, 1fr)`, gap: 6 }}>
             <span />
             {CUBE_CORNERS.map(c => <span key={c} style={{ fontSize: 10, fontFamily: MONO, color: 'var(--text)', textAlign: 'center' }}>{c}</span>)}
@@ -159,6 +208,10 @@ export function DataCubePage() {
       </div>
     </div>
   );
+}
+
+function badgeStyle(color: string, border: string): React.CSSProperties {
+  return { display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 9.5, fontFamily: MONO, color, border: `1px solid ${border}`, borderRadius: 5, padding: '3px 8px' };
 }
 
 function Boxs({ l, cell, onPick, selected }: { l: number; cell: (l: number, c: string) => CubeCell; onPick: (c: string) => void; selected: boolean }) {

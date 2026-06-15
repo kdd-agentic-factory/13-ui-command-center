@@ -6,6 +6,10 @@ COPY package*.json ./
 RUN npm ci --quiet
 
 COPY . .
+# Bake the live telemetry-dataset service URL so the Data Cube reads real
+# sessions (CORS is open on the service). Overridable at build time.
+ARG VITE_TELEMETRY_URL=https://kdd-rjz-telemetry.fly.dev
+ENV VITE_TELEMETRY_URL=$VITE_TELEMETRY_URL
 RUN npm run build
 
 # ── Serving stage ──────────────────────────────────────────────────────────────
