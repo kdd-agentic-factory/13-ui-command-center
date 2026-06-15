@@ -60,6 +60,40 @@ const STATUS_COLOR: Record<ChannelStatus, string> = {
 export function channelColor(s: ChannelStatus): string { return STATUS_COLOR[s]; }
 export function scoreColor(n: number): string { return n >= 85 ? 'var(--green)' : n >= 70 ? 'var(--yellow)' : 'var(--accent)'; }
 
+// ── KDD pipelines lineage (06-kdd-data-pipelines) ─────────────────────────────
+// The static lineage below is the baseline; this overlays the REAL registered
+// KDD pipelines that process the data, live-with-fallback.
+
+export type PipelineLineageState = 'live' | 'reachable' | 'unavailable';
+export interface PipelineLineage {
+  state: PipelineLineageState;
+  pipelines: string[];
+  total: number;
+}
+export interface PipelinesOutcomeLike {
+  ok: boolean;
+  data?: { pipelines: string[]; total: number };
+  reason?: 'unauthorized' | 'unreachable';
+}
+
+export async function loadPipelineLineage(
+  deps: { fetchPipelines: () => Promise<PipelinesOutcomeLike> },
+): Promise<PipelineLineage> {
+  try {
+    const out = await deps.fetchPipelines();
+    if (out.ok && out.data) {
+      // Show the pipeline file names without the .yaml/.json extension, trimmed.
+      const pipelines = (out.data.pipelines ?? []).map(p => p.replace(/\.(ya?ml|json)$/i, ''));
+      return pipelines.length
+        ? { state: 'live', pipelines: pipelines.slice(0, 12), total: out.data.total ?? pipelines.length }
+        : { state: 'reachable', pipelines: [], total: 0 };
+    }
+    return { state: out.reason === 'unauthorized' ? 'reachable' : 'unavailable', pipelines: [], total: 0 };
+  } catch {
+    return { state: 'unavailable', pipelines: [], total: 0 };
+  }
+}
+
 export function buildDataTrust(rider: string, bike: string, circuit: string, session: string, telemetryLimited = false): DataTrust {
   const ecu = !telemetryLimited;
   const trustScore = telemetryLimited ? 68 : 91;

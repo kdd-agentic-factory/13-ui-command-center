@@ -35,6 +35,9 @@ const RAG_KEY = import.meta.env.VITE_RAG_KEY ?? '';
 // service-to-service: the X-Internal-API-Key + principal headers are injected by
 // a same-origin proxy server-side; never bake them into the browser.
 const SECURITY_BASE = import.meta.env.VITE_SECURITY_URL ?? '/api/security';
+// KDD data pipelines — backs the Data Trust Center lineage. API-key protected,
+// so the key is injected by a same-origin proxy server-side, never in the browser.
+const PIPELINES_BASE = import.meta.env.VITE_PIPELINES_URL ?? '/api/pipelines';
 
 const V1 = '/api/v1';
 
@@ -283,6 +286,24 @@ export async function evaluatePolicy(action: string, context: Record<string, unk
     if (r.status === 503) return { ok: false, reason: 'not-configured' };
     if (!r.ok) return { ok: false, reason: 'unreachable' };
     return { ok: true, data: (await r.json()) as PolicyEvaluation };
+  } catch {
+    return { ok: false, reason: 'unreachable' };
+  }
+}
+
+// ── KDD data pipelines (06-kdd-data-pipelines) ────────────────────────────────
+
+export interface PipelinesList { pipelines: string[]; total: number }
+export type PipelinesOutcome =
+  | { ok: true; data: PipelinesList }
+  | { ok: false; reason: 'unauthorized' | 'unreachable' };
+
+export async function fetchPipelines(): Promise<PipelinesOutcome> {
+  try {
+    const r = await fetch(`${PIPELINES_BASE}${V1}/pipelines/`, { signal: AbortSignal.timeout(8000) });
+    if (r.status === 401 || r.status === 403) return { ok: false, reason: 'unauthorized' };
+    if (!r.ok) return { ok: false, reason: 'unreachable' };
+    return { ok: true, data: (await r.json()) as PipelinesList };
   } catch {
     return { ok: false, reason: 'unreachable' };
   }

@@ -20,6 +20,8 @@ ENV VITE_RAG_URL=$VITE_RAG_URL
 # Security policy engine base only (no internal key — injected server-side).
 ARG VITE_SECURITY_URL=https://kdd-rjz-security.fly.dev
 ENV VITE_SECURITY_URL=$VITE_SECURITY_URL
+ARG VITE_PIPELINES_URL=https://kdd-rjz-pipelines.fly.dev
+ENV VITE_PIPELINES_URL=$VITE_PIPELINES_URL
 RUN npm run build
 
 # ── Serving stage ──────────────────────────────────────────────────────────────

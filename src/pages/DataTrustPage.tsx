@@ -6,10 +6,12 @@
  * per-module trust, graceful degraded modes, bike/circuit compatibility, time
  * sync, data lineage and the Oracle's data-trust posture.
  */
-import { ShieldCheck, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ShieldCheck, AlertTriangle, CheckCircle2, Wifi, WifiOff } from 'lucide-react';
 import { useGarage } from '../hooks/useGarage';
 import { useSessionContext } from '../hooks/useSessionContext';
-import { buildDataTrust, channelColor, scoreColor } from '../domain/dataTrust';
+import { buildDataTrust, channelColor, scoreColor, loadPipelineLineage, PipelineLineage } from '../domain/dataTrust';
+import { fetchPipelines } from '../services/api';
 
 const MONO = 'JetBrains Mono, monospace';
 
@@ -18,6 +20,14 @@ export function DataTrustPage() {
   const { ctx } = useSessionContext();
   const session = ctx.setup.stint ?? ctx.setup.session ?? 'Stint 03';
   const d = buildDataTrust(garage.profile.rider.name, `${garage.profile.bike.brand} ${garage.profile.bike.model}`, ctx.circuitName, session, garage.telemetryLimited);
+
+  // Live KDD pipelines lineage (06-kdd-data-pipelines), live-with-fallback.
+  const [pipe, setPipe] = useState<PipelineLineage | null>(null);
+  useEffect(() => {
+    let alive = true;
+    loadPipelineLineage({ fetchPipelines }).then(p => { if (alive) setPipe(p); }).catch(() => {});
+    return () => { alive = false; };
+  }, []);
 
   return (
     <div className="page">
@@ -144,6 +154,27 @@ export function DataTrustPage() {
           <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', margin: '6px 0 3px' }}>Used by</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
             {d.lineage.usedBy.map(u => <span key={u} style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 4, padding: '1px 6px' }}>{u}</span>)}
+          </div>
+
+          {/* Live KDD pipelines (06-kdd-data-pipelines) */}
+          <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+              <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', flex: 1 }}>KDD pipelines</span>
+              {pipe && (pipe.state === 'live'
+                ? <span title="Live from the pipeline registry" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 9, fontFamily: MONO, color: 'var(--green)', border: '1px solid rgba(0,230,118,0.4)', borderRadius: 4, padding: '0 6px' }}><Wifi size={10} /> LIVE · {pipe.total}</span>
+                : pipe.state === 'reachable'
+                  ? <span title="06-kdd-data-pipelines reachable but requires server-side credentials" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 9, fontFamily: MONO, color: 'var(--cyan)', border: '1px solid rgba(0,183,255,0.4)', borderRadius: 4, padding: '0 6px' }}><Wifi size={10} /> REACHABLE</span>
+                  : <span title="pipelines service unreachable / asleep" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', border: '1px solid var(--border)', borderRadius: 4, padding: '0 6px' }}><WifiOff size={10} /> OFFLINE</span>
+              )}
+            </div>
+            {pipe && pipe.state === 'live' && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                {pipe.pipelines.map(p => <span key={p} style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 4, padding: '1px 6px' }}>{p}</span>)}
+              </div>
+            )}
+            {pipe && pipe.state !== 'live' && (
+              <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>Lineage shown from the calibration profile; live pipeline registry needs a server-side key.</div>
+            )}
           </div>
         </div>
       </div>
