@@ -59,6 +59,7 @@ const en = {
     style: 'Riding Style',
     cube: 'Data Cube',
     trust: 'Data Trust',
+    platform: 'Platform Console',
     data: 'Connect Data',
     settings: 'Settings',
     sections: {

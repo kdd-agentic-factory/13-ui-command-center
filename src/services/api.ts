@@ -140,6 +140,23 @@ export async function fetchAgents(): Promise<AgentEntry[] | null> {
   return (data.agents ?? []).map((name) => ({ name }));
 }
 
+// Intent classification / routing via the orchestrator (POST /orchestrate).
+export interface OrchestrationResult { status: string; agent_used?: string; result?: unknown }
+export async function orchestrate(userInput: string): Promise<OrchestrationResult | null> {
+  try {
+    const r = await fetch(`${BASE.orchestrator}/orchestrate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_input: userInput }),
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!r.ok) return null;
+    return r.json() as Promise<OrchestrationResult>;
+  } catch {
+    return null;
+  }
+}
+
 // ── MCP tools ───────────────────────────────────────────────────────────────
 
 export interface McpTool {
@@ -240,7 +257,8 @@ export interface RagSearchResult {
 }
 export type RagOutcome =
   | { ok: true; data: RagSearchResult }
-  | { ok: false; reason: 'unauthorized' | 'unreachable' };
+  // reached the service (auth ok / server-side issue) vs no response at all
+  | { ok: false; reason: 'unauthorized' | 'server-error' | 'unreachable' };
 
 export async function ragSearch(query: string, topK = 4): Promise<RagOutcome> {
   try {
@@ -253,6 +271,9 @@ export async function ragSearch(query: string, topK = 4): Promise<RagOutcome> {
       signal: AbortSignal.timeout(8000),
     });
     if (r.status === 401 || r.status === 403) return { ok: false, reason: 'unauthorized' };
+    // 5xx = reached + (via the BFF) authenticated, but the service can't serve
+    // (e.g. no vector index provisioned) — that's "reachable", not offline.
+    if (r.status >= 500) return { ok: false, reason: 'server-error' };
     if (!r.ok) return { ok: false, reason: 'unreachable' };
     return { ok: true, data: (await r.json()) as RagSearchResult };
   } catch {

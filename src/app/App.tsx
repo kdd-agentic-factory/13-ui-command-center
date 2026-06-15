@@ -6,7 +6,7 @@ import {
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
   Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical, CircleDot, Network, Ghost, GraduationCap, TestTubes, Video,
-  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes,
+  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, PROFILES, TabId, ProfileId } from '../context/AuthContext';
@@ -68,6 +68,7 @@ import { TeamWorkspacePage }      from '../pages/TeamWorkspacePage';
 import { CockpitPage }            from '../pages/CockpitPage';
 import { DataTrustPage }          from '../pages/DataTrustPage';
 import { DataCubePage }           from '../pages/DataCubePage';
+import { PlatformConsolePage }    from '../pages/PlatformConsolePage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -138,6 +139,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'style',   labelKey: 'nav.style',    icon: Fingerprint },
   ]},
   { section: 'nav.sections.system', items: [
+    { id: 'platform', labelKey: 'nav.platform', icon: Server, badge: 'LIVE', badgeColor: 'green' },
     { id: 'trust',    labelKey: 'nav.trust',    icon: ShieldCheck },
     { id: 'data',     labelKey: 'nav.data',     icon: Database },
     { id: 'settings', labelKey: 'nav.settings', icon: Settings },
@@ -187,6 +189,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'cockpit':   return <CockpitPage />;
     case 'trust':     return <DataTrustPage />;
     case 'cube':      return <DataCubePage />;
+    case 'platform':  return <PlatformConsolePage />;
     case 'copilot':   return <AICopilotPage />;
     case 'learning-path': return <RiderLearningPathPage />;
     case 'report':    return <SessionReportPage />;

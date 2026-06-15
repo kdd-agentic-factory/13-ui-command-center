@@ -59,6 +59,7 @@ const es = {
     style: 'Estilo de Pilotaje',
     cube: 'Cubo de Datos',
     trust: 'Confianza de Datos',
+    platform: 'Consola de Plataforma',
     data: 'Conectar Datos',
     settings: 'Configuración',
     sections: {

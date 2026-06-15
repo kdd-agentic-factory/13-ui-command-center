@@ -59,7 +59,7 @@ export interface RagEvidenceLike { source_id: string; text_excerpt?: string; tex
 export interface RagSearchLike { results?: { source_id: string; text: string; score: number }[]; evidence?: RagEvidenceLike[] }
 export type RagOutcomeLike =
   | { ok: true; data: RagSearchLike }
-  | { ok: false; reason: 'unauthorized' | 'unreachable' };
+  | { ok: false; reason: 'unauthorized' | 'server-error' | 'unreachable' };
 
 /** The query that grounds this session's debrief (the recurring limiter). */
 export function debriefQuery(bike: string, circuit: string): string {
@@ -72,7 +72,9 @@ export async function groundDebrief(
 ): Promise<Grounding> {
   try {
     const out = await deps.ragSearch(query);
-    if (!out.ok) return { state: out.reason === 'unauthorized' ? 'reachable' : 'unavailable', sources: [] };
+    // reached + authenticated (401 via direct, or 5xx with no index) → reachable;
+    // only a true no-response (network/timeout) is 'unavailable'.
+    if (!out.ok) return { state: out.reason === 'unreachable' ? 'unavailable' : 'reachable', sources: [] };
     const ev: RagEvidenceLike[] = (out.data.evidence && out.data.evidence.length
       ? out.data.evidence
       : (out.data.results ?? []).map(r => ({ source_id: r.source_id, text: r.text, score: r.score })));
