@@ -134,7 +134,7 @@ export const MODULE_LABELS: Partial<Record<TabId, string>> = {
   'pre-gp': 'Pre-GP Workspace', crew: 'Crew Chief', copilot: 'Rider Coach AI',
   'ai-crew': 'Oracle Pit Wall', report: 'Session Report', debrief: 'AI Debrief Room', 'black-box': 'KDD Black Box', knowledge: 'Knowledge Graph', style: 'Rider Style DNA',
   'ghost-lap': 'Ghost Lap Simulator', 'learning-path': 'Rider Learning Path', experiments: 'Experiment Engine', studio: 'Video Studio',
-  cockpit: 'Adaptive Cockpit', 'track-evo': 'Track Evolution', 'pit-radio': 'Pit-Radio', team: 'Team Workspace',
+  cockpit: 'Adaptive Cockpit', 'track-evo': 'Track Evolution', surface: 'Track Surface', 'pit-radio': 'Pit-Radio', team: 'Team Workspace',
   trust: 'Data Trust Center', cube: 'Telemetry Data Cube', platform: 'Platform Console', patterns: 'Pattern Miner', events: 'Event Engine',
 };
 

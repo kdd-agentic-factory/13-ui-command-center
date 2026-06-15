@@ -6,7 +6,7 @@ import {
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
   Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical, CircleDot, Network, Ghost, GraduationCap, TestTubes, Video,
-  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers,
+  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, PROFILES, TabId, ProfileId } from '../context/AuthContext';
@@ -71,6 +71,7 @@ import { DataCubePage }           from '../pages/DataCubePage';
 import { PlatformConsolePage }    from '../pages/PlatformConsolePage';
 import { PatternMinerPage }       from '../pages/PatternMinerPage';
 import { EventEnginePage }        from '../pages/EventEnginePage';
+import { TrackSurfacePage }       from '../pages/TrackSurfacePage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -112,6 +113,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'ghost-lap', labelKey: 'nav.ghostLap',  icon: Ghost, badge: 'AI', badgeColor: 'blue' },
     { id: 'tires',     labelKey: 'nav.tires',     icon: Circle },
     { id: 'track-evo', labelKey: 'nav.trackEvo',  icon: TrendingUp },
+    { id: 'surface',   labelKey: 'nav.surface',   icon: Mountain, badge: 'AI', badgeColor: 'blue' },
     { id: 'risk',      labelKey: 'nav.risk',      icon: ShieldAlert },
     { id: 'predict',   labelKey: 'nav.predict',   icon: Sparkles, badge: 'AI', badgeColor: 'blue' },
   ]},
@@ -176,6 +178,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'replay':    return <LapReplayPage />;
     case 'studio':    return <VideoStudioPage />;
     case 'track-evo': return <TrackEvolutionPage />;
+    case 'surface':   return <TrackSurfacePage />;
     case 'compare':   return <RiderComparisonPage />;
     case 'ghost-lap': return <GhostLapPage />;
     case 'risk':      return <CrashRiskPage />;

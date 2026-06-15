@@ -24,6 +24,7 @@ const es = {
   nav: {
     cockpit: 'Cockpit Adaptativo',
     trackEvo: 'Evolución de Pista',
+    surface: 'Superficie de Pista',
     pitRadio: 'Radio de Box',
     team: 'Espacio de Equipo',
     overview: 'Vista General',
