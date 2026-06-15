@@ -68,6 +68,7 @@ const es = {
     cube: 'Cubo de Datos',
     trust: 'Confianza de Datos',
     platform: 'Consola de Plataforma',
+    edge: 'Hub de Pista (Edge)',
     data: 'Conectar Datos',
     settings: 'Configuración',
     sections: {

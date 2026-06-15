@@ -68,6 +68,7 @@ const en = {
     cube: 'Data Cube',
     trust: 'Data Trust',
     platform: 'Platform Console',
+    edge: 'Trackside Edge Hub',
     data: 'Connect Data',
     settings: 'Settings',
     sections: {

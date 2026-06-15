@@ -77,6 +77,7 @@ import { OrchestratorPage }       from '../pages/OrchestratorPage';
 import { HumanPerformancePage }   from '../pages/HumanPerformancePage';
 import { FederatedPage }          from '../pages/FederatedPage';
 import { SimLabPage }             from '../pages/SimLabPage';
+import { EdgeHubPage }            from '../pages/EdgeHubPage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -155,6 +156,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'style',   labelKey: 'nav.style',    icon: Fingerprint },
   ]},
   { section: 'nav.sections.system', items: [
+    { id: 'edge',     labelKey: 'nav.edge',     icon: Radio, badge: 'AI', badgeColor: 'blue' },
     { id: 'platform', labelKey: 'nav.platform', icon: Server, badge: 'LIVE', badgeColor: 'green' },
     { id: 'trust',    labelKey: 'nav.trust',    icon: ShieldCheck },
     { id: 'data',     labelKey: 'nav.data',     icon: Database },
@@ -209,6 +211,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'trust':     return <DataTrustPage />;
     case 'cube':      return <DataCubePage />;
     case 'platform':  return <PlatformConsolePage />;
+    case 'edge':      return <EdgeHubPage />;
     case 'patterns':  return <PatternMinerPage />;
     case 'federated': return <FederatedPage />;
     case 'events':    return <EventEnginePage />;
