@@ -6,7 +6,7 @@ import {
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
   Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical, CircleDot, Network, Ghost, GraduationCap, TestTubes, Video,
-  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain,
+  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, PROFILES, TabId, ProfileId } from '../context/AuthContext';
@@ -73,6 +73,7 @@ import { PatternMinerPage }       from '../pages/PatternMinerPage';
 import { EventEnginePage }        from '../pages/EventEnginePage';
 import { TrackSurfacePage }       from '../pages/TrackSurfacePage';
 import { VisualWorkbenchPage }    from '../pages/VisualWorkbenchPage';
+import { OrchestratorPage }       from '../pages/OrchestratorPage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -134,6 +135,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'cube',    labelKey: 'nav.cube',    icon: Boxes, badge: 'AI', badgeColor: 'blue' },
   ]},
   { section: 'nav.sections.command', items: [
+    { id: 'orchestrator', labelKey: 'nav.orchestrator', icon: Crosshair, badge: 'AI', badgeColor: 'blue' },
     { id: 'crew',    labelKey: 'nav.crew',     icon: Radio },
     { id: 'pit-radio', labelKey: 'nav.pitRadio', icon: Mic },
     { id: 'team',    labelKey: 'nav.team',     icon: Users },
@@ -196,6 +198,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'pit-radio': return <PitRadioPage />;
     case 'team':      return <TeamWorkspacePage />;
     case 'workbench': return <VisualWorkbenchPage />;
+    case 'orchestrator': return <OrchestratorPage />;
     case 'cockpit':   return <CockpitPage />;
     case 'trust':     return <DataTrustPage />;
     case 'cube':      return <DataCubePage />;

@@ -52,6 +52,7 @@ const es = {
     history: 'Histórico de Circuito',
     preGp: 'Pre Gran Premio',
     crew: 'Jefe de Mecánicos',
+    orchestrator: 'Ingeniero Autónomo',
     copilot: 'Copiloto IA',
     learningPath: 'Ruta de Aprendizaje',
     report: 'Informe de Sesión',

@@ -51,6 +51,7 @@ const en = {
     twin: 'Digital Twin',
     history: 'Circuit History',
     preGp: 'Pre Grand Prix',
+    orchestrator: 'Autonomous Engineer',
     crew: 'Crew Chief',
     copilot: 'AI Copilot',
     learningPath: 'Learning Path',
