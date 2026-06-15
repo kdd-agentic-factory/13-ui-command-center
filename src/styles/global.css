@@ -1135,8 +1135,14 @@ button:hover .mini-track path {
     grid-template-areas: "header" "main";
   }
   .sidebar { display: none; }
-  .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
+  .grid-4, .grid-3, .grid-2,
+  .grid-2-1, .grid-1-2, .grid-3-2 { grid-template-columns: 1fr; }
   .page { padding: 16px; }
+  /* Collapse top-level inline multi-column layout rows (most pages use inline
+     grids, which CSS classes can't reach). Scoped to direct .page children so
+     nested fixed grids inside cards (data-cube matrix, before/after tables,
+     channel maps) keep their intended column layout. */
+  .page > div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
 }
 
 /* ── Scrollbar styling ──────────────────────────────────────────────────── */

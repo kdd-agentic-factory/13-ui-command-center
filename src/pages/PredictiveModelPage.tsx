@@ -135,7 +135,7 @@ const diffColor = (d: Lever['difficulty']) =>
 const riskColor = (r: Lever['risk']) => {
   const map: Record<string, string> = {
     'low': 'var(--green)', 'low-medium': '#a3e635', 'medium': 'var(--yellow)',
-    'medium-high': 'var(--accent)', 'high': 'var(--red)',
+    'medium-high': 'var(--accent)', 'high': 'var(--accent)',
   };
   return map[r] || 'var(--text-muted)';
 };
@@ -608,7 +608,7 @@ function cornerExitFocus(levers: Lever[]): string {
 
 function riskColorFromStr(risk: string): string {
   const map: Record<string, string> = {
-    'High': 'var(--red)', 'Medium': 'var(--yellow)', 'Low': 'var(--green)',
+    'High': 'var(--accent)', 'Medium': 'var(--yellow)', 'Low': 'var(--green)',
     'Very Low': 'var(--green)', 'Low-Medium': '#a3e635',
   };
   return map[risk] || 'var(--text-muted)';

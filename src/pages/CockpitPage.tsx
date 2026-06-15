@@ -102,7 +102,7 @@ export function CockpitPage() {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
               {layoutOut.supporting.map(s => (
                 <button key={s.tab} onClick={() => navigate(s.tab)}
-                  style={{ fontSize: 11, fontFamily: MONO, color: 'var(--text)', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 6, padding: '6px 10px', cursor: 'pointer' }}>
+                  style={{ fontSize: 11, fontFamily: MONO, color: 'var(--text)', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 6, padding: '6px 10px', cursor: 'pointer' }}>
                   {s.label}
                 </button>
               ))}

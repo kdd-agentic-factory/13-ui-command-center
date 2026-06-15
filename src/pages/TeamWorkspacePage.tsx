@@ -44,7 +44,7 @@ export function TeamWorkspacePage() {
               <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>{col.label} · {items.length}</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {items.map(t => (
-                  <div key={t.id} style={{ padding: 10, borderRadius: 7, background: 'var(--surface)', border: '1px solid var(--border)', opacity: t.status === 'done' ? 0.6 : 1 }}>
+                  <div key={t.id} style={{ padding: 10, borderRadius: 7, background: 'var(--bg-surface)', border: '1px solid var(--border)', opacity: t.status === 'done' ? 0.6 : 1 }}>
                     <div style={{ fontSize: 11.5, color: 'var(--text)', lineHeight: 1.4, textDecoration: t.status === 'done' ? 'line-through' : 'none' }}>{t.title}</div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6 }}>
                       <span style={{ fontSize: 9, fontFamily: MONO, color: PRIO_COLOR[t.priority], border: `1px solid ${PRIO_COLOR[t.priority]}`, borderRadius: 3, padding: '0 5px' }}>{t.priority}</span>

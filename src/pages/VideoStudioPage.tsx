@@ -62,7 +62,7 @@ export function VideoStudioPage() {
           <p className="page-subtitle">Synced onboard view & telemetry — {track.combo} · {lap}</p>
         </div>
         <select value={lap} onChange={e => { setLap(e.target.value); setT(0); }}
-          style={{ fontSize: 11, fontFamily: MONO, background: 'var(--surface)', color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 6, padding: '5px 8px' }}>
+          style={{ fontSize: 11, fontFamily: MONO, background: 'var(--bg-surface)', color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 6, padding: '5px 8px' }}>
           {track.lapOptions.map(o => <option key={o} value={o}>{o}</option>)}
         </select>
       </div>

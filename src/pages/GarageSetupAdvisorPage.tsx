@@ -205,7 +205,7 @@ const PRIORITY_COLOR: Record<Priority, string> = {
 /* ── Helpers ────────────────────────────────────────────────────────────── */
 
 const pctBar = (pct: number, color: string, size = 60) => (
-  <div style={{ width: size, height: 5, borderRadius: 3, background: 'var(--bg-tertiary)', overflow: 'hidden', display: 'inline-block', verticalAlign: 'middle' }}>
+  <div style={{ width: size, height: 5, borderRadius: 3, background: 'var(--bg-surface)', overflow: 'hidden', display: 'inline-block', verticalAlign: 'middle' }}>
     <div style={{ width: `${pct}%`, height: '100%', background: color, borderRadius: 3 }} />
   </div>
 );
