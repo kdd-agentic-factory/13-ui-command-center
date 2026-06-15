@@ -27,6 +27,7 @@ const en = {
     surface: 'Track Surface',
     pitRadio: 'Pit-Radio',
     team: 'Team Workspace',
+    workbench: 'Visualization OS',
     overview: 'Overview',
     live: 'Track-Live',
     telemetry: 'Live Telemetry',

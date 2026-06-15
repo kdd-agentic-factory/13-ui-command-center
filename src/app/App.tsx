@@ -72,6 +72,7 @@ import { PlatformConsolePage }    from '../pages/PlatformConsolePage';
 import { PatternMinerPage }       from '../pages/PatternMinerPage';
 import { EventEnginePage }        from '../pages/EventEnginePage';
 import { TrackSurfacePage }       from '../pages/TrackSurfacePage';
+import { VisualWorkbenchPage }    from '../pages/VisualWorkbenchPage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -136,6 +137,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'crew',    labelKey: 'nav.crew',     icon: Radio },
     { id: 'pit-radio', labelKey: 'nav.pitRadio', icon: Mic },
     { id: 'team',    labelKey: 'nav.team',     icon: Users },
+    { id: 'workbench', labelKey: 'nav.workbench', icon: LayoutDashboard, badge: 'AI', badgeColor: 'blue' },
     { id: 'copilot', labelKey: 'nav.copilot',  icon: Bot, badge: 'AI', badgeColor: 'blue' },
     { id: 'learning-path', labelKey: 'nav.learningPath', icon: GraduationCap },
     { id: 'ai-crew', labelKey: 'nav.aiCrew',   icon: Users, badge: 'AI', badgeColor: 'blue' },
@@ -193,6 +195,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'crew':      return <CrewChiefPage />;
     case 'pit-radio': return <PitRadioPage />;
     case 'team':      return <TeamWorkspacePage />;
+    case 'workbench': return <VisualWorkbenchPage />;
     case 'cockpit':   return <CockpitPage />;
     case 'trust':     return <DataTrustPage />;
     case 'cube':      return <DataCubePage />;

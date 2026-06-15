@@ -27,6 +27,7 @@ const es = {
     surface: 'Superficie de Pista',
     pitRadio: 'Radio de Box',
     team: 'Espacio de Equipo',
+    workbench: 'SO de Visualización',
     overview: 'Vista General',
     live: 'Pista en Vivo',
     telemetry: 'Telemetría en Vivo',
