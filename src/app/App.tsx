@@ -6,7 +6,7 @@ import {
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
   Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical, CircleDot, Network, Ghost, GraduationCap, TestTubes, Video,
-  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair,
+  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, PROFILES, TabId, ProfileId } from '../context/AuthContext';
@@ -74,6 +74,7 @@ import { EventEnginePage }        from '../pages/EventEnginePage';
 import { TrackSurfacePage }       from '../pages/TrackSurfacePage';
 import { VisualWorkbenchPage }    from '../pages/VisualWorkbenchPage';
 import { OrchestratorPage }       from '../pages/OrchestratorPage';
+import { HumanPerformancePage }   from '../pages/HumanPerformancePage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -142,6 +143,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'workbench', labelKey: 'nav.workbench', icon: LayoutDashboard, badge: 'AI', badgeColor: 'blue' },
     { id: 'copilot', labelKey: 'nav.copilot',  icon: Bot, badge: 'AI', badgeColor: 'blue' },
     { id: 'learning-path', labelKey: 'nav.learningPath', icon: GraduationCap },
+    { id: 'human',   labelKey: 'nav.human',    icon: HeartPulse, badge: 'AI', badgeColor: 'blue' },
     { id: 'ai-crew', labelKey: 'nav.aiCrew',   icon: Users, badge: 'AI', badgeColor: 'blue' },
     { id: 'report',  labelKey: 'nav.report',   icon: FileText, badge: 'PDF', badgeColor: 'muted' },
     { id: 'debrief', labelKey: 'nav.debrief',  icon: MessagesSquare, badge: 'AI', badgeColor: 'blue' },
@@ -207,6 +209,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'events':    return <EventEnginePage />;
     case 'copilot':   return <AICopilotPage />;
     case 'learning-path': return <RiderLearningPathPage />;
+    case 'human':     return <HumanPerformancePage />;
     case 'report':    return <SessionReportPage />;
     case 'debrief':   return <DebriefRoomPage />;
     case 'black-box': return <BlackBoxPage />;

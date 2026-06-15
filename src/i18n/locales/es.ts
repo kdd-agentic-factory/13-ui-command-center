@@ -55,6 +55,7 @@ const es = {
     orchestrator: 'Ingeniero Autónomo',
     copilot: 'Copiloto IA',
     learningPath: 'Ruta de Aprendizaje',
+    human: 'Rendimiento del Piloto',
     report: 'Informe de Sesión',
     blackBox: 'Caja Negra',
     knowledge: 'Grafo de Conocimiento',

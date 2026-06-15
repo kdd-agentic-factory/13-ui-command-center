@@ -55,6 +55,7 @@ const en = {
     crew: 'Crew Chief',
     copilot: 'AI Copilot',
     learningPath: 'Learning Path',
+    human: 'Human Performance',
     report: 'Session Report',
     blackBox: 'Black Box',
     knowledge: 'Knowledge Graph',
