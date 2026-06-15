@@ -12,6 +12,11 @@ ARG VITE_TELEMETRY_URL=https://kdd-rjz-telemetry.fly.dev
 ENV VITE_TELEMETRY_URL=$VITE_TELEMETRY_URL
 ARG VITE_TWIN_URL=https://kdd-rjz-digital-twin.fly.dev
 ENV VITE_TWIN_URL=$VITE_TWIN_URL
+# RAG base only (NEVER the API key — that stays server-side). With just the URL
+# the browser reaches the service and surfaces the honest "KB reachable" state;
+# full grounding lights up once a key-injecting proxy is configured.
+ARG VITE_RAG_URL=https://kdd-rjz-rag.fly.dev
+ENV VITE_RAG_URL=$VITE_RAG_URL
 RUN npm run build
 
 # ── Serving stage ──────────────────────────────────────────────────────────────

@@ -46,6 +46,46 @@ export interface Debrief {
   questions: DebriefQuestion[];
 }
 
+// ── RAG grounding (03-rag-cag-knowledge-layer) ────────────────────────────────
+// The scripted debrief above is the instant, always-available baseline. On top,
+// the Debrief Room asks the real knowledge layer for grounding evidence so the
+// "why" is backed by retrieved sources, not just rules — live-with-fallback.
+
+export interface GroundingSource { sourceId: string; excerpt: string; score: number }
+export type GroundingState = 'grounded' | 'reachable' | 'unavailable';
+export interface Grounding { state: GroundingState; sources: GroundingSource[] }
+
+export interface RagEvidenceLike { source_id: string; text_excerpt?: string; text?: string; score: number }
+export interface RagSearchLike { results?: { source_id: string; text: string; score: number }[]; evidence?: RagEvidenceLike[] }
+export type RagOutcomeLike =
+  | { ok: true; data: RagSearchLike }
+  | { ok: false; reason: 'unauthorized' | 'unreachable' };
+
+/** The query that grounds this session's debrief (the recurring limiter). */
+export function debriefQuery(bike: string, circuit: string): string {
+  return `${circuit} ${bike} rear instability and late throttle pickup on corner exit — setup recommendation and evidence`;
+}
+
+export async function groundDebrief(
+  query: string,
+  deps: { ragSearch: (q: string) => Promise<RagOutcomeLike> },
+): Promise<Grounding> {
+  try {
+    const out = await deps.ragSearch(query);
+    if (!out.ok) return { state: out.reason === 'unauthorized' ? 'reachable' : 'unavailable', sources: [] };
+    const ev: RagEvidenceLike[] = (out.data.evidence && out.data.evidence.length
+      ? out.data.evidence
+      : (out.data.results ?? []).map(r => ({ source_id: r.source_id, text: r.text, score: r.score })));
+    const sources: GroundingSource[] = ev
+      .map(e => ({ sourceId: e.source_id, excerpt: (e.text_excerpt ?? e.text ?? '').trim().slice(0, 240), score: e.score ?? 0 }))
+      .filter(s => s.excerpt.length > 0)
+      .slice(0, 4);
+    return sources.length ? { state: 'grounded', sources } : { state: 'reachable', sources: [] };
+  } catch {
+    return { state: 'unavailable', sources: [] };
+  }
+}
+
 /** Build the debrief for a rider+bike+circuit+session combination. */
 export function buildDebrief(rider: string, bike: string, circuit: string, session: string): Debrief {
   return {

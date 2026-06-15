@@ -25,6 +25,12 @@ const BASE = {
 const TELEMETRY_BASE = import.meta.env.VITE_TELEMETRY_URL ?? '/api/telemetry';
 // Digital Twin Simulation Lab — consumed on-demand by the Scenario Sandbox.
 const TWIN_BASE = import.meta.env.VITE_TWIN_URL ?? '/api/twin';
+// RAG/CAG knowledge layer — grounds the Debrief Room. The service is API-key
+// protected, so the key must NEVER be baked into the browser bundle: it is
+// injected server-side by a same-origin proxy (default base). VITE_RAG_KEY is
+// only for trusted/local builds, not the public deployment.
+const RAG_BASE = import.meta.env.VITE_RAG_URL ?? '/api/rag';
+const RAG_KEY = import.meta.env.VITE_RAG_KEY ?? '';
 
 const V1 = '/api/v1';
 
@@ -204,5 +210,45 @@ export async function runWhatIf(req: WhatIfRequest): Promise<WhatIfResult | null
     return r.json() as Promise<WhatIfResult>;
   } catch {
     return null;
+  }
+}
+
+// ── RAG/CAG knowledge layer (03-rag-cag-knowledge-layer) ──────────────────────
+// Grounds the AI Debrief Room. Distinguishes reachable-but-credentialed (401)
+// from unreachable so the UI can say honestly whether the knowledge base is
+// connected — without ever exposing the API key in the browser.
+
+export interface RagEvidenceItem {
+  source_id: string;
+  text_excerpt?: string;
+  text?: string;
+  score: number;
+}
+export interface RagSearchResult {
+  query: string;
+  results: { source_id: string; text: string; score: number }[];
+  evidence: RagEvidenceItem[];
+  evidence_count: number;
+  mode?: string;
+}
+export type RagOutcome =
+  | { ok: true; data: RagSearchResult }
+  | { ok: false; reason: 'unauthorized' | 'unreachable' };
+
+export async function ragSearch(query: string, topK = 4): Promise<RagOutcome> {
+  try {
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (RAG_KEY) headers['X-API-Key'] = RAG_KEY;
+    const r = await fetch(`${RAG_BASE}${V1}/search`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ query, top_k: topK, include_evidence: true }),
+      signal: AbortSignal.timeout(8000),
+    });
+    if (r.status === 401 || r.status === 403) return { ok: false, reason: 'unauthorized' };
+    if (!r.ok) return { ok: false, reason: 'unreachable' };
+    return { ok: true, data: (await r.json()) as RagSearchResult };
+  } catch {
+    return { ok: false, reason: 'unreachable' };
   }
 }

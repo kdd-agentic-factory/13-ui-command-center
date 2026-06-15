@@ -6,14 +6,19 @@
  * council, and an "ask the debrief" of curated questions answered in place —
  * with a hand-off to the live Rider Coach for free-form follow-up.
  */
-import { useState } from 'react';
-import { MessagesSquare, ChevronRight, Bot } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { MessagesSquare, ChevronRight, Bot, BookOpen, Wifi, WifiOff, Loader2 } from 'lucide-react';
 import { useNavigate } from '../context/NavContext';
 import { useGarage } from '../hooks/useGarage';
 import { useSessionContext } from '../hooks/useSessionContext';
-import { buildDebrief, advisor, ADVISORS, AgendaItem, DebriefQuestion } from '../domain/debrief';
+import { buildDebrief, advisor, ADVISORS, AgendaItem, DebriefQuestion, groundDebrief, debriefQuery, Grounding } from '../domain/debrief';
+import { ragSearch } from '../services/api';
 
 const MONO = 'JetBrains Mono, monospace';
+
+function gBadge(color: string, border: string): React.CSSProperties {
+  return { display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 9.5, fontFamily: MONO, color, border: `1px solid ${border}`, borderRadius: 5, padding: '3px 8px' };
+}
 
 function AdvisorTag({ id }: { id: AgendaItem['by'] }) {
   const a = advisor(id);
@@ -34,6 +39,18 @@ export function DebriefRoomPage() {
   );
   const [asked, setAsked] = useState<DebriefQuestion | null>(null);
 
+  // Ground the debrief with the real RAG knowledge layer (live-with-fallback).
+  const bike = `${garage.profile.bike.brand} ${garage.profile.bike.model}`;
+  const [grounding, setGrounding] = useState<Grounding | null>(null);
+  useEffect(() => {
+    let alive = true;
+    setGrounding(null);
+    groundDebrief(debriefQuery(bike, ctx.circuitName), { ragSearch })
+      .then(g => { if (alive) setGrounding(g); })
+      .catch(() => { if (alive) setGrounding({ state: 'unavailable', sources: [] }); });
+    return () => { alive = false; };
+  }, [bike, ctx.circuitName]);
+
   return (
     <div className="page">
       <div className="flex items-center justify-between mb-6">
@@ -43,7 +60,34 @@ export function DebriefRoomPage() {
             {ctx.circuitName} · {ctx.setup.stint ?? ctx.setup.session ?? 'Stint 03'} · {garage.profile.rider.name} · {garage.profile.bike.brand} {garage.profile.bike.model}
           </p>
         </div>
+        {grounding && (
+          grounding.state === 'grounded' ? (
+            <span title="Answers grounded by retrieved knowledge-base evidence" style={gBadge('var(--green)', 'rgba(0,230,118,0.4)')}><Wifi size={11} /> KB GROUNDED</span>
+          ) : grounding.state === 'reachable' ? (
+            <span title="03-rag reachable but requires server-side credentials — curated debrief shown" style={gBadge('var(--cyan)', 'rgba(0,183,255,0.4)')}><Wifi size={11} /> KB REACHABLE</span>
+          ) : (
+            <span title="Knowledge layer unreachable / asleep — curated debrief shown" style={gBadge('var(--text-muted)', 'var(--border)')}><WifiOff size={11} /> KB OFFLINE</span>
+          )
+        )}
+        {!grounding && <span style={gBadge('var(--text-muted)', 'var(--border)')}><Loader2 size={11} className="spin" /> grounding…</span>}
       </div>
+
+      {/* Grounded evidence from the RAG knowledge layer */}
+      {grounding && grounding.state === 'grounded' && (
+        <div className="card mb-4" style={{ padding: 14, borderLeft: '3px solid var(--green)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
+            <BookOpen size={13} style={{ color: 'var(--green)' }} />
+            <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Grounding evidence · knowledge base</span>
+          </div>
+          {grounding.sources.map((s, i) => (
+            <div key={i} style={{ display: 'flex', gap: 10, marginBottom: 7 }}>
+              <span style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--cyan)', flexShrink: 0, width: 110, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={s.sourceId}>{s.sourceId}</span>
+              <span style={{ fontSize: 11.5, color: 'var(--text)', lineHeight: 1.45, flex: 1 }}>{s.excerpt}</span>
+              <span style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--text-muted)' }}>{(s.score * 100).toFixed(0)}%</span>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Advisor council */}
       <div className="card mb-4" style={{ padding: 12 }}>
