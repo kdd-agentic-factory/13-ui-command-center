@@ -92,3 +92,76 @@ export function fmtLap(s: number): string {
   const m = Math.floor(s / 60);
   return `${m}:${(s - m * 60).toFixed(3).padStart(6, '0')}`;
 }
+
+// ── Digital Twin validation (17-digital-twin-simulation-lab) ──────────────────
+// The local model above gives instant, interactive feedback. On demand, the
+// Sandbox sends the current levers to the REAL twin for a second opinion (its
+// own MVP physics). Live-with-fallback: if the twin has no baseline for the
+// circuit / is asleep, `available` is false and the local model stands.
+
+export interface WhatIfRequestLike {
+  scenario_id: string; circuit_id: string; session_id: string;
+  baseline_setup_id: string; proposed_setup: Record<string, number>;
+  laps: number; ambient_temp_c: number; track_temp_c: number; tire_compound: string;
+}
+export interface WhatIfResultLike {
+  delta_metrics?: { lap_time_delta_s: number; stability_score_delta: number; rear_temp_delta_c: number };
+  risk_level?: string; approval_required?: boolean; explanation?: string; limitations?: string[];
+}
+
+export interface TwinValidation {
+  available: boolean;
+  lapDeltaS?: number;
+  stabilityDelta?: number;
+  rearTempDeltaC?: number;
+  riskLevel?: string;
+  approvalRequired?: boolean;
+  explanation?: string;
+  limitations?: string[];
+}
+
+/** Map the Sandbox levers to a proposed setup the twin understands. The twin
+ *  computes deltas vs its own catalogue baseline, so these are intent values. */
+export function leversToProposedSetup(L: Levers): Record<string, number> {
+  return {
+    rear_rebound: 2 + L.rearRebound,
+    tc: L.tc,
+    throttle_pickup_offset_s: -Math.round(L.earlierThrottle * 100) / 100,
+  };
+}
+
+export interface TwinContext { circuitId: string; sessionId?: string }
+
+export async function validateWithTwin(
+  L: Levers,
+  ctx: TwinContext,
+  deps: { runWhatIf: (r: WhatIfRequestLike) => Promise<WhatIfResultLike | null> },
+): Promise<TwinValidation> {
+  const circuit = (ctx.circuitId || 'mugello').toLowerCase().replace(/[^a-z0-9]/g, '');
+  try {
+    const res = await deps.runWhatIf({
+      scenario_id: 'sandbox',
+      circuit_id: circuit,
+      session_id: ctx.sessionId || 'race',
+      baseline_setup_id: `${circuit}-baseline`,
+      proposed_setup: leversToProposedSetup(L),
+      laps: Math.max(1, Math.round(L.rearStintLaps) || 5),
+      ambient_temp_c: 27,
+      track_temp_c: 38 + L.trackTempDelta,
+      tire_compound: 'soft',
+    });
+    if (!res || !res.delta_metrics) return { available: false };
+    return {
+      available: true,
+      lapDeltaS: res.delta_metrics.lap_time_delta_s,
+      stabilityDelta: res.delta_metrics.stability_score_delta,
+      rearTempDeltaC: res.delta_metrics.rear_temp_delta_c,
+      riskLevel: res.risk_level,
+      approvalRequired: res.approval_required,
+      explanation: res.explanation,
+      limitations: res.limitations,
+    };
+  } catch {
+    return { available: false };
+  }
+}

@@ -23,6 +23,8 @@ const BASE = {
 // Telemetry dataset service is consumed by specific modules (Data Cube), not the
 // 6-service health panel, so it lives outside BASE to keep HealthMap unchanged.
 const TELEMETRY_BASE = import.meta.env.VITE_TELEMETRY_URL ?? '/api/telemetry';
+// Digital Twin Simulation Lab — consumed on-demand by the Scenario Sandbox.
+const TWIN_BASE = import.meta.env.VITE_TWIN_URL ?? '/api/twin';
 
 const V1 = '/api/v1';
 
@@ -163,4 +165,44 @@ export async function fetchTelemetrySessions(): Promise<TelemetrySession[] | nul
   );
   if (!data) return null;
   return Array.isArray(data) ? data : data.sessions ?? null;
+}
+
+// ── Digital Twin what-if (17-digital-twin-simulation-lab) ─────────────────────
+// On-demand validation for the Scenario Sandbox: POST a proposed setup and get
+// the twin's delta metrics + risk verdict. Returns null on failure so the
+// Sandbox keeps its instant local model.
+
+export interface WhatIfRequest {
+  scenario_id: string;
+  circuit_id: string;
+  session_id: string;
+  baseline_setup_id: string;
+  proposed_setup: Record<string, number>;
+  laps: number;
+  ambient_temp_c: number;
+  track_temp_c: number;
+  tire_compound: string;
+}
+
+export interface WhatIfResult {
+  delta_metrics?: { lap_time_delta_s: number; stability_score_delta: number; rear_temp_delta_c: number };
+  risk_level?: string;
+  approval_required?: boolean;
+  explanation?: string;
+  limitations?: string[];
+}
+
+export async function runWhatIf(req: WhatIfRequest): Promise<WhatIfResult | null> {
+  try {
+    const r = await fetch(`${TWIN_BASE}${V1}/what-if`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req),
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!r.ok) return null;
+    return r.json() as Promise<WhatIfResult>;
+  } catch {
+    return null;
+  }
 }

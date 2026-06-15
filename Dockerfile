@@ -10,6 +10,8 @@ COPY . .
 # sessions (CORS is open on the service). Overridable at build time.
 ARG VITE_TELEMETRY_URL=https://kdd-rjz-telemetry.fly.dev
 ENV VITE_TELEMETRY_URL=$VITE_TELEMETRY_URL
+ARG VITE_TWIN_URL=https://kdd-rjz-digital-twin.fly.dev
+ENV VITE_TWIN_URL=$VITE_TWIN_URL
 RUN npm run build
 
 # ── Serving stage ──────────────────────────────────────────────────────────────
