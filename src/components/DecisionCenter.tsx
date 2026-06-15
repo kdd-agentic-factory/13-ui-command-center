@@ -17,19 +17,38 @@ import { useProfile } from '../context/AuthContext';
 import { useToast } from './ToastProvider';
 import {
   Decision, decisionsFor, pendingCount, decide, defer, reopen, subscribeDecisions,
-  syncDecisionsFromBackend,
+  syncDecisionsFromBackend, gateDecision, PolicyVerdict,
 } from '../domain/decisions';
+import { evaluatePolicy } from '../services/api';
 
 const MONO = 'JetBrains Mono, monospace';
 
-function DecisionCard({ d, lap, onDecide, onDefer }: {
-  d: Decision; lap: number;
+function PolicyBadge({ v }: { v?: PolicyVerdict }) {
+  if (!v || v.state === 'offline') return null;
+  const map = {
+    allowed:  ['POLICY: ALLOWED', 'var(--green)'],
+    blocked:  ['POLICY: BLOCKED', 'var(--accent)'],
+    approval: ['APPROVAL REQUIRED', 'var(--yellow)'],
+  } as const;
+  const [label, color] = map[v.state];
+  const title = [v.riskLevel && `risk: ${v.riskLevel}`, v.violated?.length && `violates: ${v.violated.join(', ')}`, v.mitigations?.length && `mitigations: ${v.mitigations.join(', ')}`].filter(Boolean).join(' · ');
+  return (
+    <span title={title || undefined}
+      style={{ fontSize: 9, fontFamily: MONO, color, border: `1px solid ${color}`, borderRadius: 999, padding: '1px 8px', whiteSpace: 'nowrap' }}>
+      {label}{v.riskLevel ? ` · ${v.riskLevel}` : ''}
+    </span>
+  );
+}
+
+function DecisionCard({ d, lap, verdict, onDecide, onDefer }: {
+  d: Decision; lap: number; verdict?: PolicyVerdict;
   onDecide: (opt: number) => void; onDefer: () => void;
 }) {
   return (
     <div className="card" style={{ padding: 14, marginBottom: 10 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <span style={{ fontSize: 12.5, fontWeight: 800, color: 'var(--text)', flex: 1 }}>{d.title}</span>
+        <PolicyBadge v={verdict} />
         <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--yellow)', border: '1px solid var(--yellow)', borderRadius: 999, padding: '1px 8px', whiteSpace: 'nowrap' }}>{d.window}</span>
       </div>
       <div style={{ fontSize: 10.5, fontFamily: MONO, color: 'var(--text-muted)', margin: '3px 0 8px' }}>{d.source}</div>
@@ -104,6 +123,19 @@ export function DecisionCenter({ lap }: { lap: number }) {
   const log = all.filter(d => d.status === 'decided');
   const count = pendingCount(profileId);
 
+  // Run each pending decision through the real security policy engine (gate),
+  // live-with-fallback: if the engine is offline/not configured, no badge shows.
+  const [verdicts, setVerdicts] = useState<Record<string, PolicyVerdict>>({});
+  const pendingKey = pending.map(d => d.id).join(',');
+  useEffect(() => {
+    let alive = true;
+    Promise.all(pending.map(async d => [d.id, await gateDecision(d, { evaluatePolicy })] as const))
+      .then(entries => { if (alive) setVerdicts(Object.fromEntries(entries)); })
+      .catch(() => { /* keep prior */ });
+    return () => { alive = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingKey]);
+
   if (!profileId || all.length === 0) return null;
 
   return (
@@ -169,7 +201,7 @@ export function DecisionCenter({ lap }: { lap: number }) {
                   </div>
                 )}
                 {pending.map(d => (
-                  <DecisionCard key={d.id} d={d} lap={lap}
+                  <DecisionCard key={d.id} d={d} lap={lap} verdict={verdicts[d.id]}
                     onDecide={(opt) => { decide(d.id, opt, lap); toast({ type: 'success', title: 'Decision logged', message: `${d.title} → ${d.options[opt].label} (lap ${lap})` }); }}
                     onDefer={() => { defer(d.id); toast({ type: 'info', title: 'Deferred', message: d.title }); }}
                   />

@@ -31,6 +31,10 @@ const TWIN_BASE = import.meta.env.VITE_TWIN_URL ?? '/api/twin';
 // only for trusted/local builds, not the public deployment.
 const RAG_BASE = import.meta.env.VITE_RAG_URL ?? '/api/rag';
 const RAG_KEY = import.meta.env.VITE_RAG_KEY ?? '';
+// Security/governance policy engine — gates the Decision Center. INTERNAL
+// service-to-service: the X-Internal-API-Key + principal headers are injected by
+// a same-origin proxy server-side; never bake them into the browser.
+const SECURITY_BASE = import.meta.env.VITE_SECURITY_URL ?? '/api/security';
 
 const V1 = '/api/v1';
 
@@ -248,6 +252,37 @@ export async function ragSearch(query: string, topK = 4): Promise<RagOutcome> {
     if (r.status === 401 || r.status === 403) return { ok: false, reason: 'unauthorized' };
     if (!r.ok) return { ok: false, reason: 'unreachable' };
     return { ok: true, data: (await r.json()) as RagSearchResult };
+  } catch {
+    return { ok: false, reason: 'unreachable' };
+  }
+}
+
+// ── Security policy engine (24-security-governance-compliance) ────────────────
+
+export interface PolicyEvaluation {
+  action: string;
+  actor?: string;
+  allowed: boolean;
+  violated_policies?: string[];
+  required_mitigations?: string[];
+  risk_level?: string;
+}
+export type PolicyOutcome =
+  | { ok: true; data: PolicyEvaluation }
+  | { ok: false; reason: 'not-configured' | 'unreachable' };
+
+export async function evaluatePolicy(action: string, context: Record<string, unknown> = {}): Promise<PolicyOutcome> {
+  try {
+    const r = await fetch(`${SECURITY_BASE}${V1}/policies/evaluate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action, context }),
+      signal: AbortSignal.timeout(8000),
+    });
+    // 503 = engine up but internal auth not configured server-side.
+    if (r.status === 503) return { ok: false, reason: 'not-configured' };
+    if (!r.ok) return { ok: false, reason: 'unreachable' };
+    return { ok: true, data: (await r.json()) as PolicyEvaluation };
   } catch {
     return { ok: false, reason: 'unreachable' };
   }

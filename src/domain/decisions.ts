@@ -208,3 +208,52 @@ export function _resetDecisions(): void {
   decisions = SEED.map(d => ({ ...d }));
   emit();
 }
+
+// ── Policy gate (24-security-governance-compliance) ───────────────────────────
+// Each decision is run through the real security policy engine before it can be
+// approved: is the action allowed, what's the risk level, does it need
+// escalation? Live-with-fallback — if the gate is unreachable / not configured
+// the Decision Center still works (state 'offline'), it just can't show the
+// verdict. The engine is an INTERNAL service: the credential + principal are
+// injected by a same-origin proxy server-side, never in the browser.
+
+export type PolicyState = 'allowed' | 'blocked' | 'approval' | 'offline';
+export interface PolicyVerdict {
+  state: PolicyState;
+  riskLevel?: string;
+  mitigations?: string[];
+  violated?: string[];
+}
+
+export interface PolicyEvaluationLike {
+  allowed: boolean;
+  risk_level?: string;
+  required_mitigations?: string[];
+  violated_policies?: string[];
+}
+export type PolicyOutcomeLike =
+  | { ok: true; data: PolicyEvaluationLike }
+  | { ok: false; reason: 'not-configured' | 'unreachable' };
+
+/** Map a decision to the canonical policy action the engine evaluates. */
+export function decisionAction(d: Decision): string {
+  if (d.source === 'Safety Guardian') return 'safety.override';
+  if (d.title.toLowerCase().startsWith('approve:')) return 'workflow.approve';
+  return 'setup.change';
+}
+
+export async function gateDecision(
+  d: Decision,
+  deps: { evaluatePolicy: (action: string, context?: Record<string, unknown>) => Promise<PolicyOutcomeLike> },
+): Promise<PolicyVerdict> {
+  try {
+    const out = await deps.evaluatePolicy(decisionAction(d), { decision_id: d.id, source: d.source });
+    if (!out.ok) return { state: 'offline' };
+    const r = out.data;
+    const needsApproval = (r.required_mitigations ?? []).some(m => m === 'require_approval' || m.startsWith('escalate_to:'));
+    const state: PolicyState = !r.allowed ? 'blocked' : needsApproval ? 'approval' : 'allowed';
+    return { state, riskLevel: r.risk_level, mitigations: r.required_mitigations, violated: r.violated_policies };
+  } catch {
+    return { state: 'offline' };
+  }
+}

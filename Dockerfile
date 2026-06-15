@@ -17,6 +17,9 @@ ENV VITE_TWIN_URL=$VITE_TWIN_URL
 # full grounding lights up once a key-injecting proxy is configured.
 ARG VITE_RAG_URL=https://kdd-rjz-rag.fly.dev
 ENV VITE_RAG_URL=$VITE_RAG_URL
+# Security policy engine base only (no internal key — injected server-side).
+ARG VITE_SECURITY_URL=https://kdd-rjz-security.fly.dev
+ENV VITE_SECURITY_URL=$VITE_SECURITY_URL
 RUN npm run build
 
 # ── Serving stage ──────────────────────────────────────────────────────────────
