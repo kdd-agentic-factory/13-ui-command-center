@@ -6,7 +6,7 @@ import {
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
   Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical, CircleDot, Network, Ghost, GraduationCap, TestTubes, Video,
-  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse,
+  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse, Globe2,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, PROFILES, TabId, ProfileId } from '../context/AuthContext';
@@ -75,6 +75,7 @@ import { TrackSurfacePage }       from '../pages/TrackSurfacePage';
 import { VisualWorkbenchPage }    from '../pages/VisualWorkbenchPage';
 import { OrchestratorPage }       from '../pages/OrchestratorPage';
 import { HumanPerformancePage }   from '../pages/HumanPerformancePage';
+import { FederatedPage }          from '../pages/FederatedPage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -133,6 +134,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'history', labelKey: 'nav.history', icon: History },
     { id: 'knowledge', labelKey: 'nav.knowledge', icon: Network },
     { id: 'patterns', labelKey: 'nav.patterns', icon: Layers, badge: 'AI', badgeColor: 'blue' },
+    { id: 'federated', labelKey: 'nav.federated', icon: Globe2, badge: 'AI', badgeColor: 'blue' },
     { id: 'cube',    labelKey: 'nav.cube',    icon: Boxes, badge: 'AI', badgeColor: 'blue' },
   ]},
   { section: 'nav.sections.command', items: [
@@ -206,6 +208,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'cube':      return <DataCubePage />;
     case 'platform':  return <PlatformConsolePage />;
     case 'patterns':  return <PatternMinerPage />;
+    case 'federated': return <FederatedPage />;
     case 'events':    return <EventEnginePage />;
     case 'copilot':   return <AICopilotPage />;
     case 'learning-path': return <RiderLearningPathPage />;

@@ -60,6 +60,7 @@ const en = {
     blackBox: 'Black Box',
     knowledge: 'Knowledge Graph',
     patterns: 'Pattern Miner',
+    federated: 'Federated Intelligence',
     debrief: 'Debrief Room',
     aiCrew: 'Oracle Pit Wall',
     style: 'Riding Style',

@@ -60,6 +60,7 @@ const es = {
     blackBox: 'Caja Negra',
     knowledge: 'Grafo de Conocimiento',
     patterns: 'Minería de Patrones',
+    federated: 'Inteligencia Federada',
     debrief: 'Sala de Debrief',
     aiCrew: 'Oracle Pit Wall',
     style: 'Estilo de Pilotaje',
