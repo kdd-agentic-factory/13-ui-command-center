@@ -42,6 +42,7 @@ const es = {
     advisor: 'Asesor de Reglajes',
     sandbox: 'Simulador Escenarios',
     experiments: 'Motor de Experimentos',
+    events: 'Motor de Eventos',
     setupLab: 'Laboratorio Setup',
     bikeCompare: 'Comparar Motos',
     parts: 'Diseño de Piezas',

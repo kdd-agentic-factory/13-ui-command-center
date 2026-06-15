@@ -70,6 +70,7 @@ import { DataTrustPage }          from '../pages/DataTrustPage';
 import { DataCubePage }           from '../pages/DataCubePage';
 import { PlatformConsolePage }    from '../pages/PlatformConsolePage';
 import { PatternMinerPage }       from '../pages/PatternMinerPage';
+import { EventEnginePage }        from '../pages/EventEnginePage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -123,6 +124,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'twin',    labelKey: 'nav.twin',    icon: GitBranch },
     { id: 'sandbox', labelKey: 'nav.sandbox', icon: FlaskConical, badge: 'AI', badgeColor: 'blue' },
     { id: 'experiments', labelKey: 'nav.experiments', icon: TestTubes, badge: 'AI', badgeColor: 'blue' },
+    { id: 'events',  labelKey: 'nav.events',  icon: Zap, badge: 'AI', badgeColor: 'blue' },
     { id: 'history', labelKey: 'nav.history', icon: History },
     { id: 'knowledge', labelKey: 'nav.knowledge', icon: Network },
     { id: 'patterns', labelKey: 'nav.patterns', icon: Layers, badge: 'AI', badgeColor: 'blue' },
@@ -193,6 +195,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'cube':      return <DataCubePage />;
     case 'platform':  return <PlatformConsolePage />;
     case 'patterns':  return <PatternMinerPage />;
+    case 'events':    return <EventEnginePage />;
     case 'copilot':   return <AICopilotPage />;
     case 'learning-path': return <RiderLearningPathPage />;
     case 'report':    return <SessionReportPage />;
