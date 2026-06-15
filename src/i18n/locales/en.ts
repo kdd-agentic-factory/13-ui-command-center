@@ -46,6 +46,7 @@ const en = {
     simLab: 'Sim-to-Real Lab',
     experiments: 'Experiment Engine',
     events: 'Event Engine',
+    causal: 'Causal Engine',
     setupLab: 'Setup Lab',
     bikeCompare: 'Bike Comparison',
     parts: 'Part Design',

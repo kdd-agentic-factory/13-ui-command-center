@@ -46,6 +46,7 @@ const es = {
     simLab: 'Lab Sim-a-Real',
     experiments: 'Motor de Experimentos',
     events: 'Motor de Eventos',
+    causal: 'Motor Causal',
     setupLab: 'Laboratorio Setup',
     bikeCompare: 'Comparar Motos',
     parts: 'Diseño de Piezas',
