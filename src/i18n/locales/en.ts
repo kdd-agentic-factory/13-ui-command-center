@@ -54,6 +54,7 @@ const en = {
     report: 'Session Report',
     blackBox: 'Black Box',
     knowledge: 'Knowledge Graph',
+    patterns: 'Pattern Miner',
     debrief: 'Debrief Room',
     aiCrew: 'Oracle Pit Wall',
     style: 'Riding Style',

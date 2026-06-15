@@ -54,6 +54,7 @@ const es = {
     report: 'Informe de Sesión',
     blackBox: 'Caja Negra',
     knowledge: 'Grafo de Conocimiento',
+    patterns: 'Minería de Patrones',
     debrief: 'Sala de Debrief',
     aiCrew: 'Oracle Pit Wall',
     style: 'Estilo de Pilotaje',
