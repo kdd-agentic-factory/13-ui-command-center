@@ -10,10 +10,11 @@ _resetDecisions();
 const aDecision = decisionsFor('race-engineer')[0]; // a seeded pending decision
 
 describe('decision → policy action mapping', () => {
-  it('maps source/title to a canonical action', () => {
-    expect(decisionAction({ ...aDecision, source: 'Safety Guardian' })).toBe('safety.override');
+  it('maps source/title to the security engine action vocabulary', () => {
     expect(decisionAction({ ...aDecision, title: 'Approve: deploy workflow' })).toBe('workflow.approve');
-    expect(decisionAction({ ...aDecision, source: 'Garage Engineer', title: 'Rear rebound +2' })).toBe('setup.change');
+    expect(decisionAction({ ...aDecision, source: 'Tyre Intelligence', title: 'TC step' })).toBe('race.apply_tire_strategy');
+    expect(decisionAction({ ...aDecision, source: 'Safety Guardian', title: 'Engine map' })).toBe('race.apply_engine_map_change');
+    expect(decisionAction({ ...aDecision, source: 'Garage Engineer', title: 'Rear rebound +2' })).toBe('race.apply_setup_change');
   });
 });
 

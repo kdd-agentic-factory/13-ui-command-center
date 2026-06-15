@@ -12,16 +12,11 @@ ARG VITE_TELEMETRY_URL=https://kdd-rjz-telemetry.fly.dev
 ENV VITE_TELEMETRY_URL=$VITE_TELEMETRY_URL
 ARG VITE_TWIN_URL=https://kdd-rjz-digital-twin.fly.dev
 ENV VITE_TWIN_URL=$VITE_TWIN_URL
-# RAG base only (NEVER the API key — that stays server-side). With just the URL
-# the browser reaches the service and surfaces the honest "KB reachable" state;
-# full grounding lights up once a key-injecting proxy is configured.
-ARG VITE_RAG_URL=https://kdd-rjz-rag.fly.dev
-ENV VITE_RAG_URL=$VITE_RAG_URL
-# Security policy engine base only (no internal key — injected server-side).
-ARG VITE_SECURITY_URL=https://kdd-rjz-security.fly.dev
-ENV VITE_SECURITY_URL=$VITE_SECURITY_URL
-ARG VITE_PIPELINES_URL=https://kdd-rjz-pipelines.fly.dev
-ENV VITE_PIPELINES_URL=$VITE_PIPELINES_URL
+# RAG / pipelines / security are API-key/credentialed: they are NOT baked to a
+# direct URL here. They default to the same-origin BFF paths (/api/rag,
+# /api/pipelines, /api/security) which the nginx BFF below proxies to the Fly
+# services while injecting the internal key + principal server-side. This is how
+# the credentialed integrations go fully live without any secret in the browser.
 RUN npm run build
 
 # ── Serving stage ──────────────────────────────────────────────────────────────

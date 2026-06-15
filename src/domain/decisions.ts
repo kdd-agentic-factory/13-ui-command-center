@@ -235,11 +235,13 @@ export type PolicyOutcomeLike =
   | { ok: true; data: PolicyEvaluationLike }
   | { ok: false; reason: 'not-configured' | 'unreachable' };
 
-/** Map a decision to the canonical policy action the engine evaluates. */
+/** Map a decision to the canonical action the security engine evaluates
+ *  (24-security vocabulary), so verdicts reflect the real approval matrix. */
 export function decisionAction(d: Decision): string {
-  if (d.source === 'Safety Guardian') return 'safety.override';
   if (d.title.toLowerCase().startsWith('approve:')) return 'workflow.approve';
-  return 'setup.change';
+  if (d.source === 'Tyre Intelligence') return 'race.apply_tire_strategy';      // race_engineer can approve
+  if (d.source === 'Safety Guardian') return 'race.apply_engine_map_change';    // high-risk → escalate
+  return 'race.apply_setup_change';                                             // high-risk → escalate to crew_chief
 }
 
 export async function gateDecision(
