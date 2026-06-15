@@ -69,6 +69,7 @@ const es = {
     trust: 'Confianza de Datos',
     platform: 'Consola de Plataforma',
     edge: 'Hub de Pista (Edge)',
+    lakehouse: 'Lakehouse de Datos',
     data: 'Conectar Datos',
     settings: 'Configuración',
     sections: {

@@ -69,6 +69,7 @@ const en = {
     trust: 'Data Trust',
     platform: 'Platform Console',
     edge: 'Trackside Edge Hub',
+    lakehouse: 'Data Lakehouse',
     data: 'Connect Data',
     settings: 'Settings',
     sections: {

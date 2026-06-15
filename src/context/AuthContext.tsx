@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { insforge } from '../lib/insforge';
 
-export type TabId = 'cockpit' | 'overview' | 'live' | 'telemetry' | 'circuit' | 'corners' | 'replay' | 'compare' | 'ghost-lap' | 'studio' | 'track-evo' | 'surface' | 'risk' | 'predict' | 'tires' | 'setup' | 'advisor' | 'setup-lab' | 'parts' | 'bike-compare' | 'twin' | 'sandbox' | 'sim-lab' | 'experiments' | 'events' | 'history' | 'pre-gp' | 'crew' | 'copilot' | 'learning-path' | 'human' | 'pit-radio' | 'team' | 'workbench' | 'orchestrator' | 'report' | 'debrief' | 'black-box' | 'knowledge' | 'patterns' | 'federated' | 'ai-crew' | 'style' | 'cube' | 'trust' | 'platform' | 'edge' | 'data' | 'settings';
+export type TabId = 'cockpit' | 'overview' | 'live' | 'telemetry' | 'circuit' | 'corners' | 'replay' | 'compare' | 'ghost-lap' | 'studio' | 'track-evo' | 'surface' | 'risk' | 'predict' | 'tires' | 'setup' | 'advisor' | 'setup-lab' | 'parts' | 'bike-compare' | 'twin' | 'sandbox' | 'sim-lab' | 'experiments' | 'events' | 'history' | 'pre-gp' | 'crew' | 'copilot' | 'learning-path' | 'human' | 'pit-radio' | 'team' | 'workbench' | 'orchestrator' | 'report' | 'debrief' | 'black-box' | 'knowledge' | 'patterns' | 'federated' | 'ai-crew' | 'style' | 'cube' | 'trust' | 'platform' | 'edge' | 'lakehouse' | 'data' | 'settings';
 export type ProfileId = 'race-engineer' | 'team-principal' | 'data-analyst' | 'mechanic' | 'spectator';
 
 export interface Profile {
@@ -25,7 +25,7 @@ export const PROFILES: Profile[] = [
     color: '#E03737',
     icon: '⚙️',
     accessCount: '23',
-    allowedTabs: ['cockpit','overview','live','telemetry','circuit','corners','replay','compare','ghost-lap','studio','track-evo','surface','risk','predict','tires','setup','advisor','setup-lab','parts','bike-compare','twin','sandbox','sim-lab','experiments','events','history','pre-gp','crew','copilot','learning-path','human','pit-radio','team','workbench','orchestrator','report','ai-crew','style','cube','trust','platform','patterns','federated','edge','data','settings'],
+    allowedTabs: ['cockpit','overview','live','telemetry','circuit','corners','replay','compare','ghost-lap','studio','track-evo','surface','risk','predict','tires','setup','advisor','setup-lab','parts','bike-compare','twin','sandbox','sim-lab','experiments','events','history','pre-gp','crew','copilot','learning-path','human','pit-radio','team','workbench','orchestrator','report','ai-crew','style','cube','trust','platform','patterns','federated','edge','lakehouse','data','settings'],
     defaultTab: 'overview',
     requiresAuth: true,
   },
@@ -47,7 +47,7 @@ export const PROFILES: Profile[] = [
     color: '#3B82F6',
     icon: '📊',
     accessCount: '14',
-    allowedTabs: ['cockpit','telemetry','corners','replay','compare','ghost-lap','studio','track-evo','surface','predict','tires','circuit','twin','sandbox','sim-lab','experiments','events','history','report','debrief','black-box','knowledge','patterns','learning-path','human','team','workbench','ai-crew','style','bike-compare','setup-lab','cube','trust','platform','federated','edge','data','settings'],
+    allowedTabs: ['cockpit','telemetry','corners','replay','compare','ghost-lap','studio','track-evo','surface','predict','tires','circuit','twin','sandbox','sim-lab','experiments','events','history','report','debrief','black-box','knowledge','patterns','learning-path','human','team','workbench','ai-crew','style','bike-compare','setup-lab','cube','trust','platform','federated','edge','lakehouse','data','settings'],
     defaultTab: 'telemetry',
     requiresAuth: true,
   },
