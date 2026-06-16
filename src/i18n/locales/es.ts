@@ -57,6 +57,7 @@ const es = {
     brakes: 'Térmica de Frenos',
     electronics: 'Electrónica',
     aero: 'Aerodinámica',
+    fuel: 'Combustible y Energía',
     twin: 'Gemelo Digital',
     history: 'Histórico de Circuito',
     preGp: 'Pre Gran Premio',

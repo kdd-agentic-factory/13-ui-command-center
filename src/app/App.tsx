@@ -6,7 +6,7 @@ import {
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
   Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical, CircleDot, Network, Ghost, GraduationCap, TestTubes, Video,
-  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse, Globe2, FlaskRound, GitMerge, Plug, Flag, Radar, Trophy, Timer, Disc, CircuitBoard, CloudRain, Wind,
+  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse, Globe2, FlaskRound, GitMerge, Plug, Flag, Radar, Trophy, Timer, Disc, CircuitBoard, CloudRain, Wind, Fuel,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, PROFILES, TabId, ProfileId } from '../context/AuthContext';
@@ -89,6 +89,7 @@ import { BrakeThermalPage }       from '../pages/BrakeThermalPage';
 import { ElectronicsPage }        from '../pages/ElectronicsPage';
 import { WeatherPage }            from '../pages/WeatherPage';
 import { AeroPage }               from '../pages/AeroPage';
+import { FuelPage }               from '../pages/FuelPage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -143,6 +144,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'advisor', labelKey: 'nav.advisor', icon: Lightbulb, badge: 'AI', badgeColor: 'blue' },
     { id: 'electronics', labelKey: 'nav.electronics', icon: CircuitBoard, badge: 'AI', badgeColor: 'blue' },
     { id: 'aero',    labelKey: 'nav.aero',    icon: Wind, badge: 'AI', badgeColor: 'blue' },
+    { id: 'fuel',    labelKey: 'nav.fuel',    icon: Fuel, badge: 'AI', badgeColor: 'blue' },
     { id: 'setup-lab', labelKey: 'nav.setupLab', icon: GitBranch },
     { id: 'parts',   labelKey: 'nav.parts',   icon: Wrench },
     { id: 'brakes',  labelKey: 'nav.brakes',  icon: Disc, badge: 'AI', badgeColor: 'blue' },
@@ -244,6 +246,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'electronics': return <ElectronicsPage />;
     case 'weather':   return <WeatherPage />;
     case 'aero':      return <AeroPage />;
+    case 'fuel':      return <FuelPage />;
     case 'patterns':  return <PatternMinerPage />;
     case 'federated': return <FederatedPage />;
     case 'events':    return <EventEnginePage />;
