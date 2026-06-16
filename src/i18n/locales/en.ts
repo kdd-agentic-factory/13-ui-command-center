@@ -41,6 +41,7 @@ const en = {
     predict: 'Improvement Model',
     strategy: 'Race Strategy',
     rivals: 'Rival Radar',
+    quali: 'Qualifying Lab',
     tires: 'Tyre Degradation',
     setup: 'Setup Management',
     advisor: 'Garage Setup Advisor',

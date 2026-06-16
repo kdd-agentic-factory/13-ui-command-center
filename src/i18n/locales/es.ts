@@ -41,6 +41,7 @@ const es = {
     predict: 'Modelo de Mejora',
     strategy: 'Estrategia de Carrera',
     rivals: 'Radar de Rivales',
+    quali: 'Laboratorio de Clasificación',
     tires: 'Degradación de Neumáticos',
     setup: 'Gestión de Setup',
     advisor: 'Asesor de Reglajes',

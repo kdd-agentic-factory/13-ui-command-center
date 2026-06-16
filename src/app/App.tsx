@@ -6,7 +6,7 @@ import {
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
   Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical, CircleDot, Network, Ghost, GraduationCap, TestTubes, Video,
-  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse, Globe2, FlaskRound, GitMerge, Plug, Flag, Radar, Trophy,
+  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse, Globe2, FlaskRound, GitMerge, Plug, Flag, Radar, Trophy, Timer,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, PROFILES, TabId, ProfileId } from '../context/AuthContext';
@@ -84,6 +84,7 @@ import { DevHubPage }             from '../pages/DevHubPage';
 import { RaceStrategyPage }       from '../pages/RaceStrategyPage';
 import { RivalRadarPage }         from '../pages/RivalRadarPage';
 import { ChampionshipPage }       from '../pages/ChampionshipPage';
+import { QualifyingPage }         from '../pages/QualifyingPage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -130,6 +131,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'predict',   labelKey: 'nav.predict',   icon: Sparkles, badge: 'AI', badgeColor: 'blue' },
     { id: 'strategy',  labelKey: 'nav.strategy',  icon: Flag, badge: 'AI', badgeColor: 'blue' },
     { id: 'rivals',    labelKey: 'nav.rivals',    icon: Radar, badge: 'AI', badgeColor: 'blue' },
+    { id: 'quali',     labelKey: 'nav.quali',     icon: Timer, badge: 'AI', badgeColor: 'blue' },
   ]},
   { section: 'nav.sections.engineering', items: [
     { id: 'setup',   labelKey: 'nav.setup',   icon: Sliders },
@@ -229,6 +231,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'strategy':  return <RaceStrategyPage />;
     case 'rivals':    return <RivalRadarPage />;
     case 'season':    return <ChampionshipPage />;
+    case 'quali':     return <QualifyingPage />;
     case 'patterns':  return <PatternMinerPage />;
     case 'federated': return <FederatedPage />;
     case 'events':    return <EventEnginePage />;
