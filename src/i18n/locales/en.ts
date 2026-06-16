@@ -62,6 +62,7 @@ const en = {
     fuel: 'Fuel & Energy',
     chassis: 'Chassis & Geometry',
     gearing: 'Gearing',
+    engctrl: 'Engineering Control',
     twin: 'Digital Twin',
     history: 'Circuit History',
     preGp: 'Pre Grand Prix',

@@ -6,7 +6,7 @@ import {
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
   Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical, CircleDot, Network, Ghost, GraduationCap, TestTubes, Video,
-  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse, Globe2, FlaskRound, GitMerge, Plug, Flag, Radar, Trophy, Timer, Disc, CircuitBoard, CloudRain, Wind, Fuel, Gauge, Bike, ClipboardList, Gavel, Cog,
+  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse, Globe2, FlaskRound, GitMerge, Plug, Flag, Radar, Trophy, Timer, Disc, CircuitBoard, CloudRain, Wind, Fuel, Gauge, Bike, ClipboardList, Gavel, Cog, SlidersHorizontal,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, PROFILES, TabId, ProfileId } from '../context/AuthContext';
@@ -95,6 +95,7 @@ import { ChassisPage }            from '../pages/ChassisPage';
 import { RaceDayControlPage }     from '../pages/RaceDayControlPage';
 import { RaceControlPage }        from '../pages/RaceControlPage';
 import { GearingPage }            from '../pages/GearingPage';
+import { EngineeringControlPage } from '../pages/EngineeringControlPage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -147,6 +148,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'quali',     labelKey: 'nav.quali',     icon: Timer, badge: 'AI', badgeColor: 'blue' },
   ]},
   { section: 'nav.sections.engineering', items: [
+    { id: 'engctrl', labelKey: 'nav.engctrl', icon: SlidersHorizontal, badge: 'AI', badgeColor: 'blue' },
     { id: 'setup',   labelKey: 'nav.setup',   icon: Sliders },
     { id: 'advisor', labelKey: 'nav.advisor', icon: Lightbulb, badge: 'AI', badgeColor: 'blue' },
     { id: 'electronics', labelKey: 'nav.electronics', icon: CircuitBoard, badge: 'AI', badgeColor: 'blue' },
@@ -262,6 +264,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'pressure':  return <TyrePressurePage />;
     case 'chassis':   return <ChassisPage />;
     case 'gearing':   return <GearingPage />;
+    case 'engctrl':   return <EngineeringControlPage />;
     case 'patterns':  return <PatternMinerPage />;
     case 'federated': return <FederatedPage />;
     case 'events':    return <EventEnginePage />;
