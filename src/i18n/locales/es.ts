@@ -71,6 +71,7 @@ const es = {
     platform: 'Consola de Plataforma',
     edge: 'Hub de Pista (Edge)',
     lakehouse: 'Lakehouse de Datos',
+    devhub: 'Hub de Desarrollo',
     data: 'Conectar Datos',
     settings: 'Configuración',
     sections: {

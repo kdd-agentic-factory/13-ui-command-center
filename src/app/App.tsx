@@ -6,7 +6,7 @@ import {
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
   Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical, CircleDot, Network, Ghost, GraduationCap, TestTubes, Video,
-  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse, Globe2, FlaskRound, GitMerge,
+  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse, Globe2, FlaskRound, GitMerge, Plug,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, PROFILES, TabId, ProfileId } from '../context/AuthContext';
@@ -80,6 +80,7 @@ import { SimLabPage }             from '../pages/SimLabPage';
 import { EdgeHubPage }            from '../pages/EdgeHubPage';
 import { LakehousePage }          from '../pages/LakehousePage';
 import { CausalEnginePage }       from '../pages/CausalEnginePage';
+import { DevHubPage }             from '../pages/DevHubPage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -161,6 +162,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
   { section: 'nav.sections.system', items: [
     { id: 'edge',     labelKey: 'nav.edge',     icon: Radio, badge: 'AI', badgeColor: 'blue' },
     { id: 'lakehouse', labelKey: 'nav.lakehouse', icon: Database, badge: 'AI', badgeColor: 'blue' },
+    { id: 'devhub',   labelKey: 'nav.devhub',   icon: Plug, badge: 'AI', badgeColor: 'blue' },
     { id: 'platform', labelKey: 'nav.platform', icon: Server, badge: 'LIVE', badgeColor: 'green' },
     { id: 'trust',    labelKey: 'nav.trust',    icon: ShieldCheck },
     { id: 'data',     labelKey: 'nav.data',     icon: Database },
@@ -217,6 +219,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'platform':  return <PlatformConsolePage />;
     case 'edge':      return <EdgeHubPage />;
     case 'lakehouse': return <LakehousePage />;
+    case 'devhub':    return <DevHubPage />;
     case 'patterns':  return <PatternMinerPage />;
     case 'federated': return <FederatedPage />;
     case 'events':    return <EventEnginePage />;

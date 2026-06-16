@@ -71,6 +71,7 @@ const en = {
     platform: 'Platform Console',
     edge: 'Trackside Edge Hub',
     lakehouse: 'Data Lakehouse',
+    devhub: 'Developer Hub',
     data: 'Connect Data',
     settings: 'Settings',
     sections: {
