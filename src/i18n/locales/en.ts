@@ -40,6 +40,7 @@ const en = {
     risk: 'Crash-Risk Index',
     predict: 'Improvement Model',
     strategy: 'Race Strategy',
+    rivals: 'Rival Radar',
     tires: 'Tyre Degradation',
     setup: 'Setup Management',
     advisor: 'Garage Setup Advisor',

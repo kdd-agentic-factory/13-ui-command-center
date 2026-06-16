@@ -40,6 +40,7 @@ const es = {
     risk: 'Índice de Riesgo',
     predict: 'Modelo de Mejora',
     strategy: 'Estrategia de Carrera',
+    rivals: 'Radar de Rivales',
     tires: 'Degradación de Neumáticos',
     setup: 'Gestión de Setup',
     advisor: 'Asesor de Reglajes',
