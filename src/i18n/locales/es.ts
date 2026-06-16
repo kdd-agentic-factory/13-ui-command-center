@@ -57,6 +57,7 @@ const es = {
     preGp: 'Pre Gran Premio',
     crew: 'Jefe de Mecánicos',
     orchestrator: 'Ingeniero Autónomo',
+    season: 'Campeonato',
     copilot: 'Copiloto IA',
     learningPath: 'Ruta de Aprendizaje',
     human: 'Rendimiento del Piloto',

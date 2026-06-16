@@ -56,6 +56,7 @@ const en = {
     history: 'Circuit History',
     preGp: 'Pre Grand Prix',
     orchestrator: 'Autonomous Engineer',
+    season: 'Championship',
     crew: 'Crew Chief',
     copilot: 'AI Copilot',
     learningPath: 'Learning Path',

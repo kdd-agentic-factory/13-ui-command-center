@@ -6,7 +6,7 @@ import {
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
   Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical, CircleDot, Network, Ghost, GraduationCap, TestTubes, Video,
-  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse, Globe2, FlaskRound, GitMerge, Plug, Flag, Radar,
+  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse, Globe2, FlaskRound, GitMerge, Plug, Flag, Radar, Trophy,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, PROFILES, TabId, ProfileId } from '../context/AuthContext';
@@ -83,6 +83,7 @@ import { CausalEnginePage }       from '../pages/CausalEnginePage';
 import { DevHubPage }             from '../pages/DevHubPage';
 import { RaceStrategyPage }       from '../pages/RaceStrategyPage';
 import { RivalRadarPage }         from '../pages/RivalRadarPage';
+import { ChampionshipPage }       from '../pages/ChampionshipPage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -150,6 +151,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
   ]},
   { section: 'nav.sections.command', items: [
     { id: 'orchestrator', labelKey: 'nav.orchestrator', icon: Crosshair, badge: 'AI', badgeColor: 'blue' },
+    { id: 'season',  labelKey: 'nav.season',   icon: Trophy, badge: 'AI', badgeColor: 'blue' },
     { id: 'crew',    labelKey: 'nav.crew',     icon: Radio },
     { id: 'pit-radio', labelKey: 'nav.pitRadio', icon: Mic },
     { id: 'team',    labelKey: 'nav.team',     icon: Users },
@@ -226,6 +228,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'devhub':    return <DevHubPage />;
     case 'strategy':  return <RaceStrategyPage />;
     case 'rivals':    return <RivalRadarPage />;
+    case 'season':    return <ChampionshipPage />;
     case 'patterns':  return <PatternMinerPage />;
     case 'federated': return <FederatedPage />;
     case 'events':    return <EventEnginePage />;
