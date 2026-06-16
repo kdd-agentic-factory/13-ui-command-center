@@ -54,6 +54,7 @@ const es = {
     bikeCompare: 'Comparar Motos',
     parts: 'Diseño de Piezas',
     brakes: 'Térmica de Frenos',
+    electronics: 'Electrónica',
     twin: 'Gemelo Digital',
     history: 'Histórico de Circuito',
     preGp: 'Pre Gran Premio',

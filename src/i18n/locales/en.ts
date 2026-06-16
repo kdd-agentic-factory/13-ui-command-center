@@ -54,6 +54,7 @@ const en = {
     bikeCompare: 'Bike Comparison',
     parts: 'Part Design',
     brakes: 'Brake Thermal',
+    electronics: 'Electronics',
     twin: 'Digital Twin',
     history: 'Circuit History',
     preGp: 'Pre Grand Prix',
