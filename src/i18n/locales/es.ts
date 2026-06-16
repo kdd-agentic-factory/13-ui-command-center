@@ -61,6 +61,7 @@ const es = {
     aero: 'Aerodinámica',
     fuel: 'Combustible y Energía',
     chassis: 'Chasis y Geometría',
+    gearing: 'Transmisión',
     twin: 'Gemelo Digital',
     history: 'Histórico de Circuito',
     preGp: 'Pre Gran Premio',

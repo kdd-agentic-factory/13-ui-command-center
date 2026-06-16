@@ -6,7 +6,7 @@ import {
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
   Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical, CircleDot, Network, Ghost, GraduationCap, TestTubes, Video,
-  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse, Globe2, FlaskRound, GitMerge, Plug, Flag, Radar, Trophy, Timer, Disc, CircuitBoard, CloudRain, Wind, Fuel, Gauge, Bike, ClipboardList, Gavel,
+  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse, Globe2, FlaskRound, GitMerge, Plug, Flag, Radar, Trophy, Timer, Disc, CircuitBoard, CloudRain, Wind, Fuel, Gauge, Bike, ClipboardList, Gavel, Cog,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, PROFILES, TabId, ProfileId } from '../context/AuthContext';
@@ -94,6 +94,7 @@ import { TyrePressurePage }       from '../pages/TyrePressurePage';
 import { ChassisPage }            from '../pages/ChassisPage';
 import { RaceDayControlPage }     from '../pages/RaceDayControlPage';
 import { RaceControlPage }        from '../pages/RaceControlPage';
+import { GearingPage }            from '../pages/GearingPage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -152,6 +153,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'aero',    labelKey: 'nav.aero',    icon: Wind, badge: 'AI', badgeColor: 'blue' },
     { id: 'fuel',    labelKey: 'nav.fuel',    icon: Fuel, badge: 'AI', badgeColor: 'blue' },
     { id: 'chassis', labelKey: 'nav.chassis', icon: Bike, badge: 'AI', badgeColor: 'blue' },
+    { id: 'gearing', labelKey: 'nav.gearing', icon: Cog, badge: 'AI', badgeColor: 'blue' },
     { id: 'setup-lab', labelKey: 'nav.setupLab', icon: GitBranch },
     { id: 'parts',   labelKey: 'nav.parts',   icon: Wrench },
     { id: 'brakes',  labelKey: 'nav.brakes',  icon: Disc, badge: 'AI', badgeColor: 'blue' },
@@ -259,6 +261,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'fuel':      return <FuelPage />;
     case 'pressure':  return <TyrePressurePage />;
     case 'chassis':   return <ChassisPage />;
+    case 'gearing':   return <GearingPage />;
     case 'patterns':  return <PatternMinerPage />;
     case 'federated': return <FederatedPage />;
     case 'events':    return <EventEnginePage />;
