@@ -53,6 +53,7 @@ const es = {
     setupLab: 'Laboratorio Setup',
     bikeCompare: 'Comparar Motos',
     parts: 'Diseño de Piezas',
+    brakes: 'Térmica de Frenos',
     twin: 'Gemelo Digital',
     history: 'Histórico de Circuito',
     preGp: 'Pre Gran Premio',

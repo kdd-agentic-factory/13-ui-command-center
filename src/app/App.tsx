@@ -6,7 +6,7 @@ import {
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
   Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical, CircleDot, Network, Ghost, GraduationCap, TestTubes, Video,
-  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse, Globe2, FlaskRound, GitMerge, Plug, Flag, Radar, Trophy, Timer,
+  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse, Globe2, FlaskRound, GitMerge, Plug, Flag, Radar, Trophy, Timer, Disc,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, PROFILES, TabId, ProfileId } from '../context/AuthContext';
@@ -85,6 +85,7 @@ import { RaceStrategyPage }       from '../pages/RaceStrategyPage';
 import { RivalRadarPage }         from '../pages/RivalRadarPage';
 import { ChampionshipPage }       from '../pages/ChampionshipPage';
 import { QualifyingPage }         from '../pages/QualifyingPage';
+import { BrakeThermalPage }       from '../pages/BrakeThermalPage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -138,6 +139,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'advisor', labelKey: 'nav.advisor', icon: Lightbulb, badge: 'AI', badgeColor: 'blue' },
     { id: 'setup-lab', labelKey: 'nav.setupLab', icon: GitBranch },
     { id: 'parts',   labelKey: 'nav.parts',   icon: Wrench },
+    { id: 'brakes',  labelKey: 'nav.brakes',  icon: Disc, badge: 'AI', badgeColor: 'blue' },
     { id: 'bike-compare', labelKey: 'nav.bikeCompare', icon: GitCompare },
     { id: 'twin',    labelKey: 'nav.twin',    icon: GitBranch },
     { id: 'sandbox', labelKey: 'nav.sandbox', icon: FlaskConical, badge: 'AI', badgeColor: 'blue' },
@@ -232,6 +234,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'rivals':    return <RivalRadarPage />;
     case 'season':    return <ChampionshipPage />;
     case 'quali':     return <QualifyingPage />;
+    case 'brakes':    return <BrakeThermalPage />;
     case 'patterns':  return <PatternMinerPage />;
     case 'federated': return <FederatedPage />;
     case 'events':    return <EventEnginePage />;
