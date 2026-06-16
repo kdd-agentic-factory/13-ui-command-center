@@ -14,6 +14,7 @@
  * Deterministic energy model derived from circuit shape. Honest: a
  * representative fuel picture, not a live flow-meter feed. Volumes in litres.
  */
+import { raceLapsFor } from './raceModel';
 
 export type FuelStatus = 'safe' | 'tight' | 'short';
 
@@ -35,9 +36,8 @@ export interface Fuel {
 const STATUS_COLOR: Record<FuelStatus, string> = { safe: 'var(--green)', tight: 'var(--yellow)', short: 'var(--accent)' };
 export function fuelStatusColor(s: FuelStatus): string { return STATUS_COLOR[s]; }
 
-export function raceLapsForFuel(lengthKm: number): number {
-  return Math.min(30, Math.max(18, Math.round(120 / Math.max(lengthKm, 2.5))));
-}
+/** Alias of the shared race model, kept for a stable public name. */
+export const raceLapsForFuel = raceLapsFor;
 
 export function buildFuel(rider: string, bike: string, circuit: string, lengthKm: number, turns: number): Fuel {
   const raceLaps = raceLapsForFuel(lengthKm);

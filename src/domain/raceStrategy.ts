@@ -13,6 +13,7 @@
  * Deterministic model derived from circuit length + turns. Honest: this is a
  * representative strategy model, not a live timing / weather radar feed.
  */
+import { raceLapsFor } from './raceModel';
 
 export type Risk = 'low' | 'medium' | 'high';
 
@@ -49,11 +50,8 @@ export interface RaceStrategy {
 const RISK_COLOR: Record<Risk, string> = { low: 'var(--green)', medium: 'var(--yellow)', high: 'var(--accent)' };
 export function riskColor(r: Risk): string { return RISK_COLOR[r]; }
 
-/** A MotoGP race is ~120 km; derive laps from the circuit length (clamped). */
-export function raceLapsFor(lengthKm: number): number {
-  const laps = Math.round(120 / Math.max(lengthKm, 2.5));
-  return Math.min(30, Math.max(18, laps));
-}
+/** Re-exported from the shared race model so callers/tests keep a stable import. */
+export { raceLapsFor };
 
 export function buildRaceStrategy(rider: string, bike: string, circuit: string, lengthKm: number, turns: number): RaceStrategy {
   const raceLaps = raceLapsFor(lengthKm);

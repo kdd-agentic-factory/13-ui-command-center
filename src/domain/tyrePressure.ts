@@ -14,6 +14,7 @@
  * representative compliance picture, not a live tyre-pressure-monitor feed.
  * Pressures in bar.
  */
+import { raceLapsFor } from './raceModel';
 
 export type ComplianceStatus = 'compliant' | 'marginal' | 'breach';
 
@@ -35,9 +36,8 @@ export interface TyrePressure {
 const STATUS_COLOR: Record<ComplianceStatus, string> = { compliant: 'var(--green)', marginal: 'var(--yellow)', breach: 'var(--accent)' };
 export function complianceColor(s: ComplianceStatus): string { return STATUS_COLOR[s]; }
 
-export function raceLapsForPressure(lengthKm: number): number {
-  return Math.min(30, Math.max(18, Math.round(120 / Math.max(lengthKm, 2.5))));
-}
+/** Alias of the shared race model, kept for a stable public name. */
+export const raceLapsForPressure = raceLapsFor;
 
 export function buildTyrePressure(rider: string, bike: string, circuit: string, lengthKm: number): TyrePressure {
   const raceLaps = raceLapsForPressure(lengthKm);
