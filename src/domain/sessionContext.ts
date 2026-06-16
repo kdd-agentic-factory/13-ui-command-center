@@ -130,7 +130,7 @@ export const MODULE_LABELS: Partial<Record<TabId, string>> = {
   circuit: '3D Track Map', corners: 'Corner Intelligence', replay: 'Lap Replay',
   compare: 'Rider Comparison', tires: 'Tyre & Grip', risk: 'Crash-Risk',
   predict: 'Predictive Model', setup: 'Setup Management', advisor: 'Garage Setup Advisor', 'setup-lab': 'Setup Lab',
-  parts: 'Garage Part Factory', brakes: 'Brake Thermal Lab', electronics: 'Electronics Control Lab', 'bike-compare': 'Bike Comparison', twin: 'Digital Twin', sandbox: 'Scenario Sandbox', history: 'Circuit History',
+  parts: 'Garage Part Factory', brakes: 'Brake Thermal Lab', electronics: 'Electronics Control Lab', aero: 'Aerodynamics Lab', 'bike-compare': 'Bike Comparison', twin: 'Digital Twin', sandbox: 'Scenario Sandbox', history: 'Circuit History',
   'pre-gp': 'Pre-GP Workspace', crew: 'Crew Chief', copilot: 'Rider Coach AI',
   'ai-crew': 'Oracle Pit Wall', report: 'Session Report', debrief: 'AI Debrief Room', 'black-box': 'KDD Black Box', knowledge: 'Knowledge Graph', style: 'Rider Style DNA',
   'ghost-lap': 'Ghost Lap Simulator', 'learning-path': 'Rider Learning Path', experiments: 'Experiment Engine', studio: 'Video Studio', 'sim-lab': 'Sim-to-Real Lab',

@@ -56,6 +56,7 @@ const es = {
     parts: 'Diseño de Piezas',
     brakes: 'Térmica de Frenos',
     electronics: 'Electrónica',
+    aero: 'Aerodinámica',
     twin: 'Gemelo Digital',
     history: 'Histórico de Circuito',
     preGp: 'Pre Gran Premio',

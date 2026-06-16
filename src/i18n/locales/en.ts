@@ -56,6 +56,7 @@ const en = {
     parts: 'Part Design',
     brakes: 'Brake Thermal',
     electronics: 'Electronics',
+    aero: 'Aerodynamics',
     twin: 'Digital Twin',
     history: 'Circuit History',
     preGp: 'Pre Grand Prix',
