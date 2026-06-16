@@ -30,6 +30,7 @@ const en = {
     team: 'Team Workspace',
     workbench: 'Visualization OS',
     overview: 'Overview',
+    raceday: 'Race Day Control',
     live: 'Track-Live',
     telemetry: 'Live Telemetry',
     circuit: 'Circuit Intelligence',

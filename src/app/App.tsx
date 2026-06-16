@@ -6,7 +6,7 @@ import {
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
   Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical, CircleDot, Network, Ghost, GraduationCap, TestTubes, Video,
-  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse, Globe2, FlaskRound, GitMerge, Plug, Flag, Radar, Trophy, Timer, Disc, CircuitBoard, CloudRain, Wind, Fuel, Gauge, Bike,
+  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse, Globe2, FlaskRound, GitMerge, Plug, Flag, Radar, Trophy, Timer, Disc, CircuitBoard, CloudRain, Wind, Fuel, Gauge, Bike, ClipboardList,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, PROFILES, TabId, ProfileId } from '../context/AuthContext';
@@ -92,6 +92,7 @@ import { AeroPage }               from '../pages/AeroPage';
 import { FuelPage }               from '../pages/FuelPage';
 import { TyrePressurePage }       from '../pages/TyrePressurePage';
 import { ChassisPage }            from '../pages/ChassisPage';
+import { RaceDayControlPage }     from '../pages/RaceDayControlPage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -123,6 +124,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'cockpit',   labelKey: 'nav.cockpit',   icon: LayoutGrid, badge: 'AI', badgeColor: 'blue' },
     { id: 'pre-gp',    labelKey: 'nav.preGp',     icon: CalendarDays },
     { id: 'overview',  labelKey: 'nav.overview',  icon: LayoutDashboard },
+    { id: 'raceday',   labelKey: 'nav.raceday',   icon: ClipboardList, badge: 'AI', badgeColor: 'blue' },
     { id: 'live',      labelKey: 'nav.live',      icon: MonitorPlay,      badge: 'LIVE', badgeColor: 'red' },
     { id: 'telemetry', labelKey: 'nav.telemetry', icon: Activity,         badge: '10Hz', badgeColor: 'green' },
     { id: 'circuit',   labelKey: 'nav.circuit',   icon: Map },
@@ -211,6 +213,7 @@ function useClock(): string {
 function PageContent({ tab }: { tab: TabId }) {
   switch (tab) {
     case 'overview':  return <OverviewPage />;
+    case 'raceday':   return <RaceDayControlPage />;
     case 'live':      return <TrackLivePage />;
     case 'telemetry': return <LiveTelemetryPage />;
     case 'circuit':   return <CircuitIntelligencePage />;

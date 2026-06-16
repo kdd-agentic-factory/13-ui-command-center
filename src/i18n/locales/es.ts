@@ -30,6 +30,7 @@ const es = {
     team: 'Espacio de Equipo',
     workbench: 'SO de Visualización',
     overview: 'Vista General',
+    raceday: 'Control de Día de Carrera',
     live: 'Pista en Vivo',
     telemetry: 'Telemetría en Vivo',
     circuit: 'Inteligencia de Circuito',
