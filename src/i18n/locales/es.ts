@@ -67,6 +67,7 @@ const es = {
     crew: 'Jefe de Mecánicos',
     orchestrator: 'Ingeniero Autónomo',
     season: 'Campeonato',
+    stewards: 'Control de Carrera',
     copilot: 'Copiloto IA',
     learningPath: 'Ruta de Aprendizaje',
     human: 'Rendimiento del Piloto',

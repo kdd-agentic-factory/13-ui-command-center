@@ -66,6 +66,7 @@ const en = {
     preGp: 'Pre Grand Prix',
     orchestrator: 'Autonomous Engineer',
     season: 'Championship',
+    stewards: 'Race Control',
     crew: 'Crew Chief',
     copilot: 'AI Copilot',
     learningPath: 'Learning Path',
