@@ -13,6 +13,7 @@
  * Deterministic compliance model. Honest: a representative race-control picture,
  * not a live Race Direction feed.
  */
+import { gradeColor } from './palette';
 
 export type CheckStatus = 'pass' | 'check' | 'fail';
 export type Flag = 'green' | 'yellow' | 'double-yellow' | 'red' | 'white' | 'chequered';
@@ -33,8 +34,9 @@ export interface RaceControl {
   verdict: string; punchline: string; confidence: number;
 }
 
-const CHECK_COLOR: Record<CheckStatus, string> = { pass: 'var(--green)', check: 'var(--yellow)', fail: 'var(--accent)' };
-export function checkColor(s: CheckStatus): string { return CHECK_COLOR[s]; }
+export function checkColor(s: CheckStatus): string {
+  return gradeColor(s === 'pass' ? 'good' : s === 'check' ? 'warn' : 'bad');
+}
 const FLAG_COLOR: Record<Flag, string> = {
   green: 'var(--green)', yellow: 'var(--yellow)', 'double-yellow': 'var(--yellow)',
   red: 'var(--accent)', white: 'var(--cyan)', chequered: 'var(--text)',

@@ -13,6 +13,7 @@
  * Deterministic season model. Honest: a representative title picture, not a
  * live results feed. Points model: 37 per weekend (25 GP + 12 Sprint win).
  */
+import { gradeColor } from './palette';
 
 export type Trend = 'up' | 'flat' | 'down';
 
@@ -38,8 +39,9 @@ export interface Championship {
 
 const TREND_COLOR: Record<Trend, string> = { up: 'var(--green)', flat: 'var(--text-muted)', down: 'var(--accent)' };
 export function trendColor(t: Trend): string { return TREND_COLOR[t]; }
-const ENGINE_COLOR: Record<EngineUse['status'], string> = { ok: 'var(--green)', tight: 'var(--yellow)', 'penalty-risk': 'var(--accent)' };
-export function engineColor(s: EngineUse['status']): string { return ENGINE_COLOR[s]; }
+export function engineColor(s: EngineUse['status']): string {
+  return gradeColor(s === 'ok' ? 'good' : s === 'tight' ? 'warn' : 'bad');
+}
 
 export function buildChampionship(rider: string, bike: string): Championship {
   const totalRounds = 22, round = 14;

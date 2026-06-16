@@ -18,6 +18,7 @@ import { buildWeather } from './weather';
 import { buildFuel } from './fuel';
 import { buildTyrePressure } from './tyrePressure';
 import { raceLapsFor } from './raceModel';
+import { gradeColor } from './palette';
 
 export type CardStatus = 'good' | 'warn' | 'bad';
 export interface ClusterCard { tab: TabId; title: string; headline: string; metric: string; metricLabel: string; status: CardStatus }
@@ -30,8 +31,7 @@ export interface RaceDayControl {
   verdict: string; punchline: string;
 }
 
-const STATUS_COLOR: Record<CardStatus, string> = { good: 'var(--green)', warn: 'var(--yellow)', bad: 'var(--accent)' };
-export function cardStatusColor(s: CardStatus): string { return STATUS_COLOR[s]; }
+export function cardStatusColor(s: CardStatus): string { return gradeColor(s); }
 const RANK: Record<CardStatus, number> = { bad: 2, warn: 1, good: 0 };
 
 export function buildRaceDayControl(rider: string, bike: string, circuit: string, lengthKm: number, turns: number): RaceDayControl {

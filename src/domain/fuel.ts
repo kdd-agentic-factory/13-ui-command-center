@@ -15,6 +15,7 @@
  * representative fuel picture, not a live flow-meter feed. Volumes in litres.
  */
 import { raceLapsFor } from './raceModel';
+import { gradeColor } from './palette';
 
 export type FuelStatus = 'safe' | 'tight' | 'short';
 
@@ -33,8 +34,9 @@ export interface Fuel {
   verdict: string; punchline: string; confidence: number;
 }
 
-const STATUS_COLOR: Record<FuelStatus, string> = { safe: 'var(--green)', tight: 'var(--yellow)', short: 'var(--accent)' };
-export function fuelStatusColor(s: FuelStatus): string { return STATUS_COLOR[s]; }
+export function fuelStatusColor(s: FuelStatus): string {
+  return gradeColor(s === 'safe' ? 'good' : s === 'tight' ? 'warn' : 'bad');
+}
 
 /** Alias of the shared race model, kept for a stable public name. */
 export const raceLapsForFuel = raceLapsFor;

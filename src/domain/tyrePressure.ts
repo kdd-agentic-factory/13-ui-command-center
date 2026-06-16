@@ -15,6 +15,7 @@
  * Pressures in bar.
  */
 import { raceLapsFor } from './raceModel';
+import { gradeColor } from './palette';
 
 export type ComplianceStatus = 'compliant' | 'marginal' | 'breach';
 
@@ -33,8 +34,9 @@ export interface TyrePressure {
   verdict: string; punchline: string; confidence: number;
 }
 
-const STATUS_COLOR: Record<ComplianceStatus, string> = { compliant: 'var(--green)', marginal: 'var(--yellow)', breach: 'var(--accent)' };
-export function complianceColor(s: ComplianceStatus): string { return STATUS_COLOR[s]; }
+export function complianceColor(s: ComplianceStatus): string {
+  return gradeColor(s === 'compliant' ? 'good' : s === 'marginal' ? 'warn' : 'bad');
+}
 
 /** Alias of the shared race model, kept for a stable public name. */
 export const raceLapsForPressure = raceLapsFor;

@@ -12,3 +12,16 @@ const SEVERITY_COLOR: Record<Severity, string> = {
 };
 
 export function severityColor(s: Severity): string { return SEVERITY_COLOR[s]; }
+
+/**
+ * Canonical good/warn/bad grade scale — green/yellow/accent. Modules whose
+ * status is a three-step health (compliance, fuel margin, scrutineering …) map
+ * their domain status to a Grade and call this, so the colours stay identical.
+ */
+export type Grade = 'good' | 'warn' | 'bad';
+
+const GRADE_COLOR: Record<Grade, string> = {
+  good: 'var(--green)', warn: 'var(--yellow)', bad: 'var(--accent)',
+};
+
+export function gradeColor(g: Grade): string { return GRADE_COLOR[g]; }
