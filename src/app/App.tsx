@@ -6,7 +6,7 @@ import {
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
   Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical, CircleDot, Network, Ghost, GraduationCap, TestTubes, Video,
-  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse, Globe2, FlaskRound, GitMerge, Plug, Flag, Radar, Trophy, Timer, Disc, CircuitBoard,
+  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse, Globe2, FlaskRound, GitMerge, Plug, Flag, Radar, Trophy, Timer, Disc, CircuitBoard, CloudRain,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, PROFILES, TabId, ProfileId } from '../context/AuthContext';
@@ -87,6 +87,7 @@ import { ChampionshipPage }       from '../pages/ChampionshipPage';
 import { QualifyingPage }         from '../pages/QualifyingPage';
 import { BrakeThermalPage }       from '../pages/BrakeThermalPage';
 import { ElectronicsPage }        from '../pages/ElectronicsPage';
+import { WeatherPage }            from '../pages/WeatherPage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -129,6 +130,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'tires',     labelKey: 'nav.tires',     icon: Circle },
     { id: 'track-evo', labelKey: 'nav.trackEvo',  icon: TrendingUp },
     { id: 'surface',   labelKey: 'nav.surface',   icon: Mountain, badge: 'AI', badgeColor: 'blue' },
+    { id: 'weather',   labelKey: 'nav.weather',   icon: CloudRain, badge: 'AI', badgeColor: 'blue' },
     { id: 'risk',      labelKey: 'nav.risk',      icon: ShieldAlert },
     { id: 'predict',   labelKey: 'nav.predict',   icon: Sparkles, badge: 'AI', badgeColor: 'blue' },
     { id: 'strategy',  labelKey: 'nav.strategy',  icon: Flag, badge: 'AI', badgeColor: 'blue' },
@@ -238,6 +240,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'quali':     return <QualifyingPage />;
     case 'brakes':    return <BrakeThermalPage />;
     case 'electronics': return <ElectronicsPage />;
+    case 'weather':   return <WeatherPage />;
     case 'patterns':  return <PatternMinerPage />;
     case 'federated': return <FederatedPage />;
     case 'events':    return <EventEnginePage />;

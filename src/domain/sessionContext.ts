@@ -134,7 +134,7 @@ export const MODULE_LABELS: Partial<Record<TabId, string>> = {
   'pre-gp': 'Pre-GP Workspace', crew: 'Crew Chief', copilot: 'Rider Coach AI',
   'ai-crew': 'Oracle Pit Wall', report: 'Session Report', debrief: 'AI Debrief Room', 'black-box': 'KDD Black Box', knowledge: 'Knowledge Graph', style: 'Rider Style DNA',
   'ghost-lap': 'Ghost Lap Simulator', 'learning-path': 'Rider Learning Path', experiments: 'Experiment Engine', studio: 'Video Studio', 'sim-lab': 'Sim-to-Real Lab',
-  cockpit: 'Adaptive Cockpit', 'track-evo': 'Track Evolution', surface: 'Track Surface', 'pit-radio': 'Pit-Radio', team: 'Team Workspace',
+  cockpit: 'Adaptive Cockpit', 'track-evo': 'Track Evolution', surface: 'Track Surface', weather: 'Weather & Grip Radar', 'pit-radio': 'Pit-Radio', team: 'Team Workspace',
   trust: 'Data Trust Center', cube: 'Telemetry Data Cube', platform: 'Platform Console', patterns: 'Pattern Miner', edge: 'Trackside Edge Hub', lakehouse: 'Data Lakehouse', devhub: 'Developer Hub', strategy: 'Race Strategy Command', rivals: 'Rival Radar', quali: 'Qualifying Lab', events: 'Event Engine', causal: 'Causal Engine', workbench: 'Visualization OS', federated: 'Federated Intelligence', orchestrator: 'Autonomous Race Engineer', season: 'Championship Command', human: 'Human Performance',
 };
 

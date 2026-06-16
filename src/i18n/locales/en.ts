@@ -25,6 +25,7 @@ const en = {
     cockpit: 'Adaptive Cockpit',
     trackEvo: 'Track Evolution',
     surface: 'Track Surface',
+    weather: 'Weather Radar',
     pitRadio: 'Pit-Radio',
     team: 'Team Workspace',
     workbench: 'Visualization OS',
