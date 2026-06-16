@@ -39,6 +39,7 @@ const en = {
     ghostLap: 'Ghost Lap',
     risk: 'Crash-Risk Index',
     predict: 'Improvement Model',
+    strategy: 'Race Strategy',
     tires: 'Tyre Degradation',
     setup: 'Setup Management',
     advisor: 'Garage Setup Advisor',

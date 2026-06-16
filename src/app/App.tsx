@@ -6,7 +6,7 @@ import {
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
   Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical, CircleDot, Network, Ghost, GraduationCap, TestTubes, Video,
-  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse, Globe2, FlaskRound, GitMerge, Plug,
+  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse, Globe2, FlaskRound, GitMerge, Plug, Flag,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, PROFILES, TabId, ProfileId } from '../context/AuthContext';
@@ -81,6 +81,7 @@ import { EdgeHubPage }            from '../pages/EdgeHubPage';
 import { LakehousePage }          from '../pages/LakehousePage';
 import { CausalEnginePage }       from '../pages/CausalEnginePage';
 import { DevHubPage }             from '../pages/DevHubPage';
+import { RaceStrategyPage }       from '../pages/RaceStrategyPage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -125,6 +126,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'surface',   labelKey: 'nav.surface',   icon: Mountain, badge: 'AI', badgeColor: 'blue' },
     { id: 'risk',      labelKey: 'nav.risk',      icon: ShieldAlert },
     { id: 'predict',   labelKey: 'nav.predict',   icon: Sparkles, badge: 'AI', badgeColor: 'blue' },
+    { id: 'strategy',  labelKey: 'nav.strategy',  icon: Flag, badge: 'AI', badgeColor: 'blue' },
   ]},
   { section: 'nav.sections.engineering', items: [
     { id: 'setup',   labelKey: 'nav.setup',   icon: Sliders },
@@ -220,6 +222,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'edge':      return <EdgeHubPage />;
     case 'lakehouse': return <LakehousePage />;
     case 'devhub':    return <DevHubPage />;
+    case 'strategy':  return <RaceStrategyPage />;
     case 'patterns':  return <PatternMinerPage />;
     case 'federated': return <FederatedPage />;
     case 'events':    return <EventEnginePage />;

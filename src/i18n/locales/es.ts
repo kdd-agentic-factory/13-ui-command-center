@@ -39,6 +39,7 @@ const es = {
     ghostLap: 'Vuelta Fantasma',
     risk: 'Índice de Riesgo',
     predict: 'Modelo de Mejora',
+    strategy: 'Estrategia de Carrera',
     tires: 'Degradación de Neumáticos',
     setup: 'Gestión de Setup',
     advisor: 'Asesor de Reglajes',
