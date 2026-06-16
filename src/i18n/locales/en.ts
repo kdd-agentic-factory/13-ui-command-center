@@ -44,6 +44,7 @@ const en = {
     rivals: 'Rival Radar',
     quali: 'Qualifying Lab',
     tires: 'Tyre Degradation',
+    pressure: 'Tyre Pressure',
     setup: 'Setup Management',
     advisor: 'Garage Setup Advisor',
     sandbox: 'Scenario Sandbox',

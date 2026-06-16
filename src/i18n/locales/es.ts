@@ -44,6 +44,7 @@ const es = {
     rivals: 'Radar de Rivales',
     quali: 'Laboratorio de Clasificación',
     tires: 'Degradación de Neumáticos',
+    pressure: 'Presión de Neumáticos',
     setup: 'Gestión de Setup',
     advisor: 'Asesor de Reglajes',
     sandbox: 'Simulador Escenarios',

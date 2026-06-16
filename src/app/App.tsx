@@ -6,7 +6,7 @@ import {
   CalendarDays, Radio, Bot, GitBranch, Settings, Zap, ChevronRight, LogOut,
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
   Sparkles, Fingerprint, Loader2, MessagesSquare, FlaskConical, CircleDot, Network, Ghost, GraduationCap, TestTubes, Video,
-  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse, Globe2, FlaskRound, GitMerge, Plug, Flag, Radar, Trophy, Timer, Disc, CircuitBoard, CloudRain, Wind, Fuel,
+  LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse, Globe2, FlaskRound, GitMerge, Plug, Flag, Radar, Trophy, Timer, Disc, CircuitBoard, CloudRain, Wind, Fuel, Gauge,
 } from 'lucide-react';
 
 import { AuthProvider, useProfile, PROFILES, TabId, ProfileId } from '../context/AuthContext';
@@ -90,6 +90,7 @@ import { ElectronicsPage }        from '../pages/ElectronicsPage';
 import { WeatherPage }            from '../pages/WeatherPage';
 import { AeroPage }               from '../pages/AeroPage';
 import { FuelPage }               from '../pages/FuelPage';
+import { TyrePressurePage }       from '../pages/TyrePressurePage';
 import { AICrewPage }               from '../pages/AICrewPage';
 import { ConnectDataPage }          from '../pages/ConnectDataPage';
 import { TrackLivePage }            from '../pages/TrackLivePage';
@@ -130,6 +131,7 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'compare',   labelKey: 'nav.compare',   icon: GitCompare },
     { id: 'ghost-lap', labelKey: 'nav.ghostLap',  icon: Ghost, badge: 'AI', badgeColor: 'blue' },
     { id: 'tires',     labelKey: 'nav.tires',     icon: Circle },
+    { id: 'pressure',  labelKey: 'nav.pressure',  icon: Gauge, badge: 'AI', badgeColor: 'blue' },
     { id: 'track-evo', labelKey: 'nav.trackEvo',  icon: TrendingUp },
     { id: 'surface',   labelKey: 'nav.surface',   icon: Mountain, badge: 'AI', badgeColor: 'blue' },
     { id: 'weather',   labelKey: 'nav.weather',   icon: CloudRain, badge: 'AI', badgeColor: 'blue' },
@@ -247,6 +249,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'weather':   return <WeatherPage />;
     case 'aero':      return <AeroPage />;
     case 'fuel':      return <FuelPage />;
+    case 'pressure':  return <TyrePressurePage />;
     case 'patterns':  return <PatternMinerPage />;
     case 'federated': return <FederatedPage />;
     case 'events':    return <EventEnginePage />;
