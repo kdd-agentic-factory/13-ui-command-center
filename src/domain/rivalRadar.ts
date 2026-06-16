@@ -13,6 +13,7 @@
  * Deterministic competitive model derived from circuit shape. Honest: a
  * representative grid read, not a live timing-screen feed.
  */
+import { severityColor } from './palette';
 
 export type Threat = 'low' | 'medium' | 'high';
 
@@ -39,8 +40,8 @@ export interface RivalRadar {
   verdict: string; punchline: string; confidence: number;
 }
 
-const THREAT_COLOR: Record<Threat, string> = { low: 'var(--green)', medium: 'var(--yellow)', high: 'var(--accent)' };
-export function threatColor(t: Threat): string { return THREAT_COLOR[t]; }
+/** Threat shares the canonical low/medium/high severity scale. */
+export function threatColor(t: Threat): string { return severityColor(t); }
 
 export function buildRivalRadar(rider: string, bike: string, circuit: string, turns: number): RivalRadar {
   const rivals: Rival[] = [

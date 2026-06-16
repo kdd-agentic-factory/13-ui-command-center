@@ -13,6 +13,7 @@
  * Deterministic aero model derived from circuit shape. Honest: a representative
  * aero picture, not a CFD/wind-tunnel run.
  */
+import { severityColor } from './palette';
 
 export interface AeroPackage { id: string; name: string; downforce: number; drag: number; topSpeedKmh: number; chosen: boolean; note: string }
 export interface AeroCorner { corner: string; type: 'slow' | 'medium' | 'fast'; aeroGain: number; note: string }
@@ -28,8 +29,8 @@ export interface Aero {
   verdict: string; punchline: string; confidence: number;
 }
 
-const DIFF_COLOR: Record<Aero['dirtyAir']['overtakeDifficulty'], string> = { low: 'var(--green)', medium: 'var(--yellow)', high: 'var(--accent)' };
-export function difficultyColor(d: Aero['dirtyAir']['overtakeDifficulty']): string { return DIFF_COLOR[d]; }
+/** Overtake difficulty shares the canonical low/medium/high severity scale. */
+export function difficultyColor(d: Aero['dirtyAir']['overtakeDifficulty']): string { return severityColor(d); }
 const TYPE_COLOR: Record<AeroCorner['type'], string> = { slow: 'var(--text-muted)', medium: 'var(--yellow)', fast: 'var(--green)' };
 export function aeroTypeColor(t: AeroCorner['type']): string { return TYPE_COLOR[t]; }
 

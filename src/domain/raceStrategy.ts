@@ -14,6 +14,7 @@
  * representative strategy model, not a live timing / weather radar feed.
  */
 import { raceLapsFor } from './raceModel';
+import { severityColor } from './palette';
 
 export type Risk = 'low' | 'medium' | 'high';
 
@@ -47,8 +48,8 @@ export interface RaceStrategy {
   contingency: string[];
 }
 
-const RISK_COLOR: Record<Risk, string> = { low: 'var(--green)', medium: 'var(--yellow)', high: 'var(--accent)' };
-export function riskColor(r: Risk): string { return RISK_COLOR[r]; }
+/** Risk shares the canonical low/medium/high severity scale. */
+export function riskColor(r: Risk): string { return severityColor(r); }
 
 /** Re-exported from the shared race model so callers/tests keep a stable import. */
 export { raceLapsFor };
