@@ -4,7 +4,7 @@ import { ArrowRight, CheckCircle2, Layers3, PlayCircle, Radar, ShieldCheck, User
 
 const decisionFlow = ['Datos', 'Eventos', 'Causa', 'Recomendación', 'Misión', 'Validación'];
 
-const valueProps = ['Menos tiempo perdido', 'Mejores decisiones', 'Más consistencia'];
+const valueProps = ['Menos conjetura', 'Más claridad', 'Más velocidad'];
 
 const capabilities = [
   {
@@ -96,7 +96,7 @@ export function HomePage() {
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, marginBottom: 40, flexWrap: 'wrap' }}>
           <div>
             <p style={{ margin: 0, textTransform: 'uppercase', letterSpacing: '0.16em', color: 'var(--color-text-muted, #98a2b3)', fontSize: 11 }}>KDD Moto Intelligence</p>
-            <h1 style={{ margin: '8px 0 0', fontSize: 20 }}>La inteligencia que hay debajo de la pista</h1>
+            <h1 style={{ margin: '8px 0 0', fontSize: 20 }}>La plataforma que convierte cada tanda en una decisión</h1>
           </div>
           <nav style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <a href="#prueba" style={{ textDecoration: 'none' }}><Pill><PlayCircle size={14} /> Entrar a la prueba</Pill></a>
@@ -106,11 +106,11 @@ export function HomePage() {
 
         <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20, alignItems: 'stretch' }}>
           <div style={{ border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: '28px clamp(20px, 4vw, 40px)', background: 'rgba(3, 7, 18, 0.88)', boxShadow: '0 24px 80px rgba(0, 0, 0, 0.38)' }}>
-            <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>Convierte cada tanda en una decisión de mejora</p>
+            <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>Para saber qué hacer en la siguiente salida</p>
             <h2 style={{ margin: '14px 0 16px', fontSize: 'clamp(38px, 6vw, 68px)', lineHeight: 0.95, maxWidth: 780 }}>KDD Moto Intelligence</h2>
             <p style={{ margin: '0 0 18px', fontSize: 18, lineHeight: 1.65, color: 'var(--color-text-muted, #98a2b3)', maxWidth: 820 }}>
               KDD Moto Intelligence es el box digital inteligente para pilotos, coaches, academias y equipos de motociclismo.
-              Conecta telemetría, vídeo, setup, neumáticos, sensores y contexto de circuito para responder las preguntas clave después de cada tanda.
+              No es otro panel de datos: es el copiloto que te dice qué pasó, por qué pasó y qué probar después.
             </p>
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 18 }}>
@@ -132,7 +132,7 @@ export function HomePage() {
             </div>
 
             <p style={{ margin: '0 0 22px', lineHeight: 1.7, color: 'var(--color-text-muted, #98a2b3)', maxWidth: 760 }}>
-              KDD no sustituye tu logger. KDD convierte tus datos en inteligencia de pista.
+              KDD no sustituye tu logger. Lo vuelve útil. Y lo convierte en una decisión de pista.
             </p>
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
@@ -169,7 +169,7 @@ export function HomePage() {
         </section>
 
         <section style={{ marginTop: 28, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: '22px 24px', background: 'rgba(15, 23, 42, 0.55)' }}>
-          <SectionTitle eyebrow="De datos a decisiones de box" title="Después de una tanda, lo importante es saber qué hacer después." body="KDD analiza la sesión, detecta los eventos relevantes, explica la causa probable y genera una misión concreta para la siguiente salida." />
+            <SectionTitle eyebrow="De datos a decisiones de box" title="Después de una tanda, lo importante es saber qué hacer después." body="KDD analiza la sesión, detecta lo relevante, explica la causa probable y te deja una misión clara para la siguiente salida." />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12 }}>
             {decisionFlow.map((step, index) => (
               <div key={step} style={{ borderRadius: 18, border: '1px solid rgba(148, 163, 184, 0.18)', padding: 14, background: index % 2 === 0 ? 'rgba(3,7,18,0.65)' : 'rgba(15,23,42,0.65)' }}>
@@ -181,7 +181,7 @@ export function HomePage() {
         </section>
 
         <section style={{ marginTop: 34 }}>
-          <SectionTitle eyebrow="Qué hace KDD" title="Todo lo que necesitas para convertir datos en una decisión." body="Relaciona telemetría, trazada, neumático, riesgo y estilo de pilotaje, y convierte cada recomendación en una misión concreta." />
+          <SectionTitle eyebrow="Qué hace KDD" title="Te ahorra tiempo en el análisis y te da foco para la siguiente tanda." body="Relaciona telemetría, trazada, neumático, riesgo y estilo de pilotaje, y convierte cada recomendación en una misión concreta." />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
             {capabilities.map(item => <HomeCard key={item.title} title={item.title} body={item.body} />)}
           </div>
@@ -203,7 +203,7 @@ export function HomePage() {
         </section>
 
         <section id="stack" style={{ marginTop: 34, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: 24, background: 'rgba(3, 7, 18, 0.8)' }}>
-          <SectionTitle eyebrow="La plataforma detrás de la experiencia" title="Todo está conectado para que la decisión salga clara." body="La home te muestra el valor. La prueba te deja experimentarlo." />
+          <SectionTitle eyebrow="La plataforma detrás de la experiencia" title="Todo está conectado para que la decisión salga clara." body="La home te muestra el valor. La prueba te deja experimentarlo sin fricción." />
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
             {stack.map(item => (
               <Pill key={item}><Radar size={14} /> {item}</Pill>
