@@ -13,10 +13,14 @@ server {
     root /usr/share/nginx/html;
     index index.html;
 
-    # ── CORS for the InsForge static front (browser → this BFF) ──────────────
+    # ── CORS for the public frontend(s) (browser → this BFF) ──────────────────
     # The internal API key is still injected server-side below; the browser only
-    # receives JSON. Only the canonical public origin is allowed.
-    add_header Access-Control-Allow-Origin "https://kdd-agentic-factory.insforge.site" always;
+    # receives JSON. Allow the currently deployed frontend origin(s) explicitly.
+    set $cors_origin "";
+    if ($http_origin = "https://vdf553wq.insforge.site") { set $cors_origin $http_origin; }
+    if ($http_origin = "https://kdd-agentic-factory.insforge.site") { set $cors_origin $http_origin; }
+    if ($http_origin = "https://kdd-rjz-ui.fly.dev") { set $cors_origin $http_origin; }
+    add_header Access-Control-Allow-Origin $cors_origin always;
     add_header Access-Control-Allow-Methods "GET, POST, OPTIONS" always;
     add_header Access-Control-Allow-Headers "Content-Type, Authorization" always;
     add_header Vary "Origin" always;
@@ -70,6 +74,74 @@ server {
         proxy_pass https://kdd-rjz-experiments.fly.dev/;
         proxy_ssl_server_name on;
         proxy_set_header Host kdd-rjz-experiments.fly.dev;
+        proxy_set_header X-API-Key "${KDD_INTERNAL_API_KEY}";
+        proxy_connect_timeout 15s;
+        proxy_read_timeout 60s;
+    }
+
+    # InsForge browser-facing proxy: auth, PostgREST, storage and AI gateway.
+    # The browser sends its own public anon key; the BFF only relays it.
+    location /api/auth/ {
+        proxy_pass https://vdf553wq.eu-central.insforge.app/api/auth/;
+        proxy_ssl_server_name on;
+        proxy_set_header Host vdf553wq.eu-central.insforge.app;
+        proxy_connect_timeout 15s;
+        proxy_read_timeout 60s;
+    }
+    location /rest/ {
+        proxy_pass https://vdf553wq.eu-central.insforge.app/rest/;
+        proxy_ssl_server_name on;
+        proxy_set_header Host vdf553wq.eu-central.insforge.app;
+        proxy_connect_timeout 15s;
+        proxy_read_timeout 60s;
+    }
+    location /storage/ {
+        proxy_pass https://vdf553wq.eu-central.insforge.app/storage/;
+        proxy_ssl_server_name on;
+        proxy_set_header Host vdf553wq.eu-central.insforge.app;
+        proxy_connect_timeout 15s;
+        proxy_read_timeout 60s;
+    }
+    location /api/storage/ {
+        proxy_pass https://vdf553wq.eu-central.insforge.app/api/storage/;
+        proxy_ssl_server_name on;
+        proxy_set_header Host vdf553wq.eu-central.insforge.app;
+        proxy_connect_timeout 15s;
+        proxy_read_timeout 60s;
+    }
+    location /api/database/ {
+        proxy_pass https://vdf553wq.eu-central.insforge.app/api/database/;
+        proxy_ssl_server_name on;
+        proxy_set_header Host vdf553wq.eu-central.insforge.app;
+        proxy_connect_timeout 15s;
+        proxy_read_timeout 60s;
+    }
+    location /api/ai/ {
+        proxy_pass https://vdf553wq.eu-central.insforge.app/api/ai/;
+        proxy_ssl_server_name on;
+        proxy_set_header Host vdf553wq.eu-central.insforge.app;
+        proxy_connect_timeout 15s;
+        proxy_read_timeout 60s;
+    }
+    location /api/functions/ {
+        proxy_pass https://vdf553wq.eu-central.insforge.app/api/functions/;
+        proxy_ssl_server_name on;
+        proxy_set_header Host vdf553wq.eu-central.insforge.app;
+        proxy_connect_timeout 15s;
+        proxy_read_timeout 60s;
+    }
+    location /api/telemetry/ {
+        proxy_pass https://kdd-rjz-telemetry.fly.dev/;
+        proxy_ssl_server_name on;
+        proxy_set_header Host kdd-rjz-telemetry.fly.dev;
+        proxy_set_header X-API-Key "${KDD_INTERNAL_API_KEY}";
+        proxy_connect_timeout 15s;
+        proxy_read_timeout 60s;
+    }
+    location /api/twin/ {
+        proxy_pass https://kdd-rjz-digital-twin.fly.dev/;
+        proxy_ssl_server_name on;
+        proxy_set_header Host kdd-rjz-digital-twin.fly.dev;
         proxy_set_header X-API-Key "${KDD_INTERNAL_API_KEY}";
         proxy_connect_timeout 15s;
         proxy_read_timeout 60s;

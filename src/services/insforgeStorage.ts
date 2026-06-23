@@ -3,7 +3,7 @@
  *
  * Persistence strategy (two layers):
  *   1. localStorage  — immediate, offline-capable (key: kdd-parts-v1)
- *   2. InsForge      — cloud sync: PostgREST /rest/v1/parts + Storage bucket
+ *   2. InsForge      — cloud sync: gateway /api/database/records/parts + Storage bucket
  *
  * Credentials come from VITE_INSFORGE_URL / VITE_INSFORGE_ANON_KEY (.env.local) —
  * never hardcode a key here: this bundle ships to every browser visitor, so an
@@ -77,17 +77,20 @@ function localUpsert(part: SavedPartMeta): void {
 // ── PostgREST ─────────────────────────────────────────────────────────────────
 
 async function dbInsert(table: string, row: Record<string, unknown>): Promise<boolean> {
+  const endpoints = [
+    `${BASE}/api/database/records/${table}`,
+  ];
   try {
-    const res = await fetch(`${BASE}/rest/v1/${table}`, {
-      method: 'POST',
-      headers: HEADERS,
-      body: JSON.stringify(row),
-    });
-    if (!res.ok) {
-      console.warn(`[InsForge] POST /rest/v1/${table} → ${res.status}`);
-      return false;
+    for (const url of endpoints) {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: HEADERS,
+        body: JSON.stringify(row),
+      });
+      if (res.ok) return true;
+      console.warn(`[InsForge] POST ${new URL(url).pathname} → ${res.status}`);
     }
-    return true;
+    return false;
   } catch (err) {
     console.warn('[InsForge] dbInsert error:', err);
     return false;
@@ -95,14 +98,23 @@ async function dbInsert(table: string, row: Record<string, unknown>): Promise<bo
 }
 
 async function dbSelect(table: string, qs: string): Promise<Record<string, unknown>[]> {
+  const endpoints = [
+    `${BASE}/api/database/records/${table}?${qs}`,
+  ];
   try {
-    const res = await fetch(`${BASE}/rest/v1/${table}?${qs}`, {
-      method: 'GET',
-      headers: { apikey: KEY, Authorization: `Bearer ${KEY}` },
-    });
-    if (!res.ok) return [];
-    const data = await res.json();
-    return Array.isArray(data) ? data : [];
+    for (const url of endpoints) {
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: { apikey: KEY, Authorization: `Bearer ${KEY}` },
+      });
+      if (!res.ok) {
+        console.warn(`[InsForge] GET ${new URL(url).pathname} → ${res.status}`);
+        continue;
+      }
+      const data = await res.json();
+      return Array.isArray(data) ? data : [];
+    }
+    return [];
   } catch {
     return [];
   }

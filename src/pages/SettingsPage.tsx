@@ -25,8 +25,8 @@ const RACE = (name: string) => `https://kdd-rjz-${name}.fly.dev`;
 
 const SERVICES: ServiceStatus[] = [
   // Core
-  { group: 'Core',       name: 'InsForge API',            url: 'https://vdf553wq.eu-central.insforge.app',  status: 'up', probe: 'browser',  latency: '42ms',  latencyMs: 42,  description: 'Database · Auth · AI Gateway' },
-  { group: 'Core',       name: 'InsForge Dashboard',      url: 'https://vdf553wq.insforge.site',            status: 'up', probe: 'browser',  latency: '—',    latencyMs: 0,   description: 'Frontend deployment (Vercel)' },
+  { group: 'Core',       name: 'InsForge API',            url: 'https://vdf553wq.eu-central.insforge.app',  status: 'up', probe: 'registry', latency: '42ms',  latencyMs: 42,  description: 'Database · Auth · AI Gateway' },
+  { group: 'Core',       name: 'InsForge Dashboard',      url: 'https://vdf553wq.insforge.site',            status: 'up', probe: 'registry', latency: '—',    latencyMs: 0,   description: 'Frontend deployment (Vercel)' },
   // InsForge Compute (managed)
   { group: 'Compute',    name: 'Agent Orchestrator',      url: fly('agent-orchestrator'), status: 'up', probe: 'registry', latency: '140ms', latencyMs: 140, description: 'Multi-agent coordination · Task routing' },
   { group: 'Compute',    name: 'MCP Gateway',             url: fly('mcp-gateway'),        status: 'up', probe: 'registry', latency: '120ms', latencyMs: 120, description: 'Tool access · External APIs' },

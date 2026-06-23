@@ -16,12 +16,14 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { animate } from 'animejs';
 import {
   Bot, CheckCircle, AlertTriangle, XCircle,
-  Loader2, Download, Zap, ChevronRight,
+  Loader2, Download, Zap, ChevronRight, ExternalLink,
   FlaskConical, Printer, CloudUpload, CloudOff,
 } from 'lucide-react';
 import { useToast } from './ToastProvider';
 import { usePartStorage } from '../hooks/usePartStorage';
 import { BlueprintBriefPanel } from './BlueprintBriefPanel';
+
+const BLUEPRINT_WEB_URL = import.meta.env.VITE_BLUEPRINT_WEB_URL ?? 'https://vdf553wq.insforge.site';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -600,26 +602,49 @@ M30 ; End program` : '';
 
           {/* Generate button */}
           <div style={{ marginTop: 14 }}>
-            <button
-              onClick={handleGenerate}
-              disabled={isRunning}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 8,
-                padding: '9px 24px',
-                background: isRunning ? 'rgba(56,189,248,0.08)' : 'rgba(56,189,248,0.15)',
-                border: '1px solid rgba(56,189,248,0.35)',
-                borderRadius: 7, cursor: isRunning ? 'not-allowed' : 'pointer',
-                color: isRunning ? 'rgba(56,189,248,0.5)' : '#38BDF8',
-                fontSize: 12, fontWeight: 700,
-                fontFamily: 'JetBrains Mono,monospace',
-                letterSpacing: '0.07em',
-                transition: 'all 0.15s',
-              }}
-            >
-              {isRunning ? <Loader2 size={13} style={{ animation: 'spin 1s linear infinite' }} /> : <Bot size={13} />}
-              {isRunning ? 'PIPELINE RUNNING...' : (phase === 'done' ? 'REGENERATE' : 'GENERATE PART')}
-              {!isRunning && <ChevronRight size={13} />}
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+              <button
+                onClick={handleGenerate}
+                disabled={isRunning}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  padding: '9px 24px',
+                  background: isRunning ? 'rgba(56,189,248,0.08)' : 'rgba(56,189,248,0.15)',
+                  border: '1px solid rgba(56,189,248,0.35)',
+                  borderRadius: 7, cursor: isRunning ? 'not-allowed' : 'pointer',
+                  color: isRunning ? 'rgba(56,189,248,0.5)' : '#38BDF8',
+                  fontSize: 12, fontWeight: 700,
+                  fontFamily: 'JetBrains Mono,monospace',
+                  letterSpacing: '0.07em',
+                  transition: 'all 0.15s',
+                }}
+              >
+                {isRunning ? <Loader2 size={13} style={{ animation: 'spin 1s linear infinite' }} /> : <Bot size={13} />}
+                {isRunning ? 'PIPELINE RUNNING...' : (phase === 'done' ? 'REGENERATE' : 'GENERATE PART')}
+                {!isRunning && <ChevronRight size={13} />}
+              </button>
+
+              <a
+                href={BLUEPRINT_WEB_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 6,
+                  padding: '8px 12px',
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.10)',
+                  borderRadius: 7,
+                  color: 'var(--text)',
+                  fontSize: 11,
+                  fontWeight: 700,
+                  fontFamily: 'JetBrains Mono,monospace',
+                  textDecoration: 'none',
+                }}
+              >
+                <ExternalLink size={12} />
+                OPEN WEB
+              </a>
+            </div>
           </div>
 
           <BlueprintBriefPanel

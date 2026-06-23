@@ -18,10 +18,10 @@ export function initAnalytics(): void {
     capture_pageleave: true,
     // Respect "Do Not Track" browser setting
     respect_dnt: true,
-    // Disable session recording by default (enable if needed)
-    disable_session_recording: false,
+    // Disable session recording by default to avoid heavy external traffic.
+    disable_session_recording: true,
     // Autocapture UI interactions
-    autocapture: true,
+    autocapture: false,
     // Persist identity across reloads
     persistence: 'localStorage',
     loaded: (ph) => {

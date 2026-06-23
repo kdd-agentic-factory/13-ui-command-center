@@ -1,6 +1,8 @@
-import { FileText, Loader2, Sparkles, CheckCircle, AlertTriangle, XCircle, RotateCcw } from 'lucide-react';
+import { FileText, Loader2, Sparkles, CheckCircle, AlertTriangle, XCircle, RotateCcw, ExternalLink } from 'lucide-react';
 import { useBlueprintBrief } from '../hooks/useBlueprintBrief';
 import type { BlueprintRequest } from '../services/blueprintBrief';
+
+const BLUEPRINT_WEB_URL = import.meta.env.VITE_BLUEPRINT_WEB_URL ?? 'https://vdf553wq.insforge.site';
 
 interface BlueprintBriefPanelProps {
   request: BlueprintRequest;
@@ -91,6 +93,26 @@ export function BlueprintBriefPanel({ request }: BlueprintBriefPanelProps) {
           {isGenerating ? <Loader2 size={12} style={{ animation: 'spin 1s linear infinite' }} /> : <Sparkles size={12} />}
           {isGenerating ? 'GENERATING BRIEF…' : 'GENERATE BLUEPRINT'}
         </button>
+
+        <a
+          href={BLUEPRINT_WEB_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            padding: '8px 12px',
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.10)',
+            borderRadius: 6,
+            color: 'var(--text)',
+            fontSize: 11,
+            fontFamily: 'JetBrains Mono,monospace',
+            textDecoration: 'none',
+          }}
+        >
+          <ExternalLink size={12} />
+          OPEN WEB
+        </a>
 
         {status !== 'idle' && (
           <button
