@@ -96,7 +96,7 @@ export function HomePage() {
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, marginBottom: 40, flexWrap: 'wrap' }}>
           <div>
             <p style={{ margin: 0, textTransform: 'uppercase', letterSpacing: '0.16em', color: 'var(--color-text-muted, #98a2b3)', fontSize: 11 }}>KDD Moto Intelligence</p>
-            <h1 style={{ margin: '8px 0 0', fontSize: 20 }}>La plataforma que convierte cada tanda en una decisión</h1>
+            <h1 style={{ margin: '8px 0 0', fontSize: 20 }}>La plataforma que convierte tus datos en decisiones de pista</h1>
           </div>
           <nav style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <a href="#prueba" style={{ textDecoration: 'none' }}><Pill><PlayCircle size={14} /> Entrar a la prueba</Pill></a>
@@ -132,7 +132,7 @@ export function HomePage() {
             </div>
 
             <p style={{ margin: '0 0 22px', lineHeight: 1.7, color: 'var(--color-text-muted, #98a2b3)', maxWidth: 760 }}>
-              KDD no sustituye tu logger. Lo vuelve útil. Y lo convierte en una decisión de pista.
+              KDD no sustituye tu logger. Lo vuelve útil y lo transforma en una decisión de pista.
             </p>
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
