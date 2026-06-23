@@ -125,9 +125,7 @@ server {
         try_files $uri $uri/ /pit-wall-os/index.html;
     }
 
-    location = / {
-        return 302 /pit-wall-os/;
-    }
+    # Root serves the React SPA public surface
 
     location / {
         try_files $uri $uri/ /index.html;
