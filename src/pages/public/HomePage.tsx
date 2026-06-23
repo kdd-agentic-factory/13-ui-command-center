@@ -4,6 +4,8 @@ import { ArrowRight, CheckCircle2, Layers3, PlayCircle, Radar, ShieldCheck, User
 
 const decisionFlow = ['Datos', 'Eventos', 'Causa', 'Recomendación', 'Misión', 'Validación'];
 
+const valueProps = ['Menos tiempo perdido', 'Mejores decisiones', 'Más consistencia'];
+
 const capabilities = [
   {
     title: 'Analiza la telemetría',
@@ -111,6 +113,10 @@ export function HomePage() {
               Conecta telemetría, vídeo, setup, neumáticos, sensores y contexto de circuito para responder las preguntas clave después de cada tanda.
             </p>
 
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 18 }}>
+              {valueProps.map(item => <Pill key={item}>{item}</Pill>)}
+            </div>
+
             <div style={{ display: 'grid', gap: 8, marginBottom: 18 }}>
               {[
                 '¿Dónde pierdo tiempo?',
@@ -175,7 +181,7 @@ export function HomePage() {
         </section>
 
         <section style={{ marginTop: 34 }}>
-          <SectionTitle eyebrow="Qué hace KDD" title="No se limita a mostrar números." body="Relaciona telemetría, trazada, neumático, riesgo y estilo de pilotaje, y convierte cada recomendación en una misión concreta." />
+          <SectionTitle eyebrow="Qué hace KDD" title="Todo lo que necesitas para convertir datos en una decisión." body="Relaciona telemetría, trazada, neumático, riesgo y estilo de pilotaje, y convierte cada recomendación en una misión concreta." />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
             {capabilities.map(item => <HomeCard key={item.title} title={item.title} body={item.body} />)}
           </div>
@@ -197,7 +203,7 @@ export function HomePage() {
         </section>
 
         <section id="stack" style={{ marginTop: 34, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: 24, background: 'rgba(3, 7, 18, 0.8)' }}>
-          <SectionTitle eyebrow="La inteligencia que hay debajo" title="KDD integra una arquitectura completa." body="La home te muestra el valor. La prueba te deja experimentarlo." />
+          <SectionTitle eyebrow="La plataforma detrás de la experiencia" title="Todo está conectado para que la decisión salga clara." body="La home te muestra el valor. La prueba te deja experimentarlo." />
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
             {stack.map(item => (
               <Pill key={item}><Radar size={14} /> {item}</Pill>
@@ -207,7 +213,7 @@ export function HomePage() {
 
         <section style={{ marginTop: 34, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 18, alignItems: 'stretch' }}>
           <div style={{ border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: 24, background: 'rgba(15,23,42,0.55)' }}>
-            <SectionTitle eyebrow="Accede a la prueba" title="Introduce tus credenciales y prueba una sesión completa de KDD Moto Intelligence." />
+            <SectionTitle eyebrow="Accede a la prueba" title="Pide acceso y prueba una sesión completa de KDD Moto Intelligence." />
             <p style={{ margin: '0 0 16px', color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.65 }}>¿No tienes acceso? Solicita una demo personalizada para tu academia, equipo o proyecto.</p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
               <a href="/trial" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, background: 'linear-gradient(135deg, #22c55e, #06b6d4)', color: '#fff', fontWeight: 700 }}>
