@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { useToast } from './ToastProvider';
 import { usePartStorage } from '../hooks/usePartStorage';
+import { BlueprintBriefPanel } from './BlueprintBriefPanel';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -620,6 +621,25 @@ M30 ; End program` : '';
               {!isRunning && <ChevronRight size={13} />}
             </button>
           </div>
+
+          <BlueprintBriefPanel
+            request={{
+              prompt: params.prompt,
+              material: params.material,
+              dimensions: {
+                x: params.dimX,
+                y: params.dimY,
+                z: params.dimZ,
+                loadKg: params.load,
+              },
+              result: result ? {
+                mass: result.mass,
+                peakStress: result.peakStress,
+                safetyFactor: result.safetyFactor,
+                rounds: result.rounds,
+              } : undefined,
+            }}
+          />
         </div>
 
         {/* ── Agent log + 3D viewer (visible when running or done) ─────── */}
