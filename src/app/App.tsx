@@ -31,17 +31,19 @@ import { HomePage } from '../pages/public/HomePage';
 import { LoginPage } from '../pages/public/LoginPage';
 import { TrialHomePage } from '../pages/public/TrialHomePage';
 import { ThanksPage } from '../pages/public/ThanksPage';
+import { FoundingNodesPage } from '../pages/public/FoundingNodesPage';
 
 function getPathname(): string {
   if (typeof window === 'undefined') return '/';
   return window.location.pathname;
 }
 
-function getAppRoute(pathname: string): 'home' | 'login' | 'trial' | 'thanks' | 'app' {
+function getAppRoute(pathname: string): 'home' | 'login' | 'trial' | 'thanks' | 'founding-nodes' | 'app' {
   if (pathname === '/app' || pathname.startsWith('/app/')) return 'app';
   if (pathname === '/login') return 'login';
   if (pathname === '/trial' || pathname.startsWith('/trial/')) return 'trial';
   if (pathname === '/founding-node-thanks') return 'thanks';
+  if (pathname === '/founding-nodes') return 'founding-nodes';
   return 'home';
 }
 
@@ -234,6 +236,8 @@ function AppRouter() {
       return <TrialHomePage />;
     case 'thanks':
       return <ThanksPage />;
+    case 'founding-nodes':
+      return <FoundingNodesPage />;
     case 'app':
       return <AppEntryFlow />;
     case 'home':

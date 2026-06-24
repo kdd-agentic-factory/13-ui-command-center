@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { ArrowRight, CheckCircle2, Layers3, PlayCircle, Radar, ShieldCheck, Users } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Layers3, NotebookText, PlayCircle, Radar, ShieldCheck, Users } from 'lucide-react';
 
 const decisionFlow = ['Datos', 'Eventos', 'Causa', 'Recomendación', 'Misión', 'Validación'];
 
@@ -119,6 +119,7 @@ export function HomePage() {
             <h1 style={{ margin: '8px 0 0', fontSize: 20 }}>La red inteligente de aprendizaje para rendimiento en moto</h1>
           </div>
           <nav style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            <a href="/founding-nodes" style={{ textDecoration: 'none' }}><Pill><NotebookText size={14} /> Founding Nodes</Pill></a>
             <a href="#prueba" style={{ textDecoration: 'none' }}><Pill><PlayCircle size={14} /> Entrar a la prueba</Pill></a>
             <a href="#stack" style={{ textDecoration: 'none' }}><Pill><Layers3 size={14} /> Ver arquitectura</Pill></a>
           </nav>
@@ -156,8 +157,8 @@ export function HomePage() {
             </p>
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-              <a href="/trial" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, background: 'linear-gradient(135deg, #60a5fa, #8b5cf6)', color: '#fff', fontWeight: 700 }}>
-                Solicitar Founding Access <ArrowRight size={16} />
+              <a href="/founding-nodes" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, background: 'linear-gradient(135deg, #60a5fa, #8b5cf6)', color: '#fff', fontWeight: 700 }}>
+                Ver Founding Nodes <ArrowRight size={16} />
               </a>
               <a href="/login" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, border: '1px solid rgba(148,163,184,0.24)', background: 'rgba(15,23,42,0.6)', color: 'var(--color-text, #eef1f8)', fontWeight: 700 }}>
                 Hablar con KDD <ArrowRight size={16} />
