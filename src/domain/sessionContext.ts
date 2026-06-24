@@ -13,6 +13,7 @@
  * SIMULATION / PRE-RACE …) is pinned over the dashboard.
  */
 import type { TabId } from '../context/AuthContext';
+import { getCircuitLibrary } from './circuits';
 
 // ── Modes ─────────────────────────────────────────────────────────────────────
 
@@ -178,6 +179,20 @@ export interface SessionContext {
   setup: Record<string, string>;
 }
 
+export interface SessionContextRow {
+  circuit_id: string;
+  session_mode: SessionMode;
+  data_mode: DataMode;
+  dashboard_profile: string;
+  pit_strategy_enabled: boolean;
+  demo_mode: boolean;
+  setup: Record<string, string> | null;
+}
+
+function resolveCircuitName(circuitId: string): string {
+  return getCircuitLibrary().find(circuit => circuit.id === circuitId)?.name ?? circuitId;
+}
+
 let current: SessionContext | null = null;
 
 export function setSessionContext(ctx: SessionContext): void {
@@ -225,6 +240,44 @@ export function buildSessionContext(
     pitStrategyEnabled: def.pitStrategyEnabled, demoMode: def.demoMode,
     badge: def.badge, badgeColor: def.badgeColor, setup,
   };
+}
+
+export function hydrateSessionContextRow(row: SessionContextRow): SessionContext {
+  const circuitName = resolveCircuitName(row.circuit_id);
+  const def = modeDef(row.session_mode);
+  return {
+    selectedCircuit: row.circuit_id,
+    circuitName,
+    sessionMode: row.session_mode,
+    dataMode: row.data_mode,
+    dashboardProfile: row.dashboard_profile,
+    pitStrategyEnabled: row.pit_strategy_enabled,
+    demoMode: row.demo_mode,
+    badge: def.badge,
+    badgeColor: def.badgeColor,
+    setup: row.setup ?? {},
+  };
+}
+
+export async function loadLatestSessionContextForCurrentUser(): Promise<SessionContextRow | null> {
+  try {
+    const { insforge } = await import('../lib/insforge');
+    const { data: user } = await insforge.auth.getCurrentUser();
+    const uid = (user as { user?: { id?: string } } | null)?.user?.id;
+    if (!uid) return null;
+
+    const { data, error } = await insforge.database
+      .from('session_contexts')
+      .select('circuit_id, session_mode, data_mode, dashboard_profile, pit_strategy_enabled, demo_mode, setup')
+      .eq('created_by', uid)
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    if (error || !Array.isArray(data) || data.length === 0) return null;
+    return data[0] as SessionContextRow;
+  } catch {
+    return null;
+  }
 }
 
 // ── Session Setup forms (spec §7) ─────────────────────────────────────────────

@@ -1,5 +1,5 @@
 import '../i18n'; // must be first — initialises i18next before any component renders
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { AuthProvider, useProfile, PROFILES, type ProfileId } from '../context/AuthContext';
 import { IntroExperience } from '../components/intro/IntroExperience';
@@ -22,9 +22,11 @@ import {
   buildSessionContext,
   DEMO_PACKAGES,
   type SessionContext,
+  loadLatestSessionContextForCurrentUser,
   persistSessionContext,
   setSessionContext,
 } from '../domain/sessionContext';
+import { buildSessionResumeSnapshot } from './sessionResume';
 
 import { DashboardShell } from './DashboardShell';
 import { HomePage } from '../pages/public/HomePage';
@@ -50,11 +52,49 @@ function getAppRoute(pathname: string): 'home' | 'login' | 'trial' | 'thanks' | 
 function AppEntryFlowContent() {
   const { profile, login, user, authLoading } = useProfile();
   const [pendingProfile, setPendingProfile] = useState<ProfileId | null>(null);
-  type Stage = 'mission' | 'circuit' | 'garage' | 'mode' | 'data' | 'launch' | 'booting' | 'dashboard';
-  const [stage, setStage] = useState<Stage>('mission');
+  type Stage = 'restoring' | 'mission' | 'circuit' | 'garage' | 'mode' | 'data' | 'launch' | 'booting' | 'dashboard';
+  const [stage, setStage] = useState<Stage>('restoring');
   const [createOnOpen, setCreateOnOpen] = useState(false);
   const [gateCircuit, setGateCircuit] = useState<CircuitRecord | null>(null);
   const [sessionCtx, setSessionCtx] = useState<SessionContext | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function resumeLatestSession() {
+      if (authLoading) return;
+      if (!profile) return;
+
+      if (!user) {
+        setStage('mission');
+        return;
+      }
+
+      setStage('restoring');
+      const row = await loadLatestSessionContextForCurrentUser();
+      if (cancelled) return;
+
+      if (!row) {
+        setStage('mission');
+        return;
+      }
+
+      const snapshot = buildSessionResumeSnapshot(row);
+      if (snapshot.gateCircuit) {
+        setActiveCircuit(snapshot.gateCircuit);
+        setGateCircuit(snapshot.gateCircuit);
+      }
+      if (snapshot.garageProfile) {
+        setGarageProfile(snapshot.garageProfile);
+      }
+      setSessionContext(snapshot.sessionCtx);
+      setSessionCtx(snapshot.sessionCtx);
+      setStage(snapshot.stage);
+    }
+
+    void resumeLatestSession();
+    return () => { cancelled = true; };
+  }, [authLoading, profile?.id, user?.id]);
 
   function presetLatestSession() {
     const mugello = getCircuitLibrary().find(c => c.id === 'mugello')!;
@@ -132,6 +172,14 @@ function AppEntryFlowContent() {
 
   if (profile.requiresAuth && !user && !authLoading) {
     return <IntroExperience onEnter={handleEnter} />;
+  }
+
+  if (stage === 'restoring') {
+    return (
+      <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg, #0c0e14)', color: 'var(--text-muted, #8b8fa3)', fontSize: 13 }}>
+        <Loader2 size={18} className="spin" style={{ marginRight: 8 }} /> Restoring your latest session…
+      </div>
+    );
   }
 
   if (stage === 'mission') {
