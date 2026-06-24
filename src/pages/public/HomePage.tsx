@@ -127,7 +127,7 @@ export function HomePage() {
         <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20, alignItems: 'stretch' }}>
           <div style={{ border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: '28px clamp(20px, 4vw, 40px)', background: 'rgba(3, 7, 18, 0.88)', boxShadow: '0 24px 80px rgba(0, 0, 0, 0.38)' }}>
             <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>Tus datos siguen siendo tuyos</p>
-            <h2 style={{ margin: '14px 0 16px', fontSize: 'clamp(38px, 6vw, 68px)', lineHeight: 0.95, maxWidth: 780 }}>KDD es una red de conocimiento de pista</h2>
+            <h2 style={{ margin: '14px 0 16px', fontSize: 'clamp(38px, 6vw, 68px)', lineHeight: 0.95, maxWidth: 780 }}>KDD es una red privada de aprendizaje para rendimiento en moto</h2>
             <p style={{ margin: '0 0 18px', fontSize: 18, lineHeight: 1.65, color: 'var(--color-text-muted, #98a2b3)', maxWidth: 820 }}>
               Cada piloto, moto, equipo o academia funciona como un nodo. Cada nodo conserva sus datos.
               La red aprende de patrones agregados. Y cada nodo recibe inteligencia mejorada.
@@ -157,14 +157,14 @@ export function HomePage() {
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
               <a href="/trial" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, background: 'linear-gradient(135deg, #60a5fa, #8b5cf6)', color: '#fff', fontWeight: 700 }}>
-                Solicitar Early Access <ArrowRight size={16} />
+                Solicitar Founding Access <ArrowRight size={16} />
               </a>
               <a href="/login" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, border: '1px solid rgba(148,163,184,0.24)', background: 'rgba(15,23,42,0.6)', color: 'var(--color-text, #eef1f8)', fontWeight: 700 }}>
-                Convertirme en Founding Node <ArrowRight size={16} />
+                Hablar con KDD <ArrowRight size={16} />
               </a>
             </div>
             <p style={{ margin: '14px 0 0', fontSize: 12, lineHeight: 1.6, color: 'var(--color-text-muted, #98a2b3)', maxWidth: 640 }}>
-              No venís solo a probar una app. Venís a formar parte de la primera red de aprendizaje inteligente para rendimiento en moto.
+              No venís solo a probar una app. Entrás a una red que aprende, protege tu contexto y acelera tu mejora.
             </p>
           </div>
 
@@ -291,7 +291,7 @@ export function HomePage() {
             <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 11, fontWeight: 700 }}>Frase final</p>
             <h3 style={{ margin: '12px 0 0', fontSize: 28, lineHeight: 1.1 }}>KDD aprende contigo, pero mejora con la red.</h3>
             <p style={{ margin: '16px 0 0', fontSize: 18, lineHeight: 1.65, color: 'var(--color-text-muted, #98a2b3)' }}>
-              Tus datos se protegen. Tu conocimiento se multiplica.
+              KDD convierte experiencia privada en ventaja acumulada.
             </p>
           </div>
         </section>
