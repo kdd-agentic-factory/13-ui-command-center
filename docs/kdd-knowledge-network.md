@@ -113,3 +113,8 @@ KDD Founding Nodes is early access for the first riders, teams, and academies bu
 
 Launch with private analysis, aggregated benchmarks, and a clear Founding Nodes story.
 Move to federated learning once the network has enough high-quality nodes.
+
+## Lead ops
+
+- `LEAD_ALERT_TO` (InsForge secret/env): optional internal inbox for new founder/trial submissions.
+- When present, the lead function sends a team alert in addition to the prospect confirmation email.

@@ -54,6 +54,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   const baseUrl = Deno.env.get('INSFORGE_BASE_URL');
   const anonKey = Deno.env.get('ANON_KEY');
+  const leadAlertTo = Deno.env.get('LEAD_ALERT_TO')?.trim();
 
   if (!baseUrl || !anonKey) {
     return json({ error: 'Function misconfigured' }, 500);
@@ -107,5 +108,32 @@ export default async function handler(req: Request): Promise<Response> {
     return json({ ok: true, lead_id: leadId, email_sent: false, email_error: emailResult.error.message }, 201);
   }
 
-  return json({ ok: true, lead_id: leadId, email_sent: true }, 201);
+  let leadAlertSent = false;
+  let leadAlertError: string | null = null;
+
+  if (leadAlertTo) {
+    const alertResult = await client.emails.send({
+      to: leadAlertTo,
+      from: 'KDD Lead Alerts',
+      subject: `Nuevo lead fundador: ${name}`,
+      html: `
+        <div style="font-family: Inter, Arial, sans-serif; line-height: 1.6; color: #0f172a; background: #f8fafc; padding: 24px;">
+          <h1 style="margin: 0 0 12px; font-size: 24px;">Nuevo lead de Founding Nodes</h1>
+          <p style="margin: 0 0 12px;"><strong>Nombre:</strong> ${escapeHtml(name)}</p>
+          <p style="margin: 0 0 12px;"><strong>Email:</strong> ${escapeHtml(email)}</p>
+          <p style="margin: 0 0 12px;"><strong>Rol:</strong> ${escapeHtml(role)}</p>
+          <p style="margin: 0 0 12px;"><strong>Organización:</strong> ${escapeHtml(body.organization?.trim() || '—')}</p>
+          <p style="margin: 0 0 12px;"><strong>Privacidad:</strong> ${escapeHtml(body.privacy_mode?.trim() || '—')}</p>
+          <p style="margin: 0 0 12px;"><strong>Objetivo:</strong> ${escapeHtml(body.goal?.trim() || '—')}</p>
+          <p style="margin: 0 0 12px;"><strong>Datos:</strong> ${escapeHtml(body.data_inventory?.trim() || '—')}</p>
+        </div>
+      `,
+      replyTo: email,
+    });
+
+    leadAlertSent = !alertResult.error;
+    leadAlertError = alertResult.error ? alertResult.error.message : null;
+  }
+
+  return json({ ok: true, lead_id: leadId, email_sent: true, lead_alert_sent: leadAlertSent, lead_alert_error: leadAlertError }, 201);
 }
