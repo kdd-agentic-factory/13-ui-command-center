@@ -206,6 +206,7 @@ const en = {
         questions: ['Where do I lose time?', 'What pattern repeats inside my node?', 'What does the network share without exposing my data?', 'How do I validate that the recommendation worked?'],
         body: 'Federated network, private context, and decisions that land faster between sessions.',
         foundingCta: 'Join Founding Nodes',
+        resumeLastSession: 'Resume last session',
         loginCta: 'Enter app',
         note: 'You are not just trying an app. You are entering a network that learns, protects your context, and speeds up improvement.',
       },

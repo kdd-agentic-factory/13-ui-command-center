@@ -1,10 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
+import en from './en';
+import es from './es';
 import fr from './fr';
 import itLocale from './it';
 import ja from './ja';
 
 const locales = [
+  ['en', en],
+  ['es', es],
   ['fr', fr],
   ['it', itLocale],
   ['ja', ja],
@@ -22,6 +26,7 @@ describe('public locale namespace parity', () => {
     expect(readPath(locale, 'public.heroVisual.subtitle')).toEqual(expect.any(String));
     expect(readPath(locale, 'public.home.nav.login')).toEqual(expect.any(String));
     expect(readPath(locale, 'public.home.hero.loginCta')).toEqual(expect.any(String));
+    expect(readPath(locale, 'public.home.hero.resumeLastSession')).toEqual(expect.any(String));
     expect(readPath(locale, 'public.login.modal.actions.verifyAndEnter')).toEqual(expect.any(String));
     expect(readPath(locale, 'public.trial.sidebar.links.app')).toEqual(expect.any(String));
     expect(readPath(locale, 'public.foundingNodes.segments.universities.body')).toEqual(expect.any(String));

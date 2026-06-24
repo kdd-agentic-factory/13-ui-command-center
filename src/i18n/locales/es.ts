@@ -206,6 +206,7 @@ const es = {
         questions: ['¿Dónde pierdo tiempo?', '¿Qué patrón se repite en mi nodo?', '¿Qué comparte la red sin exponer mis datos?', '¿Cómo valido que la recomendación funcionó?'],
         body: 'Red federada, contexto privado y decisiones que salen más rápido entre tandas.',
         foundingCta: 'Nodos fundadores',
+        resumeLastSession: 'Reanudar la última sesión',
         loginCta: 'Entrar a la app',
         note: 'No venís solo a probar una app. Entrás a una red que aprende, protege tu contexto y acelera tu mejora.',
       },

@@ -48,6 +48,7 @@ export function HomePage() {
       questions: string[];
       body: string;
       foundingCta: string;
+      resumeLastSession: string;
       loginCta: string;
       note: string;
     };
@@ -107,6 +108,9 @@ export function HomePage() {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
               <a href="/founding-nodes" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, background: 'linear-gradient(135deg, #60a5fa, #8b5cf6)', color: '#fff', fontWeight: 700 }}>
                 {copy.hero.foundingCta} <ArrowRight size={16} />
+              </a>
+              <a href="/app" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, border: '1px solid rgba(148,163,184,0.24)', background: 'rgba(15,23,42,0.72)', color: 'var(--color-text, #eef1f8)', fontWeight: 700 }}>
+                {copy.hero.resumeLastSession} <PlayCircle size={16} />
               </a>
               <a href="/login" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, border: '1px solid rgba(148,163,184,0.24)', background: 'rgba(15,23,42,0.6)', color: 'var(--color-text, #eef1f8)', fontWeight: 700 }}>
                 {copy.hero.loginCta} <ArrowRight size={16} />
