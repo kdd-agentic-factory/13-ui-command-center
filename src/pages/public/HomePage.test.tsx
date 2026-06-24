@@ -39,6 +39,17 @@ beforeEach(() => {
 });
 
 describe('HomePage resume session CTA', () => {
+  it('shows a signed-in cue in the landing header for authenticated visitors', () => {
+    currentLocale = en;
+    currentUser = { id: 'user-1' };
+
+    render(<HomePage />);
+
+    const header = screen.getByRole('banner');
+
+    expect(within(header).getByText('Welcome back')).toBeInTheDocument();
+  });
+
   it('keeps public ordering for visitors who are not authenticated', () => {
     currentLocale = en;
     currentUser = null;
@@ -57,7 +68,7 @@ describe('HomePage resume session CTA', () => {
 
     render(<HomePage />);
 
-    expect(screen.getByText(/welcome back/i)).toBeInTheDocument();
+    expect(screen.getByText('Welcome back — resume your last session')).toBeInTheDocument();
     expect(screen.getByText(/resume your last session/i)).toBeInTheDocument();
   });
 

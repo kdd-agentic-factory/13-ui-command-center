@@ -86,7 +86,7 @@ const fr = {
       sr: 'KDD visual hero: a federated knowledge network rising above raw telemetry to accelerate decisions.',
     },
     home: {
-      header: { eyebrow: 'KDD Knowledge Network', title: 'The intelligent learning network for motorcycle performance' },
+      header: { eyebrow: 'KDD Knowledge Network', title: 'The intelligent learning network for motorcycle performance', signedInCue: 'Bon retour' },
       nav: { foundingNodes: 'Join Founding Nodes', login: 'Sign in', stack: 'See architecture' },
       hero: {
         eyebrow: 'Telemetry below. KDD above.',

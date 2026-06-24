@@ -24,6 +24,7 @@ function readPath(source: unknown, path: string): unknown {
 describe('public locale namespace parity', () => {
   it.each(locales)('%s exposes the landing and funnel copy', (_localeName, locale) => {
     expect(readPath(locale, 'public.heroVisual.subtitle')).toEqual(expect.any(String));
+    expect(readPath(locale, 'public.home.header.signedInCue')).toEqual(expect.any(String));
     expect(readPath(locale, 'public.home.nav.login')).toEqual(expect.any(String));
     expect(readPath(locale, 'public.home.hero.loginCta')).toEqual(expect.any(String));
     expect(readPath(locale, 'public.home.hero.resumeLastSession')).toEqual(expect.any(String));

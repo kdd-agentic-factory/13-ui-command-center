@@ -196,7 +196,7 @@ const es = {
       sr: 'Hero visual de KDD: una red de conocimiento federada que se eleva sobre la telemetría cruda para acelerar decisiones.',
     },
     home: {
-      header: { eyebrow: 'KDD Knowledge Network', title: 'La red inteligente de aprendizaje para rendimiento en moto' },
+      header: { eyebrow: 'KDD Knowledge Network', title: 'La red inteligente de aprendizaje para rendimiento en moto', signedInCue: 'Bienvenido de nuevo' },
       nav: { foundingNodes: 'Nodos fundadores', login: 'Entrar', stack: 'Ver arquitectura' },
       hero: {
         eyebrow: 'Telemetría abajo. KDD arriba.',

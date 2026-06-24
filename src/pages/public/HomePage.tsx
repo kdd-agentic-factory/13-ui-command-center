@@ -40,7 +40,7 @@ export function HomePage() {
   const { t } = useTranslation();
   const { user } = useAuth();
   const copy = t('public.home', { returnObjects: true }) as {
-    header: { eyebrow: string; title: string };
+    header: { eyebrow: string; title: string; signedInCue: string };
     nav: { foundingNodes: string; login: string; stack: string };
     hero: {
       eyebrow: string;
@@ -84,9 +84,15 @@ export function HomePage() {
     <main style={{ minHeight: '100vh', background: 'radial-gradient(circle at top, rgba(59,130,246,0.18), transparent 28%), radial-gradient(circle at 80% 0%, rgba(168,85,247,0.14), transparent 24%), #070b14', color: 'var(--color-text, #eef1f8)' }}>
       <div style={{ width: 'min(1180px, calc(100% - 32px))', margin: '0 auto', padding: '28px 0 56px' }}>
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, marginBottom: 40, flexWrap: 'wrap' }}>
-          <div>
+          <div style={{ display: 'grid', gap: 8 }}>
             <p style={{ margin: 0, textTransform: 'uppercase', letterSpacing: '0.16em', color: 'var(--color-text-muted, #98a2b3)', fontSize: 11 }}>{copy.header.eyebrow}</p>
             <h1 style={{ margin: '8px 0 0', fontSize: 20 }}>{copy.header.title}</h1>
+            {user ? (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, width: 'fit-content', padding: '6px 10px', borderRadius: 999, border: '1px solid rgba(96, 165, 250, 0.28)', background: 'rgba(59, 130, 246, 0.12)', color: '#dbeafe', fontSize: 12, fontWeight: 700 }}>
+                <ShieldCheck size={13} />
+                <span>{copy.header.signedInCue}</span>
+              </span>
+            ) : null}
           </div>
           <nav style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <a href="/founding-nodes" style={{ textDecoration: 'none' }}><Pill><NotebookText size={14} /> {copy.nav.foundingNodes}</Pill></a>
