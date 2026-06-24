@@ -49,6 +49,7 @@ export function TrialHomePage() {
       setStatus('success');
       setMessage('Tu acceso de prueba quedó registrado. Te vamos a devolver un caso de uso alineado a tu nodo.');
       event.currentTarget.reset();
+      window.location.assign('/founding-node-thanks?source=trial');
     } catch (error) {
       setStatus('error');
       setMessage(error instanceof Error ? error.message : 'No pudimos enviar la solicitud.');

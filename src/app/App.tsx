@@ -30,16 +30,18 @@ import { DashboardShell } from './DashboardShell';
 import { HomePage } from '../pages/public/HomePage';
 import { LoginPage } from '../pages/public/LoginPage';
 import { TrialHomePage } from '../pages/public/TrialHomePage';
+import { ThanksPage } from '../pages/public/ThanksPage';
 
 function getPathname(): string {
   if (typeof window === 'undefined') return '/';
   return window.location.pathname;
 }
 
-function getAppRoute(pathname: string): 'home' | 'login' | 'trial' | 'app' {
+function getAppRoute(pathname: string): 'home' | 'login' | 'trial' | 'thanks' | 'app' {
   if (pathname === '/app' || pathname.startsWith('/app/')) return 'app';
   if (pathname === '/login') return 'login';
   if (pathname === '/trial' || pathname.startsWith('/trial/')) return 'trial';
+  if (pathname === '/founding-node-thanks') return 'thanks';
   return 'home';
 }
 
@@ -230,6 +232,8 @@ function AppRouter() {
       return <LoginPage />;
     case 'trial':
       return <TrialHomePage />;
+    case 'thanks':
+      return <ThanksPage />;
     case 'app':
       return <AppEntryFlow />;
     case 'home':
