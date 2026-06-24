@@ -143,11 +143,14 @@ export function HomePage() {
                 Solicitar demo personalizada <ArrowRight size={16} />
               </a>
             </div>
+            <p style={{ margin: '14px 0 0', fontSize: 12, lineHeight: 1.6, color: 'var(--color-text-muted, #98a2b3)', maxWidth: 640 }}>
+              Pensado para pilotos, coaches y equipos que quieren salir a pista con una misión clara, no con más ruido.
+            </p>
           </div>
 
           <aside id="prueba" style={{ border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: 22, background: 'rgba(15, 23, 42, 0.64)' }}>
-            <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>Prueba incluida</p>
-            <h3 style={{ margin: '12px 0 14px', fontSize: 24 }}>Sesión realista guiada</h3>
+            <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>Experiencia guiada</p>
+            <h3 style={{ margin: '12px 0 14px', fontSize: 24 }}>Demo inmersiva incluida</h3>
             <div style={{ display: 'grid', gap: 10, marginBottom: 18 }}>
               {[
                 ['Circuito', 'Mugello GP'],
@@ -163,7 +166,7 @@ export function HomePage() {
               ))}
             </div>
             <p style={{ margin: 0, lineHeight: 1.65, color: 'var(--color-text-muted, #98a2b3)' }}>
-              Verás cómo KDD detecta una pérdida de tiempo, explica la causa, consulta al Oráculo y propone una misión de mejora para la siguiente tanda.
+              Descubres cómo KDD detecta una pérdida de tiempo, explica la causa, consulta al Oráculo y propone una misión de mejora para la siguiente tanda.
             </p>
           </aside>
         </section>
