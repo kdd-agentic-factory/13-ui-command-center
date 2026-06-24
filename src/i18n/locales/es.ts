@@ -205,6 +205,7 @@ const es = {
         valueProps: ['Tus datos siguen siendo tuyos', 'La red aprende con vos', 'Más velocidad de mejora'],
         questions: ['¿Dónde pierdo tiempo?', '¿Qué patrón se repite en mi nodo?', '¿Qué comparte la red sin exponer mis datos?', '¿Cómo valido que la recomendación funcionó?'],
         body: 'Red federada, contexto privado y decisiones que salen más rápido entre tandas.',
+        resumeIndicator: 'Bienvenido de nuevo — reanudá tu última sesión',
         foundingCta: 'Nodos fundadores',
         resumeLastSession: 'Reanudar la última sesión',
         loginCta: 'Entrar a la app',

@@ -49,6 +49,7 @@ export function HomePage() {
       valueProps: string[];
       questions: string[];
       body: string;
+      resumeIndicator: string;
       foundingCta: string;
       resumeLastSession: string;
       loginCta: string;
@@ -119,7 +120,15 @@ export function HomePage() {
               {copy.hero.body}
             </p>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+            <div style={{ display: 'grid', gap: 12 }}>
+              {resumeFirst ? (
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, width: 'fit-content', padding: '8px 12px', borderRadius: 999, border: '1px solid rgba(96, 165, 250, 0.35)', background: 'rgba(59, 130, 246, 0.14)', color: '#dbeafe', fontSize: 13, fontWeight: 700 }}>
+                  <ShieldCheck size={14} />
+                  <span>{copy.hero.resumeIndicator}</span>
+                </div>
+              ) : null}
+
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
               {heroCtas.map(cta => (
                 <a
                   key={cta.href}
@@ -140,6 +149,7 @@ export function HomePage() {
                   {cta.label} {cta.icon}
                 </a>
               ))}
+              </div>
             </div>
             <p style={{ margin: '14px 0 0', fontSize: 12, lineHeight: 1.6, color: 'var(--color-text-muted, #98a2b3)', maxWidth: 640 }}>
               {copy.hero.note}

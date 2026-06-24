@@ -51,6 +51,25 @@ describe('HomePage resume session CTA', () => {
     expect(heroLinks.map(link => link.getAttribute('href'))).toEqual(['/founding-nodes', '/app', '/login']);
   });
 
+  it('shows a welcome back indicator for authenticated visitors', () => {
+    currentLocale = en;
+    currentUser = { id: 'user-1' };
+
+    render(<HomePage />);
+
+    expect(screen.getByText(/welcome back/i)).toBeInTheDocument();
+    expect(screen.getByText(/resume your last session/i)).toBeInTheDocument();
+  });
+
+  it('keeps the indicator hidden for guests', () => {
+    currentLocale = en;
+    currentUser = null;
+
+    render(<HomePage />);
+
+    expect(screen.queryByText(/welcome back/i)).not.toBeInTheDocument();
+  });
+
   it('promotes resume last session to the first CTA for authenticated visitors', () => {
     currentLocale = es;
     currentUser = { id: 'user-1' };
