@@ -1,13 +1,18 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import en from '../../i18n/locales/en';
 import es from '../../i18n/locales/es';
 
 let currentLocale: Record<string, unknown> = en;
+let currentUser: { id: string } | null = null;
 
 vi.mock('../../components/public/KddHeroVisual', () => ({
   KddHeroVisual: () => null,
+}));
+
+vi.mock('../../context/AuthContext', () => ({
+  useAuth: () => ({ user: currentUser, authLoading: false }),
 }));
 
 vi.mock('react-i18next', () => ({
@@ -30,22 +35,31 @@ function createTranslator(locale: Record<string, unknown>) {
 
 beforeEach(() => {
   currentLocale = en;
+  currentUser = null;
 });
 
 describe('HomePage resume session CTA', () => {
-  it('shows the resume-last-session CTA for English visitors', () => {
+  it('keeps public ordering for visitors who are not authenticated', () => {
     currentLocale = en;
+    currentUser = null;
 
     render(<HomePage />);
 
-    expect(screen.getByRole('link', { name: /resume last session/i })).toHaveAttribute('href', '/app');
+    const resumeLink = screen.getByRole('link', { name: /resume last session/i });
+    const heroLinks = within(resumeLink.closest('div')!).getAllByRole('link');
+
+    expect(heroLinks.map(link => link.getAttribute('href'))).toEqual(['/founding-nodes', '/app', '/login']);
   });
 
-  it('shows the translated resume-last-session CTA for Spanish visitors', () => {
+  it('promotes resume last session to the first CTA for authenticated visitors', () => {
     currentLocale = es;
+    currentUser = { id: 'user-1' };
 
     render(<HomePage />);
 
-    expect(screen.getByRole('link', { name: /reanudar la última sesión/i })).toHaveAttribute('href', '/app');
+    const resumeLink = screen.getByRole('link', { name: /reanudar la última sesión/i });
+    const heroLinks = within(resumeLink.closest('div')!).getAllByRole('link');
+
+    expect(heroLinks.map(link => link.getAttribute('href'))).toEqual(['/app', '/founding-nodes', '/login']);
   });
 });

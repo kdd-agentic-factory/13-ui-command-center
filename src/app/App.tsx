@@ -290,7 +290,7 @@ function AppRouter() {
       return <AppEntryFlow />;
     case 'home':
     default:
-      return <HomePage />;
+      return <AuthProvider><HomePage /></AuthProvider>;
   }
 }
 

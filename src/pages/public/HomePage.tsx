@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ArrowRight, CheckCircle2, Layers3, NotebookText, PlayCircle, Radar, ShieldCheck, Users } from 'lucide-react';
 
 import { KddHeroVisual } from '../../components/public/KddHeroVisual';
+import { useAuth } from '../../context/AuthContext';
 
 function SectionTitle({ eyebrow, title, body }: { eyebrow: string; title: string; body?: string }) {
   return (
@@ -37,6 +38,7 @@ function Pill({ children }: { children: ReactNode }) {
 
 export function HomePage() {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const copy = t('public.home', { returnObjects: true }) as {
     header: { eyebrow: string; title: string };
     nav: { foundingNodes: string; login: string; stack: string };
@@ -64,6 +66,18 @@ export function HomePage() {
     closing: { eyebrow: string; title: string; body: string };
   };
   const visual = t('public.heroVisual', { returnObjects: true }) as { subtitle: string; phrase: string };
+  const resumeFirst = Boolean(user);
+  const heroCtas = resumeFirst
+    ? [
+        { href: '/app', label: copy.hero.resumeLastSession, icon: <PlayCircle size={16} />, primary: true },
+        { href: '/founding-nodes', label: copy.hero.foundingCta, icon: <ArrowRight size={16} />, primary: false },
+        { href: '/login', label: copy.hero.loginCta, icon: <ArrowRight size={16} />, primary: false },
+      ]
+    : [
+        { href: '/founding-nodes', label: copy.hero.foundingCta, icon: <ArrowRight size={16} />, primary: true },
+        { href: '/app', label: copy.hero.resumeLastSession, icon: <PlayCircle size={16} />, primary: false },
+        { href: '/login', label: copy.hero.loginCta, icon: <ArrowRight size={16} />, primary: false },
+      ];
 
   return (
     <main style={{ minHeight: '100vh', background: 'radial-gradient(circle at top, rgba(59,130,246,0.18), transparent 28%), radial-gradient(circle at 80% 0%, rgba(168,85,247,0.14), transparent 24%), #070b14', color: 'var(--color-text, #eef1f8)' }}>
@@ -106,15 +120,26 @@ export function HomePage() {
             </p>
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-              <a href="/founding-nodes" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, background: 'linear-gradient(135deg, #60a5fa, #8b5cf6)', color: '#fff', fontWeight: 700 }}>
-                {copy.hero.foundingCta} <ArrowRight size={16} />
-              </a>
-              <a href="/app" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, border: '1px solid rgba(148,163,184,0.24)', background: 'rgba(15,23,42,0.72)', color: 'var(--color-text, #eef1f8)', fontWeight: 700 }}>
-                {copy.hero.resumeLastSession} <PlayCircle size={16} />
-              </a>
-              <a href="/login" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, border: '1px solid rgba(148,163,184,0.24)', background: 'rgba(15,23,42,0.6)', color: 'var(--color-text, #eef1f8)', fontWeight: 700 }}>
-                {copy.hero.loginCta} <ArrowRight size={16} />
-              </a>
+              {heroCtas.map(cta => (
+                <a
+                  key={cta.href}
+                  href={cta.href}
+                  style={{
+                    textDecoration: 'none',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 10,
+                    padding: '14px 18px',
+                    borderRadius: 14,
+                    background: cta.primary ? 'linear-gradient(135deg, #60a5fa, #8b5cf6)' : 'rgba(15,23,42,0.72)',
+                    border: cta.primary ? 'none' : '1px solid rgba(148,163,184,0.24)',
+                    color: cta.primary ? '#fff' : 'var(--color-text, #eef1f8)',
+                    fontWeight: 700,
+                  }}
+                >
+                  {cta.label} {cta.icon}
+                </a>
+              ))}
             </div>
             <p style={{ margin: '14px 0 0', fontSize: 12, lineHeight: 1.6, color: 'var(--color-text-muted, #98a2b3)', maxWidth: 640 }}>
               {copy.hero.note}
