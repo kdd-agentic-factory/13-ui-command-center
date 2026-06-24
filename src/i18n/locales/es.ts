@@ -161,6 +161,11 @@ const es = {
       desc: 'Panel de vista general en vivo — solo lectura',
       modules: '1 módulo',
     },
+    foundingNode: {
+      name: 'Nodo Fundador',
+      desc: 'Acceso anticipado con acceso total al producto e influencia en el roadmap',
+      modules: '23 módulos',
+    },
   },
   common: {
     live: 'EN VIVO',

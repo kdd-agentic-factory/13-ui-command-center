@@ -51,6 +51,11 @@ const fr = {
       desc: 'Tableau de bord en direct — lecture seule',
       modules: '1 module',
     },
+    foundingNode: {
+      name: 'Nœud Fondateur',
+      desc: 'Accès anticipé avec accès complet au produit et influence sur la feuille de route',
+      modules: '23 modules',
+    },
   },
   common: {
     live: 'EN DIRECT',

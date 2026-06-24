@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect, useCallback, ReactNode 
 import { insforge } from '../lib/insforge';
 
 export type TabId = 'cockpit' | 'overview' | 'raceday' | 'live' | 'telemetry' | 'circuit' | 'corners' | 'replay' | 'compare' | 'ghost-lap' | 'studio' | 'track-evo' | 'surface' | 'weather' | 'risk' | 'predict' | 'strategy' | 'rivals' | 'quali' | 'tires' | 'pressure' | 'setup' | 'advisor' | 'electronics' | 'aero' | 'fuel' | 'chassis' | 'gearing' | 'engctrl' | 'setup-lab' | 'parts' | 'brakes' | 'bike-compare' | 'twin' | 'sandbox' | 'sim-lab' | 'experiments' | 'events' | 'causal' | 'history' | 'pre-gp' | 'crew' | 'copilot' | 'learning-path' | 'human' | 'pit-radio' | 'team' | 'workbench' | 'orchestrator' | 'season' | 'stewards' | 'report' | 'debrief' | 'black-box' | 'knowledge' | 'patterns' | 'federated' | 'ai-crew' | 'style' | 'cube' | 'trust' | 'platform' | 'edge' | 'lakehouse' | 'devhub' | 'data' | 'settings';
-export type ProfileId = 'race-engineer' | 'team-principal' | 'data-analyst' | 'mechanic' | 'spectator';
+export type ProfileId = 'race-engineer' | 'team-principal' | 'data-analyst' | 'mechanic' | 'spectator' | 'founding-node';
 
 export interface Profile {
   id: ProfileId;
@@ -72,6 +72,17 @@ export const PROFILES: Profile[] = [
     allowedTabs: ['overview','live'],
     defaultTab: 'overview',
     requiresAuth: false, // public read-only showcase — no login required
+  },
+  {
+    id: 'founding-node',
+    nameKey: 'profiles.foundingNode.name',
+    descKey: 'profiles.foundingNode.desc',
+    color: '#8B5CF6',
+    icon: '✨',
+    accessCount: '23',
+    allowedTabs: ['cockpit','overview','raceday','live','telemetry','circuit','corners','replay','compare','ghost-lap','studio','track-evo','surface','weather','risk','predict','strategy','rivals','quali','tires','pressure','setup','advisor','electronics','aero','fuel','chassis','gearing','engctrl','setup-lab','parts','brakes','bike-compare','twin','sandbox','sim-lab','experiments','events','causal','history','pre-gp','crew','copilot','learning-path','human','pit-radio','team','workbench','orchestrator','season','stewards','report','debrief','black-box','knowledge','patterns','federated','ai-crew','style','cube','trust','platform','edge','lakehouse','devhub','data','settings'],
+    defaultTab: 'overview',
+    requiresAuth: false,
   },
 ];
 

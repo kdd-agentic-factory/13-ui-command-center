@@ -79,6 +79,7 @@ const PROFILE_MODULES: Record<ProfileId, string[]> = {
   'data-analyst': ['Telemetry', 'Corner Intel', 'Rider Comparison', 'Lap Replay', 'Digital Twin'],
   'mechanic': ['Setup', 'Advisor', 'Parts', 'Tyres'],
   'spectator': ['Overview', 'Track-Live'],
+  'founding-node': ['Overview', 'Telemetry', 'Corner Intel', 'Lap Replay', 'Setup', 'AI Crew', 'Report'],
 };
 
 // Real in-app modules previewed on the landing (labels reuse the localised nav keys).

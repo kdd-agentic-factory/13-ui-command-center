@@ -51,6 +51,11 @@ const it = {
       desc: 'Dashboard panoramica live — sola lettura',
       modules: '1 modulo',
     },
+    foundingNode: {
+      name: 'Nodo Fondatore',
+      desc: 'Accesso anticipato con accesso completo al prodotto e influenza sulla roadmap',
+      modules: '23 moduli',
+    },
   },
   common: {
     live: 'LIVE',

@@ -161,6 +161,11 @@ const en = {
       desc: 'Live overview dashboard — read only',
       modules: '1 module',
     },
+    foundingNode: {
+      name: 'Founding Node',
+      desc: 'Early access with full product access and roadmap influence',
+      modules: '23 modules',
+    },
   },
   common: {
     live: 'LIVE',

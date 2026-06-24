@@ -48,7 +48,8 @@ export function LoginPage() {
       setStatus('success');
       setMessage('Tu solicitud quedó registrada. Te contactamos con una propuesta de nodo fundador.');
       event.currentTarget.reset();
-      window.location.assign('/founding-node-thanks?source=login');
+      localStorage.setItem('kdd-profile', 'founding-node');
+      window.location.assign('/app');
     } catch (error) {
       setStatus('error');
       setMessage(error instanceof Error ? error.message : 'No pudimos enviar la solicitud.');
