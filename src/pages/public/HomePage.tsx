@@ -4,24 +4,24 @@ import { ArrowRight, CheckCircle2, Layers3, PlayCircle, Radar, ShieldCheck, User
 
 const decisionFlow = ['Datos', 'Eventos', 'Causa', 'Recomendación', 'Misión', 'Validación'];
 
-const valueProps = ['Menos conjetura', 'Más claridad', 'Más velocidad'];
+const valueProps = ['Tus datos siguen siendo tuyos', 'La red aprende contigo', 'Más velocidad de mejora'];
 
 const capabilities = [
   {
-    title: 'Analiza la telemetría',
-    body: 'Visualiza velocidad, gas, freno, inclinación, marcha, trazada, sectores y eventos críticos.',
+    title: 'Aprendizaje privado por nodo',
+    body: 'Cada piloto, moto, equipo o academia conserva su histórico, su contexto y sus decisiones.',
   },
   {
-    title: 'Detecta la curva clave',
-    body: 'KDD identifica dónde se pierde tiempo y en qué fase ocurre: entrada, frenada, ápice o salida.',
+    title: 'Detecta patrones de pista',
+    body: 'KDD identifica dónde se pierde tiempo y qué patrón se repite entre sesiones similares.',
   },
   {
     title: 'Explica la causa',
     body: 'Relaciona telemetría, trazada, neumático, riesgo y estilo de pilotaje en una sola lectura.',
   },
   {
-    title: 'Consulta el Oracle Pit Wall',
-    body: 'Un consejo de ingenieros IA recomienda qué hacer, qué no tocar y cómo validar la mejora.',
+    title: 'Consulta la red',
+    body: 'Los patrones agregados de la red mejoran benchmarks, recomendaciones y modelos compartidos.',
   },
   {
     title: 'Genera una misión',
@@ -43,20 +43,40 @@ const audiences = [
 ] as const;
 
 const stack = [
-  'Circuit Intelligence',
-  'Garage Profile',
-  'Telemetry Visualization OS',
-  'Oracle Pit Wall',
-  'Rider Style DNA',
-  'Tyre & Grip Intelligence',
-  'Garage Setup Advisor',
-  'Performance Experiment Engine',
-  'KDD Black Box',
-  'Trackside Edge Hub',
-  'Data Lakehouse',
-  'Safety Governance',
-  'Blueprint Automation Bridge',
+  'Local Data Vault',
+  'Feature Extraction Node',
+  'Federated Learning Client',
+  'Knowledge Aggregation Network',
+  'Global Intelligence Services',
+  'Privacy Guard',
+  'Consent Manager',
+  'Model Registry',
+  'Anonymous Benchmarks',
+  'Team Learning Mode',
+  'Private Learning Mode',
+  'Federated Learning Mode',
 ];
+
+const nodeTypes = [
+  ['Rider Node', 'Piloto individual con aprendizaje privado y recomendaciones personalizadas.'],
+  ['Team Node', 'Equipo con varios pilotos y motos, con aprendizaje interno sin salir del grupo.'],
+  ['Academy Node', 'Escuela o coach con alumnos, sesiones comparables y learning paths.'],
+  ['Garage Node', 'Preparador o taller con conocimiento de setup y validación de cambios.'],
+  ['Federated Node', 'Nodo que contribuye patrones anonimizados a la red de conocimiento.'],
+] as const;
+
+const privacyLevels = [
+  ['Private Learning', 'Solo analiza tus sesiones. No contribuyes a la red.'],
+  ['Team Learning', 'Compartes conocimiento dentro de tu equipo o academia.'],
+  ['Federated Learning', 'Aportas señales anonimizadas para mejorar benchmarks y modelos.'],
+] as const;
+
+const networkPrinciples = [
+  'Tus datos crudos no se publican.',
+  'Tus vídeos y setups privados permanecen en tu nodo.',
+  'La red aprende de patrones agregados, no de exposición indiscriminada.',
+  'Tú decides el nivel de contribución en cualquier momento.',
+] as const;
 
 function SectionTitle({ eyebrow, title, body }: { eyebrow: string; title: string; body?: string }) {
   return (
@@ -95,8 +115,8 @@ export function HomePage() {
       <div style={{ width: 'min(1180px, calc(100% - 32px))', margin: '0 auto', padding: '28px 0 56px' }}>
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, marginBottom: 40, flexWrap: 'wrap' }}>
           <div>
-            <p style={{ margin: 0, textTransform: 'uppercase', letterSpacing: '0.16em', color: 'var(--color-text-muted, #98a2b3)', fontSize: 11 }}>KDD Moto Intelligence</p>
-            <h1 style={{ margin: '8px 0 0', fontSize: 20 }}>La plataforma que convierte tus datos en decisiones de pista</h1>
+            <p style={{ margin: 0, textTransform: 'uppercase', letterSpacing: '0.16em', color: 'var(--color-text-muted, #98a2b3)', fontSize: 11 }}>KDD Knowledge Network</p>
+            <h1 style={{ margin: '8px 0 0', fontSize: 20 }}>La red inteligente de aprendizaje para rendimiento en moto</h1>
           </div>
           <nav style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <a href="#prueba" style={{ textDecoration: 'none' }}><Pill><PlayCircle size={14} /> Entrar a la prueba</Pill></a>
@@ -106,11 +126,11 @@ export function HomePage() {
 
         <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20, alignItems: 'stretch' }}>
           <div style={{ border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: '28px clamp(20px, 4vw, 40px)', background: 'rgba(3, 7, 18, 0.88)', boxShadow: '0 24px 80px rgba(0, 0, 0, 0.38)' }}>
-            <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>Para saber qué hacer en la siguiente salida</p>
-            <h2 style={{ margin: '14px 0 16px', fontSize: 'clamp(38px, 6vw, 68px)', lineHeight: 0.95, maxWidth: 780 }}>KDD Moto Intelligence</h2>
+            <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>Tus datos siguen siendo tuyos</p>
+            <h2 style={{ margin: '14px 0 16px', fontSize: 'clamp(38px, 6vw, 68px)', lineHeight: 0.95, maxWidth: 780 }}>KDD es una red de conocimiento de pista</h2>
             <p style={{ margin: '0 0 18px', fontSize: 18, lineHeight: 1.65, color: 'var(--color-text-muted, #98a2b3)', maxWidth: 820 }}>
-              KDD Moto Intelligence es el box digital inteligente para pilotos, coaches, academias y equipos de motociclismo.
-              No es otro panel de datos: es el copiloto que te dice qué pasó, por qué pasó y qué probar después.
+              Cada piloto, moto, equipo o academia funciona como un nodo. Cada nodo conserva sus datos.
+              La red aprende de patrones agregados. Y cada nodo recibe inteligencia mejorada.
             </p>
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 18 }}>
@@ -120,9 +140,9 @@ export function HomePage() {
             <div style={{ display: 'grid', gap: 8, marginBottom: 18 }}>
               {[
                 '¿Dónde pierdo tiempo?',
-                '¿Por qué ocurre?',
-                'Qué debo probar en la siguiente salida?',
-                '¿Cómo valido si ha funcionado?',
+                '¿Qué patrón se repite en mi nodo?',
+                '¿Qué comparte la red sin exponer mis datos?',
+                '¿Cómo valido si la recomendación funcionó?',
               ].map(q => (
                 <div key={q} style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--color-text, #eef1f8)', fontSize: 16 }}>
                   <CheckCircle2 size={16} color="#34d399" />
@@ -132,32 +152,32 @@ export function HomePage() {
             </div>
 
             <p style={{ margin: '0 0 22px', lineHeight: 1.7, color: 'var(--color-text-muted, #98a2b3)', maxWidth: 760 }}>
-              KDD no sustituye tu logger. Lo vuelve útil y lo transforma en una decisión de pista.
+              Tus datos siguen siendo tuyos. Pero tu aprendizaje se acelera porque formas parte de una red que aprende.
             </p>
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
               <a href="/trial" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, background: 'linear-gradient(135deg, #60a5fa, #8b5cf6)', color: '#fff', fontWeight: 700 }}>
-                Entrar a la prueba <ArrowRight size={16} />
+                Solicitar Early Access <ArrowRight size={16} />
               </a>
               <a href="/login" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, border: '1px solid rgba(148,163,184,0.24)', background: 'rgba(15,23,42,0.6)', color: 'var(--color-text, #eef1f8)', fontWeight: 700 }}>
-                Solicitar demo personalizada <ArrowRight size={16} />
+                Convertirme en Founding Node <ArrowRight size={16} />
               </a>
             </div>
             <p style={{ margin: '14px 0 0', fontSize: 12, lineHeight: 1.6, color: 'var(--color-text-muted, #98a2b3)', maxWidth: 640 }}>
-              Pensado para pilotos, coaches y equipos que quieren salir a pista con una misión clara, no con más ruido.
+              No venís solo a probar una app. Venís a formar parte de la primera red de aprendizaje inteligente para rendimiento en moto.
             </p>
           </div>
 
           <aside id="prueba" style={{ border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: 22, background: 'rgba(15, 23, 42, 0.64)' }}>
-            <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>Experiencia guiada</p>
-            <h3 style={{ margin: '12px 0 14px', fontSize: 24 }}>Demo inmersiva incluida</h3>
+            <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>Founding Nodes</p>
+            <h3 style={{ margin: '12px 0 14px', fontSize: 24 }}>Acceso anticipado para los primeros nodos</h3>
             <div style={{ display: 'grid', gap: 10, marginBottom: 18 }}>
               {[
-                ['Circuito', 'Mugello GP'],
-                ['Moto', 'Yamaha R1'],
-                ['Sesión', 'Stint 03'],
-                ['Modo', 'Replay Telemetry'],
-                ['Objetivo', 'Mejorar salida de curva en T15 Bucine'],
+                ['Modo', 'Private / Team / Federated'],
+                ['Privacidad', 'Datos crudos protegidos'],
+                ['Contribución', 'Opcional y controlada'],
+                ['Beneficio', 'Benchmarks y modelos mejores'],
+                ['Rol', 'Pilot / Team / Academy Node'],
               ].map(([k, v]) => (
                 <div key={k} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, paddingBottom: 10, borderBottom: '1px solid rgba(148,163,184,0.14)' }}>
                   <span style={{ color: 'var(--color-text-muted, #98a2b3)' }}>{k}</span>
@@ -166,13 +186,52 @@ export function HomePage() {
               ))}
             </div>
             <p style={{ margin: 0, lineHeight: 1.65, color: 'var(--color-text-muted, #98a2b3)' }}>
-              Descubres cómo KDD detecta una pérdida de tiempo, explica la causa, consulta al Oráculo y propone una misión de mejora para la siguiente tanda.
+              Descubres cómo KDD detecta un patrón, protege el contexto privado y devuelve aprendizaje mejorado a cada nodo.
             </p>
           </aside>
         </section>
 
         <section style={{ marginTop: 28, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: '22px 24px', background: 'rgba(15, 23, 42, 0.55)' }}>
-            <SectionTitle eyebrow="De datos a decisiones de box" title="Después de una tanda, lo importante es saber qué hacer después." body="KDD analiza la sesión, detecta lo relevante, explica la causa probable y te deja una misión clara para la siguiente salida." />
+          <SectionTitle eyebrow="Cómo aprende la red" title="La inteligencia viaja, los datos crudos no." body="KDD analiza localmente, comparte solo lo permitido y usa la red para mejorar modelos, benchmarks y recomendaciones." />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
+            {nodeTypes.map(([title, body]) => (
+              <HomeCard key={title} title={title} body={body} />
+            ))}
+          </div>
+        </section>
+
+        <section style={{ marginTop: 28, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: '22px 24px', background: 'rgba(15, 23, 42, 0.55)' }}>
+          <SectionTitle eyebrow="Privacidad desde el diseño" title="Cada nodo decide cuánto quiere compartir." body="Tus datos crudos, vídeos y setups privados se quedan en tu nodo. Tú elegís si el aprendizaje es privado, de equipo o federado." />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
+            {privacyLevels.map(([title, body]) => (
+              <HomeCard key={title} title={title} body={body} />
+            ))}
+          </div>
+          <div style={{ display: 'grid', gap: 8, marginTop: 16 }}>
+            {networkPrinciples.map(item => (
+              <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--color-text, #eef1f8)', fontSize: 16 }}>
+                <CheckCircle2 size={16} color="#34d399" />
+                <span>{item}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section style={{ marginTop: 28, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: '22px 24px', background: 'rgba(15, 23, 42, 0.55)' }}>
+          <SectionTitle eyebrow="Aprendizaje por niveles" title="Private, Team o Federated: vos elegís cómo entra tu nodo a la red." body="Los primeros nodos fundadores pueden empezar en modo privado y subir de nivel a medida que confían en la red." />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
+            {[
+              ['Private', 'Solo análisis individual.'],
+              ['Team', 'Aprendizaje dentro del grupo.'],
+              ['Federated', 'Patrones anonimizados y modelos compartidos.'],
+            ].map(([title, body]) => (
+              <HomeCard key={title} title={title} body={body} />
+            ))}
+          </div>
+        </section>
+
+        <section style={{ marginTop: 28, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: '22px 24px', background: 'rgba(15, 23, 42, 0.55)' }}>
+          <SectionTitle eyebrow="De datos a decisiones de box" title="Después de una tanda, lo importante es saber qué hacer después." body="KDD analiza la sesión, detecta lo relevante, explica la causa probable y te deja una misión clara para la siguiente salida." />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12 }}>
             {decisionFlow.map((step, index) => (
               <div key={step} style={{ borderRadius: 18, border: '1px solid rgba(148, 163, 184, 0.18)', padding: 14, background: index % 2 === 0 ? 'rgba(3,7,18,0.65)' : 'rgba(15,23,42,0.65)' }}>
@@ -216,23 +275,23 @@ export function HomePage() {
 
         <section style={{ marginTop: 34, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 18, alignItems: 'stretch' }}>
           <div style={{ border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: 24, background: 'rgba(15,23,42,0.55)' }}>
-            <SectionTitle eyebrow="Accede a la prueba" title="Pide acceso y prueba una sesión completa de KDD Moto Intelligence." />
-            <p style={{ margin: '0 0 16px', color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.65 }}>¿No tienes acceso? Solicita una demo personalizada para tu academia, equipo o proyecto.</p>
+            <SectionTitle eyebrow="Accede a la red" title="Pide acceso y convierte tu nodo en parte de KDD Knowledge Network." />
+            <p style={{ margin: '0 0 16px', color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.65 }}>¿No tienes acceso? Solicita early access para tu academia, equipo, garage o proyecto.</p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
               <a href="/trial" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, background: 'linear-gradient(135deg, #22c55e, #06b6d4)', color: '#fff', fontWeight: 700 }}>
-                Entrar a la prueba <PlayCircle size={16} />
+                Solicitar Early Access <PlayCircle size={16} />
               </a>
               <a href="/login" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, border: '1px solid rgba(148,163,184,0.24)', background: 'rgba(15,23,42,0.6)', color: 'var(--color-text, #eef1f8)', fontWeight: 700 }}>
-                Solicitar demo personalizada <ShieldCheck size={16} />
+                Convertirme en Founding Node <ShieldCheck size={16} />
               </a>
             </div>
           </div>
 
           <div style={{ border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: 24, background: 'linear-gradient(180deg, rgba(59,130,246,0.16), rgba(15,23,42,0.6))' }}>
             <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 11, fontWeight: 700 }}>Frase final</p>
-            <h3 style={{ margin: '12px 0 0', fontSize: 28, lineHeight: 1.1 }}>KDD no te dice solo cuánto has rodado.</h3>
+            <h3 style={{ margin: '12px 0 0', fontSize: 28, lineHeight: 1.1 }}>KDD aprende contigo, pero mejora con la red.</h3>
             <p style={{ margin: '16px 0 0', fontSize: 18, lineHeight: 1.65, color: 'var(--color-text-muted, #98a2b3)' }}>
-              Te dice qué debes hacer en la siguiente salida.
+              Tus datos se protegen. Tu conocimiento se multiplica.
             </p>
           </div>
         </section>
