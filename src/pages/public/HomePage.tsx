@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight, CheckCircle2, Layers3, NotebookText, PlayCircle, ShieldCheck } from 'lucide-react';
 
+import { DesignsCanvas } from '../../components/public/DesignsCanvas';
 import { KddHeroVisual } from '../../components/public/KddHeroVisual';
 import { LanguageSwitcher } from '../../components/LanguageSwitcher';
 import { useAuth } from '../../context/AuthContext';
@@ -17,22 +18,6 @@ function SectionTitle({ eyebrow, title, body }: { eyebrow: string; title: string
         <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.7, maxWidth: 700 }}>{body}</p>
       ) : null}
     </div>
-  );
-}
-
-function DesignCard({ eyebrow, title, body, chips, accent }: { eyebrow: string; title: string; body: string; chips: string[]; accent: string }) {
-  return (
-    <article style={{ borderTop: `2px solid color-mix(in srgb, ${accent} 55%, transparent)`, paddingTop: 14 }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 8 }}>
-        <p style={{ margin: 0, color: accent, textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 11, fontWeight: 700 }}>{eyebrow}</p>
-        <span aria-hidden="true" style={{ width: 8, height: 8, borderRadius: 999, background: accent }} />
-      </div>
-      <h3 style={{ margin: '0 0 8px', fontSize: 20, lineHeight: 1.1 }}>{title}</h3>
-      <p style={{ margin: '0 0 14px', color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.6 }}>{body}</p>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-        {chips.map(chip => <Pill key={chip}>{chip}</Pill>)}
-      </div>
-    </article>
   );
 }
 
@@ -117,7 +102,7 @@ export function HomePage() {
             <nav style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
               <a href="/founding-nodes" style={{ textDecoration: 'none' }}><Pill><NotebookText size={14} /> {copy.nav.foundingNodes}</Pill></a>
               <a href="/login" style={{ textDecoration: 'none' }}><Pill><PlayCircle size={14} /> {copy.nav.login}</Pill></a>
-              <a href="#network" style={{ textDecoration: 'none' }}><Pill><Layers3 size={14} /> {copy.nav.stack}</Pill></a>
+              <a href="#designs" style={{ textDecoration: 'none' }}><Pill><Layers3 size={14} /> {copy.nav.stack}</Pill></a>
             </nav>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 999, border: '1px solid rgba(148,163,184,0.18)', background: 'rgba(15,23,42,0.58)' }}>
               <span style={{ color: 'var(--color-text-muted, #98a2b3)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 700 }}>{copy.nav.language}</span>
@@ -206,34 +191,23 @@ export function HomePage() {
           </aside>
         </section>
 
-        <section id="network" style={{ marginTop: 44, paddingTop: 28, borderTop: '1px solid rgba(148,163,184,0.12)' }}>
+        <section id="designs" style={{ marginTop: 44, paddingTop: 28, borderTop: '1px solid rgba(148,163,184,0.12)' }}>
           <SectionTitle eyebrow={copy.designs.eyebrow} title={copy.designs.title} body={copy.designs.body} />
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 0.8fr)', gap: 28, alignItems: 'start' }}>
-            <div style={{ display: 'grid', gap: 14 }}>
-              {copy.designs.cards.map(card => (
-                <article key={card.title} style={{ paddingTop: 14, borderTop: `1px solid color-mix(in srgb, ${card.accent} 35%, rgba(148,163,184,0.16))` }}>
-                  <p style={{ margin: 0, color: card.accent, textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{card.eyebrow}</p>
-                  <h3 style={{ margin: '8px 0 6px', fontSize: 20, lineHeight: 1.1 }}>{card.title}</h3>
-                  <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.6, maxWidth: 560 }}>{card.body}</p>
-                </article>
-              ))}
-            </div>
-            <div style={{ paddingTop: 2, borderTop: '1px solid rgba(148,163,184,0.14)' }}>
-              <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.16em', fontSize: 11, fontWeight: 700 }}>{copy.network.eyebrow}</p>
-              <h3 style={{ margin: '10px 0 10px', fontSize: 28, lineHeight: 1.05 }}>{copy.network.title}</h3>
-              <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.7 }}>{copy.network.body}</p>
-              <div style={{ marginTop: 18, display: 'grid', gap: 10 }}>
-                {copy.network.cards.slice(0, 3).map(card => (
-                  <div key={card.title} style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 10, alignItems: 'start', paddingTop: 10, borderTop: '1px solid rgba(148,163,184,0.14)' }}>
-                    <span style={{ width: 8, height: 8, borderRadius: 999, background: '#60a5fa', marginTop: 6 }} />
-                    <div>
-                      <div style={{ fontWeight: 700 }}>{card.title}</div>
-                      <div style={{ color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.55 }}>{card.body}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+          <DesignsCanvas
+            title={copy.designs.title}
+            subtitle={copy.designs.body}
+            cards={copy.designs.cards}
+            networkBody={copy.network.body}
+            steps={['Private Learning', 'Detect Patterns', 'Explain Cause']}
+          />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 18, marginTop: 18 }}>
+            {copy.designs.cards.map(card => (
+              <article key={card.title} style={{ paddingTop: 12, borderTop: `1px solid color-mix(in srgb, ${card.accent} 28%, rgba(148,163,184,0.14))` }}>
+                <p style={{ margin: 0, color: card.accent, textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{card.eyebrow}</p>
+                <h3 style={{ margin: '8px 0 6px', fontSize: 18, lineHeight: 1.1 }}>{card.title}</h3>
+                <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.6 }}>{card.body}</p>
+              </article>
+            ))}
           </div>
         </section>
 

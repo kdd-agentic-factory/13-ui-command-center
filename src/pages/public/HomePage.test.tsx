@@ -11,6 +11,10 @@ vi.mock('../../components/public/KddHeroVisual', () => ({
   KddHeroVisual: () => null,
 }));
 
+vi.mock('../../components/public/DesignsCanvas', () => ({
+  DesignsCanvas: () => <div data-testid="designs-canvas" />,
+}));
+
 vi.mock('../../context/AuthContext', () => ({
   useAuth: () => ({ user: currentUser, authLoading: false }),
 }));
@@ -112,5 +116,6 @@ describe('HomePage resume session CTA', () => {
     render(<HomePage />);
 
     expect(screen.getByText(/three visual designs/i)).toBeInTheDocument();
+    expect(screen.getByTestId('designs-canvas')).toBeInTheDocument();
   });
 });
