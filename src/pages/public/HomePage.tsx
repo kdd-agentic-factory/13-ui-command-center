@@ -1,82 +1,8 @@
 import type { ReactNode } from 'react';
-
+import { useTranslation } from 'react-i18next';
 import { ArrowRight, CheckCircle2, Layers3, NotebookText, PlayCircle, Radar, ShieldCheck, Users } from 'lucide-react';
 
-const decisionFlow = ['Datos', 'Eventos', 'Causa', 'Recomendación', 'Misión', 'Validación'];
-
-const valueProps = ['Tus datos siguen siendo tuyos', 'La red aprende contigo', 'Más velocidad de mejora'];
-
-const capabilities = [
-  {
-    title: 'Aprendizaje privado por nodo',
-    body: 'Cada piloto, moto, equipo o academia conserva su histórico, su contexto y sus decisiones.',
-  },
-  {
-    title: 'Detecta patrones de pista',
-    body: 'KDD identifica dónde se pierde tiempo y qué patrón se repite entre sesiones similares.',
-  },
-  {
-    title: 'Explica la causa',
-    body: 'Relaciona telemetría, trazada, neumático, riesgo y estilo de pilotaje en una sola lectura.',
-  },
-  {
-    title: 'Consulta la red',
-    body: 'Los patrones agregados de la red mejoran benchmarks, recomendaciones y modelos compartidos.',
-  },
-  {
-    title: 'Genera una misión',
-    body: 'Cada recomendación se convierte en un plan concreto para la siguiente tanda.',
-  },
-  {
-    title: 'Valida el resultado',
-    body: 'KDD compara antes y después para saber si la decisión funcionó.',
-  },
-];
-
-const audiences = [
-  ['Pilotos', 'Entiende qué debes mejorar en la siguiente tanda.'],
-  ['Coaches', 'Convierte sesiones en debriefs profesionales con evidencia.'],
-  ['Academias', 'Ofrece formación premium basada en datos, vídeo e IA.'],
-  ['Equipos', 'Toma mejores decisiones de setup, neumáticos y estrategia.'],
-  ['Talleres', 'Demuestra con datos el impacto real de cada ajuste.'],
-  ['Universidades y laboratorios', 'Trabaja con IA aplicada, sensores, edge, telemetría y digital twins.'],
-] as const;
-
-const stack = [
-  'Local Data Vault',
-  'Feature Extraction Node',
-  'Federated Learning Client',
-  'Knowledge Aggregation Network',
-  'Global Intelligence Services',
-  'Privacy Guard',
-  'Consent Manager',
-  'Model Registry',
-  'Anonymous Benchmarks',
-  'Team Learning Mode',
-  'Private Learning Mode',
-  'Federated Learning Mode',
-];
-
-const nodeTypes = [
-  ['Rider Node', 'Piloto individual con aprendizaje privado y recomendaciones personalizadas.'],
-  ['Team Node', 'Equipo con varios pilotos y motos, con aprendizaje interno sin salir del grupo.'],
-  ['Academy Node', 'Escuela o coach con alumnos, sesiones comparables y learning paths.'],
-  ['Garage Node', 'Preparador o taller con conocimiento de setup y validación de cambios.'],
-  ['Federated Node', 'Nodo que contribuye patrones anonimizados a la red de conocimiento.'],
-] as const;
-
-const privacyLevels = [
-  ['Private Learning', 'Solo analiza tus sesiones. No contribuyes a la red.'],
-  ['Team Learning', 'Compartes conocimiento dentro de tu equipo o academia.'],
-  ['Federated Learning', 'Aportas señales anonimizadas para mejorar benchmarks y modelos.'],
-] as const;
-
-const networkPrinciples = [
-  'Tus datos crudos no se publican.',
-  'Tus vídeos y setups privados permanecen en tu nodo.',
-  'La red aprende de patrones agregados, no de exposición indiscriminada.',
-  'Tú decides el nivel de contribución en cualquier momento.',
-] as const;
+import { KddHeroVisual } from '../../components/public/KddHeroVisual';
 
 function SectionTitle({ eyebrow, title, body }: { eyebrow: string; title: string; body?: string }) {
   return (
@@ -110,106 +36,119 @@ function Pill({ children }: { children: ReactNode }) {
 }
 
 export function HomePage() {
+  const { t } = useTranslation();
+  const copy = t('public.home', { returnObjects: true }) as {
+    header: { eyebrow: string; title: string };
+    nav: { foundingNodes: string; login: string; stack: string };
+    hero: {
+      eyebrow: string;
+      title: string;
+      subtitle: string;
+      valueProps: string[];
+      questions: string[];
+      body: string;
+      foundingCta: string;
+      loginCta: string;
+      note: string;
+    };
+    foundingPanel: { eyebrow: string; title: string; rows: Array<{ label: string; value: string }>; body: string };
+    network: { eyebrow: string; title: string; body: string; cards: Array<{ title: string; body: string }> };
+    privacy: { eyebrow: string; title: string; body: string; cards: Array<{ title: string; body: string }>; principles: string[] };
+    levels: { eyebrow: string; title: string; body: string; cards: Array<{ title: string; body: string }> };
+    workflow: { eyebrow: string; title: string; body: string; steps: string[] };
+    capabilities: { eyebrow: string; title: string; body: string; cards: Array<{ title: string; body: string }> };
+    audiences: { eyebrow: string; title: string; body?: string; cards: Array<{ title: string; body: string }> };
+    stack: { eyebrow: string; title: string; body: string; items: string[] };
+    access: { eyebrow: string; title: string; body: string; trialCta: string; foundingCta: string };
+    closing: { eyebrow: string; title: string; body: string };
+  };
+  const visual = t('public.heroVisual', { returnObjects: true }) as { subtitle: string; phrase: string };
+
   return (
     <main style={{ minHeight: '100vh', background: 'radial-gradient(circle at top, rgba(59,130,246,0.18), transparent 28%), radial-gradient(circle at 80% 0%, rgba(168,85,247,0.14), transparent 24%), #070b14', color: 'var(--color-text, #eef1f8)' }}>
       <div style={{ width: 'min(1180px, calc(100% - 32px))', margin: '0 auto', padding: '28px 0 56px' }}>
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, marginBottom: 40, flexWrap: 'wrap' }}>
           <div>
-            <p style={{ margin: 0, textTransform: 'uppercase', letterSpacing: '0.16em', color: 'var(--color-text-muted, #98a2b3)', fontSize: 11 }}>KDD Knowledge Network</p>
-            <h1 style={{ margin: '8px 0 0', fontSize: 20 }}>La red inteligente de aprendizaje para rendimiento en moto</h1>
+            <p style={{ margin: 0, textTransform: 'uppercase', letterSpacing: '0.16em', color: 'var(--color-text-muted, #98a2b3)', fontSize: 11 }}>{copy.header.eyebrow}</p>
+            <h1 style={{ margin: '8px 0 0', fontSize: 20 }}>{copy.header.title}</h1>
           </div>
           <nav style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            <a href="/founding-nodes" style={{ textDecoration: 'none' }}><Pill><NotebookText size={14} /> Founding Nodes</Pill></a>
-            <a href="#prueba" style={{ textDecoration: 'none' }}><Pill><PlayCircle size={14} /> Entrar a la prueba</Pill></a>
-            <a href="#stack" style={{ textDecoration: 'none' }}><Pill><Layers3 size={14} /> Ver arquitectura</Pill></a>
+            <a href="/founding-nodes" style={{ textDecoration: 'none' }}><Pill><NotebookText size={14} /> {copy.nav.foundingNodes}</Pill></a>
+            <a href="#prueba" style={{ textDecoration: 'none' }}><Pill><PlayCircle size={14} /> {copy.nav.login}</Pill></a>
+            <a href="#stack" style={{ textDecoration: 'none' }}><Pill><Layers3 size={14} /> {copy.nav.stack}</Pill></a>
           </nav>
         </header>
 
         <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20, alignItems: 'stretch' }}>
           <div style={{ border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: '28px clamp(20px, 4vw, 40px)', background: 'rgba(3, 7, 18, 0.88)', boxShadow: '0 24px 80px rgba(0, 0, 0, 0.38)' }}>
-            <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>Tus datos siguen siendo tuyos</p>
-            <h2 style={{ margin: '14px 0 16px', fontSize: 'clamp(38px, 6vw, 68px)', lineHeight: 0.95, maxWidth: 780 }}>KDD es una red privada de aprendizaje para rendimiento en moto</h2>
+            <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{copy.hero.eyebrow}</p>
+            <h2 style={{ margin: '14px 0 16px', fontSize: 'clamp(38px, 6vw, 68px)', lineHeight: 0.95, maxWidth: 780 }}>{copy.hero.title}</h2>
             <p style={{ margin: '0 0 18px', fontSize: 18, lineHeight: 1.65, color: 'var(--color-text-muted, #98a2b3)', maxWidth: 820 }}>
-              Cada piloto, moto, equipo o academia funciona como un nodo. Cada nodo conserva sus datos.
-              La red aprende de patrones agregados. Y cada nodo recibe inteligencia mejorada.
+              {copy.hero.subtitle}
             </p>
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 18 }}>
-              {valueProps.map(item => <Pill key={item}>{item}</Pill>)}
+              {copy.hero.valueProps.map(item => <Pill key={item}>{item}</Pill>)}
             </div>
 
             <div style={{ display: 'grid', gap: 8, marginBottom: 18 }}>
-              {[
-                '¿Dónde pierdo tiempo?',
-                '¿Qué patrón se repite en mi nodo?',
-                '¿Qué comparte la red sin exponer mis datos?',
-                '¿Cómo valido si la recomendación funcionó?',
-              ].map(q => (
-                <div key={q} style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--color-text, #eef1f8)', fontSize: 16 }}>
+              {copy.hero.questions.map(question => (
+                <div key={question} style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--color-text, #eef1f8)', fontSize: 16 }}>
                   <CheckCircle2 size={16} color="#34d399" />
-                  <span>{q}</span>
+                  <span>{question}</span>
                 </div>
               ))}
             </div>
 
             <p style={{ margin: '0 0 22px', lineHeight: 1.7, color: 'var(--color-text-muted, #98a2b3)', maxWidth: 760 }}>
-              Tus datos siguen siendo tuyos. Pero tu aprendizaje se acelera porque formas parte de una red que aprende.
+              {copy.hero.body}
             </p>
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
               <a href="/founding-nodes" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, background: 'linear-gradient(135deg, #60a5fa, #8b5cf6)', color: '#fff', fontWeight: 700 }}>
-                Ver Founding Nodes <ArrowRight size={16} />
+                {copy.hero.foundingCta} <ArrowRight size={16} />
               </a>
               <a href="/login" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, border: '1px solid rgba(148,163,184,0.24)', background: 'rgba(15,23,42,0.6)', color: 'var(--color-text, #eef1f8)', fontWeight: 700 }}>
-                Hablar con KDD <ArrowRight size={16} />
+                {copy.hero.loginCta} <ArrowRight size={16} />
               </a>
             </div>
             <p style={{ margin: '14px 0 0', fontSize: 12, lineHeight: 1.6, color: 'var(--color-text-muted, #98a2b3)', maxWidth: 640 }}>
-              No venís solo a probar una app. Entrás a una red que aprende, protege tu contexto y acelera tu mejora.
+              {copy.hero.note}
             </p>
           </div>
 
-          <aside id="prueba" style={{ border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: 22, background: 'rgba(15, 23, 42, 0.64)' }}>
-            <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>Founding Nodes</p>
-            <h3 style={{ margin: '12px 0 14px', fontSize: 24 }}>Acceso anticipado para los primeros nodos</h3>
-            <div style={{ display: 'grid', gap: 10, marginBottom: 18 }}>
-              {[
-                ['Modo', 'Private / Team / Federated'],
-                ['Privacidad', 'Datos crudos protegidos'],
-                ['Contribución', 'Opcional y controlada'],
-                ['Beneficio', 'Benchmarks y modelos mejores'],
-                ['Rol', 'Pilot / Team / Academy Node'],
-              ].map(([k, v]) => (
-                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, paddingBottom: 10, borderBottom: '1px solid rgba(148,163,184,0.14)' }}>
-                  <span style={{ color: 'var(--color-text-muted, #98a2b3)' }}>{k}</span>
-                  <strong style={{ textAlign: 'right' }}>{v}</strong>
-                </div>
-              ))}
+          <aside id="prueba" style={{ display: 'grid', gap: 16 }}>
+            <KddHeroVisual subtitle={visual.subtitle} phrase={visual.phrase} />
+            <div style={{ border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: 22, background: 'rgba(15, 23, 42, 0.64)' }}>
+              <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{copy.foundingPanel.eyebrow}</p>
+              <h3 style={{ margin: '12px 0 14px', fontSize: 24 }}>{copy.foundingPanel.title}</h3>
+              <div style={{ display: 'grid', gap: 10, marginBottom: 18 }}>
+                {copy.foundingPanel.rows.map(row => (
+                  <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, paddingBottom: 10, borderBottom: '1px solid rgba(148,163,184,0.14)' }}>
+                    <span style={{ color: 'var(--color-text-muted, #98a2b3)' }}>{row.label}</span>
+                    <strong style={{ textAlign: 'right' }}>{row.value}</strong>
+                  </div>
+                ))}
+              </div>
+              <p style={{ margin: 0, lineHeight: 1.65, color: 'var(--color-text-muted, #98a2b3)' }}>{copy.foundingPanel.body}</p>
             </div>
-            <p style={{ margin: 0, lineHeight: 1.65, color: 'var(--color-text-muted, #98a2b3)' }}>
-              Descubres cómo KDD detecta un patrón, protege el contexto privado y devuelve aprendizaje mejorado a cada nodo.
-            </p>
           </aside>
         </section>
 
         <section style={{ marginTop: 28, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: '22px 24px', background: 'rgba(15, 23, 42, 0.55)' }}>
-          <SectionTitle eyebrow="Cómo aprende la red" title="La inteligencia viaja, los datos crudos no." body="KDD analiza localmente, comparte solo lo permitido y usa la red para mejorar modelos, benchmarks y recomendaciones." />
+          <SectionTitle eyebrow={copy.network.eyebrow} title={copy.network.title} body={copy.network.body} />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
-            {nodeTypes.map(([title, body]) => (
-              <HomeCard key={title} title={title} body={body} />
-            ))}
+            {copy.network.cards.map(item => <HomeCard key={item.title} title={item.title} body={item.body} />)}
           </div>
         </section>
 
         <section style={{ marginTop: 28, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: '22px 24px', background: 'rgba(15, 23, 42, 0.55)' }}>
-          <SectionTitle eyebrow="Privacidad desde el diseño" title="Cada nodo decide cuánto quiere compartir." body="Tus datos crudos, vídeos y setups privados se quedan en tu nodo. Tú elegís si el aprendizaje es privado, de equipo o federado." />
+          <SectionTitle eyebrow={copy.privacy.eyebrow} title={copy.privacy.title} body={copy.privacy.body} />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
-            {privacyLevels.map(([title, body]) => (
-              <HomeCard key={title} title={title} body={body} />
-            ))}
+            {copy.privacy.cards.map(item => <HomeCard key={item.title} title={item.title} body={item.body} />)}
           </div>
           <div style={{ display: 'grid', gap: 8, marginTop: 16 }}>
-            {networkPrinciples.map(item => (
+            {copy.privacy.principles.map(item => (
               <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--color-text, #eef1f8)', fontSize: 16 }}>
                 <CheckCircle2 size={16} color="#34d399" />
                 <span>{item}</span>
@@ -219,22 +158,16 @@ export function HomePage() {
         </section>
 
         <section style={{ marginTop: 28, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: '22px 24px', background: 'rgba(15, 23, 42, 0.55)' }}>
-          <SectionTitle eyebrow="Aprendizaje por niveles" title="Private, Team o Federated: vos elegís cómo entra tu nodo a la red." body="Los primeros nodos fundadores pueden empezar en modo privado y subir de nivel a medida que confían en la red." />
+          <SectionTitle eyebrow={copy.levels.eyebrow} title={copy.levels.title} body={copy.levels.body} />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
-            {[
-              ['Private', 'Solo análisis individual.'],
-              ['Team', 'Aprendizaje dentro del grupo.'],
-              ['Federated', 'Patrones anonimizados y modelos compartidos.'],
-            ].map(([title, body]) => (
-              <HomeCard key={title} title={title} body={body} />
-            ))}
+            {copy.levels.cards.map(item => <HomeCard key={item.title} title={item.title} body={item.body} />)}
           </div>
         </section>
 
         <section style={{ marginTop: 28, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: '22px 24px', background: 'rgba(15, 23, 42, 0.55)' }}>
-          <SectionTitle eyebrow="De datos a decisiones de box" title="Después de una tanda, lo importante es saber qué hacer después." body="KDD analiza la sesión, detecta lo relevante, explica la causa probable y te deja una misión clara para la siguiente salida." />
+          <SectionTitle eyebrow={copy.workflow.eyebrow} title={copy.workflow.title} body={copy.workflow.body} />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12 }}>
-            {decisionFlow.map((step, index) => (
+            {copy.workflow.steps.map((step, index) => (
               <div key={step} style={{ borderRadius: 18, border: '1px solid rgba(148, 163, 184, 0.18)', padding: 14, background: index % 2 === 0 ? 'rgba(3,7,18,0.65)' : 'rgba(15,23,42,0.65)' }}>
                 <div style={{ fontSize: 11, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 8 }}>0{index + 1}</div>
                 <div style={{ fontWeight: 700 }}>{step}</div>
@@ -244,31 +177,31 @@ export function HomePage() {
         </section>
 
         <section style={{ marginTop: 34 }}>
-          <SectionTitle eyebrow="Qué hace KDD" title="Te ahorra tiempo en el análisis y te da foco para la siguiente tanda." body="Relaciona telemetría, trazada, neumático, riesgo y estilo de pilotaje, y convierte cada recomendación en una misión concreta." />
+          <SectionTitle eyebrow={copy.capabilities.eyebrow} title={copy.capabilities.title} body={copy.capabilities.body} />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
-            {capabilities.map(item => <HomeCard key={item.title} title={item.title} body={item.body} />)}
+            {copy.capabilities.cards.map(item => <HomeCard key={item.title} title={item.title} body={item.body} />)}
           </div>
         </section>
 
         <section style={{ marginTop: 34 }}>
-          <SectionTitle eyebrow="Para quién es" title="Hecho para equipos que necesitan decidir mejor entre tandas." />
+          <SectionTitle eyebrow={copy.audiences.eyebrow} title={copy.audiences.title} body={copy.audiences.body} />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
-            {audiences.map(([title, body]) => (
-              <article key={title} style={{ border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 18, padding: 18, background: 'rgba(15, 23, 42, 0.5)' }}>
+            {copy.audiences.cards.map(item => (
+              <article key={item.title} style={{ border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 18, padding: 18, background: 'rgba(15, 23, 42, 0.5)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
                   <Users size={16} color="#93c5fd" />
-                  <h3 style={{ margin: 0, fontSize: 18 }}>{title}</h3>
+                  <h3 style={{ margin: 0, fontSize: 18 }}>{item.title}</h3>
                 </div>
-                <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.55 }}>{body}</p>
+                <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.55 }}>{item.body}</p>
               </article>
             ))}
           </div>
         </section>
 
         <section id="stack" style={{ marginTop: 34, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: 24, background: 'rgba(3, 7, 18, 0.8)' }}>
-          <SectionTitle eyebrow="La plataforma detrás de la experiencia" title="Todo está conectado para que la decisión salga clara." body="La home te muestra el valor. La prueba te deja experimentarlo sin fricción." />
+          <SectionTitle eyebrow={copy.stack.eyebrow} title={copy.stack.title} body={copy.stack.body} />
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-            {stack.map(item => (
+            {copy.stack.items.map(item => (
               <Pill key={item}><Radar size={14} /> {item}</Pill>
             ))}
           </div>
@@ -276,24 +209,21 @@ export function HomePage() {
 
         <section style={{ marginTop: 34, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 18, alignItems: 'stretch' }}>
           <div style={{ border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: 24, background: 'rgba(15,23,42,0.55)' }}>
-            <SectionTitle eyebrow="Accede a la red" title="Pide acceso y convierte tu nodo en parte de KDD Knowledge Network." />
-            <p style={{ margin: '0 0 16px', color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.65 }}>¿No tienes acceso? Solicita early access para tu academia, equipo, garage o proyecto.</p>
+            <SectionTitle eyebrow={copy.access.eyebrow} title={copy.access.title} body={copy.access.body} />
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
               <a href="/trial" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, background: 'linear-gradient(135deg, #22c55e, #06b6d4)', color: '#fff', fontWeight: 700 }}>
-                Solicitar Early Access <PlayCircle size={16} />
+                {copy.access.trialCta} <PlayCircle size={16} />
               </a>
               <a href="/login" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, border: '1px solid rgba(148,163,184,0.24)', background: 'rgba(15,23,42,0.6)', color: 'var(--color-text, #eef1f8)', fontWeight: 700 }}>
-                Convertirme en Founding Node <ShieldCheck size={16} />
+                {copy.access.foundingCta} <ShieldCheck size={16} />
               </a>
             </div>
           </div>
 
           <div style={{ border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: 24, background: 'linear-gradient(180deg, rgba(59,130,246,0.16), rgba(15,23,42,0.6))' }}>
-            <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 11, fontWeight: 700 }}>Frase final</p>
-            <h3 style={{ margin: '12px 0 0', fontSize: 28, lineHeight: 1.1 }}>KDD aprende contigo, pero mejora con la red.</h3>
-            <p style={{ margin: '16px 0 0', fontSize: 18, lineHeight: 1.65, color: 'var(--color-text-muted, #98a2b3)' }}>
-              KDD convierte experiencia privada en ventaja acumulada.
-            </p>
+            <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 11, fontWeight: 700 }}>{copy.closing.eyebrow}</p>
+            <h3 style={{ margin: '12px 0 0', fontSize: 28, lineHeight: 1.1 }}>{copy.closing.title}</h3>
+            <p style={{ margin: '16px 0 0', fontSize: 18, lineHeight: 1.65, color: 'var(--color-text-muted, #98a2b3)' }}>{copy.closing.body}</p>
           </div>
         </section>
       </div>

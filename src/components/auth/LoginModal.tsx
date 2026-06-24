@@ -1,10 +1,3 @@
-/**
- * LoginModal — real InsForge authentication gate.
- *
- * Supports sign-in (email/password), sign-up, and the 6-digit email-code
- * verification flow configured in insforge.toml (verify_email_method = "code").
- * On a successful, fully-verified session it calls onSuccess().
- */
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,6 +16,16 @@ interface LoginModalProps {
 
 export function LoginModal({ onSuccess, onClose, profileLabel }: LoginModalProps) {
   const { t } = useTranslation();
+  const copy = t('public.login.modal', { returnObjects: true }) as {
+    titles: Record<Mode, string>;
+    requiredFor: string;
+    close: string;
+    labels: { code: string; name: string; email: string; password: string };
+    actions: { signIn: string; createAccount: string; verify: string; verifyAndEnter: string };
+    links: { noAccount: string; haveAccount: string };
+    notices: { codeSent: string; accountCreated: string };
+    errors: { signIn: string; signUp: string; verify: string };
+  };
   const { refreshUser } = useAuth();
   const [mode, setMode] = useState<Mode>('signin');
   const [email, setEmail] = useState('');
@@ -43,11 +46,11 @@ export function LoginModal({ onSuccess, onClose, profileLabel }: LoginModalProps
     setBusy(true); setError(null);
     try {
       const { data, error } = await insforge.auth.signInWithPassword({ email: email.trim(), password });
-      if (error) throw new Error(error.message ?? 'Sign-in failed');
+      if (error) throw new Error(error.message ?? copy.errors.signIn);
       if (data?.accessToken || data?.user) { await finish(); return; }
-      throw new Error('Sign-in failed');
+      throw new Error(copy.errors.signIn);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Sign-in failed');
+      setError(err instanceof Error ? err.message : copy.errors.signIn);
     } finally { setBusy(false); }
   }
 
@@ -56,17 +59,17 @@ export function LoginModal({ onSuccess, onClose, profileLabel }: LoginModalProps
     setBusy(true); setError(null); setNotice(null);
     try {
       const { data, error } = await insforge.auth.signUp({ email: email.trim(), password, name: name.trim() || undefined });
-      if (error) throw new Error(error.message ?? 'Sign-up failed');
+      if (error) throw new Error(error.message ?? copy.errors.signUp);
       if (data?.requireEmailVerification) {
         setMode('verify');
-        setNotice(t('auth.codeSent', 'We sent a 6-digit code to your email.'));
+        setNotice(copy.notices.codeSent);
         return;
       }
       if (data?.accessToken || data?.user) { await finish(); return; }
       setMode('signin');
-      setNotice(t('auth.accountCreated', 'Account created — please sign in.'));
+      setNotice(copy.notices.accountCreated);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Sign-up failed');
+      setError(err instanceof Error ? err.message : copy.errors.signUp);
     } finally { setBusy(false); }
   }
 
@@ -75,19 +78,13 @@ export function LoginModal({ onSuccess, onClose, profileLabel }: LoginModalProps
     setBusy(true); setError(null);
     try {
       const { data, error } = await insforge.auth.verifyEmail({ email: email.trim(), otp: otp.trim() });
-      if (error) throw new Error(error.message ?? 'Verification failed');
+      if (error) throw new Error(error.message ?? copy.errors.verify);
       if (data?.accessToken || data?.user) { await finish(); return; }
-      throw new Error('Verification failed');
+      throw new Error(copy.errors.verify);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Verification failed');
+      setError(err instanceof Error ? err.message : copy.errors.verify);
     } finally { setBusy(false); }
   }
-
-  const titles: Record<Mode, string> = {
-    signin: t('auth.signIn', 'Sign in'),
-    signup: t('auth.createAccount', 'Create account'),
-    verify: t('auth.verifyEmail', 'Verify your email'),
-  };
 
   return (
     <div
@@ -107,10 +104,10 @@ export function LoginModal({ onSuccess, onClose, profileLabel }: LoginModalProps
           border: '1px solid var(--border, #252a38)', borderRadius: 14,
           padding: 24, position: 'relative', boxShadow: '0 24px 60px rgba(0,0,0,0.55)',
         }}
-      >
+        >
         <button
           onClick={onClose}
-          aria-label="Close"
+          aria-label={copy.close}
           style={{ position: 'absolute', top: 14, right: 14, background: 'none', border: 'none', color: 'var(--text-muted,#8b8fa3)', cursor: 'pointer' }}
         >
           <X size={18} />
@@ -118,11 +115,11 @@ export function LoginModal({ onSuccess, onClose, profileLabel }: LoginModalProps
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
           <ShieldCheck size={20} style={{ color: 'var(--accent, #4fc3f7)' }} />
-          <h2 style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>{titles[mode]}</h2>
+          <h2 style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>{copy.titles[mode]}</h2>
         </div>
         {profileLabel && (
           <p style={{ fontSize: 12, color: 'var(--text-muted,#8b8fa3)', margin: '0 0 16px' }}>
-            {t('auth.requiredFor', 'Required to enter as')} <strong>{profileLabel}</strong>
+            {copy.requiredFor} <strong>{profileLabel}</strong>
           </p>
         )}
 
@@ -131,34 +128,34 @@ export function LoginModal({ onSuccess, onClose, profileLabel }: LoginModalProps
 
         {mode === 'verify' ? (
           <form onSubmit={handleVerify} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <Field label={t('auth.code', '6-digit code')}>
+            <Field label={copy.labels.code}>
               <input value={otp} onChange={e => setOtp(e.target.value)} inputMode="numeric" maxLength={6}
                      autoFocus required style={inputStyle} />
             </Field>
-            <SubmitButton busy={busy} label={t('auth.verify', 'Verify & enter')} />
+            <SubmitButton busy={busy} label={copy.actions.verifyAndEnter} />
           </form>
         ) : (
           <form onSubmit={mode === 'signin' ? handleSignIn : handleSignUp} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {mode === 'signup' && (
-              <Field label={t('auth.name', 'Name')}>
+              <Field label={copy.labels.name}>
                 <input value={name} onChange={e => setName(e.target.value)} style={inputStyle} />
               </Field>
             )}
-            <Field label={t('auth.email', 'Email')}>
+            <Field label={copy.labels.email}>
               <input type="email" value={email} onChange={e => setEmail(e.target.value)} autoFocus required style={inputStyle} />
             </Field>
-            <Field label={t('auth.password', 'Password')}>
+            <Field label={copy.labels.password}>
               <input type="password" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} style={inputStyle} />
             </Field>
-            <SubmitButton busy={busy} label={mode === 'signin' ? t('auth.signIn', 'Sign in') : t('auth.createAccount', 'Create account')} />
+            <SubmitButton busy={busy} label={mode === 'signin' ? copy.actions.signIn : copy.actions.createAccount} />
           </form>
         )}
 
         {mode !== 'verify' && (
           <p style={{ fontSize: 12, color: 'var(--text-muted,#8b8fa3)', marginTop: 16, textAlign: 'center' }}>
             {mode === 'signin'
-              ? <>{t('auth.noAccount', 'No account?')} <Link onClick={() => { setMode('signup'); setError(null); }}>{t('auth.createAccount', 'Create account')}</Link></>
-              : <>{t('auth.haveAccount', 'Already have an account?')} <Link onClick={() => { setMode('signin'); setError(null); }}>{t('auth.signIn', 'Sign in')}</Link></>}
+              ? <>{copy.links.noAccount} <Link onClick={() => { setMode('signup'); setError(null); }}>{copy.actions.createAccount}</Link></>
+              : <>{copy.links.haveAccount} <Link onClick={() => { setMode('signin'); setError(null); }}>{copy.actions.signIn}</Link></>}
           </p>
         )}
       </div>

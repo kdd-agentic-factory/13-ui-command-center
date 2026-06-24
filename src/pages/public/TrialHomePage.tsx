@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { submitLeadCapture } from '../../services/foundingNodeLeads';
+import { goTo } from '../../lib/navigation';
 
 const fieldStyle = {
   width: '100%',
@@ -20,6 +22,21 @@ const labelStyle = {
 } as const;
 
 export function TrialHomePage() {
+  const { t } = useTranslation();
+  const copy = t('public.trial', { returnObjects: true }) as {
+    eyebrow: string;
+    title: string;
+    body: string;
+    labels: { name: string; node: string; machine: string; email: string; logger: string; privacy: string; goal: string };
+    options: { node: string[]; privacy: string[] };
+    placeholders: { name: string; machine: string; email: string; logger: string; goal: string };
+    button: string;
+    loading: string;
+    success: string;
+    error: string;
+    note: string;
+    sidebar: { eyebrow: string; items: string[]; links: { app: string; login: string; home: string } };
+  };
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
 
@@ -47,76 +64,75 @@ export function TrialHomePage() {
         metadata: { entry: 'trial-intake' },
       });
       setStatus('success');
-      setMessage('Tu acceso de prueba quedó registrado. Te vamos a devolver un caso de uso alineado a tu nodo.');
+      setMessage(copy.success);
       event.currentTarget.reset();
       localStorage.setItem('kdd-profile', 'founding-node');
-      window.location.assign('/app');
+      goTo('/app');
     } catch (error) {
       setStatus('error');
-      setMessage(error instanceof Error ? error.message : 'No pudimos enviar la solicitud.');
+      setMessage(error instanceof Error ? error.message : copy.error);
     }
   }
 
   return (
     <main style={{ minHeight: '100vh', padding: 24, background: 'radial-gradient(circle at top, rgba(16,185,129,0.12), transparent 28%), #070b14', color: 'var(--color-text, #eef1f8)' }}>
       <section style={{ width: 'min(1120px, 100%)', margin: '0 auto', border: '1px solid rgba(148,163,184,0.18)', borderRadius: 24, padding: '28px clamp(20px, 4vw, 34px)', background: 'rgba(15,23,42,0.76)', boxShadow: '0 24px 80px rgba(0,0,0,0.32)' }}>
-        <p style={{ margin: 0, color: '#86efac', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>Early Access</p>
-        <h1 style={{ margin: '10px 0 12px', fontSize: 'clamp(32px, 5vw, 52px)', lineHeight: 1.02, maxWidth: 840 }}>Completá tu perfil y activá tu primer nodo</h1>
+        <p style={{ margin: 0, color: '#86efac', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{copy.eyebrow}</p>
+        <h1 style={{ margin: '10px 0 12px', fontSize: 'clamp(32px, 5vw, 52px)', lineHeight: 1.02, maxWidth: 840 }}>{copy.title}</h1>
         <p style={{ margin: '0 0 24px', color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.7, maxWidth: 780 }}>
-          Esta entrada está pensada para pilotos, coaches, academias y equipos que quieren experimentar KDD con un caso real.
-          Así definimos la mejor forma de arrancar.
+          {copy.body}
         </p>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20, alignItems: 'start' }}>
           <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 14 }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 14 }}>
               <label style={labelStyle}>
-                Nombre
-                <input name="name" placeholder="Tu nombre" style={fieldStyle} />
+                {copy.labels.name}
+                <input name="name" placeholder={copy.placeholders.name} style={fieldStyle} />
               </label>
               <label style={labelStyle}>
-                Tipo de nodo
+                {copy.labels.node}
                 <select name="node" style={fieldStyle} defaultValue="">
-                  <option value="" disabled>Elegí un nodo</option>
-                  <option>Rider Node</option>
-                  <option>Team Node</option>
-                  <option>Academy Node</option>
-                  <option>Garage Node</option>
+                  <option value="" disabled>{copy.options.node[0]}</option>
+                  <option>{copy.options.node[1]}</option>
+                  <option>{copy.options.node[2]}</option>
+                  <option>{copy.options.node[3]}</option>
+                  <option>{copy.options.node[4]}</option>
                 </select>
               </label>
               <label style={labelStyle}>
-                Moto / programa
-                <input name="machine" placeholder="Yamaha R1, CBR, academy program..." style={fieldStyle} />
+                {copy.labels.machine}
+                <input name="machine" placeholder={copy.placeholders.machine} style={fieldStyle} />
               </label>
               <label style={labelStyle}>
-                Email
-                <input name="email" type="email" placeholder="tu@email.com" style={fieldStyle} />
+                {copy.labels.email}
+                <input name="email" type="email" placeholder={copy.placeholders.email} style={fieldStyle} />
               </label>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 14 }}>
               <label style={labelStyle}>
-                Logger / fuente de datos
-                <input name="logger" placeholder="AiM, MoTeC, custom, video..." style={fieldStyle} />
+                {copy.labels.logger}
+                <input name="logger" placeholder={copy.placeholders.logger} style={fieldStyle} />
               </label>
               <label style={labelStyle}>
-                Nivel de privacidad
+                {copy.labels.privacy}
                 <select name="privacy" style={fieldStyle} defaultValue="">
-                  <option value="" disabled>Elegí el modo</option>
-                  <option>Private</option>
-                  <option>Team</option>
-                  <option>Federated</option>
+                  <option value="" disabled>{copy.options.privacy[0]}</option>
+                  <option>{copy.options.privacy[1]}</option>
+                  <option>{copy.options.privacy[2]}</option>
+                  <option>{copy.options.privacy[3]}</option>
                 </select>
               </label>
             </div>
 
             <label style={labelStyle}>
-              Qué querés lograr con la prueba
-              <textarea name="goal" rows={5} placeholder="Reducir conjetura, comparar pilotos, validar setup, mejorar debriefs..." style={{ ...fieldStyle, resize: 'vertical' }} />
+              {copy.labels.goal}
+              <textarea name="goal" rows={5} placeholder={copy.placeholders.goal} style={{ ...fieldStyle, resize: 'vertical' }} />
             </label>
 
             <button type="submit" disabled={status === 'loading'} style={{ border: 0, borderRadius: 14, padding: '14px 18px', background: 'linear-gradient(135deg, #22c55e, #06b6d4)', color: '#fff', fontWeight: 800, fontSize: 15, cursor: 'pointer', justifySelf: 'start', opacity: status === 'loading' ? 0.75 : 1 }}>
-              {status === 'loading' ? 'Enviando…' : 'Generar acceso de prueba'}
+              {status === 'loading' ? copy.loading : copy.button}
             </button>
 
             {message ? (
@@ -126,23 +142,20 @@ export function TrialHomePage() {
             ) : null}
 
             <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', fontSize: 12, lineHeight: 1.6 }}>
-              La demo no es una pantalla suelta: es el primer paso para definir cómo entra tu nodo a la red.
+              {copy.note}
             </p>
           </form>
 
           <aside style={{ border: '1px solid rgba(148,163,184,0.18)', borderRadius: 20, padding: 20, background: 'rgba(3,7,18,0.5)' }}>
-            <p style={{ margin: 0, color: '#86efac', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>Qué incluye</p>
+            <p style={{ margin: 0, color: '#86efac', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{copy.sidebar.eyebrow}</p>
             <ul style={{ margin: '14px 0 0', paddingLeft: 18, display: 'grid', gap: 10, lineHeight: 1.6, color: 'var(--color-text-muted, #98a2b3)' }}>
-              <li>Sesión realista guiada</li>
-              <li>Primer insight comercial</li>
-              <li>Definición de modo de privacidad</li>
-              <li>Acceso a Founding Nodes</li>
+              {copy.sidebar.items.map(item => <li key={item}>{item}</li>)}
             </ul>
 
             <nav style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 20 }}>
-              <a href="/app" style={{ color: 'inherit' }}>Entrar a KDD</a>
-              <a href="/login" style={{ color: 'inherit' }}>Solicitar demo personalizada</a>
-              <a href="/" style={{ color: 'inherit' }}>Home</a>
+              <a href="/app" style={{ color: 'inherit' }}>{copy.sidebar.links.app}</a>
+              <a href="/login" style={{ color: 'inherit' }}>{copy.sidebar.links.login}</a>
+              <a href="/" style={{ color: 'inherit' }}>{copy.sidebar.links.home}</a>
             </nav>
           </aside>
         </div>
