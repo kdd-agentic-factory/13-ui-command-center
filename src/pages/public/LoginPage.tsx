@@ -1,3 +1,7 @@
+import { useState, type FormEvent } from 'react';
+
+import { submitLeadCapture } from '../../services/foundingNodeLeads';
+
 const fieldStyle = {
   width: '100%',
   padding: '12px 14px',
@@ -18,6 +22,38 @@ const labelStyle = {
 const selectStyle = fieldStyle;
 
 export function LoginPage() {
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [message, setMessage] = useState('');
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+
+    setStatus('loading');
+    setMessage('');
+
+    try {
+      await submitLeadCapture({
+        name: String(formData.get('name') ?? '').trim(),
+        organization: String(formData.get('org') ?? '').trim(),
+        role: String(formData.get('role') ?? '').trim(),
+        email: String(formData.get('email') ?? '').trim(),
+        goal: String(formData.get('goal') ?? '').trim(),
+        privacyMode: String(formData.get('privacy') ?? '').trim(),
+        dataInventory: String(formData.get('data') ?? '').trim(),
+        source: 'login',
+        page: window.location.pathname,
+        metadata: { entry: 'founding-node-intake' },
+      });
+      setStatus('success');
+      setMessage('Tu solicitud quedó registrada. Te contactamos con una propuesta de nodo fundador.');
+      event.currentTarget.reset();
+    } catch (error) {
+      setStatus('error');
+      setMessage(error instanceof Error ? error.message : 'No pudimos enviar la solicitud.');
+    }
+  }
+
   return (
     <main style={{ minHeight: '100vh', padding: 24, background: 'radial-gradient(circle at top, rgba(59,130,246,0.14), transparent 28%), #070b14', color: 'var(--color-text, #eef1f8)' }}>
       <section style={{ width: 'min(1120px, 100%)', margin: '0 auto', border: '1px solid rgba(148,163,184,0.18)', borderRadius: 24, padding: '28px clamp(20px, 4vw, 34px)', background: 'rgba(15,23,42,0.76)', boxShadow: '0 24px 80px rgba(0,0,0,0.32)' }}>
@@ -29,7 +65,7 @@ export function LoginPage() {
         </p>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20, alignItems: 'start' }}>
-          <form action="/trial" method="get" style={{ display: 'grid', gap: 14 }}>
+          <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 14 }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 14 }}>
               <label style={labelStyle}>
                 Nombre
@@ -84,9 +120,15 @@ export function LoginPage() {
               <textarea name="data" rows={5} placeholder="Telemetría, vídeo, setup, notas de coach, tiempos, sensores..." style={{ ...fieldStyle, resize: 'vertical' }} />
             </label>
 
-            <button type="submit" style={{ border: 0, borderRadius: 14, padding: '14px 18px', background: 'linear-gradient(135deg, #60a5fa, #8b5cf6)', color: '#fff', fontWeight: 800, fontSize: 15, cursor: 'pointer', justifySelf: 'start' }}>
-              Solicitar acceso fundador
+            <button type="submit" disabled={status === 'loading'} style={{ border: 0, borderRadius: 14, padding: '14px 18px', background: 'linear-gradient(135deg, #60a5fa, #8b5cf6)', color: '#fff', fontWeight: 800, fontSize: 15, cursor: 'pointer', justifySelf: 'start', opacity: status === 'loading' ? 0.75 : 1 }}>
+              {status === 'loading' ? 'Enviando…' : 'Solicitar acceso fundador'}
             </button>
+
+            {message ? (
+              <p aria-live="polite" style={{ margin: 0, color: status === 'success' ? '#86efac' : '#fca5a5', fontSize: 13, lineHeight: 1.6 }}>
+                {message}
+              </p>
+            ) : null}
 
             <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', fontSize: 12, lineHeight: 1.6 }}>
               Esto no te da un alta automática. Nos deja contexto para responderte con una propuesta seria.
