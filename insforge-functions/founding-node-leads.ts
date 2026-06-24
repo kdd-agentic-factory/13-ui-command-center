@@ -13,6 +13,15 @@ type LeadPayload = {
   metadata?: Record<string, unknown>;
 };
 
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -74,5 +83,29 @@ export default async function handler(req: Request): Promise<Response> {
     return json({ error: 'Lead capture failed' }, 500);
   }
 
-  return json({ ok: true, lead_id: leadId }, 201);
+  const emailResult = await client.emails.send({
+    to: email,
+    from: 'KDD Founding Nodes',
+    subject: 'KDD recibió tu solicitud de acceso fundador',
+    html: `
+      <div style="font-family: Inter, Arial, sans-serif; line-height: 1.6; color: #0f172a; background: #f8fafc; padding: 24px;">
+        <h1 style="margin: 0 0 12px; font-size: 28px;">Tu solicitud quedó registrada</h1>
+        <p style="margin: 0 0 12px;">Hola ${escapeHtml(name)},</p>
+        <p style="margin: 0 0 12px;">Gracias por abrir la puerta a KDD Knowledge Network. Ya recibimos tu perfil y vamos a revisar el mejor modo de entrada para tu nodo.</p>
+        <ul style="margin: 16px 0; padding-left: 20px;">
+          <li><strong>Rol:</strong> ${escapeHtml(role)}</li>
+          <li><strong>Organización:</strong> ${escapeHtml(body.organization?.trim() || '—')}</li>
+          <li><strong>Privacidad:</strong> ${escapeHtml(body.privacy_mode?.trim() || '—')}</li>
+        </ul>
+        <p style="margin: 0 0 12px;">Si el perfil encaja, te devolvemos una propuesta con el mejor camino: Private, Team o Federated.</p>
+        <p style="margin: 20px 0 0; color: #475569; font-size: 13px;">KDD learns with you. The network makes it smarter.</p>
+      </div>
+    `,
+  });
+
+  if (emailResult.error) {
+    return json({ ok: true, lead_id: leadId, email_sent: false, email_error: emailResult.error.message }, 201);
+  }
+
+  return json({ ok: true, lead_id: leadId, email_sent: true }, 201);
 }
