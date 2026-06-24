@@ -1,4 +1,4 @@
-import { Fragment, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight, CheckCircle2, Layers3, NotebookText, PlayCircle, Radar, ShieldCheck, Users } from 'lucide-react';
 
@@ -53,26 +53,43 @@ function Pill({ children }: { children: ReactNode }) {
   );
 }
 
-function SequenceDiagram({ items }: { items: Array<{ label: string; title: string; body?: string; accent?: string }> }) {
+function BlueprintDiagram({ eyebrow, title, body, nodes }: { eyebrow: string; title: string; body: string; nodes: Array<{ label: string; title: string; body: string; accent: string }> }) {
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'stretch', marginBottom: 18 }}>
-      {items.map((item, index) => (
-        <Fragment key={`${item.label}-${item.title}`}>
-          <article style={{ flex: '1 1 188px', minWidth: 188, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 18, padding: 16, background: 'rgba(3, 7, 18, 0.7)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 10 }}>
-              <span style={{ color: item.accent ?? '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{item.label}</span>
-              <span aria-hidden="true" style={{ width: 12, height: 12, borderRadius: 999, background: item.accent ?? '#93c5fd', boxShadow: `0 0 0 6px color-mix(in srgb, ${item.accent ?? '#93c5fd'} 14%, transparent)` }} />
-            </div>
-            <h3 style={{ margin: '0 0 8px', fontSize: 18, lineHeight: 1.1 }}>{item.title}</h3>
-            {item.body ? <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.55 }}>{item.body}</p> : null}
+    <div style={{ border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 26, padding: 18, background: 'radial-gradient(circle at top, rgba(96,165,250,0.18), transparent 24%), rgba(3, 7, 18, 0.72)', marginBottom: 18 }}>
+      <div style={{ display: 'grid', gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 10, alignItems: 'stretch' }}>
+          {nodes.slice(0, 2).map((node, index) => (
+            <article key={node.label} style={{ borderRadius: 18, padding: 14, border: '1px solid rgba(148, 163, 184, 0.18)', background: index === 0 ? 'rgba(15, 23, 42, 0.8)' : 'rgba(3, 7, 18, 0.72)' }}>
+              <p style={{ margin: 0, color: node.accent, textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{node.label}</p>
+              <h3 style={{ margin: '8px 0 8px', fontSize: 18, lineHeight: 1.1 }}>{node.title}</h3>
+              <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.55 }}>{node.body}</p>
+            </article>
+          ))}
+
+          <article style={{ borderRadius: 22, padding: 18, border: '1px solid rgba(96, 165, 250, 0.35)', background: 'linear-gradient(135deg, rgba(96,165,250,0.18), rgba(139,92,246,0.16))', display: 'grid', gap: 12, alignContent: 'center', minHeight: 168 }}>
+            <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.18em', fontSize: 11, fontWeight: 700 }}>{eyebrow}</p>
+            <h3 style={{ margin: 0, fontSize: 26, lineHeight: 1.05 }}>{title}</h3>
+            <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.6 }}>{body}</p>
           </article>
-          {index < items.length - 1 ? (
-            <div aria-hidden="true" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 34, color: '#93c5fd', fontSize: 18, fontWeight: 700 }}>
-              <ArrowRight size={18} />
+
+          <article style={{ borderRadius: 18, padding: 14, border: '1px solid rgba(148, 163, 184, 0.18)', background: 'rgba(15, 23, 42, 0.8)' }}>
+            <p style={{ margin: 0, color: nodes[2].accent, textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{nodes[2].label}</p>
+            <h3 style={{ margin: '8px 0 8px', fontSize: 18, lineHeight: 1.1 }}>{nodes[2].title}</h3>
+            <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.55 }}>{nodes[2].body}</p>
+          </article>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 10 }}>
+          {nodes.map(node => (
+            <div key={`${node.label}-${node.title}`} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', borderRadius: 16, border: '1px solid rgba(148, 163, 184, 0.18)', background: 'rgba(15, 23, 42, 0.52)' }}>
+              <span aria-hidden="true" style={{ width: 11, height: 11, borderRadius: 999, background: node.accent, boxShadow: `0 0 0 6px color-mix(in srgb, ${node.accent} 14%, transparent)` }} />
+              <div>
+                <div style={{ color: node.accent, textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 10, fontWeight: 700 }}>{node.label}</div>
+                <div style={{ fontWeight: 700, fontSize: 14 }}>{node.title}</div>
+              </div>
             </div>
-          ) : null}
-        </Fragment>
-      ))}
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -94,6 +111,145 @@ function StackDiagram({ items }: { items: string[] }) {
           ))}
         </div>
       ))}
+    </div>
+  );
+}
+
+function NetworkDiagram({ eyebrow, cards }: { eyebrow: string; cards: Array<{ title: string; body: string }> }) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12, marginBottom: 18 }}>
+      <article style={{ borderRadius: 22, padding: 18, border: '1px solid rgba(96, 165, 250, 0.3)', background: 'linear-gradient(135deg, rgba(96,165,250,0.16), rgba(15,23,42,0.72))', display: 'grid', gap: 10, alignContent: 'center' }}>
+        <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.16em', fontSize: 11, fontWeight: 700 }}>{eyebrow}</p>
+        <h3 style={{ margin: 0, fontSize: 26, lineHeight: 1.05 }}>{cards[0].title}</h3>
+        <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.6 }}>{cards[0].body}</p>
+      </article>
+      <div style={{ display: 'grid', gap: 10 }}>
+        {cards.slice(1).map((card, index) => (
+          <div key={card.title} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', padding: 14, borderRadius: 18, border: '1px solid rgba(148, 163, 184, 0.18)', background: index % 2 === 0 ? 'rgba(15,23,42,0.72)' : 'rgba(3,7,18,0.72)' }}>
+            <span aria-hidden="true" style={{ width: 12, height: 12, marginTop: 4, borderRadius: 999, background: index % 2 === 0 ? '#60a5fa' : '#34d399', boxShadow: `0 0 0 6px color-mix(in srgb, ${index % 2 === 0 ? '#60a5fa' : '#34d399'} 14%, transparent)` }} />
+            <div>
+              <h3 style={{ margin: '0 0 6px', fontSize: 16 }}>{card.title}</h3>
+              <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.55 }}>{card.body}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PrivacyDiagram({ cards, principles }: { cards: Array<{ title: string; body: string }>; principles: string[] }) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10, marginBottom: 18 }}>
+      {cards.map((card, index) => (
+        <article key={card.title} style={{ borderRadius: 20, padding: 16, border: '1px solid rgba(148, 163, 184, 0.18)', background: index === 0 ? 'rgba(15,23,42,0.72)' : index === 1 ? 'rgba(23,37,84,0.72)' : 'rgba(3,7,18,0.72)' }}>
+          <p style={{ margin: 0, color: index === 2 ? '#34d399' : index === 1 ? '#8b5cf6' : '#60a5fa', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{card.title}</p>
+          <p style={{ margin: '8px 0 0', color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.55 }}>{card.body}</p>
+        </article>
+      ))}
+      <article style={{ gridColumn: '1 / -1', borderRadius: 20, padding: 16, border: '1px solid rgba(148, 163, 184, 0.18)', background: 'rgba(15,23,42,0.56)' }}>
+        <div style={{ display: 'grid', gap: 8 }}>
+          {principles.map((item, index) => (
+            <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--color-text, #eef1f8)' }}>
+              <span style={{ width: 8, height: 8, borderRadius: 999, background: index === 0 ? '#60a5fa' : index === 1 ? '#8b5cf6' : '#34d399' }} />
+              <span style={{ lineHeight: 1.5 }}>{item}</span>
+            </div>
+          ))}
+        </div>
+      </article>
+    </div>
+  );
+}
+
+function LevelDiagram({ cards }: { cards: Array<{ title: string; body: string }> }) {
+  return (
+    <div style={{ display: 'grid', gap: 10, marginBottom: 18 }}>
+      {cards.map((card, index) => (
+        <div key={card.title} style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 12, alignItems: 'center', padding: 14, borderRadius: 18, border: '1px solid rgba(148, 163, 184, 0.18)', background: index === 0 ? 'rgba(15,23,42,0.72)' : index === 1 ? 'rgba(3,7,18,0.72)' : 'rgba(23,37,84,0.72)', marginLeft: `${index * 12}px` }}>
+          <span style={{ width: 34, height: 34, borderRadius: 999, display: 'grid', placeItems: 'center', background: index === 0 ? '#60a5fa' : index === 1 ? '#8b5cf6' : '#34d399', color: '#fff', fontWeight: 800 }}>{index + 1}</span>
+          <div>
+            <h3 style={{ margin: '0 0 4px', fontSize: 16 }}>{card.title}</h3>
+            <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.55 }}>{card.body}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function WorkflowDiagram({ steps }: { steps: string[] }) {
+  return (
+    <div style={{ display: 'grid', gap: 10, marginBottom: 18 }}>
+      {steps.map((step, index) => (
+        <div key={step} style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 12, alignItems: 'center' }}>
+          <div style={{ display: 'grid', justifyItems: 'center', gap: 4 }}>
+            <div style={{ width: 34, height: 34, borderRadius: 999, display: 'grid', placeItems: 'center', background: index < 3 ? '#60a5fa' : '#34d399', color: '#fff', fontWeight: 800 }}>{index + 1}</div>
+            {index < steps.length - 1 ? <div style={{ width: 2, height: 22, background: 'linear-gradient(180deg, #60a5fa, #34d399)' }} /> : null}
+          </div>
+          <div style={{ padding: 14, borderRadius: 18, border: '1px solid rgba(148, 163, 184, 0.18)', background: index % 2 === 0 ? 'rgba(15,23,42,0.72)' : 'rgba(3,7,18,0.72)' }}>
+            <div style={{ fontWeight: 700 }}>{step}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function CapabilityDiagram({ cards }: { cards: Array<{ title: string; body: string }> }) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10, marginBottom: 18 }}>
+      {cards.map((card, index) => (
+        <article key={card.title} style={{ padding: 14, borderRadius: 18, border: '1px solid rgba(148, 163, 184, 0.18)', background: index % 3 === 0 ? 'rgba(15,23,42,0.72)' : index % 3 === 1 ? 'rgba(3,7,18,0.72)' : 'rgba(23,37,84,0.72)' }}>
+          <p style={{ margin: 0, color: index % 3 === 0 ? '#60a5fa' : index % 3 === 1 ? '#8b5cf6' : '#34d399', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>0{index + 1}</p>
+          <h3 style={{ margin: '8px 0 6px', fontSize: 16 }}>{card.title}</h3>
+          <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.55 }}>{card.body}</p>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+function AudienceDiagram({ cards }: { cards: Array<{ title: string; body: string }> }) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10, marginBottom: 18 }}>
+      {cards.map((card, index) => (
+        <article key={card.title} style={{ padding: 14, borderRadius: 18, border: '1px solid rgba(148, 163, 184, 0.18)', background: index % 2 === 0 ? 'rgba(15,23,42,0.72)' : 'rgba(3,7,18,0.72)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+            <span aria-hidden="true" style={{ width: 12, height: 12, borderRadius: 999, background: index % 2 === 0 ? '#60a5fa' : '#8b5cf6' }} />
+            <h3 style={{ margin: 0, fontSize: 16 }}>{card.title}</h3>
+          </div>
+          <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.55 }}>{card.body}</p>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+function AccessDiagram({ trialCta, accessLabel, foundingCta }: { trialCta: string; accessLabel: string; foundingCta: string }) {
+  return (
+    <div style={{ display: 'grid', gap: 10, marginBottom: 18 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 10 }}>
+        {[
+          { label: '01', title: trialCta, accent: '#22c55e' },
+          { label: '02', title: accessLabel, accent: '#06b6d4' },
+          { label: '03', title: foundingCta, accent: '#8b5cf6' },
+        ].map((item, index) => (
+          <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 14, borderRadius: 18, border: '1px solid rgba(148,163,184,0.18)', background: 'rgba(15,23,42,0.68)' }}>
+            <span style={{ width: 32, height: 32, borderRadius: 999, display: 'grid', placeItems: 'center', background: item.accent, color: '#fff', fontWeight: 800 }}>{item.label}</span>
+            <span style={{ fontWeight: 700, lineHeight: 1.4 }}>{item.title}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ClosingDiagram() {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: 10, alignItems: 'center', marginTop: 18 }}>
+      <div style={{ width: 40, height: 40, borderRadius: 999, background: '#60a5fa', display: 'grid', placeItems: 'center', fontWeight: 800 }}>L</div>
+      <div style={{ height: 2, background: 'linear-gradient(90deg, #60a5fa, #8b5cf6, #34d399)' }} />
+      <div style={{ width: 40, height: 40, borderRadius: 999, background: '#34d399', display: 'grid', placeItems: 'center', fontWeight: 800 }}>N</div>
     </div>
   );
 }
@@ -160,7 +316,7 @@ export function HomePage() {
           <div style={{ display: 'grid', justifyItems: 'end', gap: 12 }}>
             <nav style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
               <a href="/founding-nodes" style={{ textDecoration: 'none' }}><Pill><NotebookText size={14} /> {copy.nav.foundingNodes}</Pill></a>
-              <a href="#prueba" style={{ textDecoration: 'none' }}><Pill><PlayCircle size={14} /> {copy.nav.login}</Pill></a>
+              <a href="/login" style={{ textDecoration: 'none' }}><Pill><PlayCircle size={14} /> {copy.nav.login}</Pill></a>
               <a href="#stack" style={{ textDecoration: 'none' }}><Pill><Layers3 size={14} /> {copy.nav.stack}</Pill></a>
             </nav>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 999, border: '1px solid rgba(148,163,184,0.18)', background: 'rgba(15,23,42,0.58)' }}>
@@ -251,8 +407,11 @@ export function HomePage() {
 
         <section style={{ marginTop: 28, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 28, padding: '24px 24px 26px', background: 'linear-gradient(180deg, rgba(15,23,42,0.64), rgba(3,7,18,0.88))' }}>
           <SectionTitle eyebrow={copy.designs.eyebrow} title={copy.designs.title} body={copy.designs.body} />
-          <SequenceDiagram
-            items={copy.designs.cards.map(card => ({ label: card.eyebrow, title: card.title, body: card.body, accent: card.accent }))}
+          <BlueprintDiagram
+            eyebrow={copy.designs.eyebrow}
+            title={copy.designs.title}
+            body={copy.designs.body}
+            nodes={copy.designs.cards.map(card => ({ label: card.eyebrow, title: card.title, body: card.body, accent: card.accent }))}
           />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
             {copy.designs.cards.map(card => <DesignCard key={card.title} eyebrow={card.eyebrow} title={card.title} body={card.body} chips={card.chips} accent={card.accent} />)}
@@ -261,9 +420,7 @@ export function HomePage() {
 
         <section style={{ marginTop: 28, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: '22px 24px', background: 'rgba(15, 23, 42, 0.55)' }}>
           <SectionTitle eyebrow={copy.network.eyebrow} title={copy.network.title} body={copy.network.body} />
-          <SequenceDiagram
-            items={copy.network.cards.map((card, index) => ({ label: `0${index + 1}`, title: card.title, body: card.body, accent: index % 2 === 0 ? '#60a5fa' : '#34d399' }))}
-          />
+          <NetworkDiagram eyebrow={copy.network.eyebrow} cards={copy.network.cards} />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
             {copy.network.cards.map(item => <HomeCard key={item.title} title={item.title} body={item.body} />)}
           </div>
@@ -271,27 +428,15 @@ export function HomePage() {
 
         <section style={{ marginTop: 28, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: '22px 24px', background: 'rgba(15, 23, 42, 0.55)' }}>
           <SectionTitle eyebrow={copy.privacy.eyebrow} title={copy.privacy.title} body={copy.privacy.body} />
-          <SequenceDiagram
-            items={copy.privacy.cards.map((card, index) => ({ label: `0${index + 1}`, title: card.title, body: card.body, accent: index === 0 ? '#60a5fa' : index === 1 ? '#8b5cf6' : '#34d399' }))}
-          />
+          <PrivacyDiagram cards={copy.privacy.cards} principles={copy.privacy.principles} />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
             {copy.privacy.cards.map(item => <HomeCard key={item.title} title={item.title} body={item.body} />)}
-          </div>
-          <div style={{ display: 'grid', gap: 8, marginTop: 16 }}>
-            {copy.privacy.principles.map(item => (
-              <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--color-text, #eef1f8)', fontSize: 16 }}>
-                <CheckCircle2 size={16} color="#34d399" />
-                <span>{item}</span>
-              </div>
-            ))}
           </div>
         </section>
 
         <section style={{ marginTop: 28, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: '22px 24px', background: 'rgba(15, 23, 42, 0.55)' }}>
           <SectionTitle eyebrow={copy.levels.eyebrow} title={copy.levels.title} body={copy.levels.body} />
-          <SequenceDiagram
-            items={copy.levels.cards.map((card, index) => ({ label: `0${index + 1}`, title: card.title, body: card.body, accent: index === 0 ? '#60a5fa' : index === 1 ? '#8b5cf6' : '#34d399' }))}
-          />
+          <LevelDiagram cards={copy.levels.cards} />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
             {copy.levels.cards.map(item => <HomeCard key={item.title} title={item.title} body={item.body} />)}
           </div>
@@ -299,9 +444,7 @@ export function HomePage() {
 
         <section style={{ marginTop: 28, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: '22px 24px', background: 'rgba(15, 23, 42, 0.55)' }}>
           <SectionTitle eyebrow={copy.workflow.eyebrow} title={copy.workflow.title} body={copy.workflow.body} />
-          <SequenceDiagram
-            items={copy.workflow.steps.map((step, index) => ({ label: `0${index + 1}`, title: step, accent: index < 3 ? '#60a5fa' : '#34d399' }))}
-          />
+          <WorkflowDiagram steps={copy.workflow.steps} />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12 }}>
             {copy.workflow.steps.map((step, index) => (
               <div key={step} style={{ borderRadius: 18, border: '1px solid rgba(148, 163, 184, 0.18)', padding: 14, background: index % 2 === 0 ? 'rgba(3,7,18,0.65)' : 'rgba(15,23,42,0.65)' }}>
@@ -314,9 +457,7 @@ export function HomePage() {
 
         <section style={{ marginTop: 34 }}>
           <SectionTitle eyebrow={copy.capabilities.eyebrow} title={copy.capabilities.title} body={copy.capabilities.body} />
-          <SequenceDiagram
-            items={copy.capabilities.cards.map((card, index) => ({ label: `0${index + 1}`, title: card.title, body: card.body, accent: index % 3 === 0 ? '#60a5fa' : index % 3 === 1 ? '#8b5cf6' : '#34d399' }))}
-          />
+          <CapabilityDiagram cards={copy.capabilities.cards} />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
             {copy.capabilities.cards.map(item => <HomeCard key={item.title} title={item.title} body={item.body} />)}
           </div>
@@ -324,9 +465,7 @@ export function HomePage() {
 
         <section style={{ marginTop: 34 }}>
           <SectionTitle eyebrow={copy.audiences.eyebrow} title={copy.audiences.title} body={copy.audiences.body} />
-          <SequenceDiagram
-            items={copy.audiences.cards.map((card, index) => ({ label: `0${index + 1}`, title: card.title, body: card.body, accent: index % 2 === 0 ? '#60a5fa' : '#8b5cf6' }))}
-          />
+          <AudienceDiagram cards={copy.audiences.cards} />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
             {copy.audiences.cards.map(item => (
               <article key={item.title} style={{ border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 18, padding: 18, background: 'rgba(15, 23, 42, 0.5)' }}>
@@ -353,13 +492,7 @@ export function HomePage() {
         <section style={{ marginTop: 34, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 18, alignItems: 'stretch' }}>
           <div style={{ border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: 24, background: 'rgba(15,23,42,0.55)' }}>
             <SectionTitle eyebrow={copy.access.eyebrow} title={copy.access.title} body={copy.access.body} />
-            <SequenceDiagram
-              items={[
-                { label: '01', title: 'Request access', body: copy.access.trialCta, accent: '#22c55e' },
-                { label: '02', title: 'Choose the mode', body: 'Private / Team / Federated', accent: '#06b6d4' },
-                { label: '03', title: 'Enter the app', body: copy.access.foundingCta, accent: '#8b5cf6' },
-              ]}
-            />
+            <AccessDiagram trialCta={copy.access.trialCta} accessLabel={copy.access.eyebrow} foundingCta={copy.access.foundingCta} />
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
               <a href="/trial" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, background: 'linear-gradient(135deg, #22c55e, #06b6d4)', color: '#fff', fontWeight: 700 }}>
                 {copy.access.trialCta} <PlayCircle size={16} />
@@ -374,13 +507,7 @@ export function HomePage() {
             <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 11, fontWeight: 700 }}>{copy.closing.eyebrow}</p>
             <h3 style={{ margin: '12px 0 0', fontSize: 28, lineHeight: 1.1 }}>{copy.closing.title}</h3>
             <p style={{ margin: '16px 0 0', fontSize: 18, lineHeight: 1.65, color: 'var(--color-text-muted, #98a2b3)' }}>{copy.closing.body}</p>
-            <SequenceDiagram
-              items={[
-                { label: '01', title: 'Learn', accent: '#60a5fa' },
-                { label: '02', title: 'Improve', accent: '#8b5cf6' },
-                { label: '03', title: 'Network', accent: '#34d399' },
-              ]}
-            />
+            <ClosingDiagram />
           </div>
         </section>
       </div>

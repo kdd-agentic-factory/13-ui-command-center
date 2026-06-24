@@ -67,6 +67,14 @@ describe('HomePage resume session CTA', () => {
     expect(heroLinks.map(link => link.getAttribute('href'))).toEqual(['/founding-nodes', '/app', '/login']);
   });
 
+  it('routes sign in from the header to the login page', () => {
+    currentLocale = en;
+
+    render(<HomePage />);
+
+    expect(screen.getByRole('link', { name: /sign in/i })).toHaveAttribute('href', '/login');
+  });
+
   it('shows a welcome back indicator for authenticated visitors', () => {
     currentLocale = en;
     currentUser = { id: 'user-1' };
