@@ -118,3 +118,7 @@ Move to federated learning once the network has enough high-quality nodes.
 
 - `LEAD_ALERT_TO` (InsForge secret/env): optional internal inbox for new founder/trial submissions.
 - When present, the lead function sends a team alert in addition to the prospect confirmation email.
+
+## Outreach next step
+
+See `docs/founding-node-outreach.md` for the first outbound playbook and `docs/founding-node-crm-template.csv` for the tracking sheet template.
