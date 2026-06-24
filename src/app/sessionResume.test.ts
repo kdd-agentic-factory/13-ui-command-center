@@ -46,4 +46,20 @@ describe('buildSessionResumeSnapshot', () => {
     expect(snapshot.gateCircuit).toBeNull();
     expect(snapshot.garageProfile).toBeNull();
   });
+
+  it('preserves the persisted dashboard tab in the resumed session setup', () => {
+    const snapshot = buildSessionResumeSnapshot({
+      circuit_id: 'mugello',
+      session_mode: 'race',
+      data_mode: 'live',
+      dashboard_profile: 'race_live',
+      pit_strategy_enabled: false,
+      demo_mode: false,
+      setup: {
+        dashboardTab: 'telemetry',
+      },
+    });
+
+    expect(snapshot.sessionCtx.setup.dashboardTab).toBe('telemetry');
+  });
 });

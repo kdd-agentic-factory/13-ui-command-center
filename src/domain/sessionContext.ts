@@ -163,6 +163,30 @@ export function defaultTabForMode(mode: SessionMode): TabId | null {
   }
 }
 
+export const DASHBOARD_TAB_SETUP_KEY = 'dashboardTab';
+
+export function resolveDashboardTab(
+  savedTab: string | undefined,
+  allowedTabs: TabId[],
+  modeDefaultTab: TabId | null,
+  profileDefaultTab: TabId | null,
+): TabId {
+  if (savedTab && allowedTabs.includes(savedTab as TabId)) return savedTab as TabId;
+  if (modeDefaultTab && allowedTabs.includes(modeDefaultTab)) return modeDefaultTab;
+  if (profileDefaultTab && allowedTabs.includes(profileDefaultTab)) return profileDefaultTab;
+  return allowedTabs[0] ?? 'overview';
+}
+
+export function withDashboardTab(ctx: SessionContext, dashboardTab: TabId): SessionContext {
+  return {
+    ...ctx,
+    setup: {
+      ...ctx.setup,
+      [DASHBOARD_TAB_SETUP_KEY]: dashboardTab,
+    },
+  };
+}
+
 // ── Context Object (spec §6) ──────────────────────────────────────────────────
 
 export interface SessionContext {

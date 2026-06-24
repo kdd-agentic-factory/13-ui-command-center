@@ -19,7 +19,15 @@ import { DecisionCenter } from '../components/DecisionCenter';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { MUGELLO_CIRCUIT, RACE_SESSION, sessionDisplayState } from '../domain/sessionTruth';
 import { getActiveDemoSession } from '../domain/demoSessions';
-import { hiddenTabsForMode, defaultTabForMode, getSessionContext } from '../domain/sessionContext';
+import {
+  DASHBOARD_TAB_SETUP_KEY,
+  hiddenTabsForMode,
+  defaultTabForMode,
+  getSessionContext,
+  resolveDashboardTab,
+  setSessionContext,
+  withDashboardTab,
+} from '../domain/sessionContext';
 
 import { OverviewPage } from '../pages/OverviewPage';
 import { LiveTelemetryPage } from '../pages/LiveTelemetryPage';
@@ -267,15 +275,15 @@ function PageContent({ tab }: { tab: TabId }) {
 function DashboardShellContent() {
   const { profile, logout } = useProfile();
   const { t } = useTranslation();
-  const [tab, setTab] = useState<TabId>(profile?.defaultTab ?? 'overview');
   const [transitioning, setTransitioning] = useState(false);
-  const prevTabRef = useRef<TabId>(tab);
+  const sessionCtx = getSessionContext();
+  const prevTabRef = useRef<TabId>(profile?.defaultTab ?? 'overview');
   const telem = useLiveTelemetry();
   const sessionState = sessionDisplayState(telem.lapCount);
   const clock = useClock();
   const live = useServiceData();
 
-  const modeHidden = hiddenTabsForMode(getSessionContext().sessionMode);
+  const modeHidden = hiddenTabsForMode(sessionCtx.sessionMode);
   const filteredSections = profile
     ? ALL_NAV_SECTIONS
         .map(section => ({
@@ -286,18 +294,22 @@ function DashboardShellContent() {
     : [];
 
   const allowedTabIds = filteredSections.flatMap(section => section.items.map(item => item.id));
+  const modeDefaultTab = (sessionCtx.sessionMode === 'demo' ? getActiveDemoSession()?.focusTab : null) ?? defaultTabForMode(sessionCtx.sessionMode);
+  const initialTab = resolveDashboardTab(
+    sessionCtx.setup[DASHBOARD_TAB_SETUP_KEY],
+    allowedTabIds,
+    modeDefaultTab,
+    profile?.defaultTab ?? null,
+  );
+  const [tab, setTab] = useState<TabId>(initialTab);
 
-  const activeTab: TabId = profile && allowedTabIds.includes(tab)
-    ? tab
-    : (() => {
-        const sessionMode = getSessionContext().sessionMode;
-        const md = (sessionMode === 'demo' ? getActiveDemoSession()?.focusTab : null) ?? defaultTabForMode(sessionMode);
-        if (md && allowedTabIds.includes(md)) return md;
-        if (profile && allowedTabIds.includes(profile.defaultTab)) return profile.defaultTab;
-        return allowedTabIds[0] ?? 'overview';
-      })();
+  const activeTab: TabId = allowedTabIds.includes(tab) ? tab : initialTab;
 
   const isFullBleed = activeTab === 'copilot';
+
+  useEffect(() => {
+    setSessionContext(withDashboardTab(getSessionContext(), activeTab));
+  }, [activeTab]);
 
   const navigateTo = useCallback((newTab: TabId) => {
     if (newTab === activeTab) return;
