@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { Fragment, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight, CheckCircle2, Layers3, NotebookText, PlayCircle, Radar, ShieldCheck, Users } from 'lucide-react';
 
@@ -50,6 +50,51 @@ function Pill({ children }: { children: ReactNode }) {
     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 12px', borderRadius: 999, border: '1px solid rgba(148, 163, 184, 0.2)', background: 'rgba(15, 23, 42, 0.6)', color: 'var(--color-text, #eef1f8)', fontSize: 13 }}>
       {children}
     </span>
+  );
+}
+
+function SequenceDiagram({ items }: { items: Array<{ label: string; title: string; body?: string; accent?: string }> }) {
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'stretch', marginBottom: 18 }}>
+      {items.map((item, index) => (
+        <Fragment key={`${item.label}-${item.title}`}>
+          <article style={{ flex: '1 1 188px', minWidth: 188, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 18, padding: 16, background: 'rgba(3, 7, 18, 0.7)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 10 }}>
+              <span style={{ color: item.accent ?? '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{item.label}</span>
+              <span aria-hidden="true" style={{ width: 12, height: 12, borderRadius: 999, background: item.accent ?? '#93c5fd', boxShadow: `0 0 0 6px color-mix(in srgb, ${item.accent ?? '#93c5fd'} 14%, transparent)` }} />
+            </div>
+            <h3 style={{ margin: '0 0 8px', fontSize: 18, lineHeight: 1.1 }}>{item.title}</h3>
+            {item.body ? <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.55 }}>{item.body}</p> : null}
+          </article>
+          {index < items.length - 1 ? (
+            <div aria-hidden="true" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 34, color: '#93c5fd', fontSize: 18, fontWeight: 700 }}>
+              <ArrowRight size={18} />
+            </div>
+          ) : null}
+        </Fragment>
+      ))}
+    </div>
+  );
+}
+
+function StackDiagram({ items }: { items: string[] }) {
+  const rows = [items.slice(0, 4), items.slice(4, 8), items.slice(8, 12)].filter(row => row.length > 0);
+
+  return (
+    <div style={{ display: 'grid', gap: 10, marginBottom: 18 }}>
+      {rows.map((row, rowIndex) => (
+        <div key={row.join('-')} style={{ display: 'grid', gridTemplateColumns: `repeat(${row.length}, minmax(0, 1fr))`, gap: 10, marginLeft: `${rowIndex * 12}px` }}>
+          {row.map((item, index) => (
+            <div key={item} style={{ padding: '12px 14px', borderRadius: 16, border: '1px solid rgba(148, 163, 184, 0.18)', background: index % 2 === 0 ? 'rgba(15, 23, 42, 0.82)' : 'rgba(3, 7, 18, 0.78)', color: 'var(--color-text, #eef1f8)', boxShadow: '0 10px 24px rgba(0,0,0,0.14)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Layers3 size={14} color="#93c5fd" />
+                <span style={{ fontSize: 13, lineHeight: 1.4 }}>{item}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -206,6 +251,9 @@ export function HomePage() {
 
         <section style={{ marginTop: 28, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 28, padding: '24px 24px 26px', background: 'linear-gradient(180deg, rgba(15,23,42,0.64), rgba(3,7,18,0.88))' }}>
           <SectionTitle eyebrow={copy.designs.eyebrow} title={copy.designs.title} body={copy.designs.body} />
+          <SequenceDiagram
+            items={copy.designs.cards.map(card => ({ label: card.eyebrow, title: card.title, body: card.body, accent: card.accent }))}
+          />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
             {copy.designs.cards.map(card => <DesignCard key={card.title} eyebrow={card.eyebrow} title={card.title} body={card.body} chips={card.chips} accent={card.accent} />)}
           </div>
@@ -213,6 +261,9 @@ export function HomePage() {
 
         <section style={{ marginTop: 28, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: '22px 24px', background: 'rgba(15, 23, 42, 0.55)' }}>
           <SectionTitle eyebrow={copy.network.eyebrow} title={copy.network.title} body={copy.network.body} />
+          <SequenceDiagram
+            items={copy.network.cards.map((card, index) => ({ label: `0${index + 1}`, title: card.title, body: card.body, accent: index % 2 === 0 ? '#60a5fa' : '#34d399' }))}
+          />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
             {copy.network.cards.map(item => <HomeCard key={item.title} title={item.title} body={item.body} />)}
           </div>
@@ -220,6 +271,9 @@ export function HomePage() {
 
         <section style={{ marginTop: 28, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: '22px 24px', background: 'rgba(15, 23, 42, 0.55)' }}>
           <SectionTitle eyebrow={copy.privacy.eyebrow} title={copy.privacy.title} body={copy.privacy.body} />
+          <SequenceDiagram
+            items={copy.privacy.cards.map((card, index) => ({ label: `0${index + 1}`, title: card.title, body: card.body, accent: index === 0 ? '#60a5fa' : index === 1 ? '#8b5cf6' : '#34d399' }))}
+          />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
             {copy.privacy.cards.map(item => <HomeCard key={item.title} title={item.title} body={item.body} />)}
           </div>
@@ -235,6 +289,9 @@ export function HomePage() {
 
         <section style={{ marginTop: 28, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: '22px 24px', background: 'rgba(15, 23, 42, 0.55)' }}>
           <SectionTitle eyebrow={copy.levels.eyebrow} title={copy.levels.title} body={copy.levels.body} />
+          <SequenceDiagram
+            items={copy.levels.cards.map((card, index) => ({ label: `0${index + 1}`, title: card.title, body: card.body, accent: index === 0 ? '#60a5fa' : index === 1 ? '#8b5cf6' : '#34d399' }))}
+          />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
             {copy.levels.cards.map(item => <HomeCard key={item.title} title={item.title} body={item.body} />)}
           </div>
@@ -242,6 +299,9 @@ export function HomePage() {
 
         <section style={{ marginTop: 28, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: '22px 24px', background: 'rgba(15, 23, 42, 0.55)' }}>
           <SectionTitle eyebrow={copy.workflow.eyebrow} title={copy.workflow.title} body={copy.workflow.body} />
+          <SequenceDiagram
+            items={copy.workflow.steps.map((step, index) => ({ label: `0${index + 1}`, title: step, accent: index < 3 ? '#60a5fa' : '#34d399' }))}
+          />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12 }}>
             {copy.workflow.steps.map((step, index) => (
               <div key={step} style={{ borderRadius: 18, border: '1px solid rgba(148, 163, 184, 0.18)', padding: 14, background: index % 2 === 0 ? 'rgba(3,7,18,0.65)' : 'rgba(15,23,42,0.65)' }}>
@@ -254,6 +314,9 @@ export function HomePage() {
 
         <section style={{ marginTop: 34 }}>
           <SectionTitle eyebrow={copy.capabilities.eyebrow} title={copy.capabilities.title} body={copy.capabilities.body} />
+          <SequenceDiagram
+            items={copy.capabilities.cards.map((card, index) => ({ label: `0${index + 1}`, title: card.title, body: card.body, accent: index % 3 === 0 ? '#60a5fa' : index % 3 === 1 ? '#8b5cf6' : '#34d399' }))}
+          />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
             {copy.capabilities.cards.map(item => <HomeCard key={item.title} title={item.title} body={item.body} />)}
           </div>
@@ -261,6 +324,9 @@ export function HomePage() {
 
         <section style={{ marginTop: 34 }}>
           <SectionTitle eyebrow={copy.audiences.eyebrow} title={copy.audiences.title} body={copy.audiences.body} />
+          <SequenceDiagram
+            items={copy.audiences.cards.map((card, index) => ({ label: `0${index + 1}`, title: card.title, body: card.body, accent: index % 2 === 0 ? '#60a5fa' : '#8b5cf6' }))}
+          />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
             {copy.audiences.cards.map(item => (
               <article key={item.title} style={{ border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 18, padding: 18, background: 'rgba(15, 23, 42, 0.5)' }}>
@@ -276,6 +342,7 @@ export function HomePage() {
 
         <section id="stack" style={{ marginTop: 34, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: 24, background: 'rgba(3, 7, 18, 0.8)' }}>
           <SectionTitle eyebrow={copy.stack.eyebrow} title={copy.stack.title} body={copy.stack.body} />
+          <StackDiagram items={copy.stack.items} />
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
             {copy.stack.items.map(item => (
               <Pill key={item}><Radar size={14} /> {item}</Pill>
@@ -286,6 +353,13 @@ export function HomePage() {
         <section style={{ marginTop: 34, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 18, alignItems: 'stretch' }}>
           <div style={{ border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: 24, background: 'rgba(15,23,42,0.55)' }}>
             <SectionTitle eyebrow={copy.access.eyebrow} title={copy.access.title} body={copy.access.body} />
+            <SequenceDiagram
+              items={[
+                { label: '01', title: 'Request access', body: copy.access.trialCta, accent: '#22c55e' },
+                { label: '02', title: 'Choose the mode', body: 'Private / Team / Federated', accent: '#06b6d4' },
+                { label: '03', title: 'Enter the app', body: copy.access.foundingCta, accent: '#8b5cf6' },
+              ]}
+            />
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
               <a href="/trial" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, background: 'linear-gradient(135deg, #22c55e, #06b6d4)', color: '#fff', fontWeight: 700 }}>
                 {copy.access.trialCta} <PlayCircle size={16} />
@@ -300,6 +374,13 @@ export function HomePage() {
             <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 11, fontWeight: 700 }}>{copy.closing.eyebrow}</p>
             <h3 style={{ margin: '12px 0 0', fontSize: 28, lineHeight: 1.1 }}>{copy.closing.title}</h3>
             <p style={{ margin: '16px 0 0', fontSize: 18, lineHeight: 1.65, color: 'var(--color-text-muted, #98a2b3)' }}>{copy.closing.body}</p>
+            <SequenceDiagram
+              items={[
+                { label: '01', title: 'Learn', accent: '#60a5fa' },
+                { label: '02', title: 'Improve', accent: '#8b5cf6' },
+                { label: '03', title: 'Network', accent: '#34d399' },
+              ]}
+            />
           </div>
         </section>
       </div>
