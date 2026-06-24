@@ -12,9 +12,9 @@ function SectionTitle({ eyebrow, title, body }: { eyebrow: string; title: string
       <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11 }}>
         {eyebrow}
       </p>
-      <h2 style={{ margin: '8px 0 8px', fontSize: 'clamp(24px, 4vw, 38px)', lineHeight: 1.05 }}>{title}</h2>
+      <h2 style={{ margin: '8px 0 8px', fontSize: 'clamp(21px, 3vw, 30px)', lineHeight: 1.08, fontWeight: 650 }}>{title}</h2>
       {body ? (
-        <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.6, maxWidth: 760 }}>{body}</p>
+        <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.7, maxWidth: 700 }}>{body}</p>
       ) : null}
     </div>
   );
@@ -100,8 +100,8 @@ export function HomePage() {
       ];
 
   return (
-    <main style={{ minHeight: '100vh', background: 'radial-gradient(circle at top, rgba(59,130,246,0.18), transparent 28%), radial-gradient(circle at 80% 0%, rgba(168,85,247,0.14), transparent 24%), #070b14', color: 'var(--color-text, #eef1f8)' }}>
-      <div style={{ width: 'min(1360px, calc(100% - 32px))', margin: '0 auto', padding: '28px 0 56px' }}>
+    <main style={{ minHeight: '100vh', background: 'radial-gradient(circle at top, rgba(59,130,246,0.12), transparent 22%), #070b14', color: 'var(--color-text, #eef1f8)' }}>
+      <div style={{ width: 'min(1240px, calc(100% - 32px))', margin: '0 auto', padding: '24px 0 64px' }}>
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 20, marginBottom: 40, flexWrap: 'wrap' }}>
           <div style={{ display: 'grid', gap: 8 }}>
             <p style={{ margin: 0, textTransform: 'uppercase', letterSpacing: '0.16em', color: 'var(--color-text-muted, #98a2b3)', fontSize: 11 }}>{copy.header.eyebrow}</p>
@@ -127,27 +127,27 @@ export function HomePage() {
         </header>
 
         <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20, alignItems: 'stretch' }}>
-          <div style={{ borderRadius: 28, padding: '28px clamp(20px, 4vw, 40px)', background: 'linear-gradient(180deg, rgba(255,255,255,0.02), rgba(3,7,18,0.58))' }}>
+          <div style={{ borderRadius: 28, padding: '24px clamp(18px, 3.2vw, 32px)', background: 'linear-gradient(180deg, rgba(255,255,255,0.02), rgba(3,7,18,0.52))' }}>
             <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{copy.hero.eyebrow}</p>
-            <h2 style={{ margin: '14px 0 16px', fontSize: 'clamp(38px, 6vw, 68px)', lineHeight: 0.95, maxWidth: 780 }}>{copy.hero.title}</h2>
-            <p style={{ margin: '0 0 18px', fontSize: 18, lineHeight: 1.65, color: 'var(--color-text-muted, #98a2b3)', maxWidth: 820 }}>
+            <h2 style={{ margin: '14px 0 14px', fontSize: 'clamp(32px, 4.8vw, 54px)', lineHeight: 0.98, maxWidth: 720, fontWeight: 650 }}>{copy.hero.title}</h2>
+            <p style={{ margin: '0 0 16px', fontSize: 17, lineHeight: 1.7, color: 'var(--color-text-muted, #98a2b3)', maxWidth: 760 }}>
               {copy.hero.subtitle}
             </p>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 18 }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 14 }}>
               {copy.hero.valueProps.map(item => <Pill key={item}>{item}</Pill>)}
             </div>
 
-            <div style={{ display: 'grid', gap: 8, marginBottom: 18 }}>
+            <div style={{ display: 'grid', gap: 8, marginBottom: 16 }}>
               {copy.hero.questions.map(question => (
-                <div key={question} style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--color-text, #eef1f8)', fontSize: 16 }}>
+                <div key={question} style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--color-text, #eef1f8)', fontSize: 15 }}>
                   <CheckCircle2 size={16} color="#34d399" />
                   <span>{question}</span>
                 </div>
               ))}
             </div>
 
-            <p style={{ margin: '0 0 22px', lineHeight: 1.7, color: 'var(--color-text-muted, #98a2b3)', maxWidth: 760 }}>
+            <p style={{ margin: '0 0 20px', lineHeight: 1.75, color: 'var(--color-text-muted, #98a2b3)', maxWidth: 700 }}>
               {copy.hero.body}
             </p>
 
@@ -183,7 +183,7 @@ export function HomePage() {
               ))}
               </div>
             </div>
-            <p style={{ margin: '14px 0 0', fontSize: 12, lineHeight: 1.6, color: 'var(--color-text-muted, #98a2b3)', maxWidth: 640 }}>
+            <p style={{ margin: '14px 0 0', fontSize: 12, lineHeight: 1.7, color: 'var(--color-text-muted, #98a2b3)', maxWidth: 620 }}>
               {copy.hero.note}
             </p>
           </div>
