@@ -15,6 +15,10 @@ vi.mock('../../context/AuthContext', () => ({
   useAuth: () => ({ user: currentUser, authLoading: false }),
 }));
 
+vi.mock('../../components/LanguageSwitcher', () => ({
+  LanguageSwitcher: () => <div data-testid="language-switcher" />,
+}));
+
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: createTranslator(currentLocale) }),
 }));
@@ -48,6 +52,7 @@ describe('HomePage resume session CTA', () => {
     const header = screen.getByRole('banner');
 
     expect(within(header).getByText('Welcome back')).toBeInTheDocument();
+    expect(within(header).getByTestId('language-switcher')).toBeInTheDocument();
   });
 
   it('keeps public ordering for visitors who are not authenticated', () => {
@@ -91,5 +96,13 @@ describe('HomePage resume session CTA', () => {
     const heroLinks = within(resumeLink.closest('div')!).getAllByRole('link');
 
     expect(heroLinks.map(link => link.getAttribute('href'))).toEqual(['/app', '/founding-nodes', '/login']);
+  });
+
+  it('renders the wider platform-design section', () => {
+    currentLocale = en;
+
+    render(<HomePage />);
+
+    expect(screen.getByText(/three visual designs/i)).toBeInTheDocument();
   });
 });

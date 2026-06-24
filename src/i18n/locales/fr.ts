@@ -87,7 +87,7 @@ const fr = {
     },
     home: {
       header: { eyebrow: 'KDD Knowledge Network', title: 'The intelligent learning network for motorcycle performance', signedInCue: 'Bon retour' },
-      nav: { foundingNodes: 'Join Founding Nodes', login: 'Sign in', stack: 'See architecture' },
+      nav: { foundingNodes: 'Join Founding Nodes', login: 'Sign in', stack: 'See architecture', language: 'Langue' },
       hero: {
         eyebrow: 'Telemetry below. KDD above.',
         title: 'KDD turns track data into decisions',
@@ -100,6 +100,16 @@ const fr = {
         resumeLastSession: 'Reprendre la dernière session',
         loginCta: 'Enter app',
         note: 'You are not just trying an app. You are entering a network that learns, protects your context, and speeds up improvement.',
+      },
+      designs: {
+        eyebrow: 'Trois visuels',
+        title: 'Trois façons de lire la plateforme en un coup d’œil',
+        body: 'Une landing plus large a besoin de plus que du texte, alors ces panneaux expliquent KDD comme un flux de décision, un modèle de confidentialité et un réseau de connaissance.',
+        cards: [
+          { eyebrow: '01', title: 'Données → Décision', body: 'La télémétrie, la vidéo, le setup et le contexte deviennent un pipeline d’action clair.', chips: ['Observer', 'Expliquer', 'Agir'], accent: '#60a5fa' },
+          { eyebrow: '02', title: 'Privé / Équipe / Fédéré', body: 'Choisissez combien de connaissance quitte le nœud et comment l’apprentissage est partagé.', chips: ['Privé', 'Équipe', 'Fédéré'], accent: '#8b5cf6' },
+          { eyebrow: '03', title: 'Réseau de connaissance', body: 'Les nœuds apprennent localement et s’améliorent ensemble sans exposer les données brutes.', chips: ['Local', 'Agrégé', 'Progresser'], accent: '#34d399' },
+        ],
       },
       foundingPanel: {
         eyebrow: 'Founding Nodes',

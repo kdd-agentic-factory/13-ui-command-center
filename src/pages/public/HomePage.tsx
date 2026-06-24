@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ArrowRight, CheckCircle2, Layers3, NotebookText, PlayCircle, Radar, ShieldCheck, Users } from 'lucide-react';
 
 import { KddHeroVisual } from '../../components/public/KddHeroVisual';
+import { LanguageSwitcher } from '../../components/LanguageSwitcher';
 import { useAuth } from '../../context/AuthContext';
 
 function SectionTitle({ eyebrow, title, body }: { eyebrow: string; title: string; body?: string }) {
@@ -28,6 +29,22 @@ function HomeCard({ title, body }: { title: string; body: string }) {
   );
 }
 
+function DesignCard({ eyebrow, title, body, chips, accent }: { eyebrow: string; title: string; body: string; chips: string[]; accent: string }) {
+  return (
+    <article style={{ border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 22, padding: 20, background: 'linear-gradient(180deg, rgba(15,23,42,0.86), rgba(3,7,18,0.9))', boxShadow: '0 18px 50px rgba(0,0,0,0.24)' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
+        <p style={{ margin: 0, color: accent, textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{eyebrow}</p>
+        <span aria-hidden="true" style={{ width: 12, height: 12, borderRadius: 999, background: accent, boxShadow: `0 0 0 6px color-mix(in srgb, ${accent} 14%, transparent)` }} />
+      </div>
+      <h3 style={{ margin: '0 0 10px', fontSize: 22, lineHeight: 1.1 }}>{title}</h3>
+      <p style={{ margin: '0 0 16px', color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.6 }}>{body}</p>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+        {chips.map(chip => <Pill key={chip}>{chip}</Pill>)}
+      </div>
+    </article>
+  );
+}
+
 function Pill({ children }: { children: ReactNode }) {
   return (
     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 12px', borderRadius: 999, border: '1px solid rgba(148, 163, 184, 0.2)', background: 'rgba(15, 23, 42, 0.6)', color: 'var(--color-text, #eef1f8)', fontSize: 13 }}>
@@ -41,7 +58,7 @@ export function HomePage() {
   const { user } = useAuth();
   const copy = t('public.home', { returnObjects: true }) as {
     header: { eyebrow: string; title: string; signedInCue: string };
-    nav: { foundingNodes: string; login: string; stack: string };
+    nav: { foundingNodes: string; login: string; stack: string; language: string };
     hero: {
       eyebrow: string;
       title: string;
@@ -55,6 +72,7 @@ export function HomePage() {
       loginCta: string;
       note: string;
     };
+    designs: { eyebrow: string; title: string; body: string; cards: Array<{ eyebrow: string; title: string; body: string; chips: string[]; accent: string }> };
     foundingPanel: { eyebrow: string; title: string; rows: Array<{ label: string; value: string }>; body: string };
     network: { eyebrow: string; title: string; body: string; cards: Array<{ title: string; body: string }> };
     privacy: { eyebrow: string; title: string; body: string; cards: Array<{ title: string; body: string }>; principles: string[] };
@@ -82,8 +100,8 @@ export function HomePage() {
 
   return (
     <main style={{ minHeight: '100vh', background: 'radial-gradient(circle at top, rgba(59,130,246,0.18), transparent 28%), radial-gradient(circle at 80% 0%, rgba(168,85,247,0.14), transparent 24%), #070b14', color: 'var(--color-text, #eef1f8)' }}>
-      <div style={{ width: 'min(1180px, calc(100% - 32px))', margin: '0 auto', padding: '28px 0 56px' }}>
-        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, marginBottom: 40, flexWrap: 'wrap' }}>
+      <div style={{ width: 'min(1360px, calc(100% - 32px))', margin: '0 auto', padding: '28px 0 56px' }}>
+        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 20, marginBottom: 40, flexWrap: 'wrap' }}>
           <div style={{ display: 'grid', gap: 8 }}>
             <p style={{ margin: 0, textTransform: 'uppercase', letterSpacing: '0.16em', color: 'var(--color-text-muted, #98a2b3)', fontSize: 11 }}>{copy.header.eyebrow}</p>
             <h1 style={{ margin: '8px 0 0', fontSize: 20 }}>{copy.header.title}</h1>
@@ -94,11 +112,17 @@ export function HomePage() {
               </span>
             ) : null}
           </div>
-          <nav style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            <a href="/founding-nodes" style={{ textDecoration: 'none' }}><Pill><NotebookText size={14} /> {copy.nav.foundingNodes}</Pill></a>
-            <a href="#prueba" style={{ textDecoration: 'none' }}><Pill><PlayCircle size={14} /> {copy.nav.login}</Pill></a>
-            <a href="#stack" style={{ textDecoration: 'none' }}><Pill><Layers3 size={14} /> {copy.nav.stack}</Pill></a>
-          </nav>
+          <div style={{ display: 'grid', justifyItems: 'end', gap: 12 }}>
+            <nav style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+              <a href="/founding-nodes" style={{ textDecoration: 'none' }}><Pill><NotebookText size={14} /> {copy.nav.foundingNodes}</Pill></a>
+              <a href="#prueba" style={{ textDecoration: 'none' }}><Pill><PlayCircle size={14} /> {copy.nav.login}</Pill></a>
+              <a href="#stack" style={{ textDecoration: 'none' }}><Pill><Layers3 size={14} /> {copy.nav.stack}</Pill></a>
+            </nav>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 999, border: '1px solid rgba(148,163,184,0.18)', background: 'rgba(15,23,42,0.58)' }}>
+              <span style={{ color: 'var(--color-text-muted, #98a2b3)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 700 }}>{copy.nav.language}</span>
+              <LanguageSwitcher />
+            </div>
+          </div>
         </header>
 
         <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20, alignItems: 'stretch' }}>
@@ -178,6 +202,13 @@ export function HomePage() {
               <p style={{ margin: 0, lineHeight: 1.65, color: 'var(--color-text-muted, #98a2b3)' }}>{copy.foundingPanel.body}</p>
             </div>
           </aside>
+        </section>
+
+        <section style={{ marginTop: 28, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 28, padding: '24px 24px 26px', background: 'linear-gradient(180deg, rgba(15,23,42,0.64), rgba(3,7,18,0.88))' }}>
+          <SectionTitle eyebrow={copy.designs.eyebrow} title={copy.designs.title} body={copy.designs.body} />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
+            {copy.designs.cards.map(card => <DesignCard key={card.title} eyebrow={card.eyebrow} title={card.title} body={card.body} chips={card.chips} accent={card.accent} />)}
+          </div>
         </section>
 
         <section style={{ marginTop: 28, border: '1px solid rgba(148, 163, 184, 0.18)', borderRadius: 24, padding: '22px 24px', background: 'rgba(15, 23, 42, 0.55)' }}>

@@ -197,7 +197,7 @@ const en = {
     },
     home: {
       header: { eyebrow: 'KDD Knowledge Network', title: 'The intelligent learning network for motorcycle performance', signedInCue: 'Welcome back' },
-      nav: { foundingNodes: 'Join Founding Nodes', login: 'Sign in', stack: 'See architecture' },
+      nav: { foundingNodes: 'Join Founding Nodes', login: 'Sign in', stack: 'See architecture', language: 'Language' },
       hero: {
         eyebrow: 'Telemetry below. KDD above.',
         title: 'KDD turns track data into decisions',
@@ -210,6 +210,16 @@ const en = {
         resumeLastSession: 'Resume last session',
         loginCta: 'Enter app',
         note: 'You are not just trying an app. You are entering a network that learns, protects your context, and speeds up improvement.',
+      },
+      designs: {
+        eyebrow: 'Three visual designs',
+        title: 'Three ways to read the platform at a glance',
+        body: 'A wider landing needs more than text, so these panels explain KDD as a decision flow, a privacy model, and a knowledge network.',
+        cards: [
+          { eyebrow: '01', title: 'Data → Decision', body: 'Telemetry, video, setup and context become a clear action pipeline.', chips: ['Observe', 'Explain', 'Act'], accent: '#60a5fa' },
+          { eyebrow: '02', title: 'Private / Team / Federated', body: 'Choose how much knowledge leaves the node and how the learning is shared.', chips: ['Private', 'Team', 'Federated'], accent: '#8b5cf6' },
+          { eyebrow: '03', title: 'Knowledge network', body: 'Nodes learn locally and improve together without exposing raw data.', chips: ['Local', 'Aggregate', 'Improve'], accent: '#34d399' },
+        ],
       },
       foundingPanel: {
         eyebrow: 'Founding Nodes',
