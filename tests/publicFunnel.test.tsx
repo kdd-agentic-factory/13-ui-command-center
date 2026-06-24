@@ -64,7 +64,7 @@ describe('public landing copy', () => {
     expect(screen.getByRole('heading', { name: 'KDD convierte tus datos de pista en decisiones' })).toBeInTheDocument();
     expect(screen.getAllByRole('link', { name: 'Nodos fundadores' })[0]).toHaveAttribute('href', '/founding-nodes');
     expect(screen.getByRole('link', { name: 'Entrar' })).toBeInTheDocument();
-    expect(screen.getByTestId('hero-visual')).toHaveTextContent('La red aprende sin exponer datos crudos');
+    expect(screen.getByTestId('hero-visual')).toHaveTextContent('La red aprende sin exponer los datos en bruto');
     expect(screen.getByTestId('hero-visual')).toHaveTextContent('KDD convierte cada tanda en aprendizaje compartido.');
   });
 });
@@ -74,9 +74,9 @@ describe('public funnel pages', () => {
     await i18n.changeLanguage('es');
     render(<TrialHomePage />);
 
-    expect(screen.getByRole('heading', { name: 'Activá tu primer nodo de prueba' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Activa tu primer nodo de prueba' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Generar acceso de prueba' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Entrar a KDD' })).toHaveAttribute('href', '/app');
+    expect(screen.getByRole('link', { name: 'Entrar en KDD' })).toHaveAttribute('href', '/app');
   });
 
   it('renders the founding nodes page copy in Spanish', async () => {
@@ -92,7 +92,7 @@ describe('public funnel pages', () => {
     await i18n.changeLanguage('es');
     render(<ThanksPage />);
 
-    expect(screen.getByRole('heading', { name: 'Tu nodo ya está en la mesa' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Tu nodo ya está sobre la mesa' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Entrar a la aplicación' })).toHaveAttribute('href', '/app');
   });
 });

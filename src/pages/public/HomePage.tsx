@@ -88,8 +88,8 @@ export function HomePage() {
 
   return (
     <main style={{ minHeight: '100vh', background: 'radial-gradient(circle at top, rgba(59,130,246,0.12), transparent 22%), #070b14', color: 'var(--color-text, #eef1f8)' }}>
-      <div style={{ width: 'min(1240px, calc(100% - 32px))', margin: '0 auto', padding: '24px 0 64px' }}>
-        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 20, marginBottom: 40, flexWrap: 'wrap' }}>
+      <div style={{ width: 'min(1360px, calc(100% - 40px))', margin: '0 auto', padding: '28px 0 72px' }}>
+        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 24, marginBottom: 52, flexWrap: 'wrap' }}>
           <div style={{ display: 'grid', gap: 8 }}>
             <p style={{ margin: 0, textTransform: 'uppercase', letterSpacing: '0.16em', color: 'var(--color-text-muted, #98a2b3)', fontSize: 11 }}>{copy.header.eyebrow}</p>
             <h1 style={{ margin: '8px 0 0', fontSize: 20 }}>{copy.header.title}</h1>
@@ -175,7 +175,7 @@ export function HomePage() {
             </p>
           </div>
 
-          <aside id="prueba" style={{ display: 'grid', gap: 16 }}>
+          <aside id="hero-visual" style={{ display: 'grid', gap: 16 }}>
             <KddHeroVisual subtitle={visual.subtitle} phrase={visual.phrase} />
             <div style={{ borderTop: '1px solid rgba(148,163,184,0.14)', paddingTop: 18 }}>
               <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{copy.foundingPanel.eyebrow}</p>
@@ -193,58 +193,70 @@ export function HomePage() {
           </aside>
         </section>
 
-        <section id="designs" style={{ marginTop: 44, paddingTop: 28, borderTop: '1px solid rgba(148,163,184,0.12)' }}>
-          <SectionTitle eyebrow={copy.designs.eyebrow} title={copy.designs.title} body={copy.designs.body} />
-          <DesignsCanvas
-            title={copy.designs.title}
-            subtitle={copy.designs.body}
-            cards={copy.designs.cards}
-            networkBody={copy.network.body}
-            steps={['Private Learning', 'Detect Patterns', 'Explain Cause']}
-          />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 18, marginTop: 18 }}>
-            {copy.designs.cards.map(card => (
-              <article key={card.title} style={{ paddingTop: 12, borderTop: `1px solid color-mix(in srgb, ${card.accent} 28%, rgba(148,163,184,0.14))` }}>
-                <p style={{ margin: 0, color: card.accent, textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{card.eyebrow}</p>
-                <h3 style={{ margin: '8px 0 6px', fontSize: 18, lineHeight: 1.1 }}>{card.title}</h3>
-                <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.6 }}>{card.body}</p>
-              </article>
-            ))}
+        <section id="designs" style={{ marginTop: 48, paddingTop: 32, borderTop: '1px solid rgba(148,163,184,0.12)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.25fr) minmax(280px, 0.75fr)', gap: 28, alignItems: 'start' }}>
+            <div>
+              <SectionTitle eyebrow={copy.designs.eyebrow} title={copy.designs.title} body={copy.designs.body} />
+              <DesignsCanvas
+                title={copy.designs.title}
+                subtitle={copy.designs.body}
+                cards={copy.designs.cards}
+                networkBody={copy.network.body}
+                steps={['Aprendizaje privado', 'Detectar patrones', 'Explicar causa']}
+              />
+            </div>
+            <div style={{ display: 'grid', gap: 18, paddingTop: 56 }}>
+              {copy.designs.cards.map(card => (
+                <article key={card.title} style={{ paddingTop: 12, borderTop: `1px solid color-mix(in srgb, ${card.accent} 28%, rgba(148,163,184,0.14))` }}>
+                  <p style={{ margin: 0, color: card.accent, textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{card.eyebrow}</p>
+                  <h3 style={{ margin: '8px 0 6px', fontSize: 18, lineHeight: 1.1 }}>{card.title}</h3>
+                  <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.6 }}>{card.body}</p>
+                </article>
+              ))}
+            </div>
           </div>
         </section>
 
-        <section style={{ marginTop: 44, paddingTop: 28, borderTop: '1px solid rgba(148,163,184,0.12)' }}>
-          <SectionTitle eyebrow={copy.privacy.eyebrow} title={copy.privacy.title} body={copy.privacy.body} />
-          <PrivacyCanvas title={copy.privacy.title} subtitle={copy.privacy.body} cards={copy.privacy.cards} principles={copy.privacy.principles} />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 20 }}>
-            {copy.privacy.cards.map((card, index) => (
-              <article key={card.title} style={{ paddingTop: 14, borderTop: `1px solid ${index === 0 ? 'rgba(96,165,250,0.35)' : index === 1 ? 'rgba(139,92,246,0.35)' : 'rgba(52,211,153,0.35)'}` }}>
-                <p style={{ margin: 0, color: index === 0 ? '#60a5fa' : index === 1 ? '#8b5cf6' : '#34d399', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{card.title}</p>
-                <p style={{ margin: '8px 0 0', color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.6 }}>{card.body}</p>
-              </article>
-            ))}
-          </div>
-          <div style={{ display: 'grid', gap: 8, marginTop: 18 }}>
-            {copy.privacy.principles.map(item => (
-              <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--color-text, #eef1f8)', fontSize: 15 }}>
-                <CheckCircle2 size={16} color="#34d399" />
-                <span>{item}</span>
+        <section style={{ marginTop: 48, paddingTop: 32, borderTop: '1px solid rgba(148,163,184,0.12)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.15fr) minmax(300px, 0.85fr)', gap: 28, alignItems: 'start' }}>
+            <div>
+              <SectionTitle eyebrow={copy.privacy.eyebrow} title={copy.privacy.title} body={copy.privacy.body} />
+              <PrivacyCanvas title={copy.privacy.title} subtitle={copy.privacy.body} cards={copy.privacy.cards} principles={copy.privacy.principles} />
+            </div>
+            <div style={{ display: 'grid', gap: 20, paddingTop: 56 }}>
+              {copy.privacy.cards.map((card, index) => (
+                <article key={card.title} style={{ paddingTop: 14, borderTop: `1px solid ${index === 0 ? 'rgba(96,165,250,0.35)' : index === 1 ? 'rgba(139,92,246,0.35)' : 'rgba(52,211,153,0.35)'}` }}>
+                  <p style={{ margin: 0, color: index === 0 ? '#60a5fa' : index === 1 ? '#8b5cf6' : '#34d399', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{card.title}</p>
+                  <p style={{ margin: '8px 0 0', color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.6 }}>{card.body}</p>
+                </article>
+              ))}
+              <div style={{ display: 'grid', gap: 8, paddingTop: 4 }}>
+                {copy.privacy.principles.map(item => (
+                  <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--color-text, #eef1f8)', fontSize: 15 }}>
+                    <CheckCircle2 size={16} color="#34d399" />
+                    <span>{item}</span>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         </section>
 
-        <section style={{ marginTop: 44, paddingTop: 28, borderTop: '1px solid rgba(148,163,184,0.12)' }}>
-          <SectionTitle eyebrow={copy.workflow.eyebrow} title={copy.workflow.title} body={copy.workflow.body} />
-          <WorkflowCanvas title={copy.workflow.title} subtitle={copy.workflow.body} steps={copy.workflow.steps} />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 14 }}>
-            {copy.workflow.steps.map((step, index) => (
-              <div key={step} style={{ paddingTop: 12, borderTop: '1px solid rgba(148,163,184,0.14)' }}>
-                <div style={{ color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 11, fontWeight: 700, marginBottom: 8 }}>0{index + 1}</div>
-                <div style={{ fontWeight: 700, marginBottom: 6 }}>{step}</div>
-                <div style={{ color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.5 }}>{index === 0 ? 'Sesiones y contexto' : index === 1 ? 'Señales y eventos' : index === 2 ? 'Lectura causal' : index === 3 ? 'Siguiente acción' : index === 4 ? 'Misión' : 'Validación'}</div>
-              </div>
-            ))}
+        <section style={{ marginTop: 48, paddingTop: 32, borderTop: '1px solid rgba(148,163,184,0.12)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.15fr) minmax(280px, 0.85fr)', gap: 28, alignItems: 'start' }}>
+            <div>
+              <SectionTitle eyebrow={copy.workflow.eyebrow} title={copy.workflow.title} body={copy.workflow.body} />
+              <WorkflowCanvas title={copy.workflow.title} subtitle={copy.workflow.body} steps={copy.workflow.steps} />
+            </div>
+            <div style={{ display: 'grid', gap: 14, paddingTop: 56 }}>
+              {copy.workflow.steps.map((step, index) => (
+                <div key={step} style={{ paddingTop: 12, borderTop: '1px solid rgba(148,163,184,0.14)' }}>
+                  <div style={{ color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 11, fontWeight: 700, marginBottom: 8 }}>0{index + 1}</div>
+                  <div style={{ fontWeight: 700, marginBottom: 6 }}>{step}</div>
+                  <div style={{ color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.5 }}>{index === 0 ? 'Sesiones y contexto' : index === 1 ? 'Señales y eventos' : index === 2 ? 'Lectura causal' : index === 3 ? 'Siguiente acción' : index === 4 ? 'Misión' : 'Validación'}</div>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 

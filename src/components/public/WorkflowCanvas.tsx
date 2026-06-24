@@ -5,6 +5,10 @@ type WorkflowCanvasProps = {
 };
 
 export function WorkflowCanvas({ title, subtitle, steps }: WorkflowCanvasProps) {
+  const startX = 124;
+  const endX = 1076;
+  const lastIndex = Math.max(steps.length - 1, 1);
+
   return (
     <div style={{ borderTop: '1px solid rgba(148,163,184,0.12)', paddingTop: 20 }}>
       <svg viewBox="0 0 1200 420" role="img" aria-labelledby="workflow-canvas-title workflow-canvas-desc" style={{ width: '100%', height: 'auto', display: 'block', borderRadius: 28, overflow: 'hidden' }}>
@@ -31,32 +35,49 @@ export function WorkflowCanvas({ title, subtitle, steps }: WorkflowCanvasProps) 
           <text x="52" y="126" fill="#98a2b3" fontSize="17">{subtitle}</text>
         </g>
 
+        <g opacity="0.85">
+          <rect x="52" y="148" width="112" height="18" rx="9" fill="rgba(96,165,250,0.14)" />
+          <rect x="172" y="148" width="126" height="18" rx="9" fill="rgba(139,92,246,0.14)" />
+          <rect x="306" y="148" width="128" height="18" rx="9" fill="rgba(52,211,153,0.14)" />
+        </g>
+
         <g>
-          <path d="M 110 226 L 1090 226" stroke="rgba(148,163,184,0.14)" strokeWidth="2" />
+          <path d={`M ${startX} 226 L ${endX} 226`} stroke="rgba(148,163,184,0.14)" strokeWidth="2" />
           {steps.map((step, index) => {
-            const x = 140 + index * 180;
+            const x = startX + (index / lastIndex) * (endX - startX);
             return (
               <g key={step}>
                 <circle cx={x} cy={226} r="16" fill={index === 0 ? '#60a5fa' : index === 1 ? '#8b5cf6' : index === 2 ? '#34d399' : '#60a5fa'} />
                 <circle cx={x} cy={226} r="6" fill="#050914" />
-                <text x={x} y={274} textAnchor="middle" fill="#eef1f8" fontSize="16" fontWeight="700">{step}</text>
-                <text x={x} y={298} textAnchor="middle" fill="#98a2b3" fontSize="12">{index === 0 ? 'Entrada' : index === 1 ? 'Lectura' : index === 2 ? 'Causa' : index === 3 ? 'Recomendación' : index === 4 ? 'Misión' : 'Validación'}</text>
+                <text x={x} y={272} textAnchor="middle" fill="#eef1f8" fontSize="15" fontWeight="700">{step}</text>
+                <text x={x} y={296} textAnchor="middle" fill="#98a2b3" fontSize="12">{index === 0 ? 'Entrada' : index === 1 ? 'Lectura' : index === 2 ? 'Causa' : index === 3 ? 'Recomendación' : index === 4 ? 'Misión' : 'Validación'}</text>
               </g>
             );
           })}
         </g>
 
         <g>
-          <path d="M 140 226 C 140 180, 200 180, 200 226" fill="none" stroke="url(#wc-line)" strokeWidth="2.5" strokeDasharray="7 8" />
-          <path d="M 320 226 C 320 180, 380 180, 380 226" fill="none" stroke="url(#wc-line)" strokeWidth="2.5" strokeDasharray="7 8" />
-          <path d="M 500 226 C 500 180, 560 180, 560 226" fill="none" stroke="url(#wc-line)" strokeWidth="2.5" strokeDasharray="7 8" />
-          <path d="M 680 226 C 680 180, 740 180, 740 226" fill="none" stroke="url(#wc-line)" strokeWidth="2.5" strokeDasharray="7 8" />
-          <path d="M 860 226 C 860 180, 920 180, 920 226" fill="none" stroke="url(#wc-line)" strokeWidth="2.5" strokeDasharray="7 8" />
+          {steps.map((_, index) => {
+            if (index === steps.length - 1) return null;
+            const x1 = startX + (index / lastIndex) * (endX - startX);
+            const x2 = startX + ((index + 1) / lastIndex) * (endX - startX);
+            const mid = x1 + (x2 - x1) * 0.5;
+            return <path key={`bridge-${index}`} d={`M ${x1} 226 C ${mid} 178, ${mid} 178, ${x2} 226`} fill="none" stroke="url(#wc-line)" strokeWidth="2.5" strokeDasharray="7 8" />;
+          })}
         </g>
 
         <g>
-          <rect x="52" y="338" width="1096" height="48" rx="20" fill="rgba(3,7,18,0.72)" stroke="rgba(148,163,184,0.12)" />
-          <text x="78" y="368" fill="#eef1f8" fontSize="16" fontWeight="600">KDD convierte cada tanda en una misión concreta y verificable.</text>
+          <rect x="52" y="332" width="1096" height="54" rx="20" fill="rgba(3,7,18,0.72)" stroke="rgba(148,163,184,0.12)" />
+          <text x="78" y="363" fill="#eef1f8" fontSize="16" fontWeight="600">KDD convierte cada tanda en una misión concreta y verificable.</text>
+          <text x="78" y="383" fill="#98a2b3" fontSize="12">Sesión → patrón → causa → acción → validación</text>
+          <g transform="translate(780 347)">
+            {['Contexto', 'Lectura', 'Acción'].map((item, index) => (
+              <g key={item} transform={`translate(${index * 112}, 0)`}>
+                <rect width="100" height="24" rx="12" fill={index === 0 ? 'rgba(96,165,250,0.12)' : index === 1 ? 'rgba(139,92,246,0.12)' : 'rgba(52,211,153,0.12)'} stroke="rgba(148,163,184,0.12)" />
+                <text x="50" y="16" textAnchor="middle" fill="#dbeafe" fontSize="11" fontWeight="700">{item}</text>
+              </g>
+            ))}
+          </g>
         </g>
       </svg>
     </div>
