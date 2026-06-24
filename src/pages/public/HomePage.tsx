@@ -6,6 +6,8 @@ import { DesignsCanvas } from '../../components/public/DesignsCanvas';
 import { KddHeroVisual } from '../../components/public/KddHeroVisual';
 import { LanguageSwitcher } from '../../components/LanguageSwitcher';
 import { useAuth } from '../../context/AuthContext';
+import { PrivacyCanvas } from '../../components/public/PrivacyCanvas';
+import { WorkflowCanvas } from '../../components/public/WorkflowCanvas';
 
 function SectionTitle({ eyebrow, title, body }: { eyebrow: string; title: string; body?: string }) {
   return (
@@ -213,6 +215,7 @@ export function HomePage() {
 
         <section style={{ marginTop: 44, paddingTop: 28, borderTop: '1px solid rgba(148,163,184,0.12)' }}>
           <SectionTitle eyebrow={copy.privacy.eyebrow} title={copy.privacy.title} body={copy.privacy.body} />
+          <PrivacyCanvas title={copy.privacy.title} subtitle={copy.privacy.body} cards={copy.privacy.cards} principles={copy.privacy.principles} />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 20 }}>
             {copy.privacy.cards.map((card, index) => (
               <article key={card.title} style={{ paddingTop: 14, borderTop: `1px solid ${index === 0 ? 'rgba(96,165,250,0.35)' : index === 1 ? 'rgba(139,92,246,0.35)' : 'rgba(52,211,153,0.35)'}` }}>
@@ -233,6 +236,7 @@ export function HomePage() {
 
         <section style={{ marginTop: 44, paddingTop: 28, borderTop: '1px solid rgba(148,163,184,0.12)' }}>
           <SectionTitle eyebrow={copy.workflow.eyebrow} title={copy.workflow.title} body={copy.workflow.body} />
+          <WorkflowCanvas title={copy.workflow.title} subtitle={copy.workflow.body} steps={copy.workflow.steps} />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 14 }}>
             {copy.workflow.steps.map((step, index) => (
               <div key={step} style={{ paddingTop: 12, borderTop: '1px solid rgba(148,163,184,0.14)' }}>
