@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, CheckCircle2, Layers3, NotebookText, PlayCircle, Radar, ShieldCheck, Users } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Layers3, NotebookText, PlayCircle, Radar, ShieldCheck } from 'lucide-react';
 
 import { KddHeroVisual } from '../../components/public/KddHeroVisual';
 import { LanguageSwitcher } from '../../components/LanguageSwitcher';
@@ -17,15 +17,6 @@ function SectionTitle({ eyebrow, title, body }: { eyebrow: string; title: string
         <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.6, maxWidth: 760 }}>{body}</p>
       ) : null}
     </div>
-  );
-}
-
-function HomeCard({ title, body }: { title: string; body: string }) {
-  return (
-    <article style={{ borderTop: '1px solid rgba(148, 163, 184, 0.14)', padding: '14px 0 0' }}>
-      <h3 style={{ margin: '0 0 8px', fontSize: 17, lineHeight: 1.15 }}>{title}</h3>
-      <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.6 }}>{body}</p>
-    </article>
   );
 }
 
@@ -118,7 +109,7 @@ function StackDiagram({ items }: { items: string[] }) {
 function NetworkDiagram({ eyebrow, cards }: { eyebrow: string; cards: Array<{ title: string; body: string }> }) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'minmax(240px, 1.2fr) minmax(0, 1fr)', gap: 18, marginBottom: 18 }}>
-      <article style={{ borderRadius: 24, padding: 18, border: '1px solid rgba(96, 165, 250, 0.18)', background: 'linear-gradient(180deg, rgba(255,255,255,0.02), rgba(15,23,42,0.52))', display: 'grid', gap: 10, alignContent: 'center' }}>
+      <article style={{ borderTop: '1px solid rgba(148,163,184,0.14)', paddingTop: 14, display: 'grid', gap: 10, alignContent: 'center' }}>
         <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.16em', fontSize: 11, fontWeight: 700 }}>{eyebrow}</p>
         <h3 style={{ margin: 0, fontSize: 28, lineHeight: 1.05 }}>{cards[0].title}</h3>
         <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.6 }}>{cards[0].body}</p>
@@ -327,7 +318,7 @@ export function HomePage() {
         </header>
 
         <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20, alignItems: 'stretch' }}>
-          <div style={{ borderRadius: 28, padding: '28px clamp(20px, 4vw, 40px)', background: 'linear-gradient(180deg, rgba(255,255,255,0.03), rgba(3,7,18,0.85))' }}>
+          <div style={{ borderRadius: 28, padding: '28px clamp(20px, 4vw, 40px)', background: 'linear-gradient(180deg, rgba(255,255,255,0.02), rgba(3,7,18,0.58))' }}>
             <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{copy.hero.eyebrow}</p>
             <h2 style={{ margin: '14px 0 16px', fontSize: 'clamp(38px, 6vw, 68px)', lineHeight: 0.95, maxWidth: 780 }}>{copy.hero.title}</h2>
             <p style={{ margin: '0 0 18px', fontSize: 18, lineHeight: 1.65, color: 'var(--color-text-muted, #98a2b3)', maxWidth: 820 }}>
@@ -369,12 +360,13 @@ export function HomePage() {
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: 10,
-                    padding: '14px 18px',
-                    borderRadius: 14,
-                    background: cta.primary ? 'linear-gradient(135deg, #60a5fa, #8b5cf6)' : 'rgba(15,23,42,0.72)',
-                    border: cta.primary ? 'none' : '1px solid rgba(148,163,184,0.24)',
-                    color: cta.primary ? '#fff' : 'var(--color-text, #eef1f8)',
-                    fontWeight: 700,
+                    padding: cta.primary ? '14px 18px' : '10px 0',
+                    borderRadius: cta.primary ? 14 : 0,
+                    background: cta.primary ? 'linear-gradient(135deg, #60a5fa, #8b5cf6)' : 'transparent',
+                    border: 'none',
+                    color: cta.primary ? '#fff' : 'var(--color-text-muted, #98a2b3)',
+                    fontWeight: cta.primary ? 700 : 600,
+                    borderBottom: cta.primary ? 'none' : '1px solid rgba(148,163,184,0.2)',
                   }}
                 >
                   {cta.label} {cta.icon}
@@ -421,62 +413,31 @@ export function HomePage() {
         <section style={{ marginTop: 44, paddingTop: 28, borderTop: '1px solid rgba(148,163,184,0.12)' }}>
           <SectionTitle eyebrow={copy.network.eyebrow} title={copy.network.title} body={copy.network.body} />
           <NetworkDiagram eyebrow={copy.network.eyebrow} cards={copy.network.cards} />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
-            {copy.network.cards.map(item => <HomeCard key={item.title} title={item.title} body={item.body} />)}
-          </div>
         </section>
 
         <section style={{ marginTop: 44, paddingTop: 28, borderTop: '1px solid rgba(148,163,184,0.12)' }}>
           <SectionTitle eyebrow={copy.privacy.eyebrow} title={copy.privacy.title} body={copy.privacy.body} />
           <PrivacyDiagram cards={copy.privacy.cards} principles={copy.privacy.principles} />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
-            {copy.privacy.cards.map(item => <HomeCard key={item.title} title={item.title} body={item.body} />)}
-          </div>
         </section>
 
         <section style={{ marginTop: 44, paddingTop: 28, borderTop: '1px solid rgba(148,163,184,0.12)' }}>
           <SectionTitle eyebrow={copy.levels.eyebrow} title={copy.levels.title} body={copy.levels.body} />
           <LevelDiagram cards={copy.levels.cards} />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
-            {copy.levels.cards.map(item => <HomeCard key={item.title} title={item.title} body={item.body} />)}
-          </div>
         </section>
 
         <section style={{ marginTop: 44, paddingTop: 28, borderTop: '1px solid rgba(148,163,184,0.12)' }}>
           <SectionTitle eyebrow={copy.workflow.eyebrow} title={copy.workflow.title} body={copy.workflow.body} />
           <WorkflowDiagram steps={copy.workflow.steps} />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12 }}>
-            {copy.workflow.steps.map((step, index) => (
-              <div key={step} style={{ borderRadius: 18, border: '1px solid rgba(148, 163, 184, 0.18)', padding: 14, background: index % 2 === 0 ? 'rgba(3,7,18,0.65)' : 'rgba(15,23,42,0.65)' }}>
-                <div style={{ fontSize: 11, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 8 }}>0{index + 1}</div>
-                <div style={{ fontWeight: 700 }}>{step}</div>
-              </div>
-            ))}
-          </div>
         </section>
 
         <section style={{ marginTop: 44, paddingTop: 28, borderTop: '1px solid rgba(148,163,184,0.12)' }}>
           <SectionTitle eyebrow={copy.capabilities.eyebrow} title={copy.capabilities.title} body={copy.capabilities.body} />
           <CapabilityDiagram cards={copy.capabilities.cards} />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
-            {copy.capabilities.cards.map(item => <HomeCard key={item.title} title={item.title} body={item.body} />)}
-          </div>
         </section>
 
         <section style={{ marginTop: 44, paddingTop: 28, borderTop: '1px solid rgba(148,163,184,0.12)' }}>
           <SectionTitle eyebrow={copy.audiences.eyebrow} title={copy.audiences.title} body={copy.audiences.body} />
           <AudienceDiagram cards={copy.audiences.cards} />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
-            {copy.audiences.cards.map(item => (
-              <article key={item.title} style={{ padding: '12px 0 0', borderTop: '1px solid rgba(148,163,184,0.14)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-                  <Users size={16} color="#93c5fd" />
-                  <h3 style={{ margin: 0, fontSize: 18 }}>{item.title}</h3>
-                </div>
-                <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.55 }}>{item.body}</p>
-              </article>
-            ))}
-          </div>
         </section>
 
         <section id="stack" style={{ marginTop: 44, paddingTop: 28, borderTop: '1px solid rgba(148,163,184,0.12)' }}>
