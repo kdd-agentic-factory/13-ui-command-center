@@ -20,8 +20,8 @@ describe('Moto Intelligence positioning', () => {
 
     render(<App />);
 
-    expect(screen.getByText('KDD Knowledge Network')).toBeInTheDocument();
-    expect(await screen.findByText('Federated knowledge network for motorcycle telemetry.')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'KDD Moto Intelligence' })).toBeInTheDocument();
+    expect(await screen.findByText('Decision Intelligence Layer for Motorcycle Performance')).toBeInTheDocument();
   });
 
   it('renders the hero fallback when canvas.getContext returns null', async () => {
@@ -29,7 +29,7 @@ describe('Moto Intelligence positioning', () => {
 
     render(<App />);
 
-    expect(screen.getByText('KDD Knowledge Network')).toBeInTheDocument();
-    expect(await screen.findByText('Federated knowledge network for motorcycle telemetry.')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'KDD Moto Intelligence' })).toBeInTheDocument();
+    expect(await screen.findByText('Decision Intelligence Layer for Motorcycle Performance')).toBeInTheDocument();
   });
 });
