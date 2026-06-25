@@ -59,10 +59,10 @@ export function DesignsCanvas({ title, subtitle, cards, networkBody, steps, acti
   const stepSpacing = steps.length > 1 ? 952 / (steps.length - 1) : 0;
   const stepStart = steps.length > 1 ? 124 : 600;
   const orbitPoints = [
-    { x: 524, y: 176, r: 5.5, fill: '#94a3b8' },
-    { x: 682, y: 146, r: 5, fill: '#a5b4fc' },
-    { x: 728, y: 292, r: 4.8, fill: '#86efac' },
-    { x: 484, y: 318, r: 4.6, fill: '#cbd5e1' },
+    { x: 524, y: 176, r: 5.5, fill: '#5f6875' },
+    { x: 682, y: 146, r: 5, fill: '#8f1d2a' },
+    { x: 728, y: 292, r: 4.8, fill: '#c7ccd4' },
+    { x: 484, y: 318, r: 4.6, fill: '#e5e7eb' },
   ];
 
   const cardControls = cards.map((card, index) => {
@@ -231,9 +231,9 @@ export function DesignsCanvas({ title, subtitle, cards, networkBody, steps, acti
             <circle cx="60" cy="60" r="1.6" fill="rgba(148,163,184,0.1)" />
           </pattern>
           <linearGradient id={ids.line} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#94a3b8" />
-            <stop offset="50%" stopColor="#a5b4fc" />
-            <stop offset="100%" stopColor="#86efac" />
+            <stop offset="0%" stopColor="#5f6875" />
+            <stop offset="50%" stopColor="#8f1d2a" />
+            <stop offset="100%" stopColor="#c7ccd4" />
           </linearGradient>
         </defs>
 
@@ -252,7 +252,7 @@ export function DesignsCanvas({ title, subtitle, cards, networkBody, steps, acti
         <g opacity="0.92">
           <text x="54" y="62" fill="#cbd5e1" fontSize="18" fontWeight="700" letterSpacing="3">GUIDED CHAPTER FLOW</text>
           <text x="54" y="100" fill="#f8fafc" fontSize="42" fontWeight="650">{title}</text>
-          <text x="54" y="132" fill="#94a3b8" fontSize="18">{subtitle}</text>
+          <text x="54" y="132" fill="#c7ccd4" fontSize="18">{subtitle}</text>
         </g>
 
         <g opacity="0.88">
@@ -304,7 +304,7 @@ export function DesignsCanvas({ title, subtitle, cards, networkBody, steps, acti
                     <tspan key={`${line}-${lineIndex}`} x={slot.x + 22} dy={lineIndex === 0 ? 0 : 28}>{line}</tspan>
                   ))}
                 </text>
-                <text x={slot.x + 22} y={slot.y + (index === 2 ? 108 : 100)} fill="#94a3b8" fontSize="14">
+                <text x={slot.x + 22} y={slot.y + (index === 2 ? 108 : 100)} fill="#c7ccd4" fontSize="14">
                   {bodyLines.map((line, lineIndex) => (
                     <tspan key={`${line}-${lineIndex}`} x={slot.x + 22} dy={lineIndex === 0 ? 0 : 20}>{line}</tspan>
                   ))}
@@ -322,13 +322,13 @@ export function DesignsCanvas({ title, subtitle, cards, networkBody, steps, acti
         <g>
           <rect x="52" y="654" width="1096" height="64" rx="22" fill="rgba(3,7,18,0.72)" stroke="rgba(148,163,184,0.12)" />
           <text x="78" y="689" fill="#f8fafc" fontSize="16" fontWeight="600">{networkBody}</text>
-          <text x="78" y="708" fill="#94a3b8" fontSize="12">Camino compartido entre captura, lectura y síntesis</text>
+          <text x="78" y="708" fill="#c7ccd4" fontSize="12">Camino compartido entre captura, lectura y síntesis</text>
           {steps.map((item, index) => {
             const x = stepStart + index * stepSpacing;
             return (
               <g key={item}>
                 <path d={`M ${x - 18} 675 H ${x + 88} a 12 12 0 0 1 0 24 H ${x - 18} a 12 12 0 0 1 0 -24 Z`} fill={index === 0 ? 'rgba(148,163,184,0.12)' : index === 1 ? 'rgba(165,180,252,0.12)' : 'rgba(134,239,172,0.12)'} stroke="rgba(148,163,184,0.12)" />
-                <circle cx={x - 2} cy="687" r="3.6" fill={index === 0 ? '#94a3b8' : index === 1 ? '#a5b4fc' : '#86efac'} />
+                <circle cx={x - 2} cy="687" r="3.6" fill={index === 0 ? '#5f6875' : index === 1 ? '#8f1d2a' : '#c7ccd4'} />
                 <text x={x + 43} y="691" textAnchor="middle" fill={index === 0 ? '#e2e8f0' : '#f8fafc'} fontSize="11" fontWeight="700">{item}</text>
               </g>
             );
@@ -340,7 +340,7 @@ export function DesignsCanvas({ title, subtitle, cards, networkBody, steps, acti
             const x = stepStart + index * stepSpacing;
             return (
               <g key={step}>
-                <circle cx={x} cy="724" r="9" fill={index === 0 ? '#94a3b8' : index === 1 ? '#a5b4fc' : '#86efac'} />
+                <circle cx={x} cy="724" r="9" fill={index === 0 ? '#5f6875' : index === 1 ? '#8f1d2a' : '#c7ccd4'} />
                 <text x={x + 18} y="729" fill="#94a3b8" fontSize="13">{step}</text>
               </g>
             );

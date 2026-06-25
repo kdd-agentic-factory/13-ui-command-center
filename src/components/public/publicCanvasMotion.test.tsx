@@ -261,7 +261,7 @@ describe('public landing canvas motion', () => {
     expect(container.firstElementChild).toHaveAttribute('data-emphasis', 'recede');
     expect(container.firstElementChild).toHaveAttribute('data-motion-state', 'reduced');
     expect(container.firstElementChild).toHaveAttribute('data-selected-id', 'privacy');
-    expect(screen.getByText('Decision intelligence layer above telemetry')).toBeInTheDocument();
+    expect(screen.getByText('Decision intelligence above telemetry')).toBeInTheDocument();
   });
 
   it('suppresses anime.js loops when reduced motion is requested', () => {

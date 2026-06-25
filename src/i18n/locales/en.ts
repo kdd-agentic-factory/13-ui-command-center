@@ -213,12 +213,12 @@ const en = {
       },
       designs: {
         eyebrow: 'Three visual designs',
-        title: 'Three ways to read the platform at a glance',
-        body: 'These panels show the decision layer, the federated network, and the guided chapter flow.',
+        title: 'Three editorial views of the platform',
+        body: 'These panels show the decision layer, the federated network, and the chapter flow.',
         cards: [
-          { eyebrow: '01', title: 'Data → Decision', body: 'Telemetry, video, setup and context become a clear action pipeline.', chips: ['Observe', 'Explain', 'Act'], accent: '#60a5fa' },
-          { eyebrow: '02', title: 'Private / Team / Federated', body: 'Choose how much knowledge leaves the node and how the learning is shared.', chips: ['Private', 'Team', 'Federated'], accent: '#8b5cf6' },
-          { eyebrow: '03', title: 'Knowledge network', body: 'Nodes learn locally and improve together without exposing raw data.', chips: ['Local', 'Aggregate', 'Improve'], accent: '#34d399' },
+          { eyebrow: '01', title: 'Data → Decision', body: 'Telemetry, video, setup and context become a clear action pipeline.', chips: ['Observe', 'Explain', 'Act'], accent: '#8f1d2a' },
+          { eyebrow: '02', title: 'Private / Team / Federated', body: 'Choose how much knowledge leaves the node and how the learning is shared.', chips: ['Private', 'Team', 'Federated'], accent: '#5f6875' },
+          { eyebrow: '03', title: 'Knowledge network', body: 'Nodes learn locally and improve together without exposing raw data.', chips: ['Local', 'Aggregate', 'Improve'], accent: '#c7ccd4' },
         ],
       },
       foundingPanel: {
@@ -311,7 +311,7 @@ const en = {
       },
       access: {
         eyebrow: 'Access the network',
-        title: 'Request access and turn your node into part of the federated network.',
+        title: 'Request access and join the federated network.',
         body: 'No access yet? Request early access for your academy, team, garage or project.',
         trialCta: 'Request Early Access',
         foundingCta: 'Become a Founding Node',

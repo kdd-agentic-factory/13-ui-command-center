@@ -175,9 +175,9 @@ export function WorkflowCanvas({ title, subtitle, steps, active, mode, selectedI
             <stop offset="100%" stopColor="#070b14" />
           </linearGradient>
           <linearGradient id={ids.line} x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#94a3b8" />
-            <stop offset="50%" stopColor="#a5b4fc" />
-            <stop offset="100%" stopColor="#86efac" />
+            <stop offset="0%" stopColor="#5f6875" />
+            <stop offset="50%" stopColor="#8f1d2a" />
+            <stop offset="100%" stopColor="#c7ccd4" />
           </linearGradient>
           <pattern id={ids.grid} width="64" height="64" patternUnits="userSpaceOnUse">
             <path d="M64 0 H0 V64" fill="none" stroke="rgba(148,163,184,0.05)" strokeWidth="1" />
@@ -202,7 +202,7 @@ export function WorkflowCanvas({ title, subtitle, steps, active, mode, selectedI
         <g>
           <text x="52" y="62" fill="#cbd5e1" fontSize="18" fontWeight="700" letterSpacing="3">GUIDED CHAPTER FLOW</text>
           <text x="52" y="98" fill="#f8fafc" fontSize="40" fontWeight="650">{title}</text>
-          <text x="52" y="128" fill="#94a3b8" fontSize="17">{subtitle}</text>
+          <text x="52" y="128" fill="#c7ccd4" fontSize="17">{subtitle}</text>
         </g>
 
         <g opacity="0.88">
@@ -224,14 +224,14 @@ export function WorkflowCanvas({ title, subtitle, steps, active, mode, selectedI
             return (
               <g key={step} className="workflow-canvas__lane">
                 <line className="workflow-canvas__dash" x1={x} y1={laneY} x2={x} y2={226} stroke="rgba(148,163,184,0.14)" strokeWidth="1.4" strokeDasharray="4 8" />
-                <circle className="workflow-canvas__pulse workflow-canvas__node" cx={x} cy={226} r="16" fill={isSelected ? '#f8fafc' : index === 0 ? '#94a3b8' : index === 1 ? '#a5b4fc' : index === 2 ? '#86efac' : '#94a3b8'} />
+                <circle className="workflow-canvas__pulse workflow-canvas__node" cx={x} cy={226} r="16" fill={isSelected ? '#f8fafc' : index === 0 ? '#5f6875' : index === 1 ? '#8f1d2a' : index === 2 ? '#c7ccd4' : '#5f6875'} />
                 <circle cx={x} cy={226} r="6" fill="#050914" />
                 <text x={x} y={271} textAnchor="middle" fill="#f8fafc" fontSize="15" fontWeight="700">
                   {wrapped.map((line, lineIndex) => (
                     <tspan key={`${line}-${lineIndex}`} x={x} dy={lineIndex === 0 ? 0 : 18}>{line}</tspan>
                   ))}
                 </text>
-                <text x={x} y={300} textAnchor="middle" fill="#94a3b8" fontSize="12">{phaseLabels[index] ?? phaseLabels[phaseLabels.length - 1]}</text>
+                <text x={x} y={300} textAnchor="middle" fill="#c7ccd4" fontSize="12">{phaseLabels[index] ?? phaseLabels[phaseLabels.length - 1]}</text>
               </g>
             );
           })}
@@ -250,7 +250,7 @@ export function WorkflowCanvas({ title, subtitle, steps, active, mode, selectedI
         <g>
           <rect x="52" y="332" width="1096" height="56" rx="20" fill="rgba(3,7,18,0.72)" stroke="rgba(148,163,184,0.12)" />
           <text x="78" y="362" fill="#f8fafc" fontSize="16" fontWeight="600">KDD converts telemetry into decisions, then validates the next chapter.</text>
-          <text x="78" y="382" fill="#94a3b8" fontSize="12">Sense → Decide → Federate → Validate</text>
+          <text x="78" y="382" fill="#c7ccd4" fontSize="12">Sense → Decide → Federate → Validate</text>
           <g>
             {['Sense', 'Decide', 'Federate'].map((item, index) => (
               <g key={item} transform={`translate(${778 + index * 112}, 347)`}>
@@ -302,9 +302,9 @@ export function WorkflowCanvas({ title, subtitle, steps, active, mode, selectedI
               }}
             >
               <span style={{ display: 'grid', gap: 2, textAlign: 'center' }}>
-                <span style={{ fontSize: 12, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#94a3b8', fontWeight: 700 }}>Step {index + 1}</span>
+                <span style={{ fontSize: 12, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--public-accent, #8f1d2a)', fontWeight: 700 }}>Step {index + 1}</span>
                 <span style={{ fontSize: 14, fontWeight: 700 }}>{step}</span>
-                <span style={{ fontSize: 11, color: isPressed ? '#e2e8f0' : '#94a3b8' }}>{isPressed ? 'Selected' : 'Activate'}</span>
+                <span style={{ fontSize: 11, color: isPressed ? '#e2e8f0' : '#c7ccd4' }}>{isPressed ? 'Selected' : 'Activate'}</span>
               </span>
             </button>
           );

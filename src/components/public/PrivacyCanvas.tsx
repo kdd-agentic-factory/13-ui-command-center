@@ -49,9 +49,9 @@ export function PrivacyCanvas({ title, subtitle, cards, principles, active, mode
   };
 
   const slots = [
-    { x: 64, y: 182, w: 286, h: 156, stroke: 'rgba(148,163,184,0.2)', accent: '#94a3b8', label: 'LOCAL' },
-    { x: 850, y: 182, w: 286, h: 156, stroke: 'rgba(165,180,252,0.2)', accent: '#a5b4fc', label: 'TEAM' },
-    { x: 376, y: 480, w: 448, h: 142, stroke: 'rgba(134,239,172,0.2)', accent: '#86efac', label: 'FEDERATED' },
+    { x: 64, y: 182, w: 286, h: 156, stroke: 'rgba(148,163,184,0.2)', accent: '#5f6875', label: 'LOCAL' },
+    { x: 850, y: 182, w: 286, h: 156, stroke: 'rgba(143,29,42,0.22)', accent: '#8f1d2a', label: 'TEAM' },
+    { x: 376, y: 480, w: 448, h: 142, stroke: 'rgba(199,204,212,0.2)', accent: '#c7ccd4', label: 'FEDERATED' },
   ];
 
   const nodes = [
@@ -184,9 +184,9 @@ export function PrivacyCanvas({ title, subtitle, cards, principles, active, mode
             <stop offset="100%" stopColor="#070b14" />
           </linearGradient>
           <linearGradient id={ids.line} x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#94a3b8" />
-            <stop offset="50%" stopColor="#a5b4fc" />
-            <stop offset="100%" stopColor="#86efac" />
+            <stop offset="0%" stopColor="#5f6875" />
+            <stop offset="50%" stopColor="#8f1d2a" />
+            <stop offset="100%" stopColor="#c7ccd4" />
           </linearGradient>
           <radialGradient id={ids.glow} cx="50%" cy="50%" r="60%">
             <stop offset="0%" stopColor="rgba(148,163,184,0.18)" />
@@ -215,7 +215,7 @@ export function PrivacyCanvas({ title, subtitle, cards, principles, active, mode
         <g>
           <text x="52" y="62" fill="#cbd5e1" fontSize="18" fontWeight="700" letterSpacing="3">FEDERATED KNOWLEDGE NETWORK</text>
           <text x="52" y="98" fill="#f8fafc" fontSize="40" fontWeight="650">{title}</text>
-          <text x="52" y="128" fill="#94a3b8" fontSize="17">{subtitle}</text>
+          <text x="52" y="128" fill="#c7ccd4" fontSize="17">{subtitle}</text>
         </g>
 
         <g opacity="0.9">
@@ -278,7 +278,7 @@ export function PrivacyCanvas({ title, subtitle, cards, principles, active, mode
                     <tspan key={`${line}-${lineIndex}`} x={slot.x + 20} dy={lineIndex === 0 ? 0 : 24}>{line}</tspan>
                   ))}
                 </text>
-                <text x={slot.x + 20} y={slot.y + 96} fill="#94a3b8" fontSize="14">
+                <text x={slot.x + 20} y={slot.y + 96} fill="#c7ccd4" fontSize="14">
                   {bodyLines.map((line, lineIndex) => (
                     <tspan key={`${line}-${lineIndex}`} x={slot.x + 20} dy={lineIndex === 0 ? 0 : 20}>{line}</tspan>
                   ))}
@@ -299,8 +299,8 @@ export function PrivacyCanvas({ title, subtitle, cards, principles, active, mode
             const lines = wrapSvgText(item, 28, 2);
             return (
               <g key={item}>
-                <circle cx={x} cy={582} r="6" fill={index === 0 ? '#94a3b8' : index === 1 ? '#a5b4fc' : '#86efac'} />
-                <text x={x + 14} y={578} fill="#94a3b8" fontSize="11">
+                <circle cx={x} cy={582} r="6" fill={index === 0 ? '#5f6875' : index === 1 ? '#8f1d2a' : '#c7ccd4'} />
+                <text x={x + 14} y={578} fill="#c7ccd4" fontSize="11">
                   {lines.map((line, lineIndex) => (
                     <tspan key={`${line}-${lineIndex}`} x={x + 14} dy={lineIndex === 0 ? 0 : 14}>{line}</tspan>
                   ))}
@@ -351,9 +351,9 @@ export function PrivacyCanvas({ title, subtitle, cards, principles, active, mode
               }}
             >
               <span style={{ display: 'grid', gap: 2, textAlign: 'left' }}>
-                <span style={{ fontSize: 12, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#94a3b8', fontWeight: 700 }}>{slot.label}</span>
+                <span style={{ fontSize: 12, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--public-accent, #8f1d2a)', fontWeight: 700 }}>{slot.label}</span>
                 <span style={{ fontSize: 14, fontWeight: 700 }}>{card.title}</span>
-                <span style={{ fontSize: 11, color: isPressed ? '#e2e8f0' : '#94a3b8' }}>{isPressed ? 'Selected' : 'Activate'}</span>
+                <span style={{ fontSize: 11, color: isPressed ? '#e2e8f0' : '#c7ccd4' }}>{isPressed ? 'Selected' : 'Activate'}</span>
               </span>
             </button>
           );

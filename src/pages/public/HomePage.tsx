@@ -15,13 +15,13 @@ type DiagramMode = 'active' | 'recede';
 
 function SectionTitle({ eyebrow, title, body }: { eyebrow: string; title: string; body?: string }) {
   return (
-    <div style={{ marginBottom: 18 }}>
-      <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11 }}>
+    <div style={{ marginBottom: 20, maxWidth: 760 }}>
+      <p style={{ margin: 0, color: 'var(--public-text-muted, #5f6875)', textTransform: 'uppercase', letterSpacing: '0.16em', fontSize: 10, fontWeight: 700 }}>
         {eyebrow}
       </p>
-      <h2 style={{ margin: '8px 0 8px', fontSize: 'clamp(21px, 3vw, 30px)', lineHeight: 1.08, fontWeight: 650 }}>{title}</h2>
+      <h2 style={{ margin: '10px 0 10px', fontSize: 'clamp(24px, 3vw, 34px)', lineHeight: 1.04, fontWeight: 650, letterSpacing: '-0.02em', color: 'var(--public-text, #111317)' }}>{title}</h2>
       {body ? (
-        <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.7, maxWidth: 700 }}>{body}</p>
+        <p style={{ margin: 0, color: 'var(--public-text-muted, #5f6875)', lineHeight: 1.72, maxWidth: 700, fontSize: 15 }}>{body}</p>
       ) : null}
     </div>
   );
@@ -29,7 +29,7 @@ function SectionTitle({ eyebrow, title, body }: { eyebrow: string; title: string
 
 function Pill({ children }: { children: ReactNode }) {
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 12px', borderRadius: 999, border: '1px solid rgba(148, 163, 184, 0.2)', background: 'rgba(15, 23, 42, 0.6)', color: 'var(--color-text, #eef1f8)', fontSize: 13 }}>
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '9px 13px', borderRadius: 999, border: '1px solid var(--public-border, rgba(15,23,42,0.12))', background: 'var(--public-surface, rgba(255,255,255,0.72))', color: 'var(--public-text, #111317)', fontSize: 13, boxShadow: '0 8px 24px rgba(15,23,42,0.04)' }}>
       {children}
     </span>
   );
@@ -37,10 +37,10 @@ function Pill({ children }: { children: ReactNode }) {
 
 function ClosingDiagram() {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: 10, alignItems: 'center', marginTop: 18 }}>
-      <div style={{ width: 40, height: 40, borderRadius: 999, background: '#60a5fa', display: 'grid', placeItems: 'center', fontWeight: 800 }}>L</div>
-      <div style={{ height: 2, background: 'linear-gradient(90deg, #60a5fa, #8b5cf6, #34d399)' }} />
-      <div style={{ width: 40, height: 40, borderRadius: 999, background: '#34d399', display: 'grid', placeItems: 'center', fontWeight: 800 }}>N</div>
+    <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: 12, alignItems: 'center', marginTop: 20, padding: '16px 18px', borderRadius: 18, border: '1px solid var(--public-border, rgba(15,23,42,0.12))', background: 'var(--public-surface, rgba(255,255,255,0.72))' }}>
+      <div style={{ width: 42, height: 42, borderRadius: 12, border: '1px solid rgba(143,29,42,0.22)', background: 'linear-gradient(180deg, rgba(143,29,42,0.16), rgba(255,255,255,0.8))', display: 'grid', placeItems: 'center', fontWeight: 800, color: 'var(--public-obsidian, #0b0f14)' }}>K</div>
+      <div style={{ height: 2, background: 'linear-gradient(90deg, rgba(143,29,42,0.18), rgba(15,23,42,0.12), rgba(15,23,42,0.04))' }} />
+      <div style={{ width: 42, height: 42, borderRadius: 12, border: '1px solid rgba(15,23,42,0.16)', background: 'linear-gradient(180deg, rgba(255,255,255,0.9), rgba(236,231,223,0.84))', display: 'grid', placeItems: 'center', fontWeight: 800, color: 'var(--public-accent, #8f1d2a)' }}>D</div>
     </div>
   );
 }
@@ -193,7 +193,7 @@ export function HomePage() {
       ];
 
   return (
-    <main className="public-home" style={{ minHeight: '100vh', background: 'radial-gradient(circle at top, rgba(148,163,184,0.08), transparent 24%), radial-gradient(circle at 80% 0%, rgba(99,102,241,0.08), transparent 18%), #070b14', color: 'var(--color-text, #eef1f8)' }}>
+    <main className="public-home" style={{ minHeight: '100vh', background: 'radial-gradient(circle at top, rgba(143,29,42,0.08), transparent 20%), radial-gradient(circle at 82% 0%, rgba(15,23,42,0.08), transparent 22%), linear-gradient(180deg, #0b0f14 0%, #0e131a 52%, #090d12 100%)', color: 'var(--color-text, #eef1f8)' }}>
       <style>{`
         .public-home .public-home__shell { width: min(1320px, calc(100% - 40px)); margin: 0 auto; padding: 28px 0 72px; }
         .public-home .public-home__header { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 42px; flex-wrap: wrap; }
@@ -258,7 +258,7 @@ export function HomePage() {
 
         <section className="public-home__hero">
           <div style={{ borderRadius: 30, padding: '24px clamp(18px, 3.2vw, 32px)', background: 'linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015))', border: '1px solid rgba(148,163,184,0.12)', boxShadow: '0 24px 80px rgba(0,0,0,0.18)' }}>
-            <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{copy.hero.eyebrow}</p>
+            <p style={{ margin: 0, color: 'var(--public-accent, #8f1d2a)', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{copy.hero.eyebrow}</p>
             <h2 style={{ margin: '14px 0 14px', fontSize: 'clamp(34px, 4.8vw, 56px)', lineHeight: 0.94, maxWidth: 720, fontWeight: 680, letterSpacing: '-0.03em' }}>{copy.hero.title}</h2>
             <p style={{ margin: '0 0 18px', fontSize: 17, lineHeight: 1.75, color: 'var(--color-text-muted, #98a2b3)', maxWidth: 760 }}>
               {copy.hero.subtitle}
@@ -271,7 +271,7 @@ export function HomePage() {
             <div style={{ display: 'grid', gap: 8, marginBottom: 16 }}>
               {copy.hero.questions.map(question => (
                 <div key={question} style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--color-text, #eef1f8)', fontSize: 15 }}>
-                  <CheckCircle2 size={16} color="#34d399" />
+                  <CheckCircle2 size={16} color="var(--public-accent, #8f1d2a)" />
                   <span>{question}</span>
                 </div>
               ))}
@@ -301,12 +301,12 @@ export function HomePage() {
                     gap: 10,
                     padding: cta.primary ? '14px 18px' : '10px 0',
                     borderRadius: cta.primary ? 14 : 0,
-                    background: cta.primary ? 'linear-gradient(135deg, #94a3b8, #6366f1)' : 'transparent',
+                    background: cta.primary ? 'linear-gradient(135deg, var(--public-accent, #8f1d2a), #5d1220)' : 'transparent',
                     border: cta.primary ? '1px solid rgba(255,255,255,0.08)' : 'none',
                     color: cta.primary ? '#fff' : 'var(--color-text-muted, #98a2b3)',
                     fontWeight: cta.primary ? 700 : 600,
                     borderBottom: cta.primary ? 'none' : '1px solid rgba(148,163,184,0.18)',
-                    boxShadow: cta.primary ? '0 16px 40px rgba(99,102,241,0.12)' : 'none',
+                    boxShadow: cta.primary ? '0 16px 40px rgba(143,29,42,0.14)' : 'none',
                   }}
                 >
                   {cta.label} {cta.icon}
@@ -330,7 +330,7 @@ export function HomePage() {
               phrase={visual.phrase}
             />
             <div style={{ borderTop: '1px solid rgba(148,163,184,0.14)', paddingTop: 18 }}>
-              <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{copy.foundingPanel.eyebrow}</p>
+              <p style={{ margin: 0, color: 'var(--public-accent, #8f1d2a)', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{copy.foundingPanel.eyebrow}</p>
               <h3 style={{ margin: '12px 0 14px', fontSize: 24, letterSpacing: '-0.02em' }}>{copy.foundingPanel.title}</h3>
               <div style={{ display: 'grid', gap: 10, marginBottom: 18 }}>
                 {copy.foundingPanel.rows.map(row => (
@@ -370,8 +370,8 @@ export function HomePage() {
             </div>
             <div className="public-home__stack">
               {copy.designs.cards.map(card => (
-                <article key={card.title} style={{ paddingTop: 12, borderTop: `1px solid ${card.accent === '#60a5fa' ? 'rgba(148,163,184,0.24)' : card.accent === '#8b5cf6' ? 'rgba(148,163,184,0.22)' : 'rgba(148,163,184,0.2)'}` }}>
-                  <p style={{ margin: 0, color: card.accent === '#60a5fa' ? '#94a3b8' : card.accent === '#8b5cf6' ? '#a5b4fc' : '#86efac', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{card.eyebrow}</p>
+                <article key={card.title} style={{ paddingTop: 12, borderTop: '1px solid rgba(148,163,184,0.18)' }}>
+                  <p style={{ margin: 0, color: 'var(--public-accent, #8f1d2a)', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{card.eyebrow}</p>
                   <h3 style={{ margin: '8px 0 6px', fontSize: 18, lineHeight: 1.15, letterSpacing: '-0.015em' }}>{card.title}</h3>
                   <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.6 }}>{card.body}</p>
                 </article>
@@ -405,14 +405,14 @@ export function HomePage() {
             <div className="public-home__stack public-home__stack--privacy">
               {copy.privacy.cards.map((card, index) => (
                 <article key={card.title} style={{ paddingTop: 14, borderTop: `1px solid ${index === 0 ? 'rgba(148,163,184,0.22)' : index === 1 ? 'rgba(165,180,252,0.24)' : 'rgba(134,239,172,0.22)'}` }}>
-                  <p style={{ margin: 0, color: index === 0 ? '#94a3b8' : index === 1 ? '#a5b4fc' : '#86efac', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{card.title}</p>
+                  <p style={{ margin: 0, color: index === 0 ? 'var(--public-accent, #8f1d2a)' : 'var(--public-text-muted, #5f6875)', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{card.title}</p>
                   <p style={{ margin: '8px 0 0', color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.6 }}>{card.body}</p>
                 </article>
               ))}
               <div style={{ display: 'grid', gap: 8, paddingTop: 4 }}>
                 {copy.privacy.principles.map(item => (
                   <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--color-text, #eef1f8)', fontSize: 15 }}>
-                    <CheckCircle2 size={16} color="#34d399" />
+                    <CheckCircle2 size={16} color="var(--public-accent, #8f1d2a)" />
                     <span>{item}</span>
                   </div>
                 ))}
@@ -445,7 +445,7 @@ export function HomePage() {
             <div className="public-home__stack public-home__stack--workflow">
               {copy.workflow.steps.map((step, index) => (
                 <div key={step} style={{ paddingTop: 12, borderTop: '1px solid rgba(148,163,184,0.14)' }}>
-                  <div style={{ color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 11, fontWeight: 700, marginBottom: 8 }}>0{index + 1}</div>
+                  <div style={{ color: 'var(--public-accent, #8f1d2a)', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 11, fontWeight: 700, marginBottom: 8 }}>0{index + 1}</div>
                   <div style={{ fontWeight: 700, marginBottom: 6 }}>{step}</div>
                   <div style={{ color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.5 }}>{index === 0 ? 'Telemetry and context' : index === 1 ? 'Choose the next decision' : index === 2 ? 'Share what is allowed' : 'Validate the outcome'}</div>
                 </div>
@@ -459,20 +459,20 @@ export function HomePage() {
             <SectionTitle eyebrow={copy.access.eyebrow} title={copy.access.title} body={copy.access.body} />
             <div style={{ display: 'grid', gap: 10, marginBottom: 20 }}>
               <div style={{ paddingTop: 10, borderTop: '1px solid rgba(148,163,184,0.14)' }}>
-                <div style={{ color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 11, fontWeight: 700 }}>01</div>
+                <div style={{ color: 'var(--public-accent, #8f1d2a)', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 11, fontWeight: 700 }}>01</div>
                 <div style={{ fontWeight: 700, marginTop: 6 }}>{copy.access.trialCta}</div>
               </div>
               <div style={{ paddingTop: 10, borderTop: '1px solid rgba(148,163,184,0.14)' }}>
-                <div style={{ color: '#a5b4fc', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 11, fontWeight: 700 }}>02</div>
+                <div style={{ color: 'var(--public-text-muted, #5f6875)', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 11, fontWeight: 700 }}>02</div>
                 <div style={{ fontWeight: 700, marginTop: 6 }}>{copy.access.eyebrow}</div>
               </div>
               <div style={{ paddingTop: 10, borderTop: '1px solid rgba(148,163,184,0.14)' }}>
-                <div style={{ color: '#86efac', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 11, fontWeight: 700 }}>03</div>
+                <div style={{ color: 'var(--public-text-muted, #5f6875)', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 11, fontWeight: 700 }}>03</div>
                 <div style={{ fontWeight: 700, marginTop: 6 }}>{copy.access.foundingCta}</div>
               </div>
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-              <a href="/trial" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, background: 'linear-gradient(135deg, #94a3b8, #6366f1)', color: '#fff', fontWeight: 700, boxShadow: '0 16px 40px rgba(99,102,241,0.12)' }}>
+              <a href="/trial" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, background: 'linear-gradient(135deg, var(--public-accent, #8f1d2a), #5d1220)', color: '#fff', fontWeight: 700, boxShadow: '0 16px 40px rgba(143,29,42,0.14)' }}>
                 {copy.access.trialCta} <PlayCircle size={16} />
               </a>
               <a href="/login" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 0', color: 'var(--color-text-muted, #98a2b3)', fontWeight: 600, borderBottom: '1px solid rgba(148,163,184,0.2)' }}>
@@ -482,7 +482,7 @@ export function HomePage() {
           </div>
 
           <div>
-            <p style={{ margin: 0, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 11, fontWeight: 700 }}>{copy.closing.eyebrow}</p>
+            <p style={{ margin: 0, color: 'var(--public-accent, #8f1d2a)', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 11, fontWeight: 700 }}>{copy.closing.eyebrow}</p>
             <h3 style={{ margin: '12px 0 0', fontSize: 28, lineHeight: 1.1 }}>{copy.closing.title}</h3>
             <p style={{ margin: '16px 0 0', fontSize: 18, lineHeight: 1.65, color: 'var(--color-text-muted, #98a2b3)' }}>{copy.closing.body}</p>
             <ClosingDiagram />
