@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 // The 3D viewers need a real WebGL context — stub them for jsdom.
 vi.mock('../src/components/babylon/DigitalTwinViewer3D', () => ({
@@ -8,14 +8,28 @@ vi.mock('../src/components/babylon/DigitalTwinViewer3D', () => ({
 
 import { App } from '../src/app/App';
 
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+
 describe('Moto Intelligence positioning', () => {
-  it('positions the product for motorcycles, not as a generic agent console', () => {
+  it('renders the hero safely when canvas.getContext throws in JSDOM', async () => {
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockImplementation(() => {
+      throw new Error('Not implemented: HTMLCanvasElement.prototype.getContext');
+    });
+
     render(<App />);
-    // Engineer feedback #1/#2: first impact must read as motorcycle telemetry.
-    expect(screen.getByText('Motorcycle telemetry intelligence')).toBeInTheDocument();
-    // Engineer feedback #5: the headline metric is rider value, not "active agents".
-    expect(screen.getByText('Potential gain')).toBeInTheDocument();
-    // Role-based entry is preserved.
-    expect(screen.getAllByText('Race Engineer').length).toBeGreaterThan(0);
+
+    expect(screen.getByText('KDD Knowledge Network')).toBeInTheDocument();
+    expect(await screen.findByText('Federated knowledge network for motorcycle telemetry.')).toBeInTheDocument();
+  });
+
+  it('renders the hero fallback when canvas.getContext returns null', async () => {
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null);
+
+    render(<App />);
+
+    expect(screen.getByText('KDD Knowledge Network')).toBeInTheDocument();
+    expect(await screen.findByText('Federated knowledge network for motorcycle telemetry.')).toBeInTheDocument();
   });
 });

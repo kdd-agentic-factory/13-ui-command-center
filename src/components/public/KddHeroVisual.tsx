@@ -4,6 +4,11 @@ import { useTranslation } from 'react-i18next';
 type KddHeroVisualProps = {
   subtitle?: string;
   phrase?: string;
+  active?: boolean;
+  mode?: 'active' | 'recede';
+  emphasis?: 'active' | 'recede';
+  selectedId?: string | null;
+  reducedMotion?: boolean;
 };
 
 type NodePoint = { x: number; y: number; r: number; label: string; glow: string };
@@ -14,7 +19,12 @@ function fitCanvas(canvas: HTMLCanvasElement, width: number, height: number) {
   canvas.height = Math.round(height * dpr);
   canvas.style.width = `${width}px`;
   canvas.style.height = `${height}px`;
-  const ctx = canvas.getContext('2d');
+  let ctx: CanvasRenderingContext2D | null = null;
+  try {
+    ctx = canvas.getContext('2d');
+  } catch {
+    return null;
+  }
   if (!ctx) return null;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   return ctx;
@@ -47,7 +57,7 @@ function drawRoundedRect(ctx: CanvasRenderingContext2D, x: number, y: number, w:
   ctx.closePath();
 }
 
-export function KddHeroVisual({ subtitle, phrase }: KddHeroVisualProps) {
+export function KddHeroVisual({ subtitle, phrase, active = false, mode = 'recede', emphasis, selectedId, reducedMotion = false }: KddHeroVisualProps) {
   const { t } = useTranslation();
   const copy = t('public.heroVisual', { returnObjects: true }) as {
     subtitle: string;
@@ -59,6 +69,7 @@ export function KddHeroVisual({ subtitle, phrase }: KddHeroVisualProps) {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const [canvasReady, setCanvasReady] = useState(true);
   const srId = useId();
+  const diagramMode = emphasis ?? mode;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -104,29 +115,29 @@ export function KddHeroVisual({ subtitle, phrase }: KddHeroVisualProps) {
         const ctx = fitCanvas(canvas, width, height);
         if (!ctx) return;
 
-        const t = frame * 0.016;
+        const t = reducedMotion ? 0 : frame * 0.016;
         const cx = width * 0.5;
         const telemetryY = height * 0.74;
         const networkY = height * 0.28;
 
       // background
       const bg = ctx.createLinearGradient(0, 0, 0, height);
-      bg.addColorStop(0, '#09101e');
-      bg.addColorStop(0.58, '#07101c');
-      bg.addColorStop(1, '#050914');
+      bg.addColorStop(0, '#0b1018');
+      bg.addColorStop(0.58, '#0a111a');
+      bg.addColorStop(1, '#070b14');
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, width, height);
 
       // ambient glows
       const topGlow = ctx.createRadialGradient(cx, height * 0.18, 10, cx, height * 0.18, width * 0.42);
-      topGlow.addColorStop(0, 'rgba(96,165,250,0.28)');
-      topGlow.addColorStop(1, 'rgba(96,165,250,0)');
+      topGlow.addColorStop(0, 'rgba(148,163,184,0.18)');
+      topGlow.addColorStop(1, 'rgba(148,163,184,0)');
       ctx.fillStyle = topGlow;
       ctx.fillRect(0, 0, width, height);
 
       const lowerGlow = ctx.createRadialGradient(cx, telemetryY, 10, cx, telemetryY, width * 0.45);
-      lowerGlow.addColorStop(0, 'rgba(34,211,238,0.16)');
-      lowerGlow.addColorStop(1, 'rgba(34,211,238,0)');
+      lowerGlow.addColorStop(0, 'rgba(99,102,241,0.12)');
+      lowerGlow.addColorStop(1, 'rgba(99,102,241,0)');
       ctx.fillStyle = lowerGlow;
       ctx.fillRect(0, 0, width, height);
 
@@ -156,9 +167,9 @@ export function KddHeroVisual({ subtitle, phrase }: KddHeroVisualProps) {
 
       // telemetry traces
       const traces = [
-        { color: '#22d3ee', base: telemetryY + 28, amp: 11, speed: 1.15 },
-        { color: '#60a5fa', base: telemetryY + 50, amp: 10, speed: 0.95 },
-        { color: '#34d399', base: telemetryY + 72, amp: 8, speed: 1.35 },
+        { color: '#94a3b8', base: telemetryY + 28, amp: 11, speed: 1.15 },
+        { color: '#a5b4fc', base: telemetryY + 50, amp: 10, speed: 0.95 },
+        { color: '#86efac', base: telemetryY + 72, amp: 8, speed: 1.35 },
       ];
 
       traces.forEach((trace, index) => {
@@ -190,7 +201,7 @@ export function KddHeroVisual({ subtitle, phrase }: KddHeroVisualProps) {
         const y = height * node.y;
         const sway = Math.sin(t * 0.9 + index) * 4;
         const dy = y + sway;
-        ctx.strokeStyle = 'rgba(148,163,184,0.18)';
+        ctx.strokeStyle = 'rgba(148,163,184,0.16)';
         ctx.lineWidth = 1.2;
         ctx.setLineDash([4, 7]);
         ctx.beginPath();
@@ -218,7 +229,7 @@ export function KddHeroVisual({ subtitle, phrase }: KddHeroVisualProps) {
         ctx.arc(x, dy, node.r, 0, Math.PI * 2);
         ctx.stroke();
 
-        ctx.fillStyle = 'rgba(226,232,240,0.9)';
+        ctx.fillStyle = 'rgba(226,232,240,0.84)';
         ctx.font = '700 10px Inter, ui-sans-serif, system-ui, sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText(node.label, x, dy + 24);
@@ -228,18 +239,18 @@ export function KddHeroVisual({ subtitle, phrase }: KddHeroVisualProps) {
       const orbY = height * 0.32;
       const orbRadius = Math.min(width, height) * 0.115;
       const orbGlow = ctx.createRadialGradient(cx, orbY, 8, cx, orbY, orbRadius * 2.2);
-      orbGlow.addColorStop(0, 'rgba(96,165,250,0.34)');
-      orbGlow.addColorStop(0.46, 'rgba(168,85,247,0.16)');
-      orbGlow.addColorStop(1, 'rgba(168,85,247,0)');
+      orbGlow.addColorStop(0, 'rgba(255,255,255,0.22)');
+      orbGlow.addColorStop(0.46, 'rgba(99,102,241,0.18)');
+      orbGlow.addColorStop(1, 'rgba(99,102,241,0)');
       ctx.fillStyle = orbGlow;
       ctx.fillRect(cx - orbRadius * 2.4, orbY - orbRadius * 2.4, orbRadius * 4.8, orbRadius * 4.8);
 
       // vertical data-to-knowledge beam
       const beam = ctx.createLinearGradient(cx, telemetryY - 10, cx, orbY + orbRadius);
-      beam.addColorStop(0, 'rgba(34,211,238,0.06)');
-      beam.addColorStop(0.42, 'rgba(59,130,246,0.18)');
-      beam.addColorStop(0.72, 'rgba(168,85,247,0.24)');
-      beam.addColorStop(1, 'rgba(168,85,247,0.03)');
+      beam.addColorStop(0, 'rgba(148,163,184,0.04)');
+      beam.addColorStop(0.42, 'rgba(99,102,241,0.12)');
+      beam.addColorStop(0.72, 'rgba(148,163,184,0.16)');
+      beam.addColorStop(1, 'rgba(148,163,184,0.02)');
       ctx.fillStyle = beam;
       ctx.fillRect(cx - 24, telemetryY - 10, 48, orbY + orbRadius - (telemetryY - 10));
 
@@ -247,15 +258,15 @@ export function KddHeroVisual({ subtitle, phrase }: KddHeroVisualProps) {
       const pulseY = telemetryY - 6 - ((t * 60) % ((telemetryY - orbY) + 48));
       const pulseGrad = ctx.createRadialGradient(cx, pulseY, 2, cx, pulseY, 22);
       pulseGrad.addColorStop(0, 'rgba(255,255,255,0.95)');
-      pulseGrad.addColorStop(0.3, 'rgba(96,165,250,0.9)');
-      pulseGrad.addColorStop(1, 'rgba(96,165,250,0)');
+      pulseGrad.addColorStop(0.3, 'rgba(165,180,252,0.9)');
+      pulseGrad.addColorStop(1, 'rgba(165,180,252,0)');
       ctx.fillStyle = pulseGrad;
       ctx.beginPath();
       ctx.arc(cx, pulseY, 18, 0, Math.PI * 2);
       ctx.fill();
 
       // hub core
-      ctx.shadowColor = 'rgba(96,165,250,0.55)';
+      ctx.shadowColor = 'rgba(99,102,241,0.28)';
       ctx.shadowBlur = 28;
       ctx.fillStyle = 'rgba(10,16,31,0.96)';
       ctx.beginPath();
@@ -269,7 +280,7 @@ export function KddHeroVisual({ subtitle, phrase }: KddHeroVisualProps) {
       ctx.arc(cx, orbY, orbRadius, 0, Math.PI * 2);
       ctx.stroke();
 
-      ctx.strokeStyle = 'rgba(96,165,250,0.55)';
+      ctx.strokeStyle = 'rgba(148,163,184,0.28)';
       ctx.lineWidth = 1.4;
       ctx.beginPath();
       ctx.arc(cx, orbY, orbRadius * hubPulse + 12, 0, Math.PI * 2);
@@ -280,11 +291,11 @@ export function KddHeroVisual({ subtitle, phrase }: KddHeroVisualProps) {
         const angle = (Math.PI * 2 * i) / 5 - Math.PI / 2 + t * 0.2;
         const px = cx + Math.cos(angle) * orbRadius * 0.56;
         const py = orbY + Math.sin(angle) * orbRadius * 0.56;
-        ctx.fillStyle = 'rgba(224,231,255,0.88)';
+        ctx.fillStyle = 'rgba(226,232,240,0.88)';
         ctx.beginPath();
         ctx.arc(px, py, 3.4, 0, Math.PI * 2);
         ctx.fill();
-        ctx.strokeStyle = 'rgba(96,165,250,0.28)';
+        ctx.strokeStyle = 'rgba(148,163,184,0.18)';
         ctx.beginPath();
         ctx.moveTo(cx, orbY);
         ctx.lineTo(px, py);
@@ -296,7 +307,7 @@ export function KddHeroVisual({ subtitle, phrase }: KddHeroVisualProps) {
       ctx.textAlign = 'center';
       ctx.fillText('KDD', cx, orbY + 10);
 
-      ctx.fillStyle = 'rgba(226,232,240,0.75)';
+      ctx.fillStyle = 'rgba(226,232,240,0.7)';
       ctx.font = '700 11px Inter, ui-sans-serif, system-ui, sans-serif';
       ctx.fillText('FEDERATED KNOWLEDGE NETWORK', cx, orbY - orbRadius - 18);
 
@@ -349,14 +360,14 @@ export function KddHeroVisual({ subtitle, phrase }: KddHeroVisualProps) {
       });
 
       // top label and orbit ring
-      ctx.strokeStyle = 'rgba(96,165,250,0.12)';
+      ctx.strokeStyle = 'rgba(148,163,184,0.12)';
       ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.ellipse(cx, orbY, orbRadius * 1.4, orbRadius * 0.7, 0, 0, Math.PI * 2);
       ctx.stroke();
 
         frame += 1;
-        raf = window.requestAnimationFrame(draw);
+        if (!reducedMotion) raf = window.requestAnimationFrame(draw);
       } catch {
         setCanvasReady(false);
       }
@@ -366,16 +377,29 @@ export function KddHeroVisual({ subtitle, phrase }: KddHeroVisualProps) {
       draw();
     });
     ro.observe(wrap);
-    raf = window.requestAnimationFrame(draw);
+    if (reducedMotion) {
+      draw();
+    } else {
+      raf = window.requestAnimationFrame(draw);
+    }
 
     return () => {
       window.cancelAnimationFrame(raf);
       ro.disconnect();
     };
-  }, [copy.fallback, copy.phrase, copy.sr, copy.subtitle, phrase, subtitle]);
+  }, [copy.fallback, copy.phrase, copy.sr, copy.subtitle, phrase, reducedMotion, subtitle]);
 
   return (
-    <div ref={wrapRef} style={{ position: 'relative', minHeight: 420, borderRadius: 24, overflow: 'hidden', border: '1px solid rgba(148, 163, 184, 0.18)', background: 'linear-gradient(180deg, rgba(8, 15, 28, 0.98), rgba(3, 7, 18, 0.98))', boxShadow: '0 30px 80px rgba(0,0,0,0.35)' }}>
+    <div
+      ref={wrapRef}
+      data-active={String(active)}
+      data-mode={diagramMode}
+      data-emphasis={diagramMode}
+      data-motion-state={reducedMotion ? 'reduced' : 'live'}
+      data-selected-id={selectedId ?? ''}
+      data-reduced-motion={String(reducedMotion)}
+      style={{ position: 'relative', minHeight: 420, borderRadius: 24, overflow: 'hidden', border: '1px solid rgba(148, 163, 184, 0.18)', background: 'linear-gradient(180deg, rgba(8, 15, 28, 0.98), rgba(3, 7, 18, 0.98))', boxShadow: '0 30px 80px rgba(0,0,0,0.35)', opacity: diagramMode === 'active' ? 1 : 0.92, transform: diagramMode === 'active' ? 'translateY(0)' : 'translateY(2px)', filter: reducedMotion ? 'saturate(0.98) brightness(1)' : diagramMode === 'active' ? 'saturate(1.06) brightness(1.03)' : 'saturate(0.92) brightness(0.98)', transition: reducedMotion ? 'none' : 'opacity 180ms ease, transform 180ms ease, filter 180ms ease' }}
+    >
       <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 50% 18%, rgba(96,165,250,0.16), transparent 32%), radial-gradient(circle at 50% 78%, rgba(34,211,238,0.12), transparent 26%)', pointerEvents: 'none' }} />
       {canvasReady ? (
         <canvas ref={canvasRef} aria-labelledby={srId} style={{ display: 'block', width: '100%', height: '100%' }} />

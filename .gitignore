@@ -18,6 +18,7 @@ vite.config.d.ts
 .cline
 .github/copilot*
 .kilocode
+.atl
 .qoder
 .qwen
 .roo
