@@ -49,7 +49,7 @@ export function WorkflowCanvas({ title, subtitle, steps, active, mode, selectedI
   const startX = 132;
   const endX = 1068;
   const lastIndex = Math.max(steps.length - 1, 1);
-  const phaseLabels = ['Entrada', 'Lectura', 'Causa', 'Recomendación', 'Misión', 'Validación'];
+  const phaseLabels = ['Sense', 'Decide', 'Federate', 'Validate'];
   const laneYs = [190, 246, 302];
   const stepControls = steps.map((step, index) => ({ step, controlId: `step-${index}` }));
 
@@ -200,7 +200,7 @@ export function WorkflowCanvas({ title, subtitle, steps, active, mode, selectedI
         </g>
 
         <g>
-          <text x="52" y="62" fill="#cbd5e1" fontSize="18" fontWeight="700" letterSpacing="3">DE DATOS A DECISIONES DE BOX</text>
+          <text x="52" y="62" fill="#cbd5e1" fontSize="18" fontWeight="700" letterSpacing="3">GUIDED CHAPTER FLOW</text>
           <text x="52" y="98" fill="#f8fafc" fontSize="40" fontWeight="650">{title}</text>
           <text x="52" y="128" fill="#94a3b8" fontSize="17">{subtitle}</text>
         </g>
@@ -249,10 +249,10 @@ export function WorkflowCanvas({ title, subtitle, steps, active, mode, selectedI
 
         <g>
           <rect x="52" y="332" width="1096" height="56" rx="20" fill="rgba(3,7,18,0.72)" stroke="rgba(148,163,184,0.12)" />
-          <text x="78" y="362" fill="#f8fafc" fontSize="16" fontWeight="600">KDD convierte cada tanda en una misión concreta y verificable.</text>
-          <text x="78" y="382" fill="#94a3b8" fontSize="12">Sesión → patrón → causa → acción → validación</text>
+          <text x="78" y="362" fill="#f8fafc" fontSize="16" fontWeight="600">KDD converts telemetry into decisions, then validates the next chapter.</text>
+          <text x="78" y="382" fill="#94a3b8" fontSize="12">Sense → Decide → Federate → Validate</text>
           <g>
-            {['Contexto', 'Lectura', 'Acción'].map((item, index) => (
+            {['Sense', 'Decide', 'Federate'].map((item, index) => (
               <g key={item} transform={`translate(${778 + index * 112}, 347)`}>
                 <rect width="100" height="24" rx="12" fill={index === 0 ? 'rgba(148,163,184,0.12)' : index === 1 ? 'rgba(165,180,252,0.12)' : 'rgba(134,239,172,0.12)'} stroke="rgba(148,163,184,0.12)" />
                 <text x="50" y="16" textAnchor="middle" fill="#e2e8f0" fontSize="11" fontWeight="700">{item}</text>

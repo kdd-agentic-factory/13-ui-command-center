@@ -447,7 +447,7 @@ export function HomePage() {
                 <div key={step} style={{ paddingTop: 12, borderTop: '1px solid rgba(148,163,184,0.14)' }}>
                   <div style={{ color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 11, fontWeight: 700, marginBottom: 8 }}>0{index + 1}</div>
                   <div style={{ fontWeight: 700, marginBottom: 6 }}>{step}</div>
-                  <div style={{ color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.5 }}>{index === 0 ? 'Sesiones y contexto' : index === 1 ? 'Señales y eventos' : index === 2 ? 'Lectura causal' : index === 3 ? 'Siguiente acción' : index === 4 ? 'Misión' : 'Validación'}</div>
+                  <div style={{ color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.5 }}>{index === 0 ? 'Telemetry and context' : index === 1 ? 'Choose the next decision' : index === 2 ? 'Share what is allowed' : 'Validate the outcome'}</div>
                 </div>
               ))}
             </div>

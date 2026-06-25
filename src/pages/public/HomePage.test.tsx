@@ -266,7 +266,9 @@ describe('HomePage resume session CTA', () => {
 
     render(<HomePage />);
 
-    expect(screen.getByText(/three visual designs/i)).toBeInTheDocument();
+    expect(screen.getByText(/decision intelligence layer/i)).toBeInTheDocument();
+    expect(screen.getByText(/federated knowledge network/i)).toBeInTheDocument();
+    expect(screen.getByText(/sense → decide → federate → validate/i)).toBeInTheDocument();
     expect(screen.getByTestId('designs-canvas')).toBeInTheDocument();
     expect(screen.getByTestId('privacy-canvas')).toBeInTheDocument();
     expect(screen.getByTestId('workflow-canvas')).toBeInTheDocument();
@@ -333,6 +335,10 @@ describe('HomePage resume session CTA', () => {
     expect(screen.getByTestId('workflow-canvas')).toHaveAttribute('data-selected-id', 'workflow');
     expect(screen.getByTestId('workflow-canvas')).toHaveAttribute('data-active', 'true');
     expect(workflowButton).toHaveAttribute('aria-pressed', 'true');
+
+    expect(screen.getByRole('button', { name: /activate designs diagram/i })).toBeVisible();
+    expect(screen.getByRole('button', { name: /activate privacy diagram/i })).toBeVisible();
+    expect(screen.getByRole('button', { name: /activate workflow diagram/i })).toBeVisible();
 
     fireEvent.mouseLeave(designsSection);
   });

@@ -213,7 +213,7 @@ export function PrivacyCanvas({ title, subtitle, cards, principles, active, mode
         </g>
 
         <g>
-          <text x="52" y="62" fill="#cbd5e1" fontSize="18" fontWeight="700" letterSpacing="3">PRIVACIDAD DESDE EL DISEÑO</text>
+          <text x="52" y="62" fill="#cbd5e1" fontSize="18" fontWeight="700" letterSpacing="3">FEDERATED KNOWLEDGE NETWORK</text>
           <text x="52" y="98" fill="#f8fafc" fontSize="40" fontWeight="650">{title}</text>
           <text x="52" y="128" fill="#94a3b8" fontSize="17">{subtitle}</text>
         </g>

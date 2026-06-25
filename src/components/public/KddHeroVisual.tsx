@@ -307,6 +307,10 @@ export function KddHeroVisual({ subtitle, phrase, active = false, mode = 'recede
       ctx.textAlign = 'center';
       ctx.fillText('KDD', cx, orbY + 10);
 
+      ctx.fillStyle = 'rgba(226,232,240,0.78)';
+      ctx.font = '700 11px Inter, ui-sans-serif, system-ui, sans-serif';
+      ctx.fillText('DECISION INTELLIGENCE LAYER', cx, orbY + 32);
+
       ctx.fillStyle = 'rgba(226,232,240,0.7)';
       ctx.font = '700 11px Inter, ui-sans-serif, system-ui, sans-serif';
       ctx.fillText('FEDERATED KNOWLEDGE NETWORK', cx, orbY - orbRadius - 18);
@@ -323,7 +327,7 @@ export function KddHeroVisual({ subtitle, phrase, active = false, mode = 'recede
       // telemetry label
       ctx.fillStyle = 'rgba(226,232,240,0.76)';
       ctx.font = '700 11px Inter, ui-sans-serif, system-ui, sans-serif';
-      ctx.fillText('TELEMETRY', 18, telemetryY + 12);
+      ctx.fillText('TELEMETRY BELOW', 18, telemetryY + 12);
 
       // moving signal dots between telemetry and KDD
       for (let i = 0; i < telemetryNodes.length; i += 1) {

@@ -25,9 +25,9 @@ vi.mock('react-i18next', () => ({
     t: (path: string, options?: { returnObjects?: boolean }) => {
       if (options?.returnObjects && path === 'public.heroVisual') {
         return {
-          subtitle: 'Telemetry subtitle',
-          phrase: 'Telemetry phrase',
-          fallback: 'Fallback hero visual',
+          subtitle: 'Decision layer subtitle',
+          phrase: 'Decision layer phrase',
+          fallback: 'Decision intelligence layer above telemetry',
           sr: 'Hero canvas description',
         };
       }
@@ -217,11 +217,11 @@ describe('public landing canvas motion', () => {
   });
 
   it('wires workflow canvas motion for the active section', () => {
-    render(
+    const workflow = render(
       <WorkflowCanvas
         title="Workflow"
         subtitle="Subtitle"
-        steps={['ingest', 'read', 'decide']}
+        steps={['sense', 'decide', 'federate', 'validate']}
         active
         mode="active"
       />,
@@ -240,6 +240,11 @@ describe('public landing canvas motion', () => {
       loop: true,
       strokeDashoffset: [0, -78],
     }));
+
+    expect(workflow.getAllByText('Sense').length).toBeGreaterThanOrEqual(2);
+    expect(workflow.getAllByText('Decide').length).toBeGreaterThanOrEqual(2);
+    expect(workflow.getAllByText('Federate').length).toBeGreaterThanOrEqual(2);
+    expect(workflow.getAllByText('Validate').length).toBeGreaterThanOrEqual(1);
   });
 
   it('marks the hero visual with section emphasis and reduced-motion state', () => {
@@ -256,7 +261,7 @@ describe('public landing canvas motion', () => {
     expect(container.firstElementChild).toHaveAttribute('data-emphasis', 'recede');
     expect(container.firstElementChild).toHaveAttribute('data-motion-state', 'reduced');
     expect(container.firstElementChild).toHaveAttribute('data-selected-id', 'privacy');
-    expect(screen.getByText('Fallback hero visual')).toBeInTheDocument();
+    expect(screen.getByText('Decision intelligence layer above telemetry')).toBeInTheDocument();
   });
 
   it('suppresses anime.js loops when reduced motion is requested', () => {

@@ -250,7 +250,7 @@ export function DesignsCanvas({ title, subtitle, cards, networkBody, steps, acti
         </g>
 
         <g opacity="0.92">
-          <text x="54" y="62" fill="#cbd5e1" fontSize="18" fontWeight="700" letterSpacing="3">TRES DISEÑOS VISUALES</text>
+          <text x="54" y="62" fill="#cbd5e1" fontSize="18" fontWeight="700" letterSpacing="3">GUIDED CHAPTER FLOW</text>
           <text x="54" y="100" fill="#f8fafc" fontSize="42" fontWeight="650">{title}</text>
           <text x="54" y="132" fill="#94a3b8" fontSize="18">{subtitle}</text>
         </g>
@@ -281,7 +281,7 @@ export function DesignsCanvas({ title, subtitle, cards, networkBody, steps, acti
             </g>
           ))}
           <text x="600" y="276" textAnchor="middle" fill="#f8fafc" fontSize="28" fontWeight="700">KDD</text>
-          <text x="600" y="306" textAnchor="middle" fill="#cbd5e1" fontSize="16" letterSpacing="2">DECISION ENGINE</text>
+          <text x="600" y="306" textAnchor="middle" fill="#cbd5e1" fontSize="16" letterSpacing="2">DECISION INTELLIGENCE LAYER</text>
         </g>
 
         <g>
