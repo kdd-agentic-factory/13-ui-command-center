@@ -84,7 +84,7 @@ describe('public funnel pages', () => {
     render(<FoundingNodesPage />);
 
     expect(screen.getByRole('heading', { name: 'Una invitación privada para los primeros nodos fundadores' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Solicitar acceso fundador' })).toHaveAttribute('href', '/trial');
+    expect(screen.getByRole('link', { name: 'Solicitar acceso de fundador' })).toHaveAttribute('href', '/trial');
     expect(screen.getByRole('link', { name: 'Hablar con KDD' })).toHaveAttribute('href', '/login');
   });
 
@@ -93,7 +93,7 @@ describe('public funnel pages', () => {
     render(<ThanksPage />);
 
     expect(screen.getByRole('heading', { name: 'Tu nodo ya está sobre la mesa' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Entrar a la aplicación' })).toHaveAttribute('href', '/app');
+    expect(screen.getByRole('link', { name: 'Entrar en la aplicación' })).toHaveAttribute('href', '/app');
   });
 });
 

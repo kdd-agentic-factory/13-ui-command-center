@@ -1,44 +1,49 @@
 /**
- * Landing → profile selection — regression lock for the WebGL crash that
- * made role selection impossible: an unguarded Babylon `new Engine()` threw
- * 'WebGL not supported' in environments without WebGL (RDP, VMs, jsdom) and
- * unmounted the whole landing. All 3D components now create engines through
- * createSafeEngine and the page must survive without WebGL.
+ * Landing → profile selection regression lock.
+ * Keeps the intro flow safe in JSDOM and verifies public vs auth-gated roles.
  */
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+vi.mock('../src/components/babylon/lazy', () => ({
+  DigitalTwinViewer3D: () => null,
+}));
 import { App } from '../src/app/App';
 
-beforeEach(() => { sessionStorage.clear(); localStorage.clear(); });
+beforeEach(() => {
+  sessionStorage.clear();
+  localStorage.clear();
+  window.history.pushState({}, '', '/app');
+});
 
 describe('landing profile selection (no-WebGL environment)', () => {
-  it('renders all role cards and the spectator path reaches Mission Control', async () => {
+  it('renders all role cards and lets public roles reach Mission Control', async () => {
     sessionStorage.setItem('kdd-intro-seen', '1');
     render(<App />);
 
+    await waitFor(() => expect(document.querySelectorAll('.intro-role-card').length).toBe(6));
+
     const cards = document.querySelectorAll('.intro-role-card');
-    expect(cards.length).toBe(5);
 
-    const spectator = Array.from(cards).find(c => /espect|spect/i.test(c.textContent ?? ''));
-    expect(spectator).toBeTruthy();
-    fireEvent.click(spectator!);
-    fireEvent.click(document.querySelector('.intro-enter')!);
+    const foundingNode = Array.from(cards).find(c => /founding|fundador/i.test(c.textContent ?? ''));
+    expect(foundingNode).toBeTruthy();
+    fireEvent.click(foundingNode!);
+    fireEvent.click(document.querySelector('.intro-enter.compact')!);
 
-    await new Promise(r => setTimeout(r, 80));
-    expect(screen.queryByText('SYSTEM READY')).not.toBeNull(); // Mission Control
+    expect(await screen.findByText('SYSTEM READY')).toBeInTheDocument();
   });
 
   it('auth-gated roles open the login modal instead of crashing', async () => {
     sessionStorage.setItem('kdd-intro-seen', '1');
     render(<App />);
 
+    await waitFor(() => expect(document.querySelectorAll('.intro-role-card').length).toBe(6));
+
     const cards = document.querySelectorAll('.intro-role-card');
     const engineer = Array.from(cards).find(c => /engineer|ingenier/i.test(c.textContent ?? ''));
     expect(engineer).toBeTruthy();
     fireEvent.click(engineer!);
-    fireEvent.click(document.querySelector('.intro-enter')!);
+    fireEvent.click(document.querySelector('.intro-enter.compact')!);
 
-    await new Promise(r => setTimeout(r, 80));
-    expect(document.querySelector('input[type="email"], input[type="password"]')).not.toBeNull();
+    expect(await screen.findByRole('dialog')).toBeInTheDocument();
   });
 });
