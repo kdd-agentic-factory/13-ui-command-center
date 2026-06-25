@@ -4,6 +4,7 @@ import i18n from '../src/i18n';
 
 const mocks = vi.hoisted(() => ({
   goTo: vi.fn(),
+  submitLeadCapture: vi.fn(),
   auth: {
     getCurrentUser: vi.fn(),
     signInWithPassword: vi.fn(),
@@ -23,13 +24,8 @@ vi.mock('../src/lib/insforge', () => ({
   },
 }));
 
-vi.mock('../src/components/public/KddHeroVisual', () => ({
-  KddHeroVisual: ({ subtitle, phrase }: { subtitle: string; phrase: string }) => (
-    <div data-testid="hero-visual">
-      <span>{subtitle}</span>
-      <span>{phrase}</span>
-    </div>
-  ),
+vi.mock('../src/services/foundingNodeLeads', () => ({
+  submitLeadCapture: mocks.submitLeadCapture,
 }));
 
 import { HomePage } from '../src/pages/public/HomePage';
@@ -43,29 +39,26 @@ beforeEach(async () => {
   sessionStorage.clear();
   vi.clearAllMocks();
   mocks.auth.getCurrentUser.mockResolvedValue({ data: { user: null }, error: null });
+  mocks.submitLeadCapture.mockResolvedValue({ ok: true, lead_id: 'lead-1' });
   await i18n.changeLanguage('en');
 });
 
 describe('public landing copy', () => {
-  it('renders the landing hero in English', () => {
+  it('renders the editorial hero in English', () => {
     render(<HomePage />);
 
-    expect(screen.getByRole('heading', { name: 'KDD turns track data into decisions' })).toBeInTheDocument();
-    expect(screen.getAllByRole('link', { name: 'Join Founding Nodes' })[0]).toHaveAttribute('href', '/founding-nodes');
-    expect(screen.getByRole('link', { name: 'Sign in' })).toBeInTheDocument();
-    expect(screen.getByTestId('hero-visual')).toHaveTextContent('The network learns without exposing raw data');
-    expect(screen.getByTestId('hero-visual')).toHaveTextContent('KDD turns every stint into shared learning.');
+    expect(screen.getByRole('heading', { name: 'KDD Moto Intelligence' })).toBeInTheDocument();
+    expect(screen.getByText('Decision Intelligence Layer for Motorcycle Performance')).toBeInTheDocument();
+    expect(screen.getAllByRole('link', { name: 'Solicitar Early Access' })[0]).toHaveAttribute('href', '/trial');
+    expect(screen.getAllByRole('link', { name: 'Convertirme en Founding Node' })[0]).toHaveAttribute('href', '/founding-nodes');
   });
 
-  it('renders the landing hero in Spanish', async () => {
+  it('renders the editorial hero in Spanish', async () => {
     await i18n.changeLanguage('es');
     render(<HomePage />);
 
-    expect(screen.getByRole('heading', { name: 'KDD convierte tus datos de pista en decisiones' })).toBeInTheDocument();
-    expect(screen.getAllByRole('link', { name: 'Nodos fundadores' })[0]).toHaveAttribute('href', '/founding-nodes');
-    expect(screen.getByRole('link', { name: 'Entrar' })).toBeInTheDocument();
-    expect(screen.getByTestId('hero-visual')).toHaveTextContent('La red aprende sin exponer los datos en bruto');
-    expect(screen.getByTestId('hero-visual')).toHaveTextContent('KDD convierte cada tanda en aprendizaje compartido.');
+    expect(screen.getByText('Capa de inteligencia de decisión para rendimiento de motocicleta')).toBeInTheDocument();
+    expect(screen.getByText('No sustituimos tu telemetría. La convertimos en conocimiento accionable.')).toBeInTheDocument();
   });
 });
 
@@ -77,6 +70,22 @@ describe('public funnel pages', () => {
     expect(screen.getByRole('heading', { name: 'Activa tu primer nodo de prueba' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Generar acceso de prueba' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Entrar en KDD' })).toHaveAttribute('href', '/app');
+  });
+
+  it('sends trial submissions to the thanks page first', async () => {
+    render(<TrialHomePage />);
+
+    fireEvent.change(screen.getByLabelText('Name'), { target: { value: 'Alex' } });
+    fireEvent.change(screen.getByLabelText('Node type'), { target: { value: 'Rider Node' } });
+    fireEvent.change(screen.getByLabelText('Bike / programme'), { target: { value: 'Yamaha R1' } });
+    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'alex@example.com' } });
+    fireEvent.change(screen.getByLabelText('Logger / data source'), { target: { value: 'AiM' } });
+    fireEvent.change(screen.getByLabelText('Privacy level'), { target: { value: 'Private' } });
+    fireEvent.change(screen.getByLabelText('What do you want to achieve with the trial?'), { target: { value: 'Improve the debrief' } });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Generate trial access' }));
+
+    await waitFor(() => expect(mocks.goTo).toHaveBeenCalledWith('/founding-node-thanks'));
   });
 
   it('renders the founding nodes page copy in Spanish', async () => {

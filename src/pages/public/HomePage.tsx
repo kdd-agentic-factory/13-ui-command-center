@@ -1,491 +1,982 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, CheckCircle2, Layers3, NotebookText, PlayCircle, ShieldCheck } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Layers3, NotebookText, ShieldCheck, Users } from 'lucide-react';
 
-import { DesignsCanvas } from '../../components/public/DesignsCanvas';
-import { KddHeroVisual } from '../../components/public/KddHeroVisual';
 import { LanguageSwitcher } from '../../components/LanguageSwitcher';
 import { useAuth } from '../../context/AuthContext';
-import { PrivacyCanvas } from '../../components/public/PrivacyCanvas';
-import { WorkflowCanvas } from '../../components/public/WorkflowCanvas';
-import { createDiagramSelectionContract, usePrefersReducedMotion } from '../../components/public/landingDiagramState';
 
-type SectionKey = 'designs' | 'privacy' | 'workflow';
-type DiagramMode = 'active' | 'recede';
+type Lang = 'en' | 'es';
 
-function SectionTitle({ eyebrow, title, body }: { eyebrow: string; title: string; body?: string }) {
+type SectionCard = {
+  title: string;
+  body: string;
+};
+
+type HomeCopy = {
+  header: {
+    eyebrow: string;
+    title: string;
+    signedInCue: string;
+  };
+  nav: {
+    earlyAccess: string;
+    foundingNode: string;
+    signIn: string;
+    language: string;
+  };
+  hero: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    lead: string;
+    support: string;
+    privacy: string;
+    primaryCta: string;
+    secondaryCta: string;
+  };
+  pipeline: {
+    source: string;
+    layer: string;
+    outcomes: string;
+    network: string;
+  };
+  sections: {
+    noTelemetry: {
+      eyebrow: string;
+      title: string;
+      body: string;
+      cards: SectionCard[];
+    };
+    systems: {
+      eyebrow: string;
+      title: string;
+      body: string;
+      sources: string[];
+    };
+    decisions: {
+      eyebrow: string;
+      title: string;
+      body: string;
+      cards: SectionCard[];
+    };
+    example: {
+      eyebrow: string;
+      title: string;
+      body: string;
+      cards: SectionCard[];
+    };
+    network: {
+      eyebrow: string;
+      title: string;
+      body: string;
+      cards: SectionCard[];
+    };
+    nodeTypes: {
+      eyebrow: string;
+      title: string;
+      cards: SectionCard[];
+    };
+    audience: {
+      eyebrow: string;
+      title: string;
+      cards: SectionCard[];
+    };
+    founding: {
+      eyebrow: string;
+      title: string;
+      body: string;
+      bullets: string[];
+    };
+    finalCta: {
+      eyebrow: string;
+      title: string;
+      body: string;
+    };
+  };
+};
+
+const HOME_COPY: Record<Lang, HomeCopy> = {
+  en: {
+    header: {
+      eyebrow: 'KDD Knowledge Network',
+      title: 'KDD Knowledge Network',
+      signedInCue: 'Welcome back',
+    },
+    nav: {
+      earlyAccess: 'Solicitar Early Access',
+      foundingNode: 'Convertirme en Founding Node',
+      signIn: 'Sign in',
+      language: 'Language',
+    },
+    hero: {
+      eyebrow: 'Editorial decision intelligence for motorcycles',
+      title: 'KDD Moto Intelligence',
+      subtitle: 'Decision Intelligence Layer for Motorcycle Performance',
+      lead: 'No sustituimos tu telemetría. La convertimos en conocimiento accionable.',
+      support: 'La telemetría mide. KDD interpreta, decide y aprende.',
+      privacy: 'Tus datos se protegen. Lo que viaja es el aprendizaje.',
+      primaryCta: 'Solicitar Early Access',
+      secondaryCta: 'Convertirme en Founding Node',
+    },
+    pipeline: {
+      source: 'Telemetry systems',
+      layer: 'KDD Decision Intelligence Layer',
+      outcomes: 'Decisions / Missions / Validation',
+      network: 'KDD Knowledge Network',
+    },
+    sections: {
+      noTelemetry: {
+        eyebrow: '02',
+        title: 'No somos telemetría',
+        body: 'La telemetría sigue midiendo. KDD se coloca encima para convertir señales en criterio, y criterio en decisión.',
+        cards: [
+          { title: 'Telemetry measures', body: 'ECU, logger, GPS, IMU, video, CSV and external feeds keep collecting the raw signal.' },
+          { title: 'KDD interprets', body: 'The layer reads the context, compares runs and isolates the relevant pattern.' },
+          { title: 'The team acts', body: 'The output is a mission, a validation rule and a next step the team can execute.' },
+        ],
+      },
+      systems: {
+        eyebrow: '03',
+        title: 'Por encima de tus sistemas actuales',
+        body: 'No pedimos que cambies tu stack. KDD sits above the systems you already trust and standardises what they mean.',
+        sources: ['ECU', 'Logger', 'GPS', 'IMU', 'Video', 'CSV', 'External telemetry'],
+      },
+      decisions: {
+        eyebrow: '04',
+        title: 'De datos a decisiones',
+        body: 'The narrative is simple on purpose: decide what happened, assign the mission, then validate the result.',
+        cards: [
+          { title: 'Decision', body: 'What changed, where, and why it matters.' },
+          { title: 'Mission', body: 'The next action for rider, engineer or team principal.' },
+          { title: 'Validation', body: 'The rule that confirms the mission worked or needs another pass.' },
+        ],
+      },
+      example: {
+        eyebrow: '05',
+        title: 'Ejemplo real: T15 Bucine',
+        body: 'At T15 Bucine, KDD can isolate the corner where the lap is lost, connect it to brake release and throttle pickup, and turn that into a mission with a validation target.',
+        cards: [
+          { title: 'Context', body: 'Sector loss, grip change and exit stability are read together.' },
+          { title: 'Decision', body: 'The system points to a late release or an overly conservative pickup.' },
+          { title: 'Mission', body: 'Run the next lap with a cleaner release window and note the delta.' },
+          { title: 'Validation', body: 'Compare the following lap against the mission target and keep only what works.' },
+        ],
+      },
+      network: {
+        eyebrow: '06',
+        title: 'KDD Knowledge Network',
+        body: 'Raw data stays protected inside the node. What travels is the learning: patterns, validation and better decisions.',
+        cards: [
+          { title: 'Protected raw data', body: 'Sessions, video and setup notes remain inside the originating node.' },
+          { title: 'Traveling learning', body: 'Only the validated knowledge and the pattern improvement leave the node.' },
+          { title: 'Better benchmarks', body: 'The network compounds benchmarks without exposing the underlying telemetry.' },
+        ],
+      },
+      nodeTypes: {
+        eyebrow: '07',
+        title: 'Private Node / Team Node / Federated Node',
+        cards: [
+          { title: 'Private Node', body: 'Everything stays local. Ideal for sensitive data, single riders and private programmes.' },
+          { title: 'Team Node', body: 'A shared space for rider, engineer and crew to work on the same learning loop.' },
+          { title: 'Federated Node', body: 'Validated learning can travel to the network while the raw data remains protected.' },
+        ],
+      },
+      audience: {
+        eyebrow: '08',
+        title: 'Para quién es',
+        cards: [
+          { title: 'Pilots', body: 'Riders who want cleaner debriefs and fewer guesses.' },
+          { title: 'Teams', body: 'Race and performance teams that need a decision layer, not another dashboard.' },
+          { title: 'Engineers', body: 'People who want to validate what the telemetry is saying before they act.' },
+          { title: 'Academies', body: 'Programmes that need repeatable learning across multiple riders or nodes.' },
+        ],
+      },
+      founding: {
+        eyebrow: '09',
+        title: 'Founding Nodes / Early Access',
+        body: 'The first nodes help define the learning rules, the validation model and the privacy contract.',
+        bullets: [
+          'Priority access to the editorial early-access programme.',
+          'A seat in the first federated learning network.',
+          'A say in how missions and validations are framed.',
+          'A sober, private onboarding path for the team.',
+        ],
+      },
+      finalCta: {
+        eyebrow: '10',
+        title: 'Solicitar Early Access',
+        body: 'If you want a decision layer above telemetry, request access. If you want to help define the network, join as a founding node.',
+      },
+    },
+  },
+  es: {
+    header: {
+      eyebrow: 'KDD Knowledge Network',
+      title: 'KDD Knowledge Network',
+      signedInCue: 'Bienvenido de nuevo',
+    },
+    nav: {
+      earlyAccess: 'Solicitar Early Access',
+      foundingNode: 'Convertirme en Founding Node',
+      signIn: 'Entrar',
+      language: 'Idioma',
+    },
+    hero: {
+      eyebrow: 'Inteligencia de decisión editorial para motos',
+      title: 'KDD Moto Intelligence',
+      subtitle: 'Capa de inteligencia de decisión para rendimiento de motocicleta',
+      lead: 'No sustituimos tu telemetría. La convertimos en conocimiento accionable.',
+      support: 'La telemetría mide. KDD interpreta, decide y aprende.',
+      privacy: 'Tus datos se protegen. Lo que viaja es el aprendizaje.',
+      primaryCta: 'Solicitar Early Access',
+      secondaryCta: 'Convertirme en Founding Node',
+    },
+    pipeline: {
+      source: 'Telemetry systems',
+      layer: 'KDD Decision Intelligence Layer',
+      outcomes: 'Decisions / Missions / Validation',
+      network: 'KDD Knowledge Network',
+    },
+    sections: {
+      noTelemetry: {
+        eyebrow: '02',
+        title: 'No somos telemetría',
+        body: 'La telemetría sigue midiendo. KDD se coloca encima para convertir señales en criterio, y criterio en decisión.',
+        cards: [
+          { title: 'La telemetría mide', body: 'ECU, logger, GPS, IMU, vídeo, CSV y feeds externos siguen recogiendo la señal en bruto.' },
+          { title: 'KDD interpreta', body: 'La capa lee el contexto, compara sesiones e identifica el patrón relevante.' },
+          { title: 'El equipo actúa', body: 'La salida es una misión, una regla de validación y el siguiente paso para ejecutar.' },
+        ],
+      },
+      systems: {
+        eyebrow: '03',
+        title: 'Por encima de tus sistemas actuales',
+        body: 'No te pedimos cambiar el stack. KDD se coloca encima de los sistemas que ya confías y ordena lo que significan.',
+        sources: ['ECU', 'Logger', 'GPS', 'IMU', 'Video', 'CSV', 'External telemetry'],
+      },
+      decisions: {
+        eyebrow: '04',
+        title: 'De datos a decisiones',
+        body: 'La narrativa es simple por diseño: decide qué pasó, asigna la misión y valida el resultado.',
+        cards: [
+          { title: 'Decisión', body: 'Qué cambió, dónde y por qué importa.' },
+          { title: 'Misión', body: 'La siguiente acción para piloto, ingeniero o team principal.' },
+          { title: 'Validación', body: 'La regla que confirma si la misión funcionó o necesita otra pasada.' },
+        ],
+      },
+      example: {
+        eyebrow: '05',
+        title: 'Ejemplo real: T15 Bucine',
+        body: 'En T15 Bucine, KDD puede aislar la curva donde se pierde la vuelta, relacionarlo con la liberación de freno y la apertura de gas, y convertirlo en una misión con objetivo de validación.',
+        cards: [
+          { title: 'Contexto', body: 'La pérdida en el sector, el cambio de agarre y la estabilidad de salida se leen juntos.' },
+          { title: 'Decisión', body: 'El sistema apunta a una liberación tardía o a una apertura demasiado conservadora.' },
+          { title: 'Misión', body: 'Ejecuta la siguiente vuelta con una ventana de liberación más limpia y mide el delta.' },
+          { title: 'Validación', body: 'Compara la vuelta siguiente contra el objetivo y conserva solo lo que funciona.' },
+        ],
+      },
+      network: {
+        eyebrow: '06',
+        title: 'KDD Knowledge Network',
+        body: 'Los datos en bruto se protegen dentro del nodo. Lo que viaja es el aprendizaje: patrones, validación y mejores decisiones.',
+        cards: [
+          { title: 'Datos en bruto protegidos', body: 'Sesiones, vídeo y notas de setup permanecen dentro del nodo de origen.' },
+          { title: 'Aprendizaje que viaja', body: 'Solo sale del nodo el conocimiento validado y la mejora del patrón.' },
+          { title: 'Benchmarks mejores', body: 'La red compone mejores referencias sin exponer la telemetría subyacente.' },
+        ],
+      },
+      nodeTypes: {
+        eyebrow: '07',
+        title: 'Private Node / Team Node / Federated Node',
+        cards: [
+          { title: 'Private Node', body: 'Todo queda local. Ideal para datos sensibles, pilotos individuales y programas privados.' },
+          { title: 'Team Node', body: 'Un espacio compartido para piloto, ingeniero y crew sobre el mismo ciclo de aprendizaje.' },
+          { title: 'Federated Node', body: 'El aprendizaje validado puede viajar a la red mientras los datos en bruto siguen protegidos.' },
+        ],
+      },
+      audience: {
+        eyebrow: '08',
+        title: 'Para quién es',
+        cards: [
+          { title: 'Pilots', body: 'Pilotos que quieren debriefs más claros y menos suposiciones.' },
+          { title: 'Teams', body: 'Equipos de carrera y rendimiento que necesitan una capa de decisión, no otro dashboard.' },
+          { title: 'Engineers', body: 'Personas que quieren validar lo que dice la telemetría antes de actuar.' },
+          { title: 'Academies', body: 'Programas que necesitan aprendizaje repetible entre varios pilotos o nodos.' },
+        ],
+      },
+      founding: {
+        eyebrow: '09',
+        title: 'Founding Nodes / Early Access',
+        body: 'Los primeros nodos ayudan a definir las reglas de aprendizaje, el modelo de validación y el contrato de privacidad.',
+        bullets: [
+          'Acceso prioritario al programa editorial de early access.',
+          'Un lugar en la primera red federada de aprendizaje.',
+          'Influencia en cómo se formulan las misiones y validaciones.',
+          'Un onboarding sobrio y privado para el equipo.',
+        ],
+      },
+      finalCta: {
+        eyebrow: '10',
+        title: 'Solicitar Early Access',
+        body: 'Si quieres una capa de decisión por encima de la telemetría, solicita acceso. Si quieres ayudar a definir la red, entra como founding node.',
+      },
+    },
+  },
+};
+
+function resolveLanguage(language: string | undefined): Lang {
+  return language?.toLowerCase().startsWith('es') ? 'es' : 'en';
+}
+
+function SectionHeading({ eyebrow, title, body }: { eyebrow: string; title: string; body: string }) {
   return (
-    <div style={{ marginBottom: 20, maxWidth: 760 }}>
-      <p style={{ margin: 0, color: 'var(--public-text-muted, #5f6875)', textTransform: 'uppercase', letterSpacing: '0.16em', fontSize: 10, fontWeight: 700 }}>
-        {eyebrow}
-      </p>
-      <h2 style={{ margin: '10px 0 10px', fontSize: 'clamp(24px, 3vw, 34px)', lineHeight: 1.04, fontWeight: 650, letterSpacing: '-0.02em', color: 'var(--public-text, #111317)' }}>{title}</h2>
-      {body ? (
-        <p style={{ margin: 0, color: 'var(--public-text-muted, #5f6875)', lineHeight: 1.72, maxWidth: 700, fontSize: 15 }}>{body}</p>
-      ) : null}
+    <div className="public-home__heading">
+      <p className="public-home__eyebrow">{eyebrow}</p>
+      <h2>{title}</h2>
+      <p>{body}</p>
     </div>
+  );
+}
+
+function Card({ title, body }: SectionCard) {
+  return (
+    <article className="public-home__card">
+      <h3>{title}</h3>
+      <p>{body}</p>
+    </article>
   );
 }
 
 function Pill({ children }: { children: ReactNode }) {
-  return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '9px 13px', borderRadius: 999, border: '1px solid var(--public-border, rgba(15,23,42,0.12))', background: 'var(--public-surface, rgba(255,255,255,0.72))', color: 'var(--public-text, #111317)', fontSize: 13, boxShadow: '0 8px 24px rgba(15,23,42,0.04)' }}>
-      {children}
-    </span>
-  );
+  return <span className="public-home__pill">{children}</span>;
 }
 
-function ClosingDiagram() {
+function PipelineNode({ label }: { label: string }) {
+  return <div className="public-home__pipeline-node">{label}</div>;
+}
+
+function SectionBlock({ id, heading, children }: { id: string; heading: { eyebrow: string; title: string; body: string }; children: ReactNode }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: 12, alignItems: 'center', marginTop: 20, padding: '16px 18px', borderRadius: 18, border: '1px solid var(--public-border, rgba(15,23,42,0.12))', background: 'var(--public-surface, rgba(255,255,255,0.72))' }}>
-      <div style={{ width: 42, height: 42, borderRadius: 12, border: '1px solid rgba(143,29,42,0.22)', background: 'linear-gradient(180deg, rgba(143,29,42,0.16), rgba(255,255,255,0.8))', display: 'grid', placeItems: 'center', fontWeight: 800, color: 'var(--public-obsidian, #0b0f14)' }}>K</div>
-      <div style={{ height: 2, background: 'linear-gradient(90deg, rgba(143,29,42,0.18), rgba(15,23,42,0.12), rgba(15,23,42,0.04))' }} />
-      <div style={{ width: 42, height: 42, borderRadius: 12, border: '1px solid rgba(15,23,42,0.16)', background: 'linear-gradient(180deg, rgba(255,255,255,0.9), rgba(236,231,223,0.84))', display: 'grid', placeItems: 'center', fontWeight: 800, color: 'var(--public-accent, #8f1d2a)' }}>D</div>
-    </div>
+    <section className="public-home__section" id={id}>
+      <SectionHeading eyebrow={heading.eyebrow} title={heading.title} body={heading.body} />
+      {children}
+    </section>
   );
 }
 
 export function HomePage() {
-  const { t } = useTranslation();
+  const { i18n } = useTranslation();
   const { user } = useAuth();
-  const reducedMotion = usePrefersReducedMotion();
-  const sectionRefs = useRef<Record<SectionKey, HTMLElement | null>>({
-    designs: null,
-    privacy: null,
-    workflow: null,
-  });
-  const [activeSection, setActiveSection] = useState<SectionKey>('designs');
-  const [hoveredSection, setHoveredSection] = useState<SectionKey | null>(null);
-  const [selectedId, setSelectedId] = useState<SectionKey>('designs');
-  const copy = t('public.home', { returnObjects: true }) as {
-    header: { eyebrow: string; title: string; signedInCue: string };
-    nav: { foundingNodes: string; login: string; stack: string; language: string };
-    hero: {
-      eyebrow: string;
-      title: string;
-      subtitle: string;
-      valueProps: string[];
-      questions: string[];
-      body: string;
-      resumeIndicator: string;
-      foundingCta: string;
-      resumeLastSession: string;
-      loginCta: string;
-      note: string;
-    };
-    designs: { eyebrow: string; title: string; body: string; cards: Array<{ eyebrow: string; title: string; body: string; chips: string[]; accent: string }> };
-    foundingPanel: { eyebrow: string; title: string; rows: Array<{ label: string; value: string }>; body: string };
-    network: { eyebrow: string; title: string; body: string; cards: Array<{ title: string; body: string }> };
-    privacy: { eyebrow: string; title: string; body: string; cards: Array<{ title: string; body: string }>; principles: string[] };
-    levels: { eyebrow: string; title: string; body: string; cards: Array<{ title: string; body: string }> };
-    workflow: { eyebrow: string; title: string; body: string; steps: string[] };
-    capabilities: { eyebrow: string; title: string; body: string; cards: Array<{ title: string; body: string }> };
-    audiences: { eyebrow: string; title: string; body?: string; cards: Array<{ title: string; body: string }> };
-    stack: { eyebrow: string; title: string; body: string; items: string[] };
-    access: { eyebrow: string; title: string; body: string; trialCta: string; foundingCta: string };
-    closing: { eyebrow: string; title: string; body: string };
-  };
-  const visual = t('public.heroVisual', { returnObjects: true }) as { subtitle: string; phrase: string };
-  const resumeFirst = Boolean(user);
-  const currentSection = hoveredSection ?? selectedId ?? activeSection;
-  const sectionMode = (section: SectionKey): DiagramMode => (currentSection === section ? 'active' : 'recede');
-  const sectionActive = (section: SectionKey) => currentSection === section;
-  const sectionSelectionProps = (section: SectionKey) => {
-    const selection = createDiagramSelectionContract(section, diagramId => {
-      const nextSection = diagramId as SectionKey;
-      setSelectedId(nextSection);
-      setHoveredSection(nextSection);
-    });
-
-    return {
-      ...selection,
-      onClick: () => {
-        setSelectedId(section);
-        setHoveredSection(section);
-      },
-      onFocus: () => setHoveredSection(section),
-      onBlur: () => setHoveredSection(null),
-    };
-  };
-
-  useEffect(() => {
-    if (typeof globalThis.IntersectionObserver === 'undefined') return;
-
-    const observer = new globalThis.IntersectionObserver(entries => {
-      const visible = entries.filter(entry => entry.isIntersecting);
-      if (visible.length === 0) return;
-
-      const nextSection = visible
-        .sort((left, right) => right.intersectionRatio - left.intersectionRatio)
-        .map(entry => (entry.target as HTMLElement).dataset.section as SectionKey | undefined)
-        .find((section): section is SectionKey => Boolean(section));
-
-      if (nextSection) setActiveSection(nextSection);
-      if (nextSection) setSelectedId(nextSection);
-    }, { threshold: 0.4 });
-
-    (Object.keys(sectionRefs.current) as SectionKey[]).forEach(section => {
-      const node = sectionRefs.current[section];
-      if (node) observer.observe(node);
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
-  const bindSection = (section: SectionKey) => (node: HTMLElement | null) => {
-    sectionRefs.current[section] = node;
-  };
-
-  const sectionEvents = (section: SectionKey) => ({
-    onMouseEnter: () => setHoveredSection(section),
-    onMouseLeave: () => setHoveredSection(null),
-    onPointerEnter: () => setHoveredSection(section),
-    onPointerLeave: () => setHoveredSection(null),
-    onFocusCapture: () => setHoveredSection(section),
-    onBlurCapture: () => setHoveredSection(null),
-  });
-
-  const sectionFrameStyle = (section: SectionKey) => {
-    const isCurrent = currentSection === section;
-
-    return {
-      marginTop: 48,
-      paddingTop: 32,
-      borderTop: `1px solid ${isCurrent ? 'rgba(165,180,252,0.22)' : 'rgba(148,163,184,0.12)'}`,
-      background: isCurrent ? 'linear-gradient(180deg, rgba(148,163,184,0.04), transparent)' : 'transparent',
-      borderRadius: isCurrent ? 22 : 0,
-      boxShadow: isCurrent ? '0 0 0 1px rgba(148,163,184,0.06), 0 24px 60px rgba(0,0,0,0.14)' : 'none',
-      outline: isCurrent ? '1px solid rgba(165,180,252,0.16)' : '1px solid transparent',
-      outlineOffset: 2,
-      transition: 'background 180ms ease, border-color 180ms ease, box-shadow 180ms ease, border-radius 180ms ease',
-    };
-  };
-
-  const diagramButtonStyle = (isCurrent: boolean, isFocused: boolean) => ({
-    appearance: 'none' as const,
-    border: `1px solid ${isCurrent ? 'rgba(165,180,252,0.3)' : 'rgba(148,163,184,0.18)'}`,
-    background: isCurrent ? 'rgba(99,102,241,0.16)' : 'rgba(255,255,255,0.03)',
-    color: isCurrent ? '#f8fafc' : 'var(--color-text-muted, #98a2b3)',
-    borderRadius: 999,
-    padding: '10px 14px',
-    minHeight: 40,
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: 8,
-    fontWeight: 700,
-    fontSize: 13,
-    cursor: 'pointer',
-    boxShadow: isCurrent ? '0 10px 30px rgba(99,102,241,0.12)' : 'none',
-    outline: isFocused ? '2px solid rgba(165, 180, 252, 0.8)' : 'none',
-    outlineOffset: isFocused ? 3 : 0,
-  });
-
-  const heroCtas = resumeFirst
-    ? [
-        { href: '/app', label: copy.hero.resumeLastSession, icon: <PlayCircle size={16} />, primary: true },
-        { href: '/founding-nodes', label: copy.hero.foundingCta, icon: <ArrowRight size={16} />, primary: false },
-        { href: '/login', label: copy.hero.loginCta, icon: <ArrowRight size={16} />, primary: false },
-      ]
-    : [
-        { href: '/founding-nodes', label: copy.hero.foundingCta, icon: <ArrowRight size={16} />, primary: true },
-        { href: '/app', label: copy.hero.resumeLastSession, icon: <PlayCircle size={16} />, primary: false },
-        { href: '/login', label: copy.hero.loginCta, icon: <ArrowRight size={16} />, primary: false },
-      ];
+  const copy = HOME_COPY[resolveLanguage(i18n.resolvedLanguage ?? i18n.language)];
+  const isSignedIn = Boolean(user);
 
   return (
-    <main className="public-home" style={{ minHeight: '100vh', background: 'radial-gradient(circle at top, rgba(143,29,42,0.08), transparent 20%), radial-gradient(circle at 82% 0%, rgba(15,23,42,0.08), transparent 22%), linear-gradient(180deg, #0b0f14 0%, #0e131a 52%, #090d12 100%)', color: 'var(--color-text, #eef1f8)' }}>
+    <main className="public-home">
       <style>{`
-        .public-home .public-home__shell { width: min(1320px, calc(100% - 40px)); margin: 0 auto; padding: 28px 0 72px; }
-        .public-home .public-home__header { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 42px; flex-wrap: wrap; }
-        .public-home .public-home__hero { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 22px; align-items: stretch; }
-        .public-home .public-home__split { display: grid; grid-template-columns: minmax(0, 1.18fr) minmax(290px, 0.82fr); gap: 26px; align-items: start; }
-        .public-home .public-home__split--privacy { grid-template-columns: minmax(0, 1.12fr) minmax(310px, 0.88fr); }
-        .public-home .public-home__split--workflow { grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr); }
-        .public-home .public-home__stack { display: grid; gap: 18px; padding-top: 48px; }
-        .public-home .public-home__stack--privacy { gap: 18px; }
-        .public-home .public-home__stack--workflow { gap: 14px; }
-        .public-home .public-home__access { margin-top: 42px; padding-top: 28px; border-top: 1px solid rgba(148,163,184,0.12); display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; align-items: start; }
-        .public-home .public-home__card-list { display: flex; flex-wrap: wrap; gap: 10px; }
-        .public-home .public-home__hero-aside { display: grid; gap: 16px; }
-        @media (max-width: 960px) {
-          .public-home .public-home__shell { width: min(100% - 24px, 1360px); padding: 20px 0 56px; }
-          .public-home .public-home__header { margin-bottom: 32px; }
-          .public-home .public-home__hero,
-          .public-home .public-home__split,
-          .public-home .public-home__split--privacy,
-          .public-home .public-home__split--workflow,
-          .public-home .public-home__access { grid-template-columns: 1fr; gap: 20px; }
-          .public-home .public-home__stack,
-          .public-home .public-home__stack--privacy,
-          .public-home .public-home__stack--workflow { padding-top: 0; }
-          .public-home .public-home__hero-aside { gap: 12px; }
+        .public-home {
+          --page: #f4f1ea;
+          --page-strong: #e7e0d4;
+          --surface: #ffffff;
+          --surface-soft: #f7f3ec;
+          --surface-dark: #0b0d0f;
+          --surface-carbon: #151719;
+          --border: rgba(11, 13, 15, 0.12);
+          --text: #0b0d0f;
+          --text-muted: #6f747a;
+          --red: #c8171d;
+          --red-deep: #8f1015;
+          --blue: #2b6f9e;
+          --violet: #5c4a72;
+          --green: #3f7d5a;
+          --amber: #c27a2c;
+          min-height: 100vh;
+          background: linear-gradient(180deg, var(--page) 0%, #f7f3ec 56%, #efe8db 100%);
+          color: var(--text);
         }
+
+        .public-home__shell {
+          width: min(1240px, calc(100% - 40px));
+          margin: 0 auto;
+          padding: 24px 0 72px;
+        }
+
+        .public-home__header {
+          display: flex;
+          justify-content: space-between;
+          gap: 24px;
+          align-items: flex-start;
+          padding-bottom: 18px;
+          border-bottom: 1px solid var(--border);
+          margin-bottom: 28px;
+          flex-wrap: wrap;
+        }
+
+        .public-home__brand {
+          display: grid;
+          gap: 8px;
+        }
+
+        .public-home__brand h1 {
+          margin: 0;
+          font-size: 18px;
+          line-height: 1.1;
+          letter-spacing: -0.02em;
+          font-weight: 650;
+        }
+
+        .public-home__eyebrow {
+          margin: 0;
+          font-size: 10px;
+          text-transform: uppercase;
+          letter-spacing: 0.18em;
+          color: var(--text-muted);
+          font-weight: 700;
+        }
+
+        .public-home__signed-in {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 12px;
+          border-radius: 999px;
+          border: 1px solid rgba(11, 13, 15, 0.16);
+          background: rgba(255, 255, 255, 0.65);
+          font-size: 12px;
+          font-weight: 600;
+          width: fit-content;
+        }
+
+        .public-home__header-actions {
+          display: grid;
+          justify-items: end;
+          gap: 12px;
+        }
+
+        .public-home__nav {
+          display: flex;
+          gap: 10px;
+          flex-wrap: wrap;
+          justify-content: flex-end;
+        }
+
+        .public-home__pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 14px;
+          border-radius: 999px;
+          border: 1px solid var(--border);
+          background: rgba(255, 255, 255, 0.75);
+          color: var(--text);
+          text-decoration: none;
+          font-size: 13px;
+          font-weight: 600;
+        }
+
+        .public-home__language {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          padding: 8px 12px;
+          border-radius: 999px;
+          border: 1px solid var(--border);
+          background: rgba(255, 255, 255, 0.75);
+        }
+
+        .public-home__language-label {
+          font-size: 10px;
+          letter-spacing: 0.16em;
+          text-transform: uppercase;
+          color: var(--text-muted);
+          font-weight: 700;
+        }
+
+        .public-home__hero {
+          display: grid;
+          grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+          gap: 24px;
+          align-items: start;
+          margin-bottom: 34px;
+        }
+
+        .public-home__hero-copy {
+          display: grid;
+          gap: 14px;
+          padding: 28px 0 0;
+        }
+
+        .public-home__hero-copy h2 {
+          margin: 0;
+          font-size: clamp(56px, 7vw, 92px);
+          line-height: 0.92;
+          letter-spacing: -0.05em;
+          font-weight: 700;
+          max-width: 820px;
+        }
+
+        .public-home__hero-copy p {
+          margin: 0;
+          max-width: 720px;
+          font-size: 18px;
+          line-height: 1.72;
+          color: var(--text-muted);
+        }
+
+        .public-home__hero-lead {
+          font-size: 22px !important;
+          line-height: 1.25 !important;
+          color: var(--text) !important;
+          max-width: 780px !important;
+        }
+
+        .public-home__hero-actions {
+          display: flex;
+          gap: 12px;
+          flex-wrap: wrap;
+          padding-top: 6px;
+        }
+
+        .public-home__button {
+          appearance: none;
+          border: 1px solid transparent;
+          border-radius: 999px;
+          padding: 14px 18px;
+          text-decoration: none;
+          font-size: 14px;
+          font-weight: 700;
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .public-home__button--primary {
+          background: var(--red);
+          color: #fff;
+        }
+
+        .public-home__button--secondary {
+          background: transparent;
+          color: var(--text);
+          border-color: var(--border);
+        }
+
+        .public-home__hero-note {
+          max-width: 620px;
+          font-size: 13px !important;
+          color: var(--text-muted) !important;
+        }
+
+        .public-home__hero-visual {
+          display: grid;
+          gap: 16px;
+          padding: 22px;
+          border: 1px solid var(--border);
+          background: rgba(255, 255, 255, 0.72);
+          border-radius: 24px;
+        }
+
+        .public-home__pipeline {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+          gap: 12px;
+          align-items: stretch;
+        }
+
+        .public-home__pipeline-node {
+          min-height: 116px;
+          padding: 16px;
+          border-radius: 18px;
+          border: 1px solid var(--border);
+          background: linear-gradient(180deg, #ffffff 0%, #f7f4ee 100%);
+          display: flex;
+          align-items: flex-end;
+          font-size: 15px;
+          line-height: 1.25;
+          letter-spacing: -0.01em;
+          font-weight: 650;
+        }
+
+        .public-home__pipeline-arrow {
+          display: grid;
+          place-items: center;
+          color: var(--text-muted);
+          font-size: 20px;
+          font-weight: 700;
+        }
+
+        .public-home__hero-trust {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 12px;
+        }
+
+        .public-home__trust-tile {
+          padding: 14px 16px;
+          border-radius: 18px;
+          border: 1px solid var(--border);
+          background: var(--surface);
+        }
+
+        .public-home__trust-tile p {
+          margin: 0;
+          font-size: 13px;
+          line-height: 1.55;
+          color: var(--text-muted);
+        }
+
+        .public-home__trust-tile strong {
+          display: block;
+          margin-bottom: 6px;
+          color: var(--text);
+        }
+
+        .public-home__section {
+          padding-top: 44px;
+          margin-top: 42px;
+          border-top: 1px solid rgba(11, 13, 15, 0.1);
+        }
+
+        .public-home__heading {
+          display: grid;
+          gap: 10px;
+          max-width: 820px;
+          margin-bottom: 20px;
+        }
+
+        .public-home__heading h2 {
+          margin: 0;
+          font-size: clamp(28px, 3vw, 42px);
+          line-height: 1.02;
+          letter-spacing: -0.03em;
+          font-weight: 650;
+        }
+
+        .public-home__heading p {
+          margin: 0;
+          font-size: 16px;
+          line-height: 1.75;
+          color: var(--text-muted);
+          max-width: 720px;
+        }
+
+        .public-home__grid-3 {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 14px;
+        }
+
+        .public-home__grid-4 {
+          display: grid;
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          gap: 14px;
+        }
+
+        .public-home__card {
+          padding: 18px;
+          border-radius: 20px;
+          border: 1px solid var(--border);
+          background: var(--surface);
+          min-height: 100%;
+        }
+
+        .public-home__card h3 {
+          margin: 0 0 10px;
+          font-size: 18px;
+          line-height: 1.15;
+          letter-spacing: -0.02em;
+        }
+
+        .public-home__card p {
+          margin: 0;
+          color: var(--text-muted);
+          line-height: 1.65;
+          font-size: 14px;
+        }
+
+        .public-home__sources {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+
+        .public-home__source {
+          padding: 10px 14px;
+          border-radius: 999px;
+          background: #fff;
+          border: 1px solid var(--border);
+          font-size: 13px;
+          font-weight: 600;
+        }
+
+        .public-home__founding-list {
+          display: grid;
+          gap: 10px;
+          padding: 0;
+          margin: 0;
+          list-style: none;
+        }
+
+        .public-home__founding-list li {
+          display: flex;
+          gap: 10px;
+          align-items: flex-start;
+          color: var(--text);
+          line-height: 1.55;
+        }
+
+        .public-home__founding-list svg {
+          flex: 0 0 auto;
+          margin-top: 2px;
+          color: var(--green);
+        }
+
+        .public-home__final-cta {
+          margin-top: 48px;
+          padding: 28px;
+          border-radius: 28px;
+          background: var(--surface-dark);
+          color: #f4f1ea;
+          display: grid;
+          gap: 18px;
+        }
+
+        .public-home__final-cta .public-home__eyebrow,
+        .public-home__final-cta p,
+        .public-home__final-cta h2 {
+          color: inherit;
+        }
+
+        .public-home__final-cta .public-home__heading p {
+          color: rgba(244, 241, 234, 0.78);
+        }
+
+        .public-home__final-actions {
+          display: flex;
+          gap: 12px;
+          flex-wrap: wrap;
+        }
+
+        .public-home__final-actions .public-home__button--secondary {
+          color: #f4f1ea;
+          border-color: rgba(244, 241, 234, 0.18);
+        }
+
+        .public-home__mono {
+          font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+          font-size: 12px;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+        }
+
+        @media (max-width: 980px) {
+          .public-home__hero,
+          .public-home__grid-4,
+          .public-home__grid-3 {
+            grid-template-columns: 1fr;
+          }
+
+          .public-home__pipeline {
+            grid-template-columns: 1fr;
+          }
+
+          .public-home__pipeline-arrow {
+            display: none;
+          }
+
+          .public-home__hero-trust {
+            grid-template-columns: 1fr;
+          }
+        }
+
         @media (max-width: 640px) {
-          .public-home .public-home__shell { width: min(100% - 18px, 1360px); padding: 16px 0 44px; }
-          .public-home .public-home__header { gap: 16px; margin-bottom: 28px; }
-          .public-home .public-home__card-list { gap: 8px; }
-          .public-home .public-home__hero > div,
-          .public-home .public-home__hero-aside > div,
-          .public-home .public-home__stack > article,
-          .public-home .public-home__stack--privacy > article,
-          .public-home .public-home__stack--workflow > div { min-width: 0; }
+          .public-home__shell {
+            width: min(100% - 18px, 1240px);
+            padding: 16px 0 48px;
+          }
+
+          .public-home__hero-copy h2 {
+            font-size: clamp(40px, 12vw, 64px);
+          }
+
+          .public-home__hero-lead {
+            font-size: 19px !important;
+          }
+
+          .public-home__final-cta {
+            padding: 22px;
+            border-radius: 24px;
+          }
         }
       `}</style>
+
       <div className="public-home__shell">
         <header className="public-home__header">
-          <div style={{ display: 'grid', gap: 8 }}>
-            <p style={{ margin: 0, textTransform: 'uppercase', letterSpacing: '0.16em', color: 'var(--color-text-muted, #98a2b3)', fontSize: 11 }}>{copy.header.eyebrow}</p>
-            <h1 style={{ margin: '6px 0 0', fontSize: 19, fontWeight: 620, letterSpacing: '-0.01em' }}>{copy.header.title}</h1>
-            {user ? (
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, width: 'fit-content', padding: '6px 10px', borderRadius: 999, border: '1px solid rgba(148, 163, 184, 0.22)', background: 'rgba(255,255,255,0.03)', color: '#e2e8f0', fontSize: 12, fontWeight: 650 }}>
-                <ShieldCheck size={13} />
-                <span>{copy.header.signedInCue}</span>
+          <div className="public-home__brand">
+            <p className="public-home__eyebrow">{copy.header.eyebrow}</p>
+            <h1>{copy.header.title}</h1>
+            {isSignedIn ? (
+              <span className="public-home__signed-in">
+                <ShieldCheck size={14} />
+                {copy.header.signedInCue}
               </span>
             ) : null}
           </div>
-          <div style={{ display: 'grid', justifyItems: 'end', gap: 12 }}>
-            <nav style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-              <a href="/founding-nodes" style={{ textDecoration: 'none' }}><Pill><NotebookText size={14} /> {copy.nav.foundingNodes}</Pill></a>
-              <a href="/login" style={{ textDecoration: 'none' }}><Pill><PlayCircle size={14} /> {copy.nav.login}</Pill></a>
-              <a href="#designs" style={{ textDecoration: 'none' }}><Pill><Layers3 size={14} /> {copy.nav.stack}</Pill></a>
+
+          <div className="public-home__header-actions">
+            <nav className="public-home__nav" aria-label="Public landing actions">
+              <a className="public-home__pill" href="/trial">
+                <NotebookText size={14} />
+                {copy.nav.earlyAccess}
+              </a>
+              <a className="public-home__pill" href="/founding-nodes">
+                <Layers3 size={14} />
+                {copy.nav.foundingNode}
+              </a>
+              <a className="public-home__pill" href="/login">
+                <ArrowRight size={14} />
+                {copy.nav.signIn}
+              </a>
             </nav>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 999, border: '1px solid rgba(148,163,184,0.18)', background: 'rgba(255,255,255,0.03)' }}>
-              <span style={{ color: 'var(--color-text-muted, #98a2b3)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 700 }}>{copy.nav.language}</span>
+            <div className="public-home__language">
+              <span className="public-home__language-label">{copy.nav.language}</span>
               <LanguageSwitcher />
             </div>
           </div>
         </header>
 
         <section className="public-home__hero">
-          <div style={{ borderRadius: 30, padding: '24px clamp(18px, 3.2vw, 32px)', background: 'linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015))', border: '1px solid rgba(148,163,184,0.12)', boxShadow: '0 24px 80px rgba(0,0,0,0.18)' }}>
-            <p style={{ margin: 0, color: 'var(--public-accent, #8f1d2a)', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{copy.hero.eyebrow}</p>
-            <h2 style={{ margin: '14px 0 14px', fontSize: 'clamp(34px, 4.8vw, 56px)', lineHeight: 0.94, maxWidth: 720, fontWeight: 680, letterSpacing: '-0.03em' }}>{copy.hero.title}</h2>
-            <p style={{ margin: '0 0 18px', fontSize: 17, lineHeight: 1.75, color: 'var(--color-text-muted, #98a2b3)', maxWidth: 760 }}>
-              {copy.hero.subtitle}
-            </p>
-
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
-              {copy.hero.valueProps.map(item => <Pill key={item}>{item}</Pill>)}
+          <div className="public-home__hero-copy">
+            <p className="public-home__eyebrow">{copy.hero.eyebrow}</p>
+            <h2>{copy.hero.title}</h2>
+            <p>{copy.hero.subtitle}</p>
+            <p className="public-home__hero-lead">{copy.hero.lead}</p>
+            <p className="public-home__hero-note">{copy.hero.support}</p>
+            <p className="public-home__hero-note">{copy.hero.privacy}</p>
+            <div className="public-home__hero-actions">
+              <a className="public-home__button public-home__button--primary" href="/trial">
+                {copy.hero.primaryCta}
+                <ArrowRight size={16} />
+              </a>
+              <a className="public-home__button public-home__button--secondary" href="/founding-nodes">
+                {copy.hero.secondaryCta}
+              </a>
             </div>
-
-            <div style={{ display: 'grid', gap: 8, marginBottom: 16 }}>
-              {copy.hero.questions.map(question => (
-                <div key={question} style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--color-text, #eef1f8)', fontSize: 15 }}>
-                  <CheckCircle2 size={16} color="var(--public-accent, #8f1d2a)" />
-                  <span>{question}</span>
-                </div>
-              ))}
-            </div>
-
-            <p style={{ margin: '0 0 20px', lineHeight: 1.75, color: 'var(--color-text-muted, #98a2b3)', maxWidth: 700 }}>
-              {copy.hero.body}
-            </p>
-
-            <div style={{ display: 'grid', gap: 12 }}>
-              {resumeFirst ? (
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, width: 'fit-content', padding: '8px 12px', borderRadius: 999, border: '1px solid rgba(148, 163, 184, 0.22)', background: 'rgba(255,255,255,0.04)', color: '#e2e8f0', fontSize: 13, fontWeight: 650 }}>
-                  <ShieldCheck size={14} />
-                  <span>{copy.hero.resumeIndicator}</span>
-                </div>
-              ) : null}
-
-            <div className="public-home__card-list">
-              {heroCtas.map(cta => (
-                <a
-                  key={cta.href}
-                  href={cta.href}
-                  style={{
-                    textDecoration: 'none',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 10,
-                    padding: cta.primary ? '14px 18px' : '10px 0',
-                    borderRadius: cta.primary ? 14 : 0,
-                    background: cta.primary ? 'linear-gradient(135deg, var(--public-accent, #8f1d2a), #5d1220)' : 'transparent',
-                    border: cta.primary ? '1px solid rgba(255,255,255,0.08)' : 'none',
-                    color: cta.primary ? '#fff' : 'var(--color-text-muted, #98a2b3)',
-                    fontWeight: cta.primary ? 700 : 600,
-                    borderBottom: cta.primary ? 'none' : '1px solid rgba(148,163,184,0.18)',
-                    boxShadow: cta.primary ? '0 16px 40px rgba(143,29,42,0.14)' : 'none',
-                  }}
-                >
-                  {cta.label} {cta.icon}
-                </a>
-              ))}
-              </div>
-            </div>
-            <p style={{ margin: '14px 0 0', fontSize: 12, lineHeight: 1.7, color: 'var(--color-text-muted, #98a2b3)', maxWidth: 620 }}>
-              {copy.hero.note}
-            </p>
           </div>
 
-          <aside id="hero-visual" className="public-home__hero-aside">
-            <KddHeroVisual
-              active={sectionActive('designs')}
-              mode={sectionMode('designs')}
-              emphasis={sectionMode('designs')}
-              selectedId={selectedId}
-              reducedMotion={reducedMotion}
-              subtitle={visual.subtitle}
-              phrase={visual.phrase}
-            />
-            <div style={{ borderTop: '1px solid rgba(148,163,184,0.14)', paddingTop: 18 }}>
-              <p style={{ margin: 0, color: 'var(--public-accent, #8f1d2a)', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{copy.foundingPanel.eyebrow}</p>
-              <h3 style={{ margin: '12px 0 14px', fontSize: 24, letterSpacing: '-0.02em' }}>{copy.foundingPanel.title}</h3>
-              <div style={{ display: 'grid', gap: 10, marginBottom: 18 }}>
-                {copy.foundingPanel.rows.map(row => (
-                  <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, paddingBottom: 10, borderBottom: '1px solid rgba(148,163,184,0.14)' }}>
-                    <span style={{ color: 'var(--color-text-muted, #98a2b3)' }}>{row.label}</span>
-                    <strong style={{ textAlign: 'right' }}>{row.value}</strong>
-                  </div>
-                ))}
+          <aside className="public-home__hero-visual" aria-label="Telemetry decision flow">
+            <div className="public-home__pipeline">
+              <PipelineNode label={copy.pipeline.source} />
+              <div className="public-home__pipeline-arrow">→</div>
+              <PipelineNode label={copy.pipeline.layer} />
+              <div className="public-home__pipeline-arrow">→</div>
+              <PipelineNode label={copy.pipeline.outcomes} />
+              <div className="public-home__pipeline-arrow">→</div>
+              <PipelineNode label={copy.pipeline.network} />
+            </div>
+            <div className="public-home__hero-trust">
+              <div className="public-home__trust-tile">
+                <strong>ECU / Logger / GPS / IMU / Video / CSV</strong>
+                <p>Telemetry stays where it belongs: at the source.</p>
               </div>
-              <p style={{ margin: 0, lineHeight: 1.65, color: 'var(--color-text-muted, #98a2b3)' }}>{copy.foundingPanel.body}</p>
+              <div className="public-home__trust-tile">
+                <strong>Decision layer</strong>
+                <p>KDD interprets, decides and turns signal into action.</p>
+              </div>
+              <div className="public-home__trust-tile">
+                <strong>Network learning</strong>
+                <p>What travels is knowledge, not raw data.</p>
+              </div>
             </div>
           </aside>
         </section>
 
-        <section id="designs" data-section="designs" data-testid="section-designs" ref={bindSection('designs')} {...sectionEvents('designs')} style={sectionFrameStyle('designs')}>
-          <div className="public-home__split">
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 14, alignItems: 'flex-start', flexWrap: 'wrap' }}>
-                <SectionTitle eyebrow={copy.designs.eyebrow} title={copy.designs.title} body={copy.designs.body} />
-                <button type="button" aria-pressed={sectionActive('designs')} aria-label="Activate designs diagram" {...sectionSelectionProps('designs')} style={diagramButtonStyle(sectionActive('designs'), hoveredSection === 'designs')}>
-                  Activate designs diagram
-                </button>
-              </div>
-              <DesignsCanvas
-                title={copy.designs.title}
-                subtitle={copy.designs.body}
-                cards={copy.designs.cards}
-                networkBody={copy.network.body}
-                steps={['Aprendizaje privado', 'Detectar patrones', 'Explicar causa']}
-                active={sectionActive('designs')}
-                mode={sectionMode('designs')}
-                selectedId={selectedId}
-                reducedMotion={reducedMotion}
-                isActive={sectionActive('designs')}
-                emphasis={sectionMode('designs')}
-              />
-            </div>
-            <div className="public-home__stack">
-              {copy.designs.cards.map(card => (
-                <article key={card.title} style={{ paddingTop: 12, borderTop: '1px solid rgba(148,163,184,0.18)' }}>
-                  <p style={{ margin: 0, color: 'var(--public-accent, #8f1d2a)', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{card.eyebrow}</p>
-                  <h3 style={{ margin: '8px 0 6px', fontSize: 18, lineHeight: 1.15, letterSpacing: '-0.015em' }}>{card.title}</h3>
-                  <p style={{ margin: 0, color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.6 }}>{card.body}</p>
-                </article>
-              ))}
-            </div>
+        <SectionBlock
+          id="no-somos-telemetria"
+          heading={{ eyebrow: copy.sections.noTelemetry.eyebrow, title: copy.sections.noTelemetry.title, body: copy.sections.noTelemetry.body }}
+        >
+          <div className="public-home__grid-3">
+            {copy.sections.noTelemetry.cards.map(card => <Card key={card.title} {...card} />)}
           </div>
-        </section>
+        </SectionBlock>
 
-        <section data-section="privacy" data-testid="section-privacy" ref={bindSection('privacy')} {...sectionEvents('privacy')} style={sectionFrameStyle('privacy')}>
-          <div className="public-home__split public-home__split--privacy">
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 14, alignItems: 'flex-start', flexWrap: 'wrap' }}>
-                <SectionTitle eyebrow={copy.privacy.eyebrow} title={copy.privacy.title} body={copy.privacy.body} />
-                <button type="button" aria-pressed={sectionActive('privacy')} aria-label="Activate privacy diagram" {...sectionSelectionProps('privacy')} style={diagramButtonStyle(sectionActive('privacy'), hoveredSection === 'privacy')}>
-                  Activate privacy diagram
-                </button>
-              </div>
-              <PrivacyCanvas
-                title={copy.privacy.title}
-                subtitle={copy.privacy.body}
-                cards={copy.privacy.cards}
-                principles={copy.privacy.principles}
-                active={sectionActive('privacy')}
-                mode={sectionMode('privacy')}
-                selectedId={selectedId}
-                reducedMotion={reducedMotion}
-                isActive={sectionActive('privacy')}
-                emphasis={sectionMode('privacy')}
-              />
-            </div>
-            <div className="public-home__stack public-home__stack--privacy">
-              {copy.privacy.cards.map((card, index) => (
-                <article key={card.title} style={{ paddingTop: 14, borderTop: `1px solid ${index === 0 ? 'rgba(148,163,184,0.22)' : index === 1 ? 'rgba(165,180,252,0.24)' : 'rgba(134,239,172,0.22)'}` }}>
-                  <p style={{ margin: 0, color: index === 0 ? 'var(--public-accent, #8f1d2a)' : 'var(--public-text-muted, #5f6875)', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{card.title}</p>
-                  <p style={{ margin: '8px 0 0', color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.6 }}>{card.body}</p>
-                </article>
-              ))}
-              <div style={{ display: 'grid', gap: 8, paddingTop: 4 }}>
-                {copy.privacy.principles.map(item => (
-                  <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--color-text, #eef1f8)', fontSize: 15 }}>
-                    <CheckCircle2 size={16} color="var(--public-accent, #8f1d2a)" />
-                    <span>{item}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+        <SectionBlock
+          id="sistemas"
+          heading={{ eyebrow: copy.sections.systems.eyebrow, title: copy.sections.systems.title, body: copy.sections.systems.body }}
+        >
+          <div className="public-home__sources" aria-label="Telemetry systems">
+            {copy.sections.systems.sources.map(source => <span key={source} className="public-home__source">{source}</span>)}
           </div>
-        </section>
+        </SectionBlock>
 
-        <section data-section="workflow" data-testid="section-workflow" ref={bindSection('workflow')} {...sectionEvents('workflow')} style={sectionFrameStyle('workflow')}>
-          <div className="public-home__split public-home__split--workflow">
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 14, alignItems: 'flex-start', flexWrap: 'wrap' }}>
-                <SectionTitle eyebrow={copy.workflow.eyebrow} title={copy.workflow.title} body={copy.workflow.body} />
-                <button type="button" aria-pressed={sectionActive('workflow')} aria-label="Activate workflow diagram" {...sectionSelectionProps('workflow')} style={diagramButtonStyle(sectionActive('workflow'), hoveredSection === 'workflow')}>
-                  Activate workflow diagram
-                </button>
-              </div>
-              <WorkflowCanvas
-                title={copy.workflow.title}
-                subtitle={copy.workflow.body}
-                steps={copy.workflow.steps}
-                active={sectionActive('workflow')}
-                mode={sectionMode('workflow')}
-                selectedId={selectedId}
-                reducedMotion={reducedMotion}
-                isActive={sectionActive('workflow')}
-                emphasis={sectionMode('workflow')}
-              />
-            </div>
-            <div className="public-home__stack public-home__stack--workflow">
-              {copy.workflow.steps.map((step, index) => (
-                <div key={step} style={{ paddingTop: 12, borderTop: '1px solid rgba(148,163,184,0.14)' }}>
-                  <div style={{ color: 'var(--public-accent, #8f1d2a)', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 11, fontWeight: 700, marginBottom: 8 }}>0{index + 1}</div>
-                  <div style={{ fontWeight: 700, marginBottom: 6 }}>{step}</div>
-                  <div style={{ color: 'var(--color-text-muted, #98a2b3)', lineHeight: 1.5 }}>{index === 0 ? 'Telemetry and context' : index === 1 ? 'Choose the next decision' : index === 2 ? 'Share what is allowed' : 'Validate the outcome'}</div>
-                </div>
-              ))}
-            </div>
+        <SectionBlock
+          id="decisiones"
+          heading={{ eyebrow: copy.sections.decisions.eyebrow, title: copy.sections.decisions.title, body: copy.sections.decisions.body }}
+        >
+          <div className="public-home__grid-3">
+            {copy.sections.decisions.cards.map(card => <Card key={card.title} {...card} />)}
           </div>
-        </section>
+        </SectionBlock>
 
-        <section className="public-home__access">
-          <div>
-            <SectionTitle eyebrow={copy.access.eyebrow} title={copy.access.title} body={copy.access.body} />
-            <div style={{ display: 'grid', gap: 10, marginBottom: 20 }}>
-              <div style={{ paddingTop: 10, borderTop: '1px solid rgba(148,163,184,0.14)' }}>
-                <div style={{ color: 'var(--public-accent, #8f1d2a)', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 11, fontWeight: 700 }}>01</div>
-                <div style={{ fontWeight: 700, marginTop: 6 }}>{copy.access.trialCta}</div>
-              </div>
-              <div style={{ paddingTop: 10, borderTop: '1px solid rgba(148,163,184,0.14)' }}>
-                <div style={{ color: 'var(--public-text-muted, #5f6875)', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 11, fontWeight: 700 }}>02</div>
-                <div style={{ fontWeight: 700, marginTop: 6 }}>{copy.access.eyebrow}</div>
-              </div>
-              <div style={{ paddingTop: 10, borderTop: '1px solid rgba(148,163,184,0.14)' }}>
-                <div style={{ color: 'var(--public-text-muted, #5f6875)', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 11, fontWeight: 700 }}>03</div>
-                <div style={{ fontWeight: 700, marginTop: 6 }}>{copy.access.foundingCta}</div>
-              </div>
-            </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-              <a href="/trial" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 14, background: 'linear-gradient(135deg, var(--public-accent, #8f1d2a), #5d1220)', color: '#fff', fontWeight: 700, boxShadow: '0 16px 40px rgba(143,29,42,0.14)' }}>
-                {copy.access.trialCta} <PlayCircle size={16} />
-              </a>
-              <a href="/login" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 0', color: 'var(--color-text-muted, #98a2b3)', fontWeight: 600, borderBottom: '1px solid rgba(148,163,184,0.2)' }}>
-                {copy.access.foundingCta} <ShieldCheck size={16} />
-              </a>
-            </div>
+        <SectionBlock
+          id="t15-bucine"
+          heading={{ eyebrow: copy.sections.example.eyebrow, title: copy.sections.example.title, body: copy.sections.example.body }}
+        >
+          <div className="public-home__grid-4">
+            {copy.sections.example.cards.map(card => <Card key={card.title} {...card} />)}
           </div>
+        </SectionBlock>
 
-          <div>
-            <p style={{ margin: 0, color: 'var(--public-accent, #8f1d2a)', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 11, fontWeight: 700 }}>{copy.closing.eyebrow}</p>
-            <h3 style={{ margin: '12px 0 0', fontSize: 28, lineHeight: 1.1 }}>{copy.closing.title}</h3>
-            <p style={{ margin: '16px 0 0', fontSize: 18, lineHeight: 1.65, color: 'var(--color-text-muted, #98a2b3)' }}>{copy.closing.body}</p>
-            <ClosingDiagram />
+        <SectionBlock
+          id="knowledge-network"
+          heading={{ eyebrow: copy.sections.network.eyebrow, title: copy.sections.network.title, body: copy.sections.network.body }}
+        >
+          <div className="public-home__grid-3">
+            {copy.sections.network.cards.map(card => <Card key={card.title} {...card} />)}
+          </div>
+        </SectionBlock>
+
+        <SectionBlock
+          id="node-types"
+          heading={{ eyebrow: copy.sections.nodeTypes.eyebrow, title: copy.sections.nodeTypes.title, body: '' }}
+        >
+          <div className="public-home__grid-3">
+            {copy.sections.nodeTypes.cards.map(card => <Card key={card.title} {...card} />)}
+          </div>
+        </SectionBlock>
+
+        <SectionBlock
+          id="audience"
+          heading={{ eyebrow: copy.sections.audience.eyebrow, title: copy.sections.audience.title, body: '' }}
+        >
+          <div className="public-home__grid-4">
+            {copy.sections.audience.cards.map(card => <Card key={card.title} {...card} />)}
+          </div>
+        </SectionBlock>
+
+        <SectionBlock
+          id="founding-nodes"
+          heading={{ eyebrow: copy.sections.founding.eyebrow, title: copy.sections.founding.title, body: copy.sections.founding.body }}
+        >
+          <ul className="public-home__founding-list">
+            {copy.sections.founding.bullets.map(bullet => (
+              <li key={bullet}>
+                <CheckCircle2 size={16} />
+                <span>{bullet}</span>
+              </li>
+            ))}
+          </ul>
+        </SectionBlock>
+
+        <section className="public-home__final-cta" id="final-cta">
+          <SectionHeading eyebrow={copy.sections.finalCta.eyebrow} title={copy.sections.finalCta.title} body={copy.sections.finalCta.body} />
+          <div className="public-home__final-actions">
+            <a className="public-home__button public-home__button--primary" href="/trial">
+              {copy.hero.primaryCta}
+              <ArrowRight size={16} />
+            </a>
+            <a className="public-home__button public-home__button--secondary" href="/founding-nodes">
+              {copy.hero.secondaryCta}
+            </a>
           </div>
         </section>
       </div>

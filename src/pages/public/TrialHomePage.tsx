@@ -42,7 +42,8 @@ export function TrialHomePage() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const formData = new FormData(form);
 
     setStatus('loading');
     setMessage('');
@@ -65,9 +66,9 @@ export function TrialHomePage() {
       });
       setStatus('success');
       setMessage(copy.success);
-      event.currentTarget.reset();
+      form.reset();
       localStorage.setItem('kdd-profile', 'founding-node');
-      goTo('/app');
+      goTo('/founding-node-thanks');
     } catch (error) {
       setStatus('error');
       setMessage(error instanceof Error ? error.message : copy.error);
