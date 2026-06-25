@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { Zap, MapPin, ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
 import { useGarage } from '../hooks/useGarage';
 import { useSessionContext } from '../hooks/useSessionContext';
-import { buildEventEngine, severityColor, categoryColor, EVENT_CATEGORIES, TelemetryEvent, EventCategory } from '../domain/eventEngine';
+import { buildEventEngine, severityColor, categoryColor, EVENT_CATEGORIES, EventCategory } from '../domain/eventEngine';
 
 const MONO = 'JetBrains Mono, monospace';
 type Filter = 'all' | 'critical' | 'resolved' | EventCategory;

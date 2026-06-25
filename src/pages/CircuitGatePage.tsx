@@ -15,7 +15,7 @@
 import { useMemo, useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Search, MapPin, CheckCircle2, XCircle, ChevronRight, Plus, Bot, Gauge,
+  Search, CheckCircle2, XCircle, ChevronRight, Plus, Bot, Gauge,
   Mountain, Route, Radar, ShieldAlert, Wrench, Upload, Eye, FlaskConical,
   Loader2, ArrowLeft, Flag,
 } from 'lucide-react';

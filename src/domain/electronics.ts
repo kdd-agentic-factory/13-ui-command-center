@@ -50,7 +50,6 @@ export function buildElectronics(rider: string, bike: string, circuit: string, t
     { aid: 'Slide control', level: 2, max: 8, status: 'aggressive', note: 'Permissive — rewards a rider who steers on the throttle.' },
   ].map(a => ({ ...a, status: aidStatus(a.level, a.max) }));
 
-  const cornerTypes: Array<CornerElectronics['type']> = ['slow', 'medium', 'fast'];
   const corners: CornerElectronics[] = [
     { corner: 'T1 · slow hairpin', type: 'slow', tc: 5, antiWheelie: 4, engineBrake: 6, note: 'High TC + AW: low grip, big lean-to-upright on exit.' },
     { corner: `T${Math.max(4, Math.round(turns * 0.35))} · medium`, type: 'medium', tc: 4, antiWheelie: 3, engineBrake: 5, note: 'Balanced — let it drive.' },

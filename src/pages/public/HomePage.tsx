@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, CheckCircle2, Layers3, NotebookText, ShieldCheck, Users } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Layers3, NotebookText, ShieldCheck } from 'lucide-react';
 
 import { LanguageSwitcher } from '../../components/LanguageSwitcher';
 import { useAuth } from '../../context/AuthContext';
@@ -345,10 +345,6 @@ function Card({ title, body }: SectionCard) {
       <p>{body}</p>
     </article>
   );
-}
-
-function Pill({ children }: { children: ReactNode }) {
-  return <span className="public-home__pill">{children}</span>;
 }
 
 function PipelineNode({ label }: { label: string }) {

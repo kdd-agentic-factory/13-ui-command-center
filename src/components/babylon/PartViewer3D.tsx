@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  Engine, Scene, ArcRotateCamera, HemisphericLight, DirectionalLight, Vector3,
+  Scene, ArcRotateCamera, HemisphericLight, DirectionalLight, Vector3,
   MeshBuilder, StandardMaterial, Color3, Color4, VertexBuffer, VertexData, Mesh,
 } from '@babylonjs/core';
 import { createSafeEngine } from './safeEngine';

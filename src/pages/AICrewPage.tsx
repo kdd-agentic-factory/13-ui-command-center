@@ -20,7 +20,6 @@ import {
 } from 'lucide-react';
 import { useNavigate } from '../context/NavContext';
 import { useGarage } from '../hooks/useGarage';
-import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 import { getActiveCircuit } from '../domain/circuits';
 
 interface Advisor {

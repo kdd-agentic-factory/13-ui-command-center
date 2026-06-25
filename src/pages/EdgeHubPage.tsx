@@ -6,7 +6,7 @@
  * video sync, edge↔cloud sync, edge/cloud AI split, sim-to-real live check,
  * security and the session buffer. Offline-first, low-latency, multi-device.
  */
-import { Radio, Wifi, WifiOff, CheckCircle2, AlertTriangle, Cloud, Cpu, Lock } from 'lucide-react';
+import { Radio, Wifi, CheckCircle2, AlertTriangle, Cloud, Cpu, Lock } from 'lucide-react';
 import { useGarage } from '../hooks/useGarage';
 import { useSessionContext } from '../hooks/useSessionContext';
 import { buildEdgeHub, deviceColor } from '../domain/edgeHub';

@@ -5,7 +5,7 @@
  * (laps above the line), the lap pressure curve, the dirty-air effect and the
  * weekend tyre allocation — keeping you legal while you lead.
  */
-import { Gauge, ShieldCheck, Wind, Circle, ListChecks } from 'lucide-react';
+import { Gauge, ShieldCheck, Wind, Circle } from 'lucide-react';
 import { useGarage } from '../hooks/useGarage';
 import { useSessionContext } from '../hooks/useSessionContext';
 import { buildTyrePressure, complianceColor } from '../domain/tyrePressure';

@@ -39,19 +39,6 @@ function lossColor(l: number): string {
   return 'var(--green)';
 }
 
-// Catmull-Rom → cubic-bezier smooth closed path through the corner pins.
-function smoothLoop(pts: CornerMap[]): string {
-  const n = pts.length;
-  let d = `M ${pts[0].x} ${pts[0].y} `;
-  for (let i = 0; i < n; i++) {
-    const p0 = pts[(i - 1 + n) % n], p1 = pts[i], p2 = pts[(i + 1) % n], p3 = pts[(i + 2) % n];
-    const c1x = p1.x + (p2.x - p0.x) / 6, c1y = p1.y + (p2.y - p0.y) / 6;
-    const c2x = p2.x - (p3.x - p1.x) / 6, c2y = p2.y - (p3.y - p1.y) / 6;
-    d += `C ${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${p2.x} ${p2.y} `;
-  }
-  return d + 'Z';
-}
-
 // Real traced Mugello layout fitted to this 400×290 viewBox; corner pins are
 // re-projected onto it (raw-outline index → fraction → nearest sample), so
 // the ribbon and the pins share the SAME real geometry.

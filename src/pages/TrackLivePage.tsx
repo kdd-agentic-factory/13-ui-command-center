@@ -20,7 +20,6 @@ import { activeRaceLaps, sampleOutline } from '../domain/circuitDatasets';
 
 // ── Mugello circuit data ────────────────────────────────────────────────────
 
-const RACE_LAPS = MUGELLO_CIRCUIT.raceLaps; // Mugello default; header uses the active circuit
 const MUGELLO_TRACK_KM = MUGELLO_CIRCUIT.lengthKm;
 const MUGELLO_TURNS = MUGELLO_CIRCUIT.turns;
 const MUGELLO_MAIN_STRAIGHT_M = MUGELLO_CIRCUIT.mainStraightKm * 1000;
