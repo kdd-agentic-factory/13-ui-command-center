@@ -20,7 +20,7 @@ describe('Moto Intelligence positioning', () => {
 
     render(<App />);
 
-    expect(screen.getByRole('heading', { name: 'KDD Moto Intelligence' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'KDD Knowledge Network' })).toBeInTheDocument();
     expect(await screen.findByText('Decision Intelligence Layer for Motorcycle Performance')).toBeInTheDocument();
   });
 
@@ -29,7 +29,7 @@ describe('Moto Intelligence positioning', () => {
 
     render(<App />);
 
-    expect(screen.getByRole('heading', { name: 'KDD Moto Intelligence' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'KDD Knowledge Network' })).toBeInTheDocument();
     expect(await screen.findByText('Decision Intelligence Layer for Motorcycle Performance')).toBeInTheDocument();
   });
 });

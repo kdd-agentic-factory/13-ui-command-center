@@ -1,9 +1,9 @@
 /**
- * RaceControlPage — KDD Race Control & Compliance.
+ * RaceControlPage â€” KDD Race Control & Compliance.
  *
  * The team's officiating surface: flag state, the track-limit count creeping
  * toward a long-lap penalty, penalties pending/served, incidents under
- * investigation and the scrutineering / parc-fermé checklist — so a result
+ * investigation and the scrutineering / parc-fermÃ© checklist â€” so a result
  * isn't lost to a rule that could have been managed.
  */
 import { Gavel, Flag, AlertTriangle, ClipboardCheck, ListChecks } from 'lucide-react';
@@ -28,7 +28,7 @@ export function RaceControlPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><Gavel size={18} /> Race Control & Compliance</h1>
-          <p className="page-subtitle">Track limits, penalties & scrutineering — {r.combo}</p>
+          <p className="page-subtitle">Track limits, penalties & scrutineering â€” {r.combo}</p>
         </div>
         <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
           <div style={{ textAlign: 'right' }}>
@@ -43,15 +43,17 @@ export function RaceControlPage() {
       </div>
 
       {/* verdict */}
-      <div className="card mb-4" style={{ padding: 14, borderLeft: `3px solid ${checkColor(r.penaltyRisk)}` }}>
+      <div className="card mb-4" style={{ padding: 14,
+ }}>
         <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 4 }}>KDD verdict</div>
         <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)' }}>{r.verdict}</div>
         <div style={{ fontSize: 11, color: 'var(--accent)', marginTop: 4, fontStyle: 'italic' }}>{r.punchline}</div>
       </div>
 
       {/* track limits */}
-      <div className="card mb-4" style={{ padding: 16, borderLeft: `3px solid ${checkColor(r.trackLimits.status)}` }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}><AlertTriangle size={14} style={{ color: checkColor(r.trackLimits.status) }} /><span style={hdr}>Track limits · {r.trackLimits.warnings} / {r.trackLimits.limit} strikes</span></div>
+      <div className="card mb-4" style={{ padding: 16,
+ }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}><AlertTriangle size={14} style={{ color: checkColor(r.trackLimits.status) }} /><span style={hdr}>Track limits Â· {r.trackLimits.warnings} / {r.trackLimits.limit} strikes</span></div>
         <div style={{ display: 'flex', gap: 6, marginBottom: 10 }}>
           {Array.from({ length: r.trackLimits.limit }, (_, i) => (
             <span key={i} style={{ flex: 1, height: 10, borderRadius: 3, background: i < r.trackLimits.warnings ? checkColor(r.trackLimits.status) : 'var(--border)' }} />
@@ -90,7 +92,7 @@ export function RaceControlPage() {
               <span style={{ fontFamily: MONO, fontSize: 9, color: 'var(--text-muted)', width: 36 }}>L{inc.lap}</span>
               <div>
                 <div style={{ color: 'var(--text)' }}>{inc.type}</div>
-                <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>→ {inc.outcome}</div>
+                <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>â†’ {inc.outcome}</div>
               </div>
             </div>
           ))}
@@ -100,7 +102,7 @@ export function RaceControlPage() {
       {/* scrutineering + recommendations */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.1fr', gap: 14, marginTop: 14 }}>
         <div className="card" style={{ padding: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}><ClipboardCheck size={14} style={{ color: 'var(--cyan)' }} /><span style={hdr}>Scrutineering · parc fermé</span></div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}><ClipboardCheck size={14} style={{ color: 'var(--cyan)' }} /><span style={hdr}>Scrutineering Â· parc fermÃ©</span></div>
           {r.scrutineering.map(c => (
             <div key={c.item} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 10.5, marginBottom: 5 }}>
               <span style={{ width: 8, height: 8, borderRadius: 999, background: checkColor(c.status), flexShrink: 0 }} />

@@ -1,5 +1,5 @@
 /**
- * RiderLearningPathPage — Rider Learning Path.
+ * RiderLearningPathPage â€” Rider Learning Path.
  *
  * A medium-term development plan for the active rider+bike: skill scores, the
  * active training block (focus + drills + success criteria), session-over-
@@ -53,7 +53,7 @@ export function RiderLearningPathPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><GraduationCap size={18} /> Rider Learning Path</h1>
-          <p className="page-subtitle">Development plan from telemetry, style & past sessions · {lp.combo}</p>
+          <p className="page-subtitle">Development plan from telemetry, style & past sessions Â· {lp.combo}</p>
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Current level</div>
@@ -64,7 +64,7 @@ export function RiderLearningPathPage() {
 
       {lp.telemetryLimited && (
         <div style={{ marginBottom: 14, padding: '8px 12px', borderRadius: 8, background: 'rgba(252,211,77,0.07)', border: '1px solid rgba(252,211,77,0.3)', fontSize: 10.5, color: 'var(--text)' }}>
-          GPS-only bike — throttle / lean / exit-drive scores are estimated (marked EST). The active block trains a measurable skill only.
+          GPS-only bike â€” throttle / lean / exit-drive scores are estimated (marked EST). The active block trains a measurable skill only.
         </div>
       )}
 
@@ -81,7 +81,8 @@ export function RiderLearningPathPage() {
 
         {/* Active block + progress + oracle */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          <div className="card" style={{ padding: 16, borderLeft: '3px solid var(--cyan)' }}>
+          <div className="card" style={{ padding: 16,
+ }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
               <Dumbbell size={15} style={{ color: 'var(--cyan)' }} />
               <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Active training block</span>
@@ -96,7 +97,7 @@ export function RiderLearningPathPage() {
             </ol>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginTop: 10 }}>
               {lp.activeBlock.successCriteria.map(c => (
-                <span key={c} style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--green)', border: '1px solid rgba(0,230,118,0.3)', borderRadius: 5, padding: '2px 7px' }}>✓ {c}</span>
+                <span key={c} style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--green)', border: '1px solid rgba(0,230,118,0.3)', borderRadius: 5, padding: '2px 7px' }}>âœ“ {c}</span>
               ))}
             </div>
           </div>
@@ -104,11 +105,11 @@ export function RiderLearningPathPage() {
           <div className="card" style={{ padding: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
               <TrendingUp size={15} style={{ color: 'var(--green)' }} />
-              <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Progress update · {lp.progress.skill}</span>
+              <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Progress update Â· {lp.progress.skill}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
               <span style={{ fontSize: 13, fontFamily: MONO, color: 'var(--text-muted)' }}>{lp.progress.previous}</span>
-              <span style={{ color: 'var(--text-muted)' }}>→</span>
+              <span style={{ color: 'var(--text-muted)' }}>â†’</span>
               <span style={{ fontSize: 22, fontWeight: 800, fontFamily: MONO, color: 'var(--text)' }}>{lp.progress.current}</span>
               <span style={{ fontSize: 12, fontFamily: MONO, color: 'var(--green)' }}>+{lp.progress.delta}</span>
             </div>
@@ -118,8 +119,8 @@ export function RiderLearningPathPage() {
 
           <div className="card" style={{ padding: 16, background: 'rgba(139,92,246,0.06)', border: '1px solid rgba(139,92,246,0.3)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-              <Sparkles size={15} style={{ color: '#8B5CF6' }} />
-              <span style={{ fontSize: 9, fontFamily: MONO, color: '#8B5CF6', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Oracle training verdict</span>
+              <Sparkles size={15} style={{ color: 'var(--violet)' }} />
+              <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--violet)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Oracle training verdict</span>
             </div>
             <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>{lp.oracle.doNot}</div>
             <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>Priority: <span style={{ color: 'var(--text)' }}>{lp.oracle.priority}</span></div>
@@ -137,7 +138,7 @@ export function RiderLearningPathPage() {
         <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Next milestone</span>
         <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', flex: 1 }}>{lp.nextMilestone}</span>
         <button onClick={() => navigate('ghost-lap')} style={{ fontSize: 10, fontFamily: MONO, color: 'var(--cyan)', background: 'none', border: '1px solid rgba(0,183,255,0.3)', borderRadius: 5, padding: '4px 9px', cursor: 'pointer' }}>
-          train vs Ghost Lap →
+          train vs Ghost Lap â†’
         </button>
       </div>
     </div>

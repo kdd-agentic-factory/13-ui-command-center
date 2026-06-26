@@ -49,9 +49,9 @@ export function PrivacyCanvas({ title, subtitle, cards, principles, active, mode
   };
 
   const slots = [
-    { x: 64, y: 182, w: 286, h: 156, stroke: 'rgba(148,163,184,0.2)', accent: '#5f6875', label: 'LOCAL' },
-    { x: 850, y: 182, w: 286, h: 156, stroke: 'rgba(143,29,42,0.22)', accent: '#8f1d2a', label: 'TEAM' },
-    { x: 376, y: 480, w: 448, h: 142, stroke: 'rgba(199,204,212,0.2)', accent: '#c7ccd4', label: 'FEDERATED' },
+    { x: 64, y: 182, w: 286, h: 156, stroke: 'rgba(148,163,184,0.2)', accent: 'var(--text-muted)', label: 'LOCAL' },
+    { x: 850, y: 182, w: 286, h: 156, stroke: 'rgba(143,29,42,0.22)', accent: 'var(--accent)', label: 'TEAM' },
+    { x: 376, y: 480, w: 448, h: 142, stroke: 'rgba(199,204,212,0.2)', accent: 'var(--text-dim)', label: 'FEDERATED' },
   ];
 
   const nodes = [
@@ -299,7 +299,7 @@ export function PrivacyCanvas({ title, subtitle, cards, principles, active, mode
             const lines = wrapSvgText(item, 28, 2);
             return (
               <g key={item}>
-                <circle cx={x} cy={582} r="6" fill={index === 0 ? '#5f6875' : index === 1 ? '#8f1d2a' : '#c7ccd4'} />
+                <circle cx={x} cy={582} r="6" fill={index === 0 ? 'var(--text-muted)' : index === 1 ? 'var(--accent)' : 'var(--text-dim)'} />
                 <text x={x + 14} y={578} fill="#c7ccd4" fontSize="11">
                   {lines.map((line, lineIndex) => (
                     <tspan key={`${line}-${lineIndex}`} x={x + 14} dy={lineIndex === 0 ? 0 : 14}>{line}</tspan>
@@ -339,7 +339,7 @@ export function PrivacyCanvas({ title, subtitle, cards, principles, active, mode
                 borderRadius: 26,
                 border: isPressed ? '1px solid rgba(226,232,240,0.58)' : '1px solid rgba(148,163,184,0.18)',
                 background: isPressed ? 'rgba(99,102,241,0.18)' : 'rgba(8,12,20,0.08)',
-                color: '#eef1f8',
+                color: 'var(--text)',
                 display: 'flex',
                 alignItems: 'flex-end',
                 justifyContent: 'flex-start',
@@ -353,7 +353,7 @@ export function PrivacyCanvas({ title, subtitle, cards, principles, active, mode
               <span style={{ display: 'grid', gap: 2, textAlign: 'left' }}>
                 <span style={{ fontSize: 12, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--public-accent, #8f1d2a)', fontWeight: 700 }}>{slot.label}</span>
                 <span style={{ fontSize: 14, fontWeight: 700 }}>{card.title}</span>
-                <span style={{ fontSize: 11, color: isPressed ? '#e2e8f0' : '#c7ccd4' }}>{isPressed ? 'Selected' : 'Activate'}</span>
+                <span style={{ fontSize: 11, color: isPressed ? '#e2e8f0' : 'var(--text-dim)' }}>{isPressed ? 'Selected' : 'Activate'}</span>
               </span>
             </button>
           );

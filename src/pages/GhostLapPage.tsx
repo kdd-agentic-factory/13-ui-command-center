@@ -1,11 +1,11 @@
 /**
- * GhostLapPage — Ghost Lap & Ideal Line Simulator.
+ * GhostLapPage Ã¢â‚¬â€ Ghost Lap & Ideal Line Simulator.
  *
  * Compete against your ideal lap, not just the clock. Pick a ghost mode
  * (best / ideal / coach / rival / twin / safety / tyre), see the cumulative
  * gap build corner by corner, inspect a selected corner's line + throttle +
  * exit delta with a coach instruction, and let the Oracle pick the smartest
- * ghost — which is not always the fastest one.
+ * ghost Ã¢â‚¬â€ which is not always the fastest one.
  */
 import { useState } from 'react';
 import { Ghost, ChevronRight, Sparkles } from 'lucide-react';
@@ -19,7 +19,7 @@ export function GhostLapPage() {
   const garage = useGarage();
   const { ctx } = useSessionContext();
   const [modeId, setModeId] = useState('ideal-personal');
-  const [cornerIdx, setCornerIdx] = useState(3); // T15 Bucine — the main loss
+  const [cornerIdx, setCornerIdx] = useState(3); // T15 Bucine Ã¢â‚¬â€ the main loss
 
   const gl = buildGhostLap(
     garage.profile.rider.name,
@@ -36,11 +36,11 @@ export function GhostLapPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><Ghost size={18} /> Ghost Lap Simulator</h1>
-          <p className="page-subtitle">Ideal line · telemetry overlay · AI coaching · risk-aware reference — {gl.combo}</p>
+          <p className="page-subtitle">Ideal line Ã‚Â· telemetry overlay Ã‚Â· AI coaching Ã‚Â· risk-aware reference Ã¢â‚¬â€ {gl.combo}</p>
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Potential gain</div>
-          <div style={{ fontSize: 18, fontWeight: 800, fontFamily: MONO, color: 'var(--green)' }}>−{gl.potentialGain.toFixed(3)}s</div>
+          <div style={{ fontSize: 18, fontWeight: 800, fontFamily: MONO, color: 'var(--green)' }}>Ã¢Ë†â€™{gl.potentialGain.toFixed(3)}s</div>
         </div>
       </div>
 
@@ -51,7 +51,7 @@ export function GhostLapPage() {
           return (
             <button key={m.id} onClick={() => setModeId(m.id)} title={m.desc}
               style={{
-                fontSize: 10.5, fontFamily: MONO, padding: '5px 10px', borderRadius: 6, cursor: 'pointer',
+                fontSize: 10.5, fontFamily: MONO, padding: '5px 10px', borderRadius: 'var(--radius)', cursor: 'pointer',
                 background: active ? 'rgba(0,183,255,0.12)' : 'transparent',
                 border: `1px solid ${active ? 'var(--cyan)' : 'var(--border)'}`,
                 color: active ? 'var(--cyan)' : 'var(--text-muted)',
@@ -78,7 +78,7 @@ export function GhostLapPage() {
         </div>
         <div>
           <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Ghost lap</div>
-          <div style={{ fontSize: 18, fontFamily: MONO, color: '#8B5CF6' }}>{gl.ghostLap}</div>
+          <div style={{ fontSize: 18, fontFamily: MONO, color: 'var(--violet)' }}>{gl.ghostLap}</div>
         </div>
         <div>
           <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Main loss</div>
@@ -86,7 +86,7 @@ export function GhostLapPage() {
         </div>
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 14, fontSize: 10 }}>
           <span><span style={{ display: 'inline-block', width: 16, height: 3, background: 'var(--cyan)', verticalAlign: 'middle', marginRight: 5 }} />Your line</span>
-          <span><span style={{ display: 'inline-block', width: 16, height: 3, background: '#8B5CF6', verticalAlign: 'middle', marginRight: 5 }} />Ghost ideal</span>
+          <span><span style={{ display: 'inline-block', width: 16, height: 3, background: 'var(--violet)', verticalAlign: 'middle', marginRight: 5 }} />Ghost ideal</span>
         </div>
       </div>
 
@@ -104,7 +104,7 @@ export function GhostLapPage() {
               <span style={{ width: 56, textAlign: 'right', fontSize: 10.5, fontFamily: MONO, color: p.gap === 0 ? 'var(--text-muted)' : 'var(--accent)' }}>+{p.gap.toFixed(3)}</span>
             </div>
           ))}
-          <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 6 }}>This is where the lap time is built — click a corner to inspect it.</div>
+          <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 6 }}>This is where the lap time is built Ã¢â‚¬â€ click a corner to inspect it.</div>
 
           <div style={{ marginTop: 14 }}>
             <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>Telemetry overlays</div>
@@ -113,7 +113,7 @@ export function GhostLapPage() {
                 const est = gl.estimatedOverlays.includes(c);
                 return (
                   <span key={c} style={{ fontSize: 9.5, fontFamily: MONO, color: est ? 'var(--text-muted)' : 'var(--text)', border: `1px solid ${est ? 'var(--border)' : 'rgba(0,183,255,0.3)'}`, borderRadius: 5, padding: '2px 7px' }}>
-                    {c}{est ? ' · est' : ''}
+                    {c}{est ? ' Ã‚Â· est' : ''}
                   </span>
                 );
               })}
@@ -139,13 +139,13 @@ export function GhostLapPage() {
             <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--text)', marginBottom: 8 }}>{corner.corner} <span style={{ fontSize: 12, fontFamily: MONO, color: 'var(--accent)' }}>+{corner.delta.toFixed(3)}s</span></div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 14px', fontSize: 11 }}>
               <div><span style={{ color: 'var(--text-muted)' }}>Your line: </span><span style={{ color: 'var(--cyan)' }}>{corner.yourLine}</span></div>
-              <div><span style={{ color: 'var(--text-muted)' }}>Ghost line: </span><span style={{ color: '#8B5CF6' }}>{corner.ghostLine}</span></div>
+              <div><span style={{ color: 'var(--text-muted)' }}>Ghost line: </span><span style={{ color: 'var(--violet)' }}>{corner.ghostLine}</span></div>
               <div><span style={{ color: 'var(--text-muted)' }}>Your throttle: </span><span style={{ color: 'var(--text)' }}>{corner.yourThrottle}</span></div>
               <div><span style={{ color: 'var(--text-muted)' }}>Ghost throttle: </span><span style={{ color: 'var(--text)' }}>{corner.ghostThrottle}</span></div>
               <div><span style={{ color: 'var(--text-muted)' }}>Your exit: </span><span style={{ fontFamily: MONO, color: 'var(--text)' }}>{corner.yourExit} km/h</span></div>
               <div><span style={{ color: 'var(--text-muted)' }}>Ghost exit: </span><span style={{ fontFamily: MONO, color: 'var(--green)' }}>{corner.ghostExit} km/h</span></div>
             </div>
-            <div style={{ marginTop: 10, padding: '8px 11px', borderRadius: 6, background: 'rgba(0,183,255,0.06)', border: '1px solid rgba(0,183,255,0.2)', fontSize: 11.5, color: 'var(--text)' }}>
+            <div style={{ marginTop: 10, padding: '8px 11px', borderRadius: 'var(--radius)', background: 'rgba(0,183,255,0.06)', border: '1px solid rgba(0,183,255,0.2)', fontSize: 11.5, color: 'var(--text)' }}>
               <ChevronRight size={12} style={{ verticalAlign: -2, color: 'var(--cyan)' }} /> {corner.coach}
             </div>
           </div>
@@ -164,8 +164,8 @@ export function GhostLapPage() {
           {/* Oracle recommendation */}
           <div className="card" style={{ padding: 16, background: 'rgba(139,92,246,0.06)', border: '1px solid rgba(139,92,246,0.3)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-              <Sparkles size={15} style={{ color: '#8B5CF6' }} />
-              <span style={{ fontSize: 9, fontFamily: MONO, color: '#8B5CF6', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Oracle ghost recommendation</span>
+              <Sparkles size={15} style={{ color: 'var(--violet)' }} />
+              <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--violet)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Oracle ghost recommendation</span>
             </div>
             <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--text)' }}>{gl.oracle.ghost}</div>
             <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>{gl.oracle.reason}</div>

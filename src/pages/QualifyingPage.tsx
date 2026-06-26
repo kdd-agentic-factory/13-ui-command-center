@@ -1,9 +1,9 @@
 /**
- * QualifyingPage — KDD Qualifying Lab (the single-lap discipline).
+ * QualifyingPage â€” KDD Qualifying Lab (the single-lap discipline).
  *
  * The ideal lap reconstructed from your best sectors vs pole, the time left on
  * the table, the tow plan, the tyre prep / out-lap, the track-evolution window
- * and the Q1/Q2 run plan — ending in the lap you already have.
+ * and the Q1/Q2 run plan â€” ending in the lap you already have.
  */
 import { Timer, Wind, Circle, TrendingUp, ListChecks, Target } from 'lucide-react';
 import { useGarage } from '../hooks/useGarage';
@@ -28,7 +28,7 @@ export function QualifyingPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><Timer size={18} /> Qualifying Lab</h1>
-          <p className="page-subtitle">The single-lap discipline — {q.combo}</p>
+          <p className="page-subtitle">The single-lap discipline â€” {q.combo}</p>
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Pole probability</div>
@@ -37,7 +37,8 @@ export function QualifyingPage() {
       </div>
 
       {/* verdict */}
-      <div className="card mb-4" style={{ padding: 14, borderLeft: '3px solid var(--accent)' }}>
+      <div className="card mb-4" style={{ padding: 14,
+ }}>
         <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 4 }}>KDD verdict</div>
         <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)' }}>{q.verdict}</div>
         <div style={{ fontSize: 11, color: 'var(--accent)', marginTop: 4, fontStyle: 'italic' }}>{q.punchline}</div>
@@ -48,13 +49,13 @@ export function QualifyingPage() {
         {[['Pole ref', fmtLap(q.poleRef)], ['Your best', fmtLap(q.yourBest)], ['Gap to pole', `${q.gapToPole >= 0 ? '+' : ''}${q.gapToPole.toFixed(3)}`], ['Ideal lap', fmtLap(q.theoreticalBest)], ['On the table', `${q.timeOnTable.toFixed(3)}s`]].map(([k, v]) => (
           <div key={k as string}><div style={{ fontSize: 15, fontWeight: 800, fontFamily: MONO, color: k === 'Ideal lap' ? 'var(--green)' : 'var(--text)' }}>{v}</div><div style={{ fontSize: 8.5, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>{k}</div></div>
         ))}
-        {q.poleInReach && <div style={{ marginLeft: 'auto', fontSize: 10, fontFamily: MONO, color: 'var(--green)', border: '1px solid var(--green)', borderRadius: 4, padding: '3px 8px' }}>POLE IN REACH — IDEAL LAP BEATS POLE</div>}
+        {q.poleInReach && <div style={{ marginLeft: 'auto', fontSize: 10, fontFamily: MONO, color: 'var(--green)', border: '1px solid var(--green)', borderRadius: 4, padding: '3px 8px' }}>POLE IN REACH â€” IDEAL LAP BEATS POLE</div>}
       </div>
 
       {/* sectors + tow */}
       <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 14 }}>
         <div className="card" style={{ padding: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}><Target size={14} style={{ color: 'var(--cyan)' }} /><span style={hdr}>Sector splits · your best vs pole vs ideal</span></div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}><Target size={14} style={{ color: 'var(--cyan)' }} /><span style={hdr}>Sector splits Â· your best vs pole vs ideal</span></div>
           {q.sectors.map(s => {
             const delta = Math.round((s.yourBest - s.pole) * 1000) / 1000;
             const onTable = Math.round((s.yourBest - s.yourIdeal) * 1000) / 1000;
@@ -64,16 +65,17 @@ export function QualifyingPage() {
                 <span style={{ fontFamily: MONO, fontSize: 10, color: 'var(--text)', width: 56, textAlign: 'right' }}>{s.yourBest.toFixed(2)}</span>
                 <span style={{ fontFamily: MONO, fontSize: 9, color: 'var(--text-muted)', width: 56, textAlign: 'right' }}>P {s.pole.toFixed(2)}</span>
                 <span style={{ fontFamily: MONO, fontSize: 10, color: delta <= 0 ? 'var(--green)' : 'var(--accent)', width: 54, textAlign: 'right' }}>{delta >= 0 ? '+' : ''}{delta.toFixed(3)}</span>
-                <span style={{ fontFamily: MONO, fontSize: 9, color: onTable > 0 ? 'var(--yellow)' : 'var(--text-muted)', flex: 1, textAlign: 'right' }}>{onTable > 0 ? `−${onTable.toFixed(3)} to find` : 'maxed'}</span>
+                <span style={{ fontFamily: MONO, fontSize: 9, color: onTable > 0 ? 'var(--yellow)' : 'var(--text-muted)', flex: 1, textAlign: 'right' }}>{onTable > 0 ? `âˆ’${onTable.toFixed(3)} to find` : 'maxed'}</span>
               </div>
             );
           })}
-          <div style={{ fontSize: 9.5, color: 'var(--text-muted)', marginTop: 4 }}>Δ vs pole (green = ahead) · last column = time left vs your own best in that sector.</div>
+          <div style={{ fontSize: 9.5, color: 'var(--text-muted)', marginTop: 4 }}>Î” vs pole (green = ahead) Â· last column = time left vs your own best in that sector.</div>
         </div>
-        <div className="card" style={{ padding: 16, borderLeft: `3px solid ${qualityColor(q.tow.risk)}` }}>
+        <div className="card" style={{ padding: 16,
+ }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}><Wind size={14} style={{ color: 'var(--cyan)' }} /><span style={hdr}>Tow / slipstream</span></div>
-          <div style={{ fontSize: 22, fontWeight: 800, fontFamily: MONO, color: 'var(--green)' }}>−{q.tow.gainS.toFixed(2)}s</div>
-          <div style={{ fontSize: 10, fontFamily: MONO, color: 'var(--text-muted)', marginBottom: 4 }}>target on push lap {q.tow.targetLap} · risk {q.tow.risk}</div>
+          <div style={{ fontSize: 22, fontWeight: 800, fontFamily: MONO, color: 'var(--green)' }}>âˆ’{q.tow.gainS.toFixed(2)}s</div>
+          <div style={{ fontSize: 10, fontFamily: MONO, color: 'var(--text-muted)', marginBottom: 4 }}>target on push lap {q.tow.targetLap} Â· risk {q.tow.risk}</div>
           <div style={{ fontSize: 10.5, color: 'var(--text-muted)' }}>{q.tow.note}</div>
         </div>
       </div>
@@ -81,13 +83,13 @@ export function QualifyingPage() {
       {/* tyre prep + evolution */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: 14, marginTop: 14 }}>
         <div className="card" style={{ padding: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}><Circle size={14} style={{ color: 'var(--violet)' }} /><span style={hdr}>Tyre prep · {q.tyrePrep.pushLaps} push laps</span></div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}><Circle size={14} style={{ color: 'var(--violet)' }} /><span style={hdr}>Tyre prep Â· {q.tyrePrep.pushLaps} push laps</span></div>
           <div style={{ fontSize: 10.5, color: 'var(--text)', marginBottom: 4 }}><b>Out-lap:</b> {q.tyrePrep.outLap}</div>
           <div style={{ fontSize: 10.5, color: 'var(--text)', marginBottom: 4 }}><b>Window:</b> {q.tyrePrep.window}</div>
           <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{q.tyrePrep.note}</div>
         </div>
         <div className="card" style={{ padding: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}><TrendingUp size={14} style={{ color: 'var(--green)' }} /><span style={hdr}>Track evolution · pick the window</span></div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}><TrendingUp size={14} style={{ color: 'var(--green)' }} /><span style={hdr}>Track evolution Â· pick the window</span></div>
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, height: 64 }}>
             {q.evolution.map(e => {
               const h = ((e.gripPct - minGrip) / (maxGrip - minGrip || 1)) * 100;
@@ -100,7 +102,7 @@ export function QualifyingPage() {
               );
             })}
           </div>
-          <div style={{ fontSize: 9.5, color: 'var(--green)', marginTop: 4 }}>Best grip window ≈ min {q.bestWindowMin} — time the new-soft run to land here.</div>
+          <div style={{ fontSize: 9.5, color: 'var(--green)', marginTop: 4 }}>Best grip window â‰ˆ min {q.bestWindowMin} â€” time the new-soft run to land here.</div>
         </div>
       </div>
 

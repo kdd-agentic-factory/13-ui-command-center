@@ -159,7 +159,8 @@ export function LakehousePage() {
             </div>
           ))}
         </div>
-        <div className="card" style={{ padding: 16, borderLeft: '3px solid var(--cyan)' }}>
+        <div className="card" style={{ padding: 16,
+ }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}><GitBranch size={14} style={{ color: 'var(--cyan)' }} /><span style={hdr}>Feature lineage · {l.lineage.confidence}%</span></div>
           <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>{l.lineage.recommendation}</div>
           <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', margin: '6px 0 3px' }}>Based on</div>

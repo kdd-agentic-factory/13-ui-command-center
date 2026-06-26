@@ -162,7 +162,7 @@ export function DecisionCenter({ lap }: { lap: number }) {
       {open && (
         <div style={{
           position: 'fixed', top: 0, right: 0, bottom: 0, width: 420, zIndex: 95,
-          background: 'rgba(8,10,14,0.98)', borderLeft: '1px solid var(--border)',
+          background: 'rgba(8,10,14,0.98)',
           boxShadow: '-16px 0 48px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column',
           animation: 'riseIn 0.25s var(--ease-out) both',
         }}>

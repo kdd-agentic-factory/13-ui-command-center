@@ -1,15 +1,15 @@
 /**
- * ToastProvider — global notification system for race-critical alerts.
+ * ToastProvider â€” global notification system for race-critical alerts.
  *
  * Usage:
  *   const { toast } = useToast();
- *   toast({ type: 'critical', title: 'Rear Grip Cliff', message: 'Lap 11 approaching — pit now.' });
+ *   toast({ type: 'critical', title: 'Rear Grip Cliff', message: 'Lap 11 approaching â€” pit now.' });
  *
  * Types: 'critical' | 'warning' | 'success' | 'info'
  */
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
 
-// ── Types ──────────────────────────────────────────────────────────────────────
+// â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export type ToastType = 'critical' | 'warning' | 'success' | 'info';
 
@@ -24,44 +24,44 @@ interface ToastCtx {
   toast: (t: Omit<Toast, 'id'>) => void;
 }
 
-// ── Context ────────────────────────────────────────────────────────────────────
+// â”€â”€ Context â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const Ctx = createContext<ToastCtx>({ toast: () => {} });
 export const useToast = () => useContext(Ctx);
 
-// ── Styling maps ───────────────────────────────────────────────────────────────
+// â”€â”€ Styling maps â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const COLORS: Record<ToastType, { bg: string; border: string; titleColor: string; icon: string }> = {
   critical: {
     bg: 'rgba(224,55,55,0.15)',
     border: 'rgba(224,55,55,0.45)',
-    titleColor: '#E03737',
-    icon: '🚨',
+    titleColor: 'var(--accent)',
+    icon: 'ðŸš¨',
   },
   warning: {
     bg: 'rgba(245,158,11,0.12)',
     border: 'rgba(245,158,11,0.40)',
-    titleColor: '#F59E0B',
-    icon: '⚠',
+    titleColor: 'var(--yellow)',
+    icon: 'âš ',
   },
   success: {
     bg: 'rgba(34,197,94,0.12)',
     border: 'rgba(34,197,94,0.40)',
-    titleColor: '#22C55E',
-    icon: '✓',
+    titleColor: 'var(--green)',
+    icon: 'âœ“',
   },
   info: {
     bg: 'rgba(59,130,246,0.12)',
     border: 'rgba(59,130,246,0.40)',
-    titleColor: '#3B82F6',
-    icon: 'ℹ',
+    titleColor: 'var(--blue)',
+    icon: 'â„¹',
   },
 };
 
 const TOAST_DURATION_MS = 4500;
 const MAX_VISIBLE = 5;
 
-// ── Provider ───────────────────────────────────────────────────────────────────
+// â”€â”€ Provider â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -78,7 +78,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <Ctx.Provider value={{ toast }}>
       {children}
 
-      {/* ── Toast portal ─────────────────────────────────────────────────── */}
+      {/* â”€â”€ Toast portal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div
         aria-live="assertive"
         aria-atomic="false"

@@ -4,7 +4,7 @@ import {
   Loader, RefreshCw, Server, ShieldCheck, Database,
 } from 'lucide-react';
 
-// ── Project constants ─────────────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Project constants Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 const PROJECT_ID = '03aba6c5-1146-4dde-848e-528daa1bab11';
 const fly = (name: string) => `https://${name}-${PROJECT_ID}.fly.dev`;
 
@@ -25,36 +25,36 @@ const RACE = (name: string) => `https://kdd-rjz-${name}.fly.dev`;
 
 const SERVICES: ServiceStatus[] = [
   // Core
-  { group: 'Core',       name: 'InsForge API',            url: 'https://vdf553wq.eu-central.insforge.app',  status: 'up', probe: 'registry', latency: '42ms',  latencyMs: 42,  description: 'Database · Auth · AI Gateway' },
-  { group: 'Core',       name: 'InsForge Dashboard',      url: 'https://vdf553wq.insforge.site',            status: 'up', probe: 'registry', latency: '—',    latencyMs: 0,   description: 'Frontend deployment (Vercel)' },
+  { group: 'Core',       name: 'InsForge API',            url: 'https://vdf553wq.eu-central.insforge.app',  status: 'up', probe: 'registry', latency: '42ms',  latencyMs: 42,  description: 'Database Ã‚Â· Auth Ã‚Â· AI Gateway' },
+  { group: 'Core',       name: 'InsForge Dashboard',      url: 'https://vdf553wq.insforge.site',            status: 'up', probe: 'registry', latency: 'Ã¢â‚¬â€',    latencyMs: 0,   description: 'Frontend deployment (Vercel)' },
   // InsForge Compute (managed)
-  { group: 'Compute',    name: 'Agent Orchestrator',      url: fly('agent-orchestrator'), status: 'up', probe: 'registry', latency: '140ms', latencyMs: 140, description: 'Multi-agent coordination · Task routing' },
-  { group: 'Compute',    name: 'MCP Gateway',             url: fly('mcp-gateway'),        status: 'up', probe: 'registry', latency: '120ms', latencyMs: 120, description: 'Tool access · External APIs' },
-  { group: 'Compute',    name: 'KDD Governance',          url: fly('kdd-governance'),     status: 'up', probe: 'registry', latency: '100ms', latencyMs: 100, description: 'Policy · Guardrails · Actor roles' },
-  { group: 'Compute',    name: 'KDD Pipelines',           url: fly('kdd-pipelines'),      status: 'up', probe: 'registry', latency: '110ms', latencyMs: 110, description: 'Feature extraction · Mining · Preprocessing' },
-  { group: 'Compute',    name: 'KDD Telemetry',           url: fly('kdd-telemetry'),      status: 'up', probe: 'registry', latency: '95ms',  latencyMs: 95,  description: 'Telemetry · Historical data' },
+  { group: 'Compute',    name: 'Agent Orchestrator',      url: fly('agent-orchestrator'), status: 'up', probe: 'registry', latency: '140ms', latencyMs: 140, description: 'Multi-agent coordination Ã‚Â· Task routing' },
+  { group: 'Compute',    name: 'MCP Gateway',             url: fly('mcp-gateway'),        status: 'up', probe: 'registry', latency: '120ms', latencyMs: 120, description: 'Tool access Ã‚Â· External APIs' },
+  { group: 'Compute',    name: 'KDD Governance',          url: fly('kdd-governance'),     status: 'up', probe: 'registry', latency: '100ms', latencyMs: 100, description: 'Policy Ã‚Â· Guardrails Ã‚Â· Actor roles' },
+  { group: 'Compute',    name: 'KDD Pipelines',           url: fly('kdd-pipelines'),      status: 'up', probe: 'registry', latency: '110ms', latencyMs: 110, description: 'Feature extraction Ã‚Â· Mining Ã‚Â· Preprocessing' },
+  { group: 'Compute',    name: 'KDD Telemetry',           url: fly('kdd-telemetry'),      status: 'up', probe: 'registry', latency: '95ms',  latencyMs: 95,  description: 'Telemetry Ã‚Â· Historical data' },
   // Race & Command (Fly.io external)
-  { group: 'Race',       name: 'Race Command Center',     url: RACE('race'),              status: 'up', probe: 'registry', latency: '150ms', latencyMs: 150, description: 'Race ops · Flag management · Live timing' },
-  { group: 'Race',       name: 'Race AI Copilot',         url: RACE('copilot'),           status: 'up', probe: 'registry', latency: '180ms', latencyMs: 180, description: 'AI strategy · Chat · Lap analysis' },
-  { group: 'Race',       name: 'Digital Twin Lab',        url: RACE('digital-twin'),      status: 'up', probe: 'registry', latency: '210ms', latencyMs: 210, description: 'Simulation · Scenario runs · What-if' },
+  { group: 'Race',       name: 'Race Command Center',     url: RACE('race'),              status: 'up', probe: 'registry', latency: '150ms', latencyMs: 150, description: 'Race ops Ã‚Â· Flag management Ã‚Â· Live timing' },
+  { group: 'Race',       name: 'Race AI Copilot',         url: RACE('copilot'),           status: 'up', probe: 'registry', latency: '180ms', latencyMs: 180, description: 'AI strategy Ã‚Â· Chat Ã‚Â· Lap analysis' },
+  { group: 'Race',       name: 'Digital Twin Lab',        url: RACE('digital-twin'),      status: 'up', probe: 'registry', latency: '210ms', latencyMs: 210, description: 'Simulation Ã‚Â· Scenario runs Ã‚Â· What-if' },
   // Agents (Fly.io external)
-  { group: 'Agents',     name: 'RAG / CAG Knowledge',     url: RACE('rag'),               status: 'up', probe: 'registry', latency: '160ms', latencyMs: 160, description: 'Embeddings · Vector search · CAG retrieval' },
-  { group: 'Agents',     name: 'Skills & Auto-Skills',    url: RACE('skills'),            status: 'up', probe: 'registry', latency: '130ms', latencyMs: 130, description: 'AI skill registry · Auto-registration' },
-  { group: 'Agents',     name: 'Documentation Agent',     url: RACE('docs'),              status: 'up', probe: 'registry', latency: '140ms', latencyMs: 140, description: 'Automated docs · KB generation' },
+  { group: 'Agents',     name: 'RAG / CAG Knowledge',     url: RACE('rag'),               status: 'up', probe: 'registry', latency: '160ms', latencyMs: 160, description: 'Embeddings Ã‚Â· Vector search Ã‚Â· CAG retrieval' },
+  { group: 'Agents',     name: 'Skills & Auto-Skills',    url: RACE('skills'),            status: 'up', probe: 'registry', latency: '130ms', latencyMs: 130, description: 'AI skill registry Ã‚Â· Auto-registration' },
+  { group: 'Agents',     name: 'Documentation Agent',     url: RACE('docs'),              status: 'up', probe: 'registry', latency: '140ms', latencyMs: 140, description: 'Automated docs Ã‚Â· KB generation' },
   // Governance (Fly.io external)
-  { group: 'Governance', name: 'Agentic Workflows',       url: RACE('workflows'),         status: 'up', probe: 'registry', latency: '145ms', latencyMs: 145, description: 'Workflow orchestration · DAG execution' },
-  { group: 'Governance', name: 'Experimentation Lab',     url: RACE('experiments'),       status: 'up', probe: 'registry', latency: '155ms', latencyMs: 155, description: 'A/B tests · ML experiment tracking' },
-  { group: 'Governance', name: 'Security & Compliance',   url: RACE('security'),          status: 'up', probe: 'registry', latency: '135ms', latencyMs: 135, description: 'RBAC · Audit · Policy enforcement' },
+  { group: 'Governance', name: 'Agentic Workflows',       url: RACE('workflows'),         status: 'up', probe: 'registry', latency: '145ms', latencyMs: 145, description: 'Workflow orchestration Ã‚Â· DAG execution' },
+  { group: 'Governance', name: 'Experimentation Lab',     url: RACE('experiments'),       status: 'up', probe: 'registry', latency: '155ms', latencyMs: 155, description: 'A/B tests Ã‚Â· ML experiment tracking' },
+  { group: 'Governance', name: 'Security & Compliance',   url: RACE('security'),          status: 'up', probe: 'registry', latency: '135ms', latencyMs: 135, description: 'RBAC Ã‚Â· Audit Ã‚Â· Policy enforcement' },
   // Other
-  { group: 'Other',      name: 'Paper Reproducibility',   url: RACE('paper-kit'),         status: 'up', probe: 'registry', latency: '—',    latencyMs: 0,   description: 'LaTeX reproducibility kit (batch)' },
+  { group: 'Other',      name: 'Paper Reproducibility',   url: RACE('paper-kit'),         status: 'up', probe: 'registry', latency: 'Ã¢â‚¬â€',    latencyMs: 0,   description: 'LaTeX reproducibility kit (batch)' },
 ];
 
-// Values are fully masked on purpose — never echo real key fragments in the UI.
+// Values are fully masked on purpose Ã¢â‚¬â€ never echo real key fragments in the UI.
 const API_KEYS = [
-  { name: 'InsForge API Key',     envKey: 'VITE_INSFORGE_ANON_KEY', value: '••••••••', status: 'set' },
-  { name: 'OpenRouter API Key',   envKey: 'VITE_OPENROUTER_KEY',    value: '••••••••', status: 'set' },
-  { name: 'KDD Internal API Key', envKey: 'VITE_KDD_INTERNAL_KEY',  value: '••••••••', status: 'set' },
-  { name: 'PostHog API Key',      envKey: 'VITE_POSTHOG_KEY',       value: '••••••••', status: 'set' },
+  { name: 'InsForge API Key',     envKey: 'VITE_INSFORGE_ANON_KEY', value: 'Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢', status: 'set' },
+  { name: 'OpenRouter API Key',   envKey: 'VITE_OPENROUTER_KEY',    value: 'Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢', status: 'set' },
+  { name: 'KDD Internal API Key', envKey: 'VITE_KDD_INTERNAL_KEY',  value: 'Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢', status: 'set' },
+  { name: 'PostHog API Key',      envKey: 'VITE_POSTHOG_KEY',       value: 'Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢', status: 'set' },
 ];
 
 const DATA_CONFIG = [
@@ -65,7 +65,7 @@ const DATA_CONFIG = [
   { name: 'Max tokens (chat)',       value: '1024',         note: 'Per response' },
   { name: 'Infrastructure',         value: 'Hybrid',       note: 'InsForge Compute + Fly.io kdd-rjz-*' },
   { name: 'Frontend deploy',        value: 'Vercel',       note: 'vdf553wq.insforge.site' },
-  { name: 'Services online',        value: '17/17',        note: 'Registry healthy · browser probes for core only' },
+  { name: 'Services online',        value: '17/17',        note: 'Registry healthy Ã‚Â· browser probes for core only' },
 ];
 
 const GROUPS = ['Core', 'Compute', 'Race', 'Agents', 'Governance', 'Other'];
@@ -79,7 +79,7 @@ const GROUP_ICONS: Record<string, React.ReactNode> = {
   Other:      <Database size={12} />,
 };
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Helpers Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 function statusColor(s: SvcStatus) {
   if (s === 'up')        return 'var(--green)';
@@ -96,7 +96,7 @@ function StatusCell({ svc, live }: { svc: ServiceStatus; live?: SvcStatus }) {
   return <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Unknown</span>;
 }
 
-// ── Health Ring (SVG donut) ───────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Health Ring (SVG donut) Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 function HealthRing({ up, deploying, total }: { up: number; deploying: number; total: number }) {
   const down = total - up - deploying;
@@ -104,9 +104,9 @@ function HealthRing({ up, deploying, total }: { up: number; deploying: number; t
   const circ = 2 * Math.PI * r;
 
   const segments = [
-    { value: up,        color: '#22C55E', label: 'Online'    },
-    { value: deploying, color: '#F59E0B', label: 'Deploying' },
-    { value: down,      color: '#E03737', label: 'Offline'   },
+    { value: up,        color: 'var(--green)', label: 'Online'    },
+    { value: deploying, color: 'var(--yellow)', label: 'Deploying' },
+    { value: down,      color: 'var(--accent)', label: 'Offline'   },
   ];
 
   let offset = circ * 0.25; // start from top
@@ -167,13 +167,13 @@ function HealthRing({ up, deploying, total }: { up: number; deploying: number; t
   );
 }
 
-// ── Latency bar chart ─────────────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Latency bar chart Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 function LatencyChart({ services }: { services: ServiceStatus[] }) {
   const online = services.filter(s => s.latencyMs != null);
   if (online.length === 0) return (
     <div style={{ fontSize: 11, color: 'var(--text-muted)', padding: 16 }}>
-      No latency data — services pending
+      No latency data Ã¢â‚¬â€ services pending
     </div>
   );
   const maxMs = Math.max(...online.map(s => s.latencyMs!));
@@ -210,13 +210,13 @@ function LatencyChart({ services }: { services: ServiceStatus[] }) {
         marginTop: 10, fontSize: 10, color: 'var(--text-muted)',
         fontFamily: 'JetBrains Mono,monospace',
       }}>
-        p95 latency · green &lt; 100ms · yellow &lt; 300ms · red ≥ 300ms
+        p95 latency Ã‚Â· green &lt; 100ms Ã‚Â· yellow &lt; 300ms Ã‚Â· red Ã¢â€°Â¥ 300ms
       </div>
     </div>
   );
 }
 
-// ── Group health summary cards ────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Group health summary cards Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 function GroupHealthCards({
   services, liveStatus,
@@ -267,7 +267,7 @@ function GroupHealthCards({
   );
 }
 
-// ── Main component ────────────────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Main component Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 export function SettingsPage() {
   const [showKeys, setShowKeys]   = useState<Record<string, boolean>>({});
@@ -323,11 +323,11 @@ export function SettingsPage() {
 
   return (
     <div className="page">
-      {/* ── Header ──────────────────────────────────────────────────────────── */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ Header Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">Settings</h1>
-          <p className="page-subtitle">Service connections · API keys · Data configuration · Infrastructure health</p>
+          <p className="page-subtitle">Service connections Ã‚Â· API keys Ã‚Â· Data configuration Ã‚Â· Infrastructure health</p>
         </div>
         <div className="flex items-center gap-2">
           <span className="badge badge-green">{upCount} online</span>
@@ -339,12 +339,12 @@ export function SettingsPage() {
             disabled={checking}
           >
             <RefreshCw size={13} style={checking ? { animation: 'spin 1s linear infinite' } : undefined} />
-            {checking ? 'Checking…' : 'Refresh'}
+            {checking ? 'CheckingÃ¢â‚¬Â¦' : 'Refresh'}
           </button>
         </div>
       </div>
 
-      {/* ── Health overview row: ring + latency chart ────────────────────── */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ Health overview row: ring + latency chart Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
       <div className="grid-2 mb-4">
         <div className="card">
           <div className="card-header">
@@ -373,10 +373,10 @@ export function SettingsPage() {
         </div>
       </div>
 
-      {/* ── Group health cards ───────────────────────────────────────────── */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ Group health cards Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
       <GroupHealthCards services={SERVICES} liveStatus={liveStatus} />
 
-      {/* ── Service health table ─────────────────────────────────────────── */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ Service health table Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
       <div className="card mb-4">
         <div className="card-header">
           <span className="card-title">Service Registry</span>
@@ -409,7 +409,7 @@ export function SettingsPage() {
                         <td style={{ fontWeight: 600, width: 200 }}>{svc.name}</td>
                         <td style={{ width: 130 }}><StatusCell svc={svc} live={live} /></td>
                         <td className="mono" style={{ width: 64, color: statusColor(effectiveStatus) }}>
-                          {svc.latency ?? '—'}
+                          {svc.latency ?? 'Ã¢â‚¬â€'}
                         </td>
                         <td style={{ fontSize: 12, color: 'var(--text-muted)', width: 240 }}>
                           {svc.description}
@@ -436,7 +436,7 @@ export function SettingsPage() {
       </div>
 
       <div className="grid-2">
-        {/* ── API Keys ──────────────────────────────────────────────────────── */}
+        {/* Ã¢â€â‚¬Ã¢â€â‚¬ API Keys Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
         <div className="card">
           <div className="card-header"><span className="card-title">API Keys</span></div>
           <div>
@@ -458,7 +458,7 @@ export function SettingsPage() {
                     fontSize: 12, fontFamily: 'JetBrains Mono,monospace',
                     color: 'var(--text-muted)', border: '1px solid var(--border)',
                   }}>
-                    {showKeys[key.name] ? key.value : '•'.repeat(22)}
+                    {showKeys[key.name] ? key.value : 'Ã¢â‚¬Â¢'.repeat(22)}
                   </code>
                   <button
                     className="btn btn-ghost btn-sm"
@@ -473,7 +473,7 @@ export function SettingsPage() {
           </div>
         </div>
 
-        {/* ── Right column ──────────────────────────────────────────────────── */}
+        {/* Ã¢â€â‚¬Ã¢â€â‚¬ Right column Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {/* Data config */}
           <div className="card">
@@ -495,10 +495,10 @@ export function SettingsPage() {
             <div className="card-body" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {[
                 { k: 'Platform',        v: 'KDD Moto Intelligence' },
-                { k: 'Version',         v: 'v3.0.0 — Race Edition' },
+                { k: 'Version',         v: 'v3.0.0 Ã¢â‚¬â€ Race Edition' },
                 { k: 'Project ID',      v: PROJECT_ID },
                 { k: 'InsForge Plan',   v: 'Pro Plan' },
-                { k: 'Architecture',    v: 'Hybrid — InsForge + Fly.io' },
+                { k: 'Architecture',    v: 'Hybrid Ã¢â‚¬â€ InsForge + Fly.io' },
                 { k: 'InsForge Compute',v: '5 services managed' },
                 { k: 'Fly.io External', v: '11 services (kdd-rjz-*)' },
                 { k: 'Frontend',        v: 'vdf553wq.insforge.site' },
@@ -523,21 +523,21 @@ export function SettingsPage() {
               {deployCount > 0 ? (
                 <>
                   <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>
-                    {upCount} services running · {deployCount} pending deployment.
-                    Pro plan is active — re-run the deploy script once InsForge quota propagates.
+                    {upCount} services running Ã‚Â· {deployCount} pending deployment.
+                    Pro plan is active Ã¢â‚¬â€ re-run the deploy script once InsForge quota propagates.
                   </p>
                   <div className="insight-panel" style={{ ['--dot-color' as string]: 'var(--yellow)' }}>
                     <div className="insight-panel__title" style={{ color: 'var(--yellow)' }}>Awaiting Quota Propagation</div>
                     <p className="insight-panel__body">
-                      Pro plan upgraded. InsForge API still reports 5-service limit —
+                      Pro plan upgraded. InsForge API still reports 5-service limit Ã¢â‚¬â€
                       this typically resolves within a few minutes. Verify the plan is linked
-                      to project {PROJECT_ID.slice(0, 8)}… then re-run{' '}
+                      to project {PROJECT_ID.slice(0, 8)}Ã¢â‚¬Â¦ then re-run{' '}
                       <code>deploy_compute.py</code>.
                     </p>
                   </div>
                   <code style={{
                     display: 'block', padding: '10px 14px',
-                    background: 'var(--bg-surface)', borderRadius: 6,
+                    background: 'var(--bg-surface)', borderRadius: 'var(--radius)',
                     fontSize: 12, fontFamily: 'JetBrains Mono,monospace',
                     color: 'var(--yellow)', border: '1px solid var(--border)',
                   }}>

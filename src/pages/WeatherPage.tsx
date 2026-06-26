@@ -34,7 +34,8 @@ export function WeatherPage() {
       </div>
 
       {/* verdict */}
-      <div className="card mb-4" style={{ padding: 14, borderLeft: '3px solid var(--accent)' }}>
+      <div className="card mb-4" style={{ padding: 14,
+ }}>
         <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 4 }}>KDD verdict</div>
         <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)' }}>{w.verdict}</div>
         <div style={{ fontSize: 11, color: 'var(--accent)', marginTop: 4, fontStyle: 'italic' }}>{w.punchline}</div>
@@ -61,7 +62,8 @@ export function WeatherPage() {
 
       {/* crossover + tyres */}
       <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 14 }}>
-        <div className="card" style={{ padding: 16, borderLeft: '3px solid var(--yellow)' }}>
+        <div className="card" style={{ padding: 16,
+ }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}><Thermometer size={14} style={{ color: 'var(--yellow)' }} /><span style={hdr}>Tyre crossover</span></div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
             <span style={{ fontSize: 13, fontWeight: 800, fontFamily: MONO, color: tyreColor(w.crossover.fromTyre), textTransform: 'uppercase' }}>{w.crossover.fromTyre}</span>

@@ -1,19 +1,19 @@
 /**
- * SetupManagementPage — Garage Setup Lab: expert moto setup engineering console.
+ * SetupManagementPage Ã¢â‚¬â€ Garage Setup Lab: expert moto setup engineering console.
  *
  * Engineer review pass:
- *   • 100% moto-credible parameters — removed car-style front/rear camber,
+ *   Ã¢â‚¬Â¢ 100% moto-credible parameters Ã¢â‚¬â€ removed car-style front/rear camber,
  *     unified Rake Angle (no duplicate), aero block reframed as Aero / Ride Height.
- *   • Separates deviation, lap-time impact, confidence and risk (not just numbers).
- *   • Turns "18 modified" into decisions: contributors, interpretation, complexity,
- *     rider feedback ↔ telemetry correlation, change history and variant actions.
+ *   Ã¢â‚¬Â¢ Separates deviation, lap-time impact, confidence and risk (not just numbers).
+ *   Ã¢â‚¬Â¢ Turns "18 modified" into decisions: contributors, interpretation, complexity,
+ *     rider feedback Ã¢â€ â€ telemetry correlation, change history and variant actions.
  */
 import { useState, useCallback, useMemo } from 'react';
 import { Save, RotateCcw, CheckCircle, TrendingDown, TrendingUp, ArrowUpToLine, FileDown, AlertTriangle, History, MessageSquare } from 'lucide-react';
 import { useToast } from '../components/ToastProvider';
 import { getSessionContext } from '../domain/sessionContext';
 
-// ── Setup parameter definitions ────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Setup parameter definitions Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 interface SetupParam {
   group: string;
@@ -22,11 +22,11 @@ interface SetupParam {
   min: number; max: number;
   unit: string;
   baseline: number;
-  lapTimeImpactPerUnit: number;  // seconds per unit change (signed: + = slower, − = faster)
+  lapTimeImpactPerUnit: number;  // seconds per unit change (signed: + = slower, Ã¢Ë†â€™ = faster)
 }
 
 // Values reflect a worked Q3 setup vs the FP3 Race Baseline. Geometry is moto-real
-// (rake / trail / fork offset / swingarm pivot) — no four-wheel camber.
+// (rake / trail / fork offset / swingarm pivot) Ã¢â‚¬â€ no four-wheel camber.
 const SETUP_PARAMS: SetupParam[] = [
   // Suspension
   { group: 'Suspension', name: 'Front Spring Preload', defaultValue: 12.4, min: 8,    max: 18,   unit: 'mm',     baseline: 11.0, lapTimeImpactPerUnit: -0.008 },
@@ -45,8 +45,8 @@ const SETUP_PARAMS: SetupParam[] = [
   { group: 'Electronics', name: 'Engine Brake',        defaultValue: 4,    min: 1,    max: 9,    unit: 'EB',     baseline: 3,    lapTimeImpactPerUnit: +0.012 },
   { group: 'Electronics', name: 'Engine Map',          defaultValue: 6.2,  min: 1,    max: 9,    unit: 'MAP',    baseline: 5,    lapTimeImpactPerUnit: -0.022 },
   { group: 'Electronics', name: 'Wheelie Control',     defaultValue: 2.6,  min: 1,    max: 5,    unit: 'WC',     baseline: 2,    lapTimeImpactPerUnit: +0.008 },
-  // Geometry (moto-real — rake / trail / fork offset / swingarm pivot)
-  { group: 'Geometry', name: 'Rake Angle',             defaultValue: 23.7, min: 22,   max: 26,   unit: '°',      baseline: 23.2, lapTimeImpactPerUnit: +0.025 },
+  // Geometry (moto-real Ã¢â‚¬â€ rake / trail / fork offset / swingarm pivot)
+  { group: 'Geometry', name: 'Rake Angle',             defaultValue: 23.7, min: 22,   max: 26,   unit: 'Ã‚Â°',      baseline: 23.2, lapTimeImpactPerUnit: +0.025 },
   { group: 'Geometry', name: 'Trail',                  defaultValue: 98.4, min: 90,   max: 105,  unit: 'mm',     baseline: 96.3, lapTimeImpactPerUnit: +0.003 },
   { group: 'Geometry', name: 'Fork Offset',            defaultValue: 29.3, min: 22,   max: 34,   unit: 'mm',     baseline: 26.0, lapTimeImpactPerUnit: -0.004 },
   { group: 'Geometry', name: 'Swingarm Pivot Height',  defaultValue: 1.5,  min: -3,   max: 5,    unit: 'mm',     baseline: 0.0,  lapTimeImpactPerUnit: -0.001 },
@@ -89,23 +89,23 @@ function baselineValues(): Record<string, number> {
   return Object.fromEntries(SETUP_PARAMS.map(p => [p.name, p.baseline]));
 }
 
-// ── Setup variants ────────────────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Setup variants Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 const SETUP_VARIANTS = [
-  { name: 'Current Setup (Q3)', session: 'Q3',  lapTime: '1:33.412', status: 'Active',       cond: 'dry · 42°C' },
-  { name: 'Race Baseline',      session: 'FP3', lapTime: '1:33.847', status: 'Reference',    cond: 'dry · 38°C' },
-  { name: 'Soft Front Option',  session: 'FP2', lapTime: '1:33.201', status: 'Fastest',      cond: 'warm · 46°C' },
-  { name: 'High Grip Option',   session: 'FP1', lapTime: '1:34.102', status: 'Safe',         cond: 'cool · 31°C' },
+  { name: 'Current Setup (Q3)', session: 'Q3',  lapTime: '1:33.412', status: 'Active',       cond: 'dry Ã‚Â· 42Ã‚Â°C' },
+  { name: 'Race Baseline',      session: 'FP3', lapTime: '1:33.847', status: 'Reference',    cond: 'dry Ã‚Â· 38Ã‚Â°C' },
+  { name: 'Soft Front Option',  session: 'FP2', lapTime: '1:33.201', status: 'Fastest',      cond: 'warm Ã‚Â· 46Ã‚Â°C' },
+  { name: 'High Grip Option',   session: 'FP1', lapTime: '1:34.102', status: 'Safe',         cond: 'cool Ã‚Â· 31Ã‚Â°C' },
 ];
 
-// ── Radar chart ───────────────────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Radar chart Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 type RadarAxis = 'Stability' | 'Turn-in' | 'Braking' | 'Exit Drive' | 'Traction' | 'Top Speed';
 
 const RADAR_AXES: RadarAxis[] = ['Stability', 'Turn-in', 'Braking', 'Exit Drive', 'Traction', 'Top Speed'];
 
 function RadarChart({ values, baseline }: { values: Record<string, number>; baseline: Record<string, number> }) {
-  // Normalize each axis 0–100 from parameter changes
+  // Normalize each axis 0Ã¢â‚¬â€œ100 from parameter changes
   const axisScore = (axis: RadarAxis, vals: Record<string, number>): number => {
     const paramMap: Record<RadarAxis, string[]> = {
       Stability:   ['Front Spring Preload', 'Rear Preload', 'Rake Angle'],
@@ -185,7 +185,7 @@ function RadarChart({ values, baseline }: { values: Record<string, number>; base
   );
 }
 
-// ── Setup slider ──────────────────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Setup slider Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 interface SliderProps {
   param: SetupParam;
@@ -233,14 +233,14 @@ function SetupSlider({ param, value, onChange }: SliderProps) {
         textAlign: 'right',
         fontFamily: 'JetBrains Mono,monospace',
       }}>
-        {hasChange ? diffStr : '—'}
+        {hasChange ? diffStr : 'Ã¢â‚¬â€'}
       </span>
       <span style={{ fontSize: 11, color: 'var(--text-muted)', minWidth: 36 }}>{param.unit}</span>
     </div>
   );
 }
 
-// ── Session comparison chart ──────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Session comparison chart Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 function SessionComparisonChart() {
   const parseLap = (s: string) => {
@@ -282,13 +282,13 @@ function SessionComparisonChart() {
         );
       })}
       <div style={{ fontSize:10, color:'var(--text-muted)', marginTop:2, lineHeight:1.45 }}>
-        Soft Front Option was fastest in warmer conditions — model predicts only <strong style={{ color:'var(--yellow)' }}>62%</strong> transferability to current track temp.
+        Soft Front Option was fastest in warmer conditions Ã¢â‚¬â€ model predicts only <strong style={{ color:'var(--yellow)' }}>62%</strong> transferability to current track temp.
       </div>
     </div>
   );
 }
 
-// ── Group deviation heatmap ───────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Group deviation heatmap Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 function GroupDeviationGrid({ values }: { values: Record<string, number> }) {
   const groups = [...new Set(SETUP_PARAMS.map(p => p.group))];
@@ -325,13 +325,13 @@ function GroupDeviationGrid({ values }: { values: Record<string, number> }) {
         <span><span style={{ display:'inline-block', width:8, height:8, borderRadius:2, background:'rgba(255,255,255,0.10)', marginRight:4, verticalAlign:-1 }} />Unchanged</span>
         <span><span style={{ display:'inline-block', width:8, height:8, borderRadius:2, background:'rgba(245,158,11,0.45)', marginRight:4, verticalAlign:-1 }} />Minor deviation</span>
         <span><span style={{ display:'inline-block', width:8, height:8, borderRadius:2, background:'rgba(224,55,55,0.55)', marginRight:4, verticalAlign:-1 }} />Major deviation</span>
-        <span style={{ color:'var(--text-dim)' }}>· hover a cell for detail</span>
+        <span style={{ color:'var(--text-dim)' }}>Ã‚Â· hover a cell for detail</span>
       </div>
     </div>
   );
 }
 
-// ── Top-impact parameters ─────────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Top-impact parameters Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 function TopImpactParams({ values }: { values: Record<string, number> }) {
   const candidates = SETUP_PARAMS.map(p => {
@@ -352,7 +352,7 @@ function TopImpactParams({ values }: { values: Record<string, number> }) {
             <div style={{ display:'flex', justifyContent:'space-between', marginBottom:2 }}>
               <span style={{ fontSize:11, color:'var(--text-dim)' }}>{p.name}</span>
               <span style={{ fontSize:11, fontFamily:'JetBrains Mono,monospace', color:'var(--green)', fontWeight:700 }}>
-                −{p.potentialGain.toFixed(3)}s
+                Ã¢Ë†â€™{p.potentialGain.toFixed(3)}s
               </span>
             </div>
             <div className="bar-track" style={{ height:6, borderRadius:3 }}>
@@ -362,13 +362,13 @@ function TopImpactParams({ values }: { values: Record<string, number> }) {
         );
       })}
       <div style={{ fontSize:9, color:'var(--text-muted)', lineHeight:1.45 }}>
-        Gains are estimated <strong>independently</strong> — combined gain may be lower due to parameter interaction.
+        Gains are estimated <strong>independently</strong> Ã¢â‚¬â€ combined gain may be lower due to parameter interaction.
       </div>
     </div>
   );
 }
 
-// ── Rider feedback ────────────────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Rider feedback Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 const RIDER_FEEDBACK = [
   { label: 'Entry stability',  value: 'Good',                  tone: 'var(--green)'  },
@@ -379,13 +379,13 @@ const RIDER_FEEDBACK = [
 
 const CHANGE_HISTORY = [
   { t: '01:16:07', e: 'Saved Current Setup Q3' },
-  { t: '01:12:44', e: 'Traction Control 4 → 3' },
-  { t: '01:11:20', e: 'Engine Map 5 → 6' },
-  { t: '01:08:05', e: 'Rear Rebound −2 clicks' },
+  { t: '01:12:44', e: 'Traction Control 4 Ã¢â€ â€™ 3' },
+  { t: '01:11:20', e: 'Engine Map 5 Ã¢â€ â€™ 6' },
+  { t: '01:08:05', e: 'Rear Rebound Ã¢Ë†â€™2 clicks' },
   { t: '01:04:30', e: 'Front Preload +1 mm' },
 ];
 
-// ── Page ───────────────────────────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Page Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 export function SetupManagementPage() {
   const { toast } = useToast();
@@ -406,7 +406,7 @@ export function SetupManagementPage() {
     }, 0);
   }, [values]);
 
-  // Per-group impact → contributors + interpretation
+  // Per-group impact Ã¢â€ â€™ contributors + interpretation
   const groupImpacts = useMemo(() => groups.map(g => {
     const impact = SETUP_PARAMS.filter(p => p.group === g)
       .reduce((a, p) => a + (values[p.name] - p.baseline) * p.lapTimeImpactPerUnit, 0);
@@ -417,12 +417,12 @@ export function SetupManagementPage() {
   const gainers = contributors.filter(c => c.impact < -0.001).map(c => c.g);
   const losers  = contributors.filter(c => c.impact >  0.001).map(c => c.g);
   const interpretation = changedCount === 0
-    ? 'Setup is at baseline — no predicted change.'
+    ? 'Setup is at baseline Ã¢â‚¬â€ no predicted change.'
     : `Current setup is ${lapTimeDelta < 0 ? 'slightly faster than' : 'slower than'} baseline. `
       + (gainers.length ? `Most predicted gain comes from ${gainers.slice(0, 2).join(' and ')}. ` : '')
       + (losers.length ? `${losers.join(' and ')} add a small stability / turn-in trade-off.` : '');
 
-  const risk = changedCount >= 12 ? 'Medium' : changedCount >= 6 ? 'Low–Medium' : 'Low';
+  const risk = changedCount >= 12 ? 'Medium' : changedCount >= 6 ? 'LowÃ¢â‚¬â€œMedium' : 'Low';
 
   const handleChange = useCallback((name: string, v: number) => {
     setValues(prev => ({ ...prev, [name]: v }));
@@ -459,12 +459,12 @@ export function SetupManagementPage() {
   function handleApplyStint() {
     toast({
       type: 'success', title: 'Setup applied to next stint',
-      message: `${changedCount} parameters · confidence ${MODEL_CONFIDENCE}% · risk ${risk}. Safety check passed.`,
+      message: `${changedCount} parameters Ã‚Â· confidence ${MODEL_CONFIDENCE}% Ã‚Â· risk ${risk}. Safety check passed.`,
     });
   }
 
   function handleExport() {
-    toast({ type: 'info', title: 'Setup sheet', message: 'Generating printable setup sheet…' });
+    toast({ type: 'info', title: 'Setup sheet', message: 'Generating printable setup sheetÃ¢â‚¬Â¦' });
     globalThis.setTimeout(() => globalThis.print(), 200);
   }
 
@@ -474,11 +474,11 @@ export function SetupManagementPage() {
   return (
     <div className="page">
 
-      {/* ── Header ──────────────────────────────────────────────────────────── */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ Header Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
       <div className="flex items-center justify-between mb-2">
         <div>
           <h1 className="page-title">Garage Setup Lab</h1>
-          <p className="page-subtitle">Live setup control · Lap-time impact prediction · Variant management</p>
+          <p className="page-subtitle">Live setup control Ã‚Â· Lap-time impact prediction Ã‚Â· Variant management</p>
         </div>
         <div className="flex items-center gap-2" style={{ flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           {changedCount > 0 && <span className="badge badge-yellow">{changedCount} modified</span>}
@@ -502,18 +502,18 @@ export function SetupManagementPage() {
         </div>
       </div>
 
-      {/* Context strip — session / track / baseline / confidence */}
+      {/* Context strip Ã¢â‚¬â€ session / track / baseline / confidence */}
       <div style={{ display:'flex', flexWrap:'wrap', gap:16, alignItems:'center', marginBottom:16, padding:'8px 14px', borderRadius:8, border:'1px solid var(--border)', background:'rgba(255,255,255,0.02)', fontSize:12, fontFamily:'JetBrains Mono,monospace' }}>
-        <span style={{ color:'var(--text-dim)' }}>{getSessionContext().circuitName} · {getSessionContext().setup.session ?? 'Q3'} · Dry · Track 42°C · Rider #47</span>
+        <span style={{ color:'var(--text-dim)' }}>{getSessionContext().circuitName} Ã‚Â· {getSessionContext().setup.session ?? 'Q3'} Ã‚Â· Dry Ã‚Â· Track 42Ã‚Â°C Ã‚Â· Rider #47</span>
         <span style={{ color:'var(--text-muted)' }}>Current: <strong style={{ color:'var(--accent)' }}>Q3 Active</strong></span>
         <span style={{ color:'var(--text-muted)' }}>Baseline: <strong style={{ color:'var(--text-dim)' }}>Race Baseline FP3</strong></span>
         <span style={{ marginLeft:'auto', color:'var(--text-muted)' }}>Model confidence <strong style={{ color:'var(--blue)' }}>{MODEL_CONFIDENCE}%</strong></span>
       </div>
 
-      {/* ── Lap time impact estimator ──────────────────────────────────────── */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ Lap time impact estimator Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
       {changedCount > 0 && (
         <div style={{
-          padding: '14px 20px', marginBottom: 16, borderRadius: 10,
+          padding: '14px 20px', marginBottom: 16, borderRadius: 'var(--radius-lg)',
           border: `1px solid ${deltaColor}44`,
           background: `${deltaColor}0D`,
         }}>
@@ -555,13 +555,13 @@ export function SetupManagementPage() {
               </span>
             ))}
             <span style={{ marginLeft:'auto', fontSize:11, color:'var(--yellow)', display:'flex', alignItems:'center', gap:5 }}>
-              <AlertTriangle size={12} /> Complexity {changedCount}/{SETUP_PARAMS.length} · validate electronics → suspension → ride height → geometry
+              <AlertTriangle size={12} /> Complexity {changedCount}/{SETUP_PARAMS.length} Ã‚Â· validate electronics Ã¢â€ â€™ suspension Ã¢â€ â€™ ride height Ã¢â€ â€™ geometry
             </span>
           </div>
         </div>
       )}
 
-      {/* ── Group deviation overview ────────────────────────────────────────── */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ Group deviation overview Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
       <div className="card mb-4">
         <div className="card-header">
           <span className="card-title">Parameter Deviation Map</span>
@@ -576,7 +576,7 @@ export function SetupManagementPage() {
 
       <div className="grid-2-1">
 
-        {/* ── Setup parameters ──────────────────────────────────────────────── */}
+        {/* Ã¢â€â‚¬Ã¢â€â‚¬ Setup parameters Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {groups.map(group => {
             const groupParams = SETUP_PARAMS.filter(p => p.group === group);
@@ -628,14 +628,14 @@ export function SetupManagementPage() {
           })}
         </div>
 
-        {/* ── Sidebar ───────────────────────────────────────────────────────── */}
+        {/* Ã¢â€â‚¬Ã¢â€â‚¬ Sidebar Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 
           {/* Radar chart: current vs baseline */}
           <div className="card">
             <div className="card-header">
               <span className="card-title">Setup Profile</span>
-              <span style={{ fontSize:10, color:'var(--text-muted)' }}>scale 0–100 · est. from setup + telemetry</span>
+              <span style={{ fontSize:10, color:'var(--text-muted)' }}>scale 0Ã¢â‚¬â€œ100 Ã‚Â· est. from setup + telemetry</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '12px 16px' }}>
               <RadarChart values={values} baseline={baseline} />
@@ -677,7 +677,7 @@ export function SetupManagementPage() {
                             {values[p.name].toFixed(1)} {p.unit} ({diff > 0 ? '+' : ''}{diff.toFixed(1)})
                           </div>
                           <div style={{ fontSize: 10, fontFamily: 'JetBrains Mono,monospace', color: impact < 0 ? 'var(--green)' : 'var(--accent)' }}>
-                            {impact >= 0 ? '+' : ''}{impact.toFixed(3)}s · {impact < 0 ? 'gain' : 'penalty'}
+                            {impact >= 0 ? '+' : ''}{impact.toFixed(3)}s Ã‚Â· {impact < 0 ? 'gain' : 'penalty'}
                           </div>
                         </div>
                       </div>
@@ -715,7 +715,7 @@ export function SetupManagementPage() {
           <div className="card">
             <div className="card-header">
               <span className="card-title">Top Gain Opportunities</span>
-              <span className="badge badge-green">Δ vs Optimal</span>
+              <span className="badge badge-green">ÃŽâ€ vs Optimal</span>
             </div>
             <div className="card-body" style={{ flexDirection:'column' }}>
               <TopImpactParams values={values} />
@@ -737,7 +737,7 @@ export function SetupManagementPage() {
                     <tr key={v.name} style={isActive ? { background: 'var(--accent-dim)' } : {}}>
                       <td>
                         <div style={{ fontWeight: isActive ? 700 : 400, fontSize: 12 }}>{v.name}</div>
-                        <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{v.status} · {v.cond}</div>
+                        <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{v.status} Ã‚Â· {v.cond}</div>
                       </td>
                       <td className="mono" style={{ fontSize: 11, color: 'var(--text-dim)' }}>{v.session}</td>
                       <td className="mono" style={{ color: isActive ? 'var(--accent)' : 'var(--text)', fontSize: 12 }}>
@@ -747,7 +747,7 @@ export function SetupManagementPage() {
                         <button className="btn btn-ghost btn-sm" style={{ fontSize:10, padding:'2px 8px' }}
                           onClick={() => toast({
                             type: isActive ? 'info' : 'success',
-                            title: isActive ? `${v.name} is active` : `Compare · ${v.name}`,
+                            title: isActive ? `${v.name} is active` : `Compare Ã‚Â· ${v.name}`,
                             message: isActive ? 'This is your current setup.' : `Overlaying ${v.name} (${v.cond}) vs current Q3 setup.`,
                           })}>
                           {isActive ? 'Active' : 'Compare'}
@@ -761,7 +761,7 @@ export function SetupManagementPage() {
             </div>
           </div>
 
-          {/* Rider feedback ↔ telemetry correlation */}
+          {/* Rider feedback Ã¢â€ â€ telemetry correlation */}
           <div className="card">
             <div className="card-header">
               <span className="card-title flex items-center gap-2"><MessageSquare size={13} style={{ color:'var(--blue)' }} /> Rider Feedback</span>
@@ -774,9 +774,9 @@ export function SetupManagementPage() {
                   <span style={{ color:f.tone, fontWeight:600 }}>{f.value}</span>
                 </div>
               ))}
-              <div style={{ marginTop:4, padding:'8px 10px', borderRadius:6, background:'rgba(59,130,246,0.08)', border:'1px solid rgba(59,130,246,0.2)', fontSize:11.5, color:'var(--text-dim)', lineHeight:1.5 }}>
+              <div style={{ marginTop:4, padding:'8px 10px', borderRadius: 'var(--radius)', background:'rgba(59,130,246,0.08)', border:'1px solid rgba(59,130,246,0.2)', fontSize:11.5, color:'var(--text-dim)', lineHeight:1.5 }}>
                 <span style={{ fontSize:10, letterSpacing:'0.1em', color:'var(--blue)', display:'block', marginBottom:2 }}>AI CORRELATION</span>
-                Rider reports rear movement at T7/T9. Telemetry confirms rear slip increase after 70% throttle — supports the TC2 trial.
+                Rider reports rear movement at T7/T9. Telemetry confirms rear slip increase after 70% throttle Ã¢â‚¬â€ supports the TC2 trial.
               </div>
             </div>
           </div>
@@ -800,24 +800,24 @@ export function SetupManagementPage() {
           <div className="card">
             <div className="card-header">
               <span className="card-title" style={{ color: 'var(--accent)' }}>AI Setup Insights</span>
-              <span className="badge badge-blue">KDD Agent · {MODEL_CONFIDENCE}%</span>
+              <span className="badge badge-blue">KDD Agent Ã‚Â· {MODEL_CONFIDENCE}%</span>
             </div>
             <div className="card-body" style={{ flexDirection: 'column', gap: 12 }}>
               {[
                 {
                   title: 'TC Reduction Opportunity',
                   color: 'var(--yellow)',
-                  text: `TC ${values['Traction Control']?.toFixed(0) ?? '3'} → TC 2 predicted gain: −0.023s/lap. Rear temperature supports lower TC, but monitor rear slip at T7–T9. Risk: Medium.`,
+                  text: `TC ${values['Traction Control']?.toFixed(0) ?? '3'} Ã¢â€ â€™ TC 2 predicted gain: Ã¢Ë†â€™0.023s/lap. Rear temperature supports lower TC, but monitor rear slip at T7Ã¢â‚¬â€œT9. Risk: Medium.`,
                 },
                 {
                   title: 'Engine Map Optimization',
                   color: 'var(--green)',
-                  text: `Map ${values['Engine Map']?.toFixed(0) ?? '6'} → Map 7 gives +0.12 km/h top speed at a cost of +0.08 kg/lap fuel. ${(values['Engine Map'] ?? 6) < 7 ? 'Recommended only if fuel margin stays above +0.4 laps.' : 'Already at upper map.'}`,
+                  text: `Map ${values['Engine Map']?.toFixed(0) ?? '6'} Ã¢â€ â€™ Map 7 gives +0.12 km/h top speed at a cost of +0.08 kg/lap fuel. ${(values['Engine Map'] ?? 6) < 7 ? 'Recommended only if fuel margin stays above +0.4 laps.' : 'Already at upper map.'}`,
                 },
                 {
                   title: 'Geometry Delta Note',
                   color: 'var(--blue)',
-                  text: `Rake angle ${values['Rake Angle']?.toFixed(1) ?? '23.7'}° (+${((values['Rake Angle'] ?? 23.7) - 23.2).toFixed(1)}° vs baseline). Stability improves under braking, but turn-in response may slow. Monitor front shoulder temp and T4/T5 entry.`,
+                  text: `Rake angle ${values['Rake Angle']?.toFixed(1) ?? '23.7'}Ã‚Â° (+${((values['Rake Angle'] ?? 23.7) - 23.2).toFixed(1)}Ã‚Â° vs baseline). Stability improves under braking, but turn-in response may slow. Monitor front shoulder temp and T4/T5 entry.`,
                 },
               ].map(ins => (
                 <div key={ins.title} className="insight-panel" style={{ ['--dot-color' as string]: ins.color }}>

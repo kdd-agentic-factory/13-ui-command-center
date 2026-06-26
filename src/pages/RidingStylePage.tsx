@@ -269,7 +269,8 @@ export function RidingStylePage() {
         </div>
       </div>
 
-      <div className="card mb-4" style={{ background: 'linear-gradient(135deg, rgba(168,85,247,0.10), rgba(59,130,246,0.05))', borderLeft: '4px solid var(--purple)' }}>
+      <div className="card mb-4" style={{ background: 'linear-gradient(135deg, rgba(168,85,247,0.10), rgba(59,130,246,0.05))',
+ }}>
         <div className="card-body">
           <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
             <div style={{ width: 58, height: 58, borderRadius: 15, flex: 'none', display: 'grid', placeItems: 'center', color: 'var(--purple)', background: 'color-mix(in srgb, var(--purple) 15%, transparent)', border: '1px solid color-mix(in srgb, var(--purple) 35%, transparent)' }}>

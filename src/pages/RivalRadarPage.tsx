@@ -38,7 +38,8 @@ export function RivalRadarPage() {
       </div>
 
       {/* verdict */}
-      <div className="card mb-4" style={{ padding: 14, borderLeft: '3px solid var(--accent)' }}>
+      <div className="card mb-4" style={{ padding: 14,
+ }}>
         <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 4 }}>KDD verdict</div>
         <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)' }}>{r.verdict}</div>
         <div style={{ fontSize: 11, color: 'var(--accent)', marginTop: 4, fontStyle: 'italic' }}>{r.punchline}</div>
@@ -92,7 +93,8 @@ export function RivalRadarPage() {
           })}
           <div style={{ fontSize: 9.5, color: 'var(--text-muted)', marginTop: 2 }}>Right of centre = you gain · left = you lose.</div>
         </div>
-        <div className="card" style={{ padding: 16, borderLeft: '3px solid var(--cyan)' }}>
+        <div className="card" style={{ padding: 16,
+ }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}><Flag size={14} style={{ color: 'var(--cyan)' }} /><span style={hdr}>Grid start</span></div>
           <div style={{ fontSize: 22, fontWeight: 800, fontFamily: MONO, color: 'var(--text)' }}>P{r.gridStart.slot}</div>
           <div style={{ fontSize: 11, fontFamily: MONO, color: 'var(--green)', marginBottom: 4 }}>+1 place prob {Math.round(r.gridStart.gainProb * 100)}%</div>
@@ -112,7 +114,8 @@ export function RivalRadarPage() {
             </div>
           ))}
         </div>
-        <div className="card" style={{ padding: 16, borderLeft: '3px solid var(--accent)' }}>
+        <div className="card" style={{ padding: 16,
+ }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}><Swords size={14} style={{ color: 'var(--accent)' }} /><span style={hdr}>Head-to-head plan · {r.headToHead.rival}</span></div>
           <div style={{ fontSize: 11.5, color: 'var(--text)', marginBottom: 6 }}>{r.headToHead.plan}</div>
           <div style={{ display: 'flex', gap: 14, fontSize: 10.5, fontFamily: MONO }}>

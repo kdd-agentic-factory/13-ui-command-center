@@ -210,7 +210,8 @@ export function AICrewPage() {
         </div>
       </div>
 
-      <div className="card mb-4" style={{ borderLeft: '4px solid var(--accent)', background: 'linear-gradient(135deg, rgba(224,55,55,0.10), rgba(59,130,246,0.04))' }}>
+      <div className="card mb-4" style={{
+ background: 'linear-gradient(135deg, rgba(224,55,55,0.10), rgba(59,130,246,0.04))' }}>
         <div className="card-header">
           <span className="card-title flex items-center gap-2"><Sparkles size={15} style={{ color: 'var(--accent)' }} /> Oracle Verdict</span>
           <span className="badge badge-green">Approved by 5 / 6 active advisors</span>

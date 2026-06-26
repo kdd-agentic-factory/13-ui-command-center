@@ -34,6 +34,11 @@ type HomeCopy = {
     primaryCta: string;
     secondaryCta: string;
   };
+  manifesto: {
+    quote: string;
+    block: string;
+    signature: string;
+  };
   pipeline: {
     source: string;
     layer: string;
@@ -41,50 +46,33 @@ type HomeCopy = {
     network: string;
   };
   sections: {
-    motion: {
+    visualTransform: {
       eyebrow: string;
       title: string;
       body: string;
-      cards: SectionCard[];
-      stackLabel: string;
-      stackRows: string[];
     };
-    noTelemetry: {
+    pipelineStations: {
       eyebrow: string;
       title: string;
       body: string;
-      cards: SectionCard[];
+      stations: { number: string; label: string; detail: string }[];
     };
-    systems: {
+    t15Bucine: {
       eyebrow: string;
       title: string;
       body: string;
-      sources: string[];
+      steps: { label: string; detail: string }[];
     };
-    decisions: {
+    knowledgeNetwork: {
       eyebrow: string;
       title: string;
       body: string;
-      cards: SectionCard[];
-    };
-    example: {
-      eyebrow: string;
-      title: string;
-      body: string;
-      cards: SectionCard[];
-    };
-    network: {
-      eyebrow: string;
-      title: string;
-      body: string;
-      cards: SectionCard[];
+      staysLabel: string;
+      travelsLabel: string;
+      staysItems: string[];
+      travelsItems: string[];
     };
     nodeTypes: {
-      eyebrow: string;
-      title: string;
-      cards: SectionCard[];
-    };
-    audience: {
       eyebrow: string;
       title: string;
       cards: SectionCard[];
@@ -100,6 +88,18 @@ type HomeCopy = {
       title: string;
       body: string;
       cta: string;
+    };
+    paperKit: {
+      eyebrow: string;
+      title: string;
+      body: string;
+      evidence: string[];
+      notePrefix: string;
+      noteSuffix: string;
+      operatingPointTitle: string;
+      operatingPointBody: string;
+      telemetryDemo: string[];
+      downloads: { href: string; label: string; detail: string }[];
     };
     finalCta: {
       eyebrow: string;
@@ -123,14 +123,19 @@ const HOME_COPY: Record<'en' | 'es', HomeCopy> = {
       language: 'Language',
     },
     hero: {
-      eyebrow: 'Editorial decision intelligence for motorcycles',
-      title: 'KDD Moto Intelligence',
+      eyebrow: 'The Knowledge Circuit for Motorcycle Performance',
+      title: 'KDD',
       subtitle: 'Decision Intelligence Layer for Motorcycle Performance',
       lead: 'We do not replace your telemetry. We turn it into actionable knowledge.',
-      support: 'KDD converts signals into events, causes, decisions, recommendations, missions, validation, and learning.',
+      support: 'Telemetry tells you what happened. KDD tells you what to do next.',
       privacy: 'Your data stays protected. What travels is the learning.',
       primaryCta: 'Request early access',
       secondaryCta: 'Become a founding node',
+    },
+    manifesto: {
+      quote: 'Telemetry tells you what happened.\nKDD tells you what to do next.',
+      block: 'We are not building another telemetry tool. Telemetry measures — and measuring is necessary. But measurement without interpretation is noise. KDD sits above your instruments to turn raw signal into events, causes, decisions, validated missions and compounding learning. The data stays where it belongs. The knowledge travels.',
+      signature: 'The Knowledge Circuit',
     },
     pipeline: {
       source: 'Telemetry systems',
@@ -139,110 +144,112 @@ const HOME_COPY: Record<'en' | 'es', HomeCopy> = {
       network: 'KDD Knowledge Network',
     },
     sections: {
-      motion: {
+      visualTransform: {
         eyebrow: '01',
-        title: 'From signal to validated learning',
-        body: 'KDD does not add another dashboard to the pit wall. It structures the full decision loop: data becomes events, events reveal causes, causes become recommendations, and missions are validated before the learning travels.',
-        cards: [
-          { title: 'Events', body: 'Relevant changes are separated from noise without asking teams to replace their telemetry stack.' },
-          { title: 'Causes', body: 'KDD links the event to context, rider input, setup and track condition before recommending action.' },
-          { title: 'Missions', body: 'Recommendations become concrete next steps for rider, engineer or team principal.' },
-          { title: 'Validated learning', body: 'Only what proves itself becomes reusable knowledge for the node or the network.' },
-        ],
-        stackLabel: 'Decision loop',
-        stackRows: [
-          'Data protected at source',
-          'Events and causes extracted',
-          'Decisions and missions assigned',
-          'Validation becomes learning',
-        ],
+        title: 'From raw telemetry to actionable knowledge',
+        body: 'The knowledge circuit takes what your instruments already produce — speed traces, GPS coordinates, lean angles, RPM curves, video frames, CSV exports — and transforms them into something no dashboard can deliver: understanding, decision, validated learning.',
       },
-      noTelemetry: {
+      pipelineStations: {
         eyebrow: '02',
-        title: 'Not another telemetry system',
-        body: 'Telemetry keeps measuring. KDD sits above it to turn signal into judgement, and judgement into decisions.',
-        cards: [
-          { title: 'Telemetry measures', body: 'ECU, logger, GPS, IMU, video, CSV and external feeds keep collecting the raw signal.' },
-          { title: 'KDD interprets', body: 'The layer reads the context, compares runs and isolates the relevant pattern.' },
-          { title: 'The team acts', body: 'The output is a mission, a validation rule and a next step the team can execute.' },
+        title: 'The Decision Loop',
+        body: 'Every cycle through the circuit follows seven stations. Data enters. Knowledge compounds. Each pass makes the network smarter.',
+        stations: [
+          { number: '01', label: 'Data', detail: 'Raw telemetry protected at source' },
+          { number: '02', label: 'Events', detail: 'Relevant changes isolated from noise' },
+          { number: '03', label: 'Causes', detail: 'Context explains why the event matters' },
+          { number: '04', label: 'Decisions', detail: 'Recommendations grounded in evidence' },
+          { number: '05', label: 'Missions', detail: 'Concrete next steps for the team' },
+          { number: '06', label: 'Validation', detail: 'Proof the mission worked or needs refinement' },
+          { number: '07', label: 'Learning', detail: 'Validated knowledge compounds across the network' },
         ],
       },
-      systems: {
+      t15Bucine: {
         eyebrow: '03',
-        title: 'Above your current systems',
-        body: 'We do not ask you to replace your stack. KDD sits above the systems you already trust and standardises what they mean.',
-        sources: ['ECU', 'Logger', 'GPS', 'IMU', 'Video', 'CSV', 'External telemetry'],
+        title: 'T15 Bucine — How the circuit works',
+        body: 'At T15 Bucine, the circuit does what no static dashboard can: it detects the problem, explains the cause, decides the intervention, creates a mission, and learns from the result.',
+        steps: [
+          { label: 'KDD detects', detail: 'Sector time loss isolated to exit phase. Grip change detected. Stability compromised.' },
+          { label: 'KDD explains', detail: 'Late brake release paired with aggressive throttle pickup. The cause is rider input timing, not setup.' },
+          { label: 'KDD decides', detail: 'Cleaner release window recommended. Target: maintain exit speed without sacrificing entry stability.' },
+          { label: 'KDD creates mission', detail: 'Next lap: execute the revised release window. Record the delta. Compare against the validation target.' },
+          { label: 'KDD learns', detail: 'Result validated. Pattern stored. The node is now smarter for every future T15 Bucine session.' },
+        ],
       },
-      decisions: {
+      knowledgeNetwork: {
         eyebrow: '04',
-        title: 'From data to decisions',
-        body: 'The narrative is simple on purpose: decide what happened, assign the mission, then validate the result.',
-        cards: [
-          { title: 'Decision', body: 'What changed, where, and why it matters.' },
-          { title: 'Mission', body: 'The next action for rider, engineer or team principal.' },
-          { title: 'Validation', body: 'The rule that confirms the mission worked or needs another pass.' },
+        title: 'Raw data protected, learning travels',
+        body: 'The fundamental principle of the Knowledge Network: your sessions, video, setup notes and raw telemetry remain inside the originating node. What travels is the learning — the patterns, validations and better decisions that make every node in the network smarter.',
+        staysLabel: 'What stays in your node',
+        travelsLabel: 'What travels through the network',
+        staysItems: [
+          'Session recordings and video',
+          'Setup notes and configuration',
+          'Raw telemetry traces',
+          'Rider-specific data',
+          'Team-specific context',
         ],
-      },
-      example: {
-        eyebrow: '05',
-        title: 'Real example: T15 Bucine',
-        body: 'At T15 Bucine, KDD can isolate the corner where the lap is lost, connect it to brake release and throttle pickup, and turn that into a mission with a validation target.',
-        cards: [
-          { title: 'Context', body: 'Sector loss, grip change and exit stability are read together.' },
-          { title: 'Decision', body: 'The system points to a late release or an overly conservative pickup.' },
-          { title: 'Mission', body: 'Run the next lap with a cleaner release window and note the delta.' },
-          { title: 'Validation', body: 'Compare the following lap against the mission target and keep only what works.' },
-        ],
-      },
-      network: {
-        eyebrow: '06',
-        title: 'KDD Knowledge Network',
-        body: 'Raw data stays protected inside the node. What travels is the learning: patterns, validation and better decisions.',
-        cards: [
-          { title: 'Protected raw data', body: 'Sessions, video and setup notes remain inside the originating node.' },
-          { title: 'Traveling learning', body: 'Only the validated knowledge and the pattern improvement leave the node.' },
-          { title: 'Better benchmarks', body: 'The network compounds benchmarks without exposing the underlying telemetry.' },
+        travelsItems: [
+          'Validated event patterns',
+          'Causal hypotheses',
+          'Mission templates',
+          'Learning compounding rules',
+          'Network benchmarks',
         ],
       },
       nodeTypes: {
-        eyebrow: '07',
-        title: 'Private Node / Team Node / Federated Node',
+        eyebrow: '05',
+        title: 'Node Modes',
         cards: [
-          { title: 'Private Node', body: 'Everything stays local. Ideal for sensitive data, single riders and private programmes.' },
-          { title: 'Team Node', body: 'A shared space for rider, engineer and crew to work on the same learning loop.' },
-          { title: 'Federated Node', body: 'Validated learning can travel to the network while the raw data remains protected.' },
-        ],
-      },
-      audience: {
-        eyebrow: '08',
-        title: 'Who it is for',
-        cards: [
-          { title: 'Pilots', body: 'Riders who want cleaner debriefs and fewer guesses.' },
-          { title: 'Teams', body: 'Race and performance teams that need a decision layer, not another dashboard.' },
-          { title: 'Engineers', body: 'People who want to validate what the telemetry is saying before they act.' },
-          { title: 'Academies', body: 'Programmes that need repeatable learning across multiple riders or nodes.' },
+          { title: 'Private Node', body: 'Everything stays local. Ideal for sensitive data, single riders and private programmes. No data leaves the node. Period.' },
+          { title: 'Team Node', body: 'A shared space for rider, engineer and crew to work on the same learning loop. Everyone sees the same events, causes and decisions.' },
+          { title: 'Federated Node', body: 'Validated learning travels to the network while raw data remains protected. The network gets smarter. Your telemetry stays private.' },
         ],
       },
       founding: {
-        eyebrow: '09',
-        title: 'Founding Nodes / Early Access',
-        body: 'The first nodes help define the learning rules, the validation model and the privacy contract.',
+        eyebrow: '06',
+        title: 'Founding Knowledge Nodes',
+        body: 'The first nodes help define the learning rules, the validation model and the privacy contract. This is not early access. This is co-creation.',
         bullets: [
           'Priority access to the editorial early-access programme.',
           'A seat in the first federated learning network.',
-          'A say in how missions and validations are framed.',
-          'A sober, private onboarding path for the team.',
+          'Influence over how missions and validations are framed.',
+          'A private, structured onboarding for the entire team.',
         ],
       },
       manual: {
-        eyebrow: 'Manual',
-        title: 'Application manual',
+        eyebrow: '07',
+        title: 'Application Manual',
         body: 'A detailed, step-by-step guide to understand KDD, enter through Early Access or Founding Node, connect telemetry sources, use the decision loop and operate the app after login.',
         cta: 'Download application manual',
       },
+      paperKit: {
+        eyebrow: 'Evidence',
+        title: 'Paper Reproducibility Kit',
+        body: 'The paper kit records the evidence behind the KDD-governed agentic race engineering platform: manuscript material, datasets, experiments, notebooks, scripts, review package, artifact index, deployment summaries, and governance evidence.',
+        evidence: [
+          'Reproducibility kit with LaTeX manuscript, generated tables and figures, synthetic datasets, analysis notebooks, workflow definitions, scripts, and checksum-backed protocol documents.',
+          'Reviewer package with reviewer guide, artifact evaluation checklist, minimal reproduction path, full reproduction instructions, and anonymized artifacts.',
+          'Artifact index, Docker and Kubernetes reproduction summaries, CI/CD release evidence, plus security and compliance documentation.',
+          'PoC result summary for "Structural optimization principles for edge AI in motorsport telemetry", including the accepted operating point int4_32b_trackside.',
+        ],
+        notePrefix: 'The compiled main paper PDF is not currently present at',
+        noteSuffix: 'The downloads below expose the generated figure/evidence PDFs that are available now, plus the application manual.',
+        operatingPointTitle: 'Accepted operating point:',
+        operatingPointBody: 'PoC evidence reports 18.0 GB memory, 69.9 tok/s, 165.0 W, Digital FoS 1.026, and IPW 0.4236 for the accepted trackside profile.',
+        telemetryDemo: [
+          'Circuit Jerez, corner T05, lap 14.',
+          'Rear tire status warning, estimated collapse lap 18, confidence 0.82.',
+          'Recommended actions: switch_to_engine_map_2, increase_rear_rebound_by_2_clicks, reduce_torque_delivery_in_corners_T05_T08_T13.',
+        ],
+        downloads: [
+          { href: '/paper-kit/results-summary.pdf', label: 'Download results summary PDF', detail: 'Generated figure/evidence PDF from the reproducibility kit.' },
+          { href: '/paper-kit/experimental-design.pdf', label: 'Download experimental design PDF', detail: 'Generated experimental design evidence PDF from the paper figures.' },
+          { href: '/kdd-application-manual.md', label: 'Download application manual', detail: 'Frontend application manual for early access, founding nodes, telemetry sources, and the decision loop.' },
+        ],
+      },
       finalCta: {
-        eyebrow: '10',
-        title: 'Request early access',
+        eyebrow: '08',
+        title: 'Enter the circuit',
         body: 'If you want a decision layer above telemetry, request access. If you want to help define the network, join as a founding node.',
       },
     },
@@ -260,14 +267,19 @@ const HOME_COPY: Record<'en' | 'es', HomeCopy> = {
       language: 'Idioma',
     },
     hero: {
-      eyebrow: 'Inteligencia de decisión editorial para motos',
-      title: 'KDD Moto Intelligence',
+      eyebrow: 'El circuito de conocimiento para rendimiento de motocicleta',
+      title: 'KDD',
       subtitle: 'Capa de inteligencia de decisión para rendimiento de motocicleta',
       lead: 'No sustituimos tu telemetría. La convertimos en conocimiento accionable.',
-      support: 'KDD convierte señales en eventos, causas, decisiones, recomendaciones, misiones, validación y aprendizaje.',
-      privacy: 'Tus datos se protegen. Lo que viaja es el aprendizaje.',
+      support: 'La telemetría mide. KDD interpreta, decide y aprende.',
+      privacy: 'Tus datos crudos no viajan. Lo que viaja es el aprendizaje.',
       primaryCta: 'Solicitar acceso anticipado',
       secondaryCta: 'Ser nodo fundador',
+    },
+    manifesto: {
+      quote: 'La telemetría mide lo que pasó.\nKDD te dice qué hacer después.',
+      block: 'No estamos construyendo otra herramienta de telemetría. La telemetría mide — y medir es necesario. Pero medir sin interpretar es ruido. KDD se coloca por encima de tus instrumentos para convertir la señal cruda en eventos, causas, decisiones, misiones validadas y aprendizaje acumulativo. Los datos quedan donde corresponden. El conocimiento viaja.',
+      signature: 'El circuito de conocimiento',
     },
     pipeline: {
       source: 'Sistemas de telemetría',
@@ -276,111 +288,113 @@ const HOME_COPY: Record<'en' | 'es', HomeCopy> = {
       network: 'Red de conocimiento KDD',
     },
     sections: {
-      motion: {
+      visualTransform: {
         eyebrow: '01',
-        title: 'De señal a aprendizaje validado',
-        body: 'KDD no suma otro dashboard al pit wall. Ordena el ciclo completo de decisión: los datos se vuelven eventos, los eventos revelan causas, las causas generan recomendaciones y las misiones se validan antes de que el aprendizaje viaje.',
-        cards: [
-          { title: 'Eventos', body: 'Los cambios relevantes se separan del ruido sin pedir al equipo que reemplace su telemetría.' },
-          { title: 'Causas', body: 'KDD conecta el evento con contexto, input del piloto, setup y pista antes de recomendar acción.' },
-          { title: 'Misiones', body: 'Las recomendaciones bajan a pasos concretos para piloto, ingeniero o team principal.' },
-          { title: 'Aprendizaje validado', body: 'Solo lo que se comprueba se convierte en conocimiento reutilizable para el nodo o la red.' },
-        ],
-        stackLabel: 'Ciclo de decisión',
-        stackRows: [
-          'Datos protegidos en origen',
-          'Eventos y causas extraídos',
-          'Decisiones y misiones asignadas',
-          'La validación se vuelve aprendizaje',
-        ],
+        title: 'De telemetría cruda a conocimiento accionable',
+        body: 'El circuito de conocimiento toma lo que tus instrumentos ya producen — trazas de velocidad, coordenadas GPS, ángulos de inclinación, curvas de RPM, fotogramas de vídeo, exportaciones CSV — y los transforma en algo que ningún dashboard puede entregar: comprensión, decisión, aprendizaje validado.',
       },
-      noTelemetry: {
+      pipelineStations: {
         eyebrow: '02',
-        title: 'No somos otra telemetría',
-        body: 'La telemetría sigue midiendo. KDD se coloca encima para convertir señales en criterio, y criterio en decisión.',
-        cards: [
-          { title: 'La telemetría mide', body: 'ECU, logger, GPS, IMU, vídeo, CSV y feeds externos siguen recogiendo la señal en bruto.' },
-          { title: 'KDD interpreta', body: 'La capa lee el contexto, compara sesiones e identifica el patrón relevante.' },
-          { title: 'El equipo actúa', body: 'La salida es una misión, una regla de validación y el siguiente paso para ejecutar.' },
+        title: 'El ciclo de decisión',
+        body: 'Cada vuelta por el circuito sigue siete estaciones. Los datos entran. El conocimiento se acumula. Cada pasada hace la red más inteligente.',
+        stations: [
+          { number: '01', label: 'Datos', detail: 'Telemetría cruda protegida en origen' },
+          { number: '02', label: 'Eventos', detail: 'Cambios relevantes aislados del ruido' },
+          { number: '03', label: 'Causas', detail: 'El contexto explica por qué importa' },
+          { number: '04', label: 'Decisiones', detail: 'Recomendaciones basadas en evidencia' },
+          { number: '05', label: 'Misiones', detail: 'Pasos concretos para el equipo' },
+          { number: '06', label: 'Validación', detail: 'Prueba de que funcionó o necesita refinamiento' },
+          { number: '07', label: 'Aprendizaje', detail: 'Conocimiento validado se acumula en la red' },
         ],
       },
-      systems: {
+      t15Bucine: {
         eyebrow: '03',
-        title: 'Por encima de tus sistemas actuales',
-        body: 'No te pedimos cambiar el stack. KDD se coloca encima de los sistemas que ya confías y ordena lo que significan.',
-        sources: ['ECU', 'Logger', 'GPS', 'IMU', 'Vídeo', 'CSV', 'Telemetría externa'],
+        title: 'T15 Bucine — Cómo funciona el circuito',
+        body: 'En T15 Bucine, el circuito hace lo que ningún dashboard estático puede: detecta el problema, explica la causa, decide la intervención, crea una misión y aprende del resultado.',
+        steps: [
+          { label: 'KDD detecta', detail: 'Pérdida de tiempo en sector aislada a la fase de salida. Cambio de agarre detectado. Estabilidad comprometida.' },
+          { label: 'KDD explica', detail: 'Liberación tardía de freno combinada con apertura agresiva de gas. La causa es el timing del piloto, no el setup.' },
+          { label: 'KDD decide', detail: 'Ventana de liberación más limpia recomendada. Objetivo: mantener velocidad de salida sin sacrificar estabilidad de entrada.' },
+          { label: 'KDD crea misión', detail: 'Siguiente vuelta: ejecutar la ventana de liberación revisada. Registrar el delta. Comparar contra el objetivo de validación.' },
+          { label: 'KDD aprende', detail: 'Resultado validado. Patrón almacenado. El nodo es ahora más inteligente para cada futura sesión en T15 Bucine.' },
+        ],
       },
-      decisions: {
+      knowledgeNetwork: {
         eyebrow: '04',
-        title: 'De datos a decisiones',
-        body: 'La narrativa es simple por diseño: decide qué pasó, asigna la misión y valida el resultado.',
-        cards: [
-          { title: 'Decisión', body: 'Qué cambió, dónde ocurrió y por qué importa.' },
-          { title: 'Misión', body: 'La siguiente acción para piloto, ingeniero o responsable del equipo.' },
-          { title: 'Validación', body: 'La regla que confirma si la misión funcionó o necesita otra pasada.' },
+        title: 'Datos crudos protegidos, el aprendizaje viaja',
+        body: 'El principio fundamental de la Red de Conocimiento: tus sesiones, vídeo, notas de setup y telemetría cruda permanecen dentro del nodo de origen. Lo que viaja es el aprendizaje — los patrones, validaciones y mejores decisiones que hacen más inteligente a cada nodo de la red.',
+        staysLabel: 'Lo que se queda en tu nodo',
+        travelsLabel: 'Lo que viaja por la red',
+        staysItems: [
+          'Grabaciones de sesión y vídeo',
+          'Notas de setup y configuración',
+          'Trazas de telemetría cruda',
+          'Datos específicos del piloto',
+          'Contexto específico del equipo',
         ],
-      },
-      example: {
-        eyebrow: '05',
-        title: 'Ejemplo real: T15 Bucine',
-        body: 'En T15 Bucine, KDD puede aislar la curva donde se pierde la vuelta, relacionarlo con la liberación de freno y la apertura de gas, y convertirlo en una misión con objetivo de validación.',
-        cards: [
-          { title: 'Contexto', body: 'La pérdida en el sector, el cambio de agarre y la estabilidad de salida se leen juntos.' },
-          { title: 'Decisión', body: 'El sistema apunta a una liberación tardía o a una apertura demasiado conservadora.' },
-          { title: 'Misión', body: 'Ejecuta la siguiente vuelta con una ventana de liberación más limpia y mide el delta.' },
-          { title: 'Validación', body: 'Compara la vuelta siguiente contra el objetivo y conserva solo lo que funciona.' },
-        ],
-      },
-      network: {
-        eyebrow: '06',
-        title: 'Red de conocimiento KDD',
-        body: 'Los datos en bruto se protegen dentro del nodo. Lo que viaja es el aprendizaje: patrones, validación y mejores decisiones.',
-        cards: [
-          { title: 'Datos en bruto protegidos', body: 'Sesiones, vídeo y notas de setup permanecen dentro del nodo de origen.' },
-          { title: 'Aprendizaje que viaja', body: 'Solo sale del nodo el conocimiento validado y la mejora del patrón.' },
-          { title: 'Benchmarks mejores', body: 'La red compone mejores referencias sin exponer la telemetría subyacente.' },
+        travelsItems: [
+          'Patrones de eventos validados',
+          'Hipótesis causales',
+          'Plantillas de misiones',
+          'Reglas de acumulación de aprendizaje',
+          'Benchmarks de la red',
         ],
       },
       nodeTypes: {
-        eyebrow: '07',
-        title: 'Nodo privado / Nodo de equipo / Nodo federado',
+        eyebrow: '05',
+        title: 'Modos de nodo',
         cards: [
-          { title: 'Nodo privado', body: 'Todo queda local. Ideal para datos sensibles, pilotos individuales y programas privados.' },
-          { title: 'Nodo de equipo', body: 'Un espacio compartido para piloto, ingeniero y equipo técnico sobre el mismo ciclo de aprendizaje.' },
-          { title: 'Nodo federado', body: 'El aprendizaje validado puede viajar a la red mientras los datos en bruto siguen protegidos.' },
-        ],
-      },
-      audience: {
-        eyebrow: '08',
-        title: 'Para quién es',
-        cards: [
-          { title: 'Pilotos', body: 'Pilotos que quieren reuniones de análisis más claras y menos suposiciones.' },
-          { title: 'Equipos', body: 'Equipos de carrera y rendimiento que necesitan una capa de decisión, no otro panel.' },
-          { title: 'Ingenieros', body: 'Personas que quieren validar lo que dice la telemetría antes de actuar.' },
-          { title: 'Academias', body: 'Programas que necesitan aprendizaje repetible entre varios pilotos o nodos.' },
+          { title: 'Nodo privado', body: 'Todo queda local. Ideal para datos sensibles, pilotos individuales y programas privados. Ningún dato sale del nodo. Punto.' },
+          { title: 'Nodo de equipo', body: 'Un espacio compartido para piloto, ingeniero y equipo técnico sobre el mismo ciclo de aprendizaje. Todos ven los mismos eventos, causas y decisiones.' },
+          { title: 'Nodo federado', body: 'El aprendizaje validado viaja a la red mientras los datos crudos permanecen protegidos. La red se hace más inteligente. Tu telemetría se mantiene privada.' },
         ],
       },
       founding: {
-        eyebrow: '09',
-        title: 'Nodos fundadores / Acceso anticipado',
-        body: 'Los primeros nodos ayudan a definir las reglas de aprendizaje, el modelo de validación y el contrato de privacidad.',
+        eyebrow: '06',
+        title: 'Nodos fundadores del conocimiento',
+        body: 'Los primeros nodos ayudan a definir las reglas de aprendizaje, el modelo de validación y el contrato de privacidad. Esto no es acceso anticipado. Esto es co-creación.',
         bullets: [
           'Acceso prioritario al programa editorial de acceso anticipado.',
           'Un lugar en la primera red federada de aprendizaje.',
           'Influencia en cómo se formulan las misiones y validaciones.',
-          'Un onboarding sobrio y privado para el equipo.',
+          'Un onboarding privado y estructurado para todo el equipo.',
         ],
       },
       manual: {
-        eyebrow: 'Manual',
+        eyebrow: '07',
         title: 'Manual de aplicación',
         body: 'Una guía detallada, paso a paso, para entender KDD, entrar por acceso anticipado o nodo fundador, conectar fuentes de telemetría, usar el ciclo de decisión y operar la aplicación después de iniciar sesión.',
         cta: 'Descargar manual de aplicación',
       },
+      paperKit: {
+        eyebrow: 'Evidencia',
+        title: 'Kit de reproducibilidad del paper',
+        body: 'El kit documenta la evidencia detrás de la plataforma de ingeniería de carrera gobernada por KDD: manuscrito, datasets, experimentos, notebooks, scripts, paquete de revisión, índice de artefactos, resúmenes de despliegue y evidencia de gobernanza.',
+        evidence: [
+          'Kit de reproducibilidad con manuscrito LaTeX, tablas y figuras generadas, datasets sintéticos, notebooks de análisis, workflows, scripts y documentos de protocolo con checksums.',
+          'Paquete para revisores con guía de revisión, checklist de evaluación de artefactos, ruta mínima de reproducción, instrucciones completas y artefactos anonimizados.',
+          'Índice de artefactos, resúmenes de reproducción con Docker y Kubernetes, evidencia de CI/CD y material de seguridad y cumplimiento.',
+          'Resumen PoC del paper "Structural optimization principles for edge AI in motorsport telemetry", incluyendo el punto operativo aceptado int4_32b_trackside.',
+        ],
+        notePrefix: 'El PDF compilado del paper principal no está disponible actualmente en',
+        noteSuffix: 'Las descargas exponen los PDFs de figuras/evidencia disponibles ahora, además del manual de aplicación.',
+        operatingPointTitle: 'Punto operativo aceptado:',
+        operatingPointBody: 'La evidencia PoC reporta 18.0 GB de memoria, 69.9 tok/s, 165.0 W, Digital FoS 1.026 e IPW 0.4236 para el perfil trackside aceptado.',
+        telemetryDemo: [
+          'Circuito Jerez, curva T05, vuelta 14.',
+          'Estado del neumático trasero en advertencia, colapso estimado en vuelta 18, confianza 0.82.',
+          'Acciones recomendadas: switch_to_engine_map_2, increase_rear_rebound_by_2_clicks, reduce_torque_delivery_in_corners_T05_T08_T13.',
+        ],
+        downloads: [
+          { href: '/paper-kit/results-summary.pdf', label: 'Descargar resumen de resultados PDF', detail: 'PDF de figura/evidencia generado desde el kit de reproducibilidad.' },
+          { href: '/paper-kit/experimental-design.pdf', label: 'Descargar diseño experimental PDF', detail: 'PDF de evidencia de diseño experimental generado desde las figuras del paper.' },
+          { href: '/kdd-application-manual.md', label: 'Descargar manual de aplicación', detail: 'Manual frontend para acceso anticipado, nodos fundadores, fuentes de telemetría y ciclo de decisión.' },
+        ],
+      },
       finalCta: {
-        eyebrow: '10',
-        title: 'Solicitar acceso anticipado',
-        body: 'Si quieres una capa de decisión por encima de la telemetría, solicita acceso. Si quieres ayudar a definir la red, entra como nodo fundador.',
+        eyebrow: '08',
+        title: 'Entrá al circuito',
+        body: 'Si querés una capa de decisión por encima de la telemetría, solicitá acceso. Si querés ayudar a definir la red, entrá como nodo fundador.',
       },
     },
   },
@@ -394,99 +408,6 @@ const HOME_COPY_BY_LANG: Record<Lang, HomeCopy> = {
   ja: HOME_COPY.en,
 };
 
-const VISUAL_COPY: Record<'en' | 'es', {
-  trustTiles: SectionCard[];
-  motionChips: string[];
-  motionRows: { title: string; body: string }[];
-  paperEyebrow: string;
-  paperTitle: string;
-  paperLead: string;
-  paperEvidence: string[];
-  paperNotePrefix: string;
-  paperNoteSuffix: string;
-  operatingPointTitle: string;
-  operatingPointBody: string;
-  telemetryDemo: string[];
-  downloads: { href: string; label: string; detail: string }[];
-}> = {
-  en: {
-    trustTiles: [
-      { title: 'ECU / Logger / GPS / IMU / Video / CSV', body: 'Telemetry stays where it belongs: at the source.' },
-      { title: 'Decision layer', body: 'KDD identifies events and causes, then recommends the mission.' },
-      { title: 'Network learning', body: 'Validation becomes learning. What travels is knowledge, not raw data.' },
-    ],
-    motionChips: ['Data', 'Events', 'Causes', 'Missions', 'Validation'],
-    motionRows: [
-      { title: 'Data', body: 'Protected at source' },
-      { title: 'Events', body: 'Relevant signal isolated' },
-      { title: 'Causes', body: 'Context explains why' },
-      { title: 'Validation', body: 'Learning compounds' },
-    ],
-    paperEyebrow: 'Project evidence',
-    paperTitle: 'Paper Reproducibility Kit and generated evidence',
-    paperLead:
-      'The paper kit records the evidence behind the KDD-governed agentic race engineering platform: manuscript material, datasets, experiments, notebooks, scripts, review package, artifact index, deployment summaries, and governance evidence. It makes the project inspectable, reproducible, and reviewable without pretending that every production integration is finished.',
-    paperEvidence: [
-      'Reproducibility kit with the LaTeX manuscript, generated tables and figures, synthetic datasets, analysis notebooks, workflow definitions, scripts, and checksum-backed protocol documents.',
-      'Reviewer package with a reviewer guide, artifact evaluation checklist, minimal reproduction path, full reproduction instructions, and anonymized artifacts for external assessment.',
-      'Artifact index, Docker and Kubernetes reproduction summaries, CI/CD release evidence, plus security and compliance material that documents how the platform can be evaluated and redeployed.',
-      'PoC result summary for the paper “Structural optimization principles for edge AI in motorsport telemetry”, including the accepted operating point int4_32b_trackside.',
-    ],
-    paperNotePrefix: 'The compiled main paper PDF is not currently present at',
-    paperNoteSuffix: 'The downloads below expose the generated figure/evidence PDFs that are available now, plus the application manual.',
-    operatingPointTitle: 'Accepted operating point:',
-    operatingPointBody: 'PoC evidence reports 18.0 GB memory, 69.9 tok/s, 165.0 W, Digital FoS 1.026, and IPW 0.4236 for the accepted trackside profile.',
-    telemetryDemo: [
-      'Circuit jerez, corner T05, lap 14.',
-      'Rear tire status warning, estimated collapse lap 18, confidence 0.82.',
-      'Recommended actions: switch_to_engine_map_2, increase_rear_rebound_by_2_clicks, reduce_torque_delivery_in_corners_T05_T08_T13.',
-    ],
-    downloads: [
-      { href: '/paper-kit/results-summary.pdf', label: 'Download results summary PDF', detail: 'Generated figure/evidence PDF from the reproducibility kit.' },
-      { href: '/paper-kit/experimental-design.pdf', label: 'Download experimental design PDF', detail: 'Generated experimental design evidence PDF from the paper figures.' },
-      { href: '/kdd-application-manual.md', label: 'Download application manual', detail: 'Frontend application manual for early access, founding nodes, telemetry sources, and the decision loop.' },
-    ],
-  },
-  es: {
-    trustTiles: [
-      { title: 'ECU / Logger / GPS / IMU / Vídeo / CSV', body: 'La telemetría permanece donde corresponde: en origen.' },
-      { title: 'Capa de decisión', body: 'KDD identifica eventos y causas, y después recomienda la misión.' },
-      { title: 'Aprendizaje en red', body: 'La validación se vuelve aprendizaje. Viaja conocimiento, no datos en bruto.' },
-    ],
-    motionChips: ['Datos', 'Eventos', 'Causas', 'Misiones', 'Validación'],
-    motionRows: [
-      { title: 'Datos', body: 'Protegidos en origen' },
-      { title: 'Eventos', body: 'Señal relevante aislada' },
-      { title: 'Causas', body: 'El contexto explica por qué' },
-      { title: 'Validación', body: 'El aprendizaje se acumula' },
-    ],
-    paperEyebrow: 'Evidencia del proyecto',
-    paperTitle: 'Kit de reproducibilidad y evidencia generada',
-    paperLead:
-      'El kit documenta la evidencia detrás de la plataforma de ingeniería de carrera gobernada por KDD: manuscrito, datasets, experimentos, notebooks, scripts, paquete de revisión, índice de artefactos, resúmenes de despliegue y evidencia de gobernanza. Permite inspeccionar, reproducir y revisar el proyecto sin fingir que cada integración productiva ya está terminada.',
-    paperEvidence: [
-      'Kit de reproducibilidad con manuscrito LaTeX, tablas y figuras generadas, datasets sintéticos, notebooks de análisis, workflows, scripts y documentos de protocolo con checksums.',
-      'Paquete para revisores con guía de revisión, checklist de evaluación de artefactos, ruta mínima de reproducción, instrucciones completas y artefactos anonimizados.',
-      'Índice de artefactos, resúmenes de reproducción con Docker y Kubernetes, evidencia de CI/CD y material de seguridad y cumplimiento para evaluar y redesplegar la plataforma.',
-      'Resumen PoC del paper “Structural optimization principles for edge AI in motorsport telemetry”, incluyendo el punto operativo aceptado int4_32b_trackside.',
-    ],
-    paperNotePrefix: 'El PDF compilado del paper principal no está disponible actualmente en',
-    paperNoteSuffix: 'Las descargas exponen los PDFs de figuras/evidencia disponibles ahora, además del manual de aplicación.',
-    operatingPointTitle: 'Punto operativo aceptado:',
-    operatingPointBody: 'La evidencia PoC reporta 18.0 GB de memoria, 69.9 tok/s, 165.0 W, Digital FoS 1.026 e IPW 0.4236 para el perfil trackside aceptado.',
-    telemetryDemo: [
-      'Circuito jerez, curva T05, vuelta 14.',
-      'Estado del neumático trasero en advertencia, colapso estimado en vuelta 18, confianza 0.82.',
-      'Acciones recomendadas: switch_to_engine_map_2, increase_rear_rebound_by_2_clicks, reduce_torque_delivery_in_corners_T05_T08_T13.',
-    ],
-    downloads: [
-      { href: '/paper-kit/results-summary.pdf', label: 'Descargar resumen de resultados PDF', detail: 'PDF de figura/evidencia generado desde el kit de reproducibilidad.' },
-      { href: '/paper-kit/experimental-design.pdf', label: 'Descargar diseño experimental PDF', detail: 'PDF de evidencia de diseño experimental generado desde las figuras del paper.' },
-      { href: '/kdd-application-manual.md', label: 'Descargar manual de aplicación', detail: 'Manual frontend para acceso anticipado, nodos fundadores, fuentes de telemetría y ciclo de decisión.' },
-    ],
-  },
-};
-
 function resolveLanguage(language: string | undefined): Lang {
   const code = language?.toLowerCase() ?? 'en';
   if (code.startsWith('es')) return 'es';
@@ -496,10 +417,20 @@ function resolveLanguage(language: string | undefined): Lang {
   return 'en';
 }
 
+/* ─── Small helpers ─── */
+
+function StationNumber({ number }: { number: string }) {
+  return <span className="public-home__station-number">{number}</span>;
+}
+
+function StationBadge({ label }: { label: string }) {
+  return <span className="public-home__station-badge">{label}</span>;
+}
+
 function SectionHeading({ eyebrow, title, body }: { eyebrow: string; title: string; body: string }) {
   return (
     <div className="public-home__heading">
-      <p className="public-home__eyebrow">{eyebrow}</p>
+      <StationNumber number={eyebrow} />
       <h2>{title}</h2>
       <p>{body}</p>
     </div>
@@ -515,10 +446,6 @@ function Card({ title, body }: SectionCard) {
   );
 }
 
-function PipelineNode({ label }: { label: string }) {
-  return <div className="public-home__pipeline-node">{label}</div>;
-}
-
 function SectionBlock({ id, heading, children }: { id: string; heading: { eyebrow: string; title: string; body: string }; children: ReactNode }) {
   return (
     <section className="public-home__section" id={id}>
@@ -528,57 +455,83 @@ function SectionBlock({ id, heading, children }: { id: string; heading: { eyebro
   );
 }
 
+/* ─── Main Component ─── */
+
 export function HomePage() {
   const { i18n } = useTranslation();
   const { user } = useAuth();
   const language = resolveLanguage(i18n.resolvedLanguage ?? i18n.language);
   const copy = HOME_COPY_BY_LANG[language];
-  const visualCopy = VISUAL_COPY[language === 'es' ? 'es' : 'en'];
   const isSignedIn = Boolean(user);
 
   return (
     <main className="public-home">
       <style>{`
+        /* ─── Foundation ─── */
         .public-home {
-          --page: #f4f1ea;
-          --page-strong: #e7e0d4;
+          --page: #F4F1EA;
+          --page-strong: #E7E0D4;
           --surface: #ffffff;
           --surface-soft: #f7f3ec;
-          --surface-dark: #0b0d0f;
+          --surface-dark: #0B0D0F;
           --surface-carbon: #151719;
           --border: rgba(11, 13, 15, 0.12);
-          --text: #0b0d0f;
-          --text-muted: #6f747a;
-          --red: #c8171d;
-          --red-deep: #8f1015;
-          --blue: #2b6f9e;
-          --violet: #5c4a72;
-          --green: #3f7d5a;
-          --amber: #c27a2c;
+          --text: #0B0D0F;
+          --text-muted: #6F747A;
+          --text-secondary: #2B2E32;
+          --red: #C8171D;
+          --red-deep: #8F1015;
+          --blue: #2B6F9E;
+          --violet: #5C4A72;
+          --green: #3F7D5A;
+          --amber: #C27A2C;
+          --home-radius-panel: var(--radius-xl);
+          --home-radius-card: var(--radius-lg);
+          --home-radius-pill: var(--radius-pill);
+          --home-font-mono: var(--font-mono);
           min-height: 100vh;
-          background:
-            radial-gradient(circle at 8% 4%, rgba(200, 23, 29, 0.09), transparent 22%),
-            radial-gradient(circle at 88% 10%, rgba(43, 111, 158, 0.11), transparent 24%),
-            linear-gradient(180deg, var(--page) 0%, #f7f3ec 56%, #efe8db 100%);
+          background: var(--page);
           color: var(--text);
+          position: relative;
         }
 
+        /* ─── Background grid ─── */
         .public-home::before {
           content: '';
           position: fixed;
           inset: 0;
           pointer-events: none;
-          background-image: linear-gradient(rgba(11, 13, 15, 0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(11, 13, 15, 0.035) 1px, transparent 1px);
-          background-size: 44px 44px;
-          mask-image: linear-gradient(180deg, rgba(0,0,0,0.55), transparent 72%);
+          background-image:
+            linear-gradient(rgba(11, 13, 15, 0.025) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(11, 13, 15, 0.025) 1px, transparent 1px);
+          background-size: 56px 56px;
+          mask-image: linear-gradient(180deg, rgba(0,0,0,0.4), transparent 60%);
+          z-index: 0;
+        }
+
+        /* ─── Red decision line ─── */
+        .public-home::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 60px;
+          width: 1px;
+          height: 100%;
+          background: linear-gradient(180deg, transparent 0%, var(--red) 8%, var(--red) 92%, transparent 100%);
+          opacity: 0.18;
+          pointer-events: none;
+          z-index: 0;
         }
 
         .public-home__shell {
+          position: relative;
+          z-index: 1;
           width: min(1240px, calc(100% - 40px));
           margin: 0 auto;
-          padding: 24px 0 72px;
+          padding: 24px 0 96px;
         }
 
+        /* ─── Header ─── */
         .public-home__header {
           display: flex;
           justify-content: space-between;
@@ -590,7 +543,7 @@ export function HomePage() {
           padding: 14px 0 18px;
           backdrop-filter: blur(18px);
           border-bottom: 1px solid var(--border);
-          margin-bottom: 46px;
+          margin-bottom: 64px;
           flex-wrap: wrap;
         }
 
@@ -621,7 +574,7 @@ export function HomePage() {
           align-items: center;
           gap: 8px;
           padding: 8px 12px;
-          border-radius: 999px;
+          border-radius: var(--home-radius-pill);
           border: 1px solid rgba(11, 13, 15, 0.16);
           background: rgba(255, 255, 255, 0.65);
           font-size: 12px;
@@ -647,13 +600,19 @@ export function HomePage() {
           align-items: center;
           gap: 8px;
           padding: 10px 14px;
-          border-radius: 999px;
+          border-radius: var(--home-radius-pill);
           border: 1px solid var(--border);
           background: rgba(255, 255, 255, 0.75);
           color: var(--text);
           text-decoration: none;
           font-size: 13px;
           font-weight: 600;
+          transition: border-color 180ms ease, background 180ms ease;
+        }
+
+        .public-home__pill:hover {
+          border-color: var(--red);
+          background: rgba(255, 255, 255, 0.95);
         }
 
         .public-home__language {
@@ -661,7 +620,7 @@ export function HomePage() {
           align-items: center;
           gap: 10px;
           padding: 8px 12px;
-          border-radius: 999px;
+          border-radius: var(--home-radius-pill);
           border: 1px solid var(--border);
           background: rgba(255, 255, 255, 0.75);
         }
@@ -674,207 +633,64 @@ export function HomePage() {
           font-weight: 700;
         }
 
-        .public-home__hero {
-          display: grid;
-          grid-template-columns: minmax(0, 0.95fr) minmax(380px, 1.05fr);
-          gap: 34px;
-          align-items: start;
-          margin-bottom: 48px;
-        }
-
-        .public-home__motion {
-          display: grid;
-          grid-template-columns: minmax(0, 1fr) minmax(300px, 0.85fr);
-          gap: 16px;
-          padding: 22px;
-          border-radius: 24px;
-          border: 1px solid rgba(11, 13, 15, 0.12);
-          background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(247,243,236,0.95));
-          box-shadow: 0 18px 40px rgba(11, 13, 15, 0.06);
-        }
-
-        .public-home__motion-stage {
-          position: relative;
-          min-height: 320px;
-          border-radius: 20px;
-          overflow: hidden;
-          border: 1px solid rgba(11, 13, 15, 0.12);
-          background:
-            radial-gradient(circle at 20% 20%, rgba(200, 23, 29, 0.12), transparent 28%),
-            radial-gradient(circle at 78% 24%, rgba(43, 111, 158, 0.12), transparent 26%),
-            linear-gradient(180deg, #0b0d0f 0%, #151719 100%);
-          color: #f4f1ea;
-        }
-
-        .public-home__motion-stage-inner {
-          position: absolute;
-          inset: 0;
-          padding: 22px;
-          display: grid;
-          align-content: space-between;
-          gap: 16px;
-        }
-
-        .public-home__motion-ribbon {
-          display: flex;
-          gap: 8px;
-          flex-wrap: wrap;
+        /* ─── Station number ─── */
+        .public-home__station-number {
+          display: inline-flex;
           align-items: center;
-        }
-
-        .public-home__motion-chip {
-          padding: 8px 12px;
-          border-radius: 999px;
-          background: rgba(255, 255, 255, 0.08);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          font-size: 12px;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
+          justify-content: center;
+          width: 48px;
+          height: 48px;
+          border-radius: var(--home-radius-panel);
+          background: var(--surface-dark);
+          color: var(--red);
+          font-family: var(--home-font-mono);
+          font-size: 16px;
           font-weight: 700;
-        }
-
-        .public-home__motion-scroll {
-          display: grid;
-          gap: 12px;
-        }
-
-        .public-home__motion-scrollbar {
-          height: 8px;
-          border-radius: 999px;
-          background: rgba(255, 255, 255, 0.14);
-          position: relative;
-          overflow: hidden;
-        }
-
-        .public-home__motion-scrollbar::after {
-          content: '';
-          position: absolute;
-          inset: 0;
-          width: 46%;
-          background: linear-gradient(90deg, rgba(200, 23, 29, 0.65), rgba(255, 255, 255, 0.9));
-          border-radius: inherit;
-          animation: publicHomeScroll 4.5s ease-in-out infinite;
-        }
-
-        @keyframes publicHomeScroll {
-          0%, 100% { transform: translateX(-18%); }
-          50% { transform: translateX(112%); }
-        }
-
-        .public-home__motion-timeline {
-          display: grid;
-          gap: 10px;
-        }
-
-        .public-home__motion-row {
-          display: flex;
-          justify-content: space-between;
-          gap: 12px;
-          padding: 10px 12px;
-          border-radius: 14px;
-          background: rgba(255, 255, 255, 0.08);
-          border: 1px solid rgba(255, 255, 255, 0.08);
-          font-size: 13px;
-        }
-
-        .public-home__motion-row strong {
-          font-weight: 700;
-        }
-
-        .public-home__motion-stack {
-          display: grid;
-          gap: 10px;
-          align-content: start;
-        }
-
-        .public-home__motion-stack-header {
-          display: flex;
-          justify-content: space-between;
-          gap: 10px;
-          align-items: center;
+          letter-spacing: -0.02em;
+          line-height: 1;
           margin-bottom: 4px;
         }
 
-        .public-home__motion-stack-header span {
-          font-size: 12px;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-          color: var(--text-muted);
+        .public-home__station-badge {
+          display: inline-flex;
+          padding: 6px 14px;
+          border-radius: var(--home-radius-pill);
+          background: var(--surface-dark);
+          color: var(--red);
+          font-family: var(--home-font-mono);
+          font-size: 11px;
           font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
         }
 
-        .public-home__motion-stack-item {
-          padding: 14px 16px;
-          border-radius: 16px;
-          border: 1px solid var(--border);
-          background: rgba(255, 255, 255, 0.82);
-          display: grid;
-          gap: 4px;
-        }
-
-        .public-home__motion-stack-item strong {
-          font-size: 15px;
-        }
-
-        .public-home__motion-stack-item span {
-          font-size: 13px;
-          color: var(--text-muted);
-          line-height: 1.45;
-        }
-
-        .public-home__hero-copy {
-          display: grid;
-          gap: 18px;
-          padding: 36px 0 0;
-        }
-
-        .public-home__hero-copy h2 {
-          margin: 0;
-          font-size: clamp(64px, 8.5vw, 132px);
-          line-height: 0.86;
-          letter-spacing: -0.075em;
-          font-weight: 760;
-          max-width: 940px;
-        }
-
-        .public-home__hero-copy p {
-          margin: 0;
-          max-width: 720px;
-          font-size: 18px;
-          line-height: 1.72;
-          color: var(--text-muted);
-        }
-
-        .public-home__hero-lead {
-          font-size: 22px !important;
-          line-height: 1.25 !important;
-          color: var(--text) !important;
-          max-width: 780px !important;
-        }
-
-        .public-home__hero-actions {
-          display: flex;
-          gap: 12px;
-          flex-wrap: wrap;
-          padding-top: 6px;
-        }
-
+        /* ─── Buttons ─── */
         .public-home__button {
           appearance: none;
           border: 1px solid transparent;
-          border-radius: 999px;
-          padding: 14px 18px;
+          border-radius: var(--home-radius-pill);
+          padding: 14px 22px;
           text-decoration: none;
           font-size: 14px;
           font-weight: 700;
           display: inline-flex;
           align-items: center;
           gap: 10px;
+          transition: transform 160ms ease, box-shadow 160ms ease;
+        }
+
+        .public-home__button:hover {
+          transform: translateY(-1px);
         }
 
         .public-home__button--primary {
           background: var(--red);
           color: #fff;
+          box-shadow: 0 4px 20px rgba(200, 23, 29, 0.25);
+        }
+
+        .public-home__button--primary:hover {
+          box-shadow: 0 8px 32px rgba(200, 23, 29, 0.35);
         }
 
         .public-home__button--secondary {
@@ -883,135 +699,251 @@ export function HomePage() {
           border-color: var(--border);
         }
 
-        .public-home__hero-note {
-          max-width: 620px;
-          font-size: 13px !important;
-          color: var(--text-muted) !important;
+        .public-home__button--secondary:hover {
+          border-color: var(--text-muted);
         }
 
-        .public-home__hero-visual {
-          position: relative;
-          overflow: hidden;
+        /* ─── Hero ─── */
+        .public-home__hero {
           display: grid;
-          gap: 16px;
-          padding: 28px;
-          border: 1px solid var(--border);
-          background:
-            linear-gradient(135deg, rgba(255,255,255,0.88), rgba(244,241,234,0.72)),
-            radial-gradient(circle at 72% 8%, rgba(200,23,29,0.11), transparent 28%);
-          border-radius: 34px;
-          box-shadow: 0 30px 80px rgba(11, 13, 15, 0.12);
-          min-height: 560px;
-          align-content: end;
+          grid-template-columns: minmax(0, 1.1fr) minmax(380px, 0.9fr);
+          gap: 56px;
+          align-items: start;
+          margin-bottom: 80px;
         }
 
-        .public-home__hero-visual::before,
-        .public-home__hero-visual::after {
-          content: '';
-          position: absolute;
-          border: 1px solid rgba(11, 13, 15, 0.1);
-          background: rgba(255, 255, 255, 0.34);
-          box-shadow: 0 18px 45px rgba(11, 13, 15, 0.08);
-          transform: rotate(-7deg);
-          pointer-events: none;
-        }
-
-        .public-home__hero-visual::before {
-          width: 52%;
-          height: 190px;
-          top: 34px;
-          left: 32px;
-          border-radius: 30px;
-        }
-
-        .public-home__hero-visual::after {
-          width: 46%;
-          height: 240px;
-          top: 86px;
-          right: 24px;
-          border-radius: 999px 999px 38px 38px;
-          transform: rotate(9deg);
-        }
-
-        .public-home__pipeline {
-          position: relative;
-          z-index: 1;
+        .public-home__hero-copy {
           display: grid;
-          grid-template-columns: 1fr;
-          gap: 12px;
-          align-items: stretch;
+          gap: 20px;
+          padding: 48px 0 0;
         }
 
-        .public-home__pipeline-node {
-          min-height: 92px;
-          padding: 16px;
-          border-radius: 22px;
-          border: 1px solid var(--border);
-          background: rgba(255, 255, 255, 0.88);
-          backdrop-filter: blur(12px);
-          display: flex;
-          align-items: flex-end;
-          font-size: 17px;
-          line-height: 1.25;
-          letter-spacing: -0.01em;
-          font-weight: 650;
-        }
-
-        .public-home__pipeline-arrow {
-          display: none;
-          color: var(--text-muted);
-          font-size: 20px;
-          font-weight: 700;
-        }
-
-        .public-home__hero-trust {
-          position: relative;
-          z-index: 1;
-          display: grid;
-          grid-template-columns: repeat(3, minmax(0, 1fr));
-          gap: 12px;
-        }
-
-        .public-home__trust-tile {
-          padding: 14px 16px;
-          border-radius: 18px;
-          border: 1px solid var(--border);
-          background: rgba(255, 255, 255, 0.84);
-          backdrop-filter: blur(12px);
-        }
-
-        .public-home__trust-tile p {
+        .public-home__hero-copy h2 {
           margin: 0;
-          font-size: 13px;
-          line-height: 1.55;
-          color: var(--text-muted);
-        }
-
-        .public-home__trust-tile strong {
-          display: block;
-          margin-bottom: 6px;
+          font-size: clamp(72px, 10vw, 140px);
+          line-height: 0.82;
+          letter-spacing: -0.08em;
+          font-weight: 780;
+          max-width: 940px;
           color: var(--text);
         }
 
+        .public-home__hero-subtitle {
+          margin: 0;
+          font-size: 20px;
+          line-height: 1.4;
+          color: var(--text-secondary);
+          font-weight: 500;
+          max-width: 520px;
+        }
+
+        .public-home__hero-lead {
+          margin: 0;
+          font-size: clamp(22px, 3vw, 30px) !important;
+          line-height: 1.25 !important;
+          color: var(--text) !important;
+          font-weight: 500;
+          max-width: 700px !important;
+          letter-spacing: -0.01em;
+        }
+
+        .public-home__hero-support {
+          margin: 0;
+          font-size: 16px;
+          line-height: 1.65;
+          color: var(--text-muted);
+          max-width: 540px;
+        }
+
+        .public-home__hero-privacy {
+          margin: 0;
+          font-size: 14px;
+          line-height: 1.55;
+          color: var(--text-muted);
+          max-width: 440px;
+          padding: 12px 16px;
+          border-radius: 12px;
+          border: 1px solid var(--border);
+          background: rgba(255, 255, 255, 0.6);
+        }
+
+        .public-home__hero-actions {
+          display: flex;
+          gap: 12px;
+          flex-wrap: wrap;
+          padding-top: 8px;
+        }
+
+        /* ─── Hero circuit diagram ─── */
+        .public-home__hero-circuit {
+          position: relative;
+          overflow: hidden;
+          display: grid;
+          gap: 0;
+          padding: 28px;
+          border: 1px solid var(--border);
+          background:
+            radial-gradient(circle at 72% 8%, rgba(200,23,29,0.06), transparent 40%),
+            linear-gradient(180deg, rgba(255,255,255,0.92), rgba(244,241,234,0.85));
+          border-radius: var(--home-radius-panel);
+          box-shadow: 0 30px 80px rgba(11, 13, 15, 0.08);
+          min-height: 580px;
+        }
+
+        .public-home__circuit-title {
+          margin: 0 0 24px;
+          font-size: 11px;
+          text-transform: uppercase;
+          letter-spacing: 0.16em;
+          color: var(--text-muted);
+          font-weight: 700;
+        }
+
+        .public-home__circuit-flow {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 0;
+          position: relative;
+        }
+
+        .public-home__circuit-stage {
+          position: relative;
+          padding: 16px 0;
+        }
+
+        .public-home__circuit-stage-label {
+          display: block;
+          margin-bottom: 8px;
+          font-size: 10px;
+          text-transform: uppercase;
+          letter-spacing: 0.14em;
+          color: var(--text-muted);
+          font-weight: 700;
+        }
+
+        .public-home__circuit-inputs {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+        }
+
+        .public-home__circuit-chip {
+          padding: 6px 12px;
+          border-radius: 8px;
+          font-size: 12px;
+          font-weight: 600;
+          border: 1px solid var(--border);
+          background: rgba(255, 255, 255, 0.85);
+          color: var(--text-secondary);
+        }
+
+        .public-home__circuit-chip--data { border-color: rgba(43, 111, 158, 0.28); background: rgba(43, 111, 158, 0.08); }
+        .public-home__circuit-chip--decision { border-color: var(--red); background: var(--surface-dark); color: var(--page); }
+        .public-home__circuit-chip--output { border-color: rgba(63, 125, 90, 0.30); background: rgba(63, 125, 90, 0.08); }
+        .public-home__circuit-chip--network { border-color: rgba(92, 74, 114, 0.30); background: rgba(92, 74, 114, 0.08); }
+
+        .public-home__circuit-connector {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 4px 0;
+          position: relative;
+        }
+
+        .public-home__circuit-connector::before {
+          content: '';
+          position: absolute;
+          left: 24px;
+          top: 0;
+          bottom: 0;
+          width: 1px;
+          background: linear-gradient(180deg, var(--border), var(--red), var(--border));
+        }
+
+        .public-home__circuit-connector-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: var(--red);
+          position: relative;
+          z-index: 1;
+          box-shadow: 0 0 0 3px rgba(200, 23, 29, 0.12);
+        }
+
+        .public-home__circuit-decision-box {
+          padding: 14px 18px;
+          border-radius: var(--home-radius-panel);
+          background: var(--surface-dark);
+          color: var(--page);
+          font-size: 14px;
+          font-weight: 600;
+          letter-spacing: -0.01em;
+          line-height: 1.4;
+        }
+
+        .public-home__circuit-decision-box small {
+          display: block;
+          margin-top: 4px;
+          font-size: 11px;
+          font-weight: 500;
+          opacity: 0.65;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+        }
+
+        .public-home__circuit-network {
+          margin-top: 8px;
+          padding: 14px 16px;
+          border-radius: var(--home-radius-panel);
+          border: 1px dashed var(--violet);
+          background: rgba(92, 74, 114, 0.04);
+        }
+
+        .public-home__circuit-network-label {
+          display: block;
+          margin-bottom: 8px;
+          font-size: 10px;
+          text-transform: uppercase;
+          letter-spacing: 0.14em;
+          color: var(--violet);
+          font-weight: 700;
+        }
+
+        .public-home__circuit-nodes {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+        }
+
+        .public-home__circuit-node {
+          padding: 5px 10px;
+          border-radius: 6px;
+          font-size: 11px;
+          font-weight: 600;
+          background: rgba(92, 74, 114, 0.08);
+          color: var(--violet);
+          border: 1px solid rgba(92, 74, 114, 0.15);
+        }
+
+        /* ─── Section (generic) ─── */
         .public-home__section {
-          padding-top: 68px;
-          margin-top: 58px;
-          border-top: 1px solid rgba(11, 13, 15, 0.1);
+          padding-top: 80px;
+          margin-top: 24px;
         }
 
         .public-home__heading {
           display: grid;
-          gap: 10px;
+          gap: 12px;
           max-width: 820px;
-          margin-bottom: 20px;
+          margin-bottom: 28px;
         }
 
         .public-home__heading h2 {
           margin: 0;
-          font-size: clamp(28px, 3vw, 42px);
-          line-height: 1.02;
-          letter-spacing: -0.03em;
-          font-weight: 650;
+          font-size: clamp(32px, 4vw, 52px);
+          line-height: 1.0;
+          letter-spacing: -0.035em;
+          font-weight: 680;
         }
 
         .public-home__heading p {
@@ -1022,21 +954,353 @@ export function HomePage() {
           max-width: 720px;
         }
 
+        /* ─── Manifesto ─── */
+        .public-home__manifesto {
+          padding: 100px 0;
+          margin-top: 24px;
+          text-align: center;
+        }
+
+        .public-home__manifesto-inner {
+          max-width: 960px;
+          margin: 0 auto;
+          padding: 0 24px;
+        }
+
+        .public-home__manifesto-quote {
+          margin: 0 0 40px;
+          font-size: clamp(36px, 5.5vw, 72px);
+          line-height: 1.05;
+          letter-spacing: -0.04em;
+          font-weight: 700;
+          color: var(--text);
+          white-space: pre-line;
+        }
+
+        .public-home__manifesto-rule {
+          width: 80px;
+          height: 2px;
+          background: var(--red);
+          margin: 0 auto 40px;
+          border: none;
+        }
+
+        .public-home__manifesto-block {
+          margin: 0 auto 32px;
+          max-width: 740px;
+          font-size: 18px;
+          line-height: 1.8;
+          color: var(--text-secondary);
+        }
+
+        .public-home__manifesto-signature {
+          display: inline-flex;
+          padding: 8px 20px;
+          border-radius: var(--home-radius-pill);
+          background: var(--surface-dark);
+          color: var(--red);
+          font-family: var(--home-font-mono);
+          font-size: 12px;
+          font-weight: 700;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+        }
+
+        /* ─── Visual Transform ─── */
+        .public-home__transform {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) 56px minmax(0, 1fr);
+          gap: 0;
+          align-items: start;
+          margin-top: 20px;
+        }
+
+        .public-home__transform-col {
+          display: grid;
+          gap: 10px;
+        }
+
+        .public-home__transform-col-title {
+          margin: 0 0 6px;
+          font-size: 10px;
+          text-transform: uppercase;
+          letter-spacing: 0.14em;
+          color: var(--text-muted);
+          font-weight: 700;
+        }
+
+        .public-home__transform-item {
+          position: relative;
+          padding: 12px 16px;
+          border-radius: 12px;
+          font-size: 13px;
+          line-height: 1.45;
+          border: 1px solid var(--border);
+        }
+
+        .public-home__transform-item--raw {
+          background: rgba(43, 111, 158, 0.06);
+          border-color: rgba(43, 111, 158, 0.22);
+          color: var(--text-secondary);
+        }
+
+        .public-home__transform-item--knowledge {
+          background: rgba(63, 125, 90, 0.06);
+          border-color: rgba(63, 125, 90, 0.24);
+          color: var(--text-secondary);
+        }
+
+        .public-home__transform-item--raw::before,
+        .public-home__transform-item--knowledge::before {
+          content: '';
+          display: inline-block;
+          width: 7px;
+          height: 7px;
+          border-radius: var(--home-radius-pill);
+          margin-right: 8px;
+          vertical-align: 1px;
+          background: var(--blue);
+        }
+
+        .public-home__transform-item--knowledge::before {
+          background: var(--green);
+        }
+
+        .public-home__transform-arrow-col {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding-top: 40px;
+          gap: 8px;
+        }
+
+        .public-home__transform-arrow-line {
+          width: 1px;
+          height: 100%;
+          min-height: 320px;
+          background: linear-gradient(180deg, var(--blue), var(--red), var(--green));
+          opacity: 0.35;
+        }
+
+        .public-home__transform-arrow-label {
+          writing-mode: vertical-rl;
+          text-orientation: mixed;
+          font-family: var(--home-font-mono);
+          font-size: 10px;
+          text-transform: uppercase;
+          letter-spacing: 0.16em;
+          color: var(--text-muted);
+          font-weight: 700;
+        }
+
+        /* ─── Pipeline stations ─── */
+        .public-home__stations {
+          display: grid;
+          gap: 0;
+          margin-top: 20px;
+          position: relative;
+        }
+
+        .public-home__stations::before {
+          content: '';
+          position: absolute;
+          left: 23px;
+          top: 0;
+          bottom: 0;
+          width: 1px;
+          background: linear-gradient(180deg, var(--border), var(--red), var(--border));
+        }
+
+        .public-home__station {
+          display: grid;
+          grid-template-columns: 48px 1fr;
+          gap: 20px;
+          align-items: start;
+          padding: 20px 0;
+          position: relative;
+        }
+
+        .public-home__station-marker {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 48px;
+          height: 48px;
+          border-radius: var(--home-radius-panel);
+          background: var(--surface-dark);
+          color: var(--red);
+          font-family: var(--home-font-mono);
+          font-size: 15px;
+          font-weight: 700;
+          position: relative;
+          z-index: 1;
+        }
+
+        .public-home__station-content {
+          display: grid;
+          gap: 4px;
+          padding: 4px 0;
+        }
+
+        .public-home__station-label {
+          margin: 0;
+          font-size: 18px;
+          font-weight: 650;
+          letter-spacing: -0.02em;
+          color: var(--text);
+        }
+
+        .public-home__station-detail {
+          margin: 0;
+          font-size: 14px;
+          line-height: 1.55;
+          color: var(--text-muted);
+        }
+
+        /* ─── T15 Bucine narrative ─── */
+        .public-home__narrative {
+          display: grid;
+          gap: 0;
+          margin-top: 20px;
+          position: relative;
+          padding-left: 32px;
+        }
+
+        .public-home__narrative::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: 2px;
+          background: linear-gradient(180deg, var(--red), var(--amber), var(--green));
+          border-radius: 2px;
+        }
+
+        .public-home__narrative-step {
+          position: relative;
+          padding: 20px 0 20px 28px;
+        }
+
+        .public-home__narrative-step::before {
+          content: '';
+          position: absolute;
+          left: -7px;
+          top: 24px;
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          border: 2px solid var(--red);
+          background: var(--page);
+        }
+
+        .public-home__narrative-step:last-child::before {
+          background: var(--green);
+          border-color: var(--green);
+        }
+
+        .public-home__narrative-label {
+          display: inline-flex;
+          margin: 0 0 6px;
+          font-size: 13px;
+          font-weight: 700;
+          letter-spacing: -0.01em;
+          color: var(--text);
+          text-transform: uppercase;
+        }
+
+        .public-home__narrative-detail {
+          margin: 0;
+          font-size: 14px;
+          line-height: 1.65;
+          color: var(--text-muted);
+          max-width: 640px;
+        }
+
+        /* ─── Knowledge network visual ─── */
+        .public-home__network-visual {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 24px;
+          margin-top: 20px;
+        }
+
+        .public-home__network-panel {
+          padding: 24px;
+          border-radius: var(--home-radius-panel);
+          border: 1px solid var(--border);
+        }
+
+        .public-home__network-panel--stays {
+          background: rgba(43, 111, 158, 0.04);
+          border-color: rgba(43, 111, 158, 0.15);
+        }
+
+        .public-home__network-panel--travels {
+          background: rgba(63, 125, 90, 0.04);
+          border-color: rgba(63, 125, 90, 0.15);
+        }
+
+        .public-home__network-panel-title {
+          margin: 0 0 14px;
+          font-size: 13px;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          font-weight: 700;
+        }
+
+        .public-home__network-panel--stays .public-home__network-panel-title {
+          color: var(--blue);
+        }
+
+        .public-home__network-panel--travels .public-home__network-panel-title {
+          color: var(--green);
+        }
+
+        .public-home__network-list {
+          display: grid;
+          gap: 8px;
+          padding: 0;
+          margin: 0;
+          list-style: none;
+        }
+
+        .public-home__network-list li {
+          display: flex;
+          gap: 8px;
+          align-items: center;
+          font-size: 14px;
+          line-height: 1.5;
+          color: var(--text-secondary);
+        }
+
+        .public-home__network-list li::before {
+          content: '';
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          flex-shrink: 0;
+        }
+
+        .public-home__network-panel--stays .public-home__network-list li::before {
+          background: var(--blue);
+        }
+
+        .public-home__network-panel--travels .public-home__network-list li::before {
+          background: var(--green);
+        }
+
+        /* ─── Node mode badges ─── */
         .public-home__grid-3 {
           display: grid;
           grid-template-columns: repeat(3, minmax(0, 1fr));
-          gap: 14px;
-        }
-
-        .public-home__grid-4 {
-          display: grid;
-          grid-template-columns: repeat(4, minmax(0, 1fr));
-          gap: 14px;
+          gap: 16px;
         }
 
         .public-home__card {
-          padding: 18px;
-          border-radius: 20px;
+          padding: 24px;
+          border-radius: var(--home-radius-panel);
           border: 1px solid var(--border);
           background: var(--surface);
           min-height: 100%;
@@ -1063,52 +1327,66 @@ export function HomePage() {
           font-size: 14px;
         }
 
-        .public-home__sources {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 10px;
+        /* ─── Founding section ─── */
+        .public-home__founding {
+          margin-top: 20px;
+          padding: 48px;
+          border-radius: var(--home-radius-panel);
+          background: var(--surface-dark);
+          color: var(--page);
         }
 
-        .public-home__source {
-          padding: 10px 14px;
-          border-radius: 999px;
-          background: #fff;
-          border: 1px solid var(--border);
-          font-size: 13px;
-          font-weight: 600;
+        .public-home__founding .public-home__heading h2 {
+          color: var(--page);
+        }
+
+        .public-home__founding .public-home__heading p {
+          color: rgba(244, 241, 234, 0.7);
+        }
+
+        .public-home__founding .public-home__station-number {
+          background: rgba(255, 255, 255, 0.08);
         }
 
         .public-home__founding-list {
           display: grid;
-          gap: 10px;
+          gap: 12px;
           padding: 0;
           margin: 0;
           list-style: none;
+          max-width: 640px;
         }
 
         .public-home__founding-list li {
           display: flex;
-          gap: 10px;
+          gap: 12px;
           align-items: flex-start;
-          color: var(--text);
+          color: rgba(244, 241, 234, 0.85);
           line-height: 1.55;
+          font-size: 15px;
         }
 
         .public-home__founding-list svg {
           flex: 0 0 auto;
-          margin-top: 2px;
+          margin-top: 3px;
           color: var(--green);
         }
 
+        .public-home__founding-cta {
+          margin-top: 28px;
+        }
+
+        /* ─── Manual panel ─── */
         .public-home__manual-panel {
           display: grid;
           grid-template-columns: minmax(0, 1fr) auto;
-          gap: 20px;
+          gap: 24px;
           align-items: center;
-          padding: 24px;
-          border-radius: 24px;
+          padding: 28px;
+          border-radius: var(--home-radius-panel);
           border: 1px solid var(--border);
-          background: linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(247, 243, 236, 0.94));
+          background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(247, 243, 236, 0.94));
+          margin-top: 20px;
         }
 
         .public-home__manual-panel p {
@@ -1118,11 +1396,13 @@ export function HomePage() {
           max-width: 760px;
         }
 
+        /* ─── Paper kit ─── */
         .public-home__paper-kit {
           display: grid;
           grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
-          gap: 20px;
+          gap: 24px;
           align-items: start;
+          margin-top: 20px;
         }
 
         .public-home__paper-copy {
@@ -1163,8 +1443,8 @@ export function HomePage() {
         .public-home__paper-aside {
           display: grid;
           gap: 14px;
-          padding: 20px;
-          border-radius: 24px;
+          padding: 24px;
+          border-radius: var(--home-radius-panel);
           border: 1px solid var(--border);
           background: rgba(255, 255, 255, 0.74);
         }
@@ -1191,11 +1471,16 @@ export function HomePage() {
           display: grid;
           gap: 6px;
           padding: 14px;
-          border-radius: 16px;
+          border-radius: var(--home-radius-panel);
           border: 1px solid var(--border);
           background: var(--surface);
           color: var(--text);
           text-decoration: none;
+          transition: border-color 160ms ease;
+        }
+
+        .public-home__download-card:hover {
+          border-color: var(--red);
         }
 
         .public-home__download-card strong {
@@ -1213,7 +1498,7 @@ export function HomePage() {
 
         .public-home__paper-note {
           padding: 12px 14px;
-          border-radius: 16px;
+          border-radius: var(--home-radius-panel);
           border: 1px solid rgba(194, 122, 44, 0.24);
           background: rgba(194, 122, 44, 0.08);
           color: var(--text-muted);
@@ -1221,14 +1506,28 @@ export function HomePage() {
           font-size: 13px;
         }
 
+        .public-home__mono {
+          font-family: var(--home-font-mono);
+          font-size: 12px;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+        }
+
+        /* ─── Final CTA ─── */
         .public-home__final-cta {
-          margin-top: 48px;
-          padding: 28px;
-          border-radius: 28px;
+          margin-top: 80px;
+          padding: 56px;
+          border-radius: var(--home-radius-panel);
           background: var(--surface-dark);
-          color: #f4f1ea;
+          color: var(--page);
           display: grid;
-          gap: 18px;
+          gap: 20px;
+          text-align: center;
+          align-items: center;
+        }
+
+        .public-home__final-cta .public-home__heading {
+          align-items: center;
         }
 
         .public-home__final-cta .public-home__eyebrow,
@@ -1237,37 +1536,65 @@ export function HomePage() {
           color: inherit;
         }
 
+        .public-home__final-cta .public-home__heading h2 {
+          font-size: clamp(36px, 5vw, 64px);
+        }
+
         .public-home__final-cta .public-home__heading p {
-          color: rgba(244, 241, 234, 0.78);
+          color: rgba(244, 241, 234, 0.7);
+          max-width: 600px;
         }
 
         .public-home__final-actions {
           display: flex;
           gap: 12px;
           flex-wrap: wrap;
+          justify-content: center;
         }
 
         .public-home__final-actions .public-home__button--secondary {
-          color: #f4f1ea;
+          color: var(--page);
           border-color: rgba(244, 241, 234, 0.18);
         }
 
-        .public-home__mono {
-          font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
-          font-size: 12px;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
+        .public-home__final-actions .public-home__button--secondary:hover {
+          border-color: rgba(244, 241, 234, 0.4);
         }
 
+        /* ─── Responsive: 980px ─── */
         @media (max-width: 980px) {
-          .public-home__hero,
-          .public-home__motion,
-          .public-home__grid-4,
+          .public-home__hero {
+            grid-template-columns: 1fr;
+            gap: 40px;
+          }
+
           .public-home__grid-3 {
             grid-template-columns: 1fr;
           }
 
-          .public-home__pipeline {
+          .public-home__transform {
+            grid-template-columns: 1fr;
+            gap: 16px;
+          }
+
+          .public-home__transform-arrow-col {
+            flex-direction: row;
+            padding-top: 0;
+            justify-content: center;
+          }
+
+          .public-home__transform-arrow-line {
+            width: 100%;
+            height: 1px;
+            min-height: 0;
+            background: linear-gradient(90deg, var(--blue), var(--red), var(--green));
+          }
+
+          .public-home__transform-arrow-label {
+            writing-mode: horizontal-tb;
+          }
+
+          .public-home__network-visual {
             grid-template-columns: 1fr;
           }
 
@@ -1278,38 +1605,58 @@ export function HomePage() {
           .public-home__paper-kit {
             grid-template-columns: 1fr;
           }
-
-          .public-home__pipeline-arrow {
-            display: none;
-          }
-
-          .public-home__hero-trust {
-            grid-template-columns: 1fr;
-          }
         }
 
+        /* ─── Responsive: 640px ─── */
         @media (max-width: 640px) {
           .public-home__shell {
             width: min(100% - 18px, 1240px);
-            padding: 16px 0 48px;
+            padding: 16px 0 56px;
           }
 
           .public-home__hero-copy h2 {
-            font-size: clamp(40px, 12vw, 64px);
+            font-size: clamp(56px, 14vw, 80px);
           }
 
           .public-home__hero-lead {
-            font-size: 19px !important;
+            font-size: 20px !important;
+          }
+
+          .public-home__manifesto-quote {
+            font-size: clamp(28px, 8vw, 48px);
+          }
+
+          .public-home__manifesto {
+            padding: 64px 0;
+          }
+
+          .public-home__founding {
+            padding: 28px;
           }
 
           .public-home__final-cta {
-            padding: 22px;
-            border-radius: 24px;
+            padding: 32px 24px;
+          }
+
+          .public-home__station-marker {
+            width: 40px;
+            height: 40px;
+            font-size: 13px;
+          }
+
+          .public-home__stations::before {
+            left: 19px;
+          }
+
+          .public-home__station {
+            grid-template-columns: 40px 1fr;
+            gap: 14px;
           }
         }
       `}</style>
 
       <div className="public-home__shell">
+        {/* ─── Header ─── */}
         <header className="public-home__header">
           <div className="public-home__brand">
             <p className="public-home__eyebrow">{copy.header.eyebrow}</p>
@@ -1344,14 +1691,15 @@ export function HomePage() {
           </div>
         </header>
 
+        {/* ─── Hero ─── */}
         <section className="public-home__hero">
           <div className="public-home__hero-copy">
             <p className="public-home__eyebrow">{copy.hero.eyebrow}</p>
             <h2>{copy.hero.title}</h2>
-            <p>{copy.hero.subtitle}</p>
+            <p className="public-home__hero-subtitle">{copy.hero.subtitle}</p>
             <p className="public-home__hero-lead">{copy.hero.lead}</p>
-            <p className="public-home__hero-note">{copy.hero.support}</p>
-            <p className="public-home__hero-note">{copy.hero.privacy}</p>
+            <p className="public-home__hero-support">{copy.hero.support}</p>
+            <p className="public-home__hero-privacy">{copy.hero.privacy}</p>
             <div className="public-home__hero-actions">
               <a className="public-home__button public-home__button--primary" href="/trial">
                 {copy.hero.primaryCta}
@@ -1363,112 +1711,179 @@ export function HomePage() {
             </div>
           </div>
 
-          <aside className="public-home__hero-visual" aria-label="Telemetry decision flow">
-            <div className="public-home__pipeline">
-              <PipelineNode label={copy.pipeline.source} />
-              <div className="public-home__pipeline-arrow">→</div>
-              <PipelineNode label={copy.pipeline.layer} />
-              <div className="public-home__pipeline-arrow">→</div>
-              <PipelineNode label={copy.pipeline.outcomes} />
-              <div className="public-home__pipeline-arrow">→</div>
-              <PipelineNode label={copy.pipeline.network} />
-            </div>
-            <div className="public-home__hero-trust">
-              {visualCopy.trustTiles.map(tile => (
-                <div key={tile.title} className="public-home__trust-tile">
-                  <strong>{tile.title}</strong>
-                  <p>{tile.body}</p>
+          <aside className="public-home__hero-circuit" aria-label="Knowledge circuit diagram">
+            <p className="public-home__circuit-title">The Knowledge Circuit</p>
+
+            <div className="public-home__circuit-flow">
+              {/* Inputs */}
+              <div className="public-home__circuit-stage">
+                <span className="public-home__circuit-stage-label">Data Sources</span>
+                <div className="public-home__circuit-inputs">
+                  {['ECU', 'Logger', 'GPS', 'IMU', 'Video', 'CSV'].map(s => (
+                    <span key={s} className="public-home__circuit-chip public-home__circuit-chip--data">{s}</span>
+                  ))}
                 </div>
-              ))}
+              </div>
+
+              {/* Connector */}
+              <div className="public-home__circuit-connector">
+                <span className="public-home__circuit-connector-dot" />
+              </div>
+
+              {/* Decision Layer */}
+              <div className="public-home__circuit-stage">
+                <div className="public-home__circuit-decision-box">
+                  KDD Decision Layer
+                  <small>{copy.pipeline.outcomes}</small>
+                </div>
+              </div>
+
+              {/* Connector */}
+              <div className="public-home__circuit-connector">
+                <span className="public-home__circuit-connector-dot" />
+              </div>
+
+              {/* Outputs */}
+              <div className="public-home__circuit-stage">
+                <span className="public-home__circuit-stage-label">Outcomes</span>
+                <div className="public-home__circuit-inputs">
+                  {['Missions', 'Validation', 'Learning'].map(s => (
+                    <span key={s} className="public-home__circuit-chip public-home__circuit-chip--output">{s}</span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Connector */}
+              <div className="public-home__circuit-connector">
+                <span className="public-home__circuit-connector-dot" />
+              </div>
+
+              {/* Network */}
+              <div className="public-home__circuit-stage">
+                <div className="public-home__circuit-network">
+                  <span className="public-home__circuit-network-label">Knowledge Network</span>
+                  <div className="public-home__circuit-nodes">
+                    {['Private', 'Team', 'Federated'].map(n => (
+                      <span key={n} className="public-home__circuit-node">{n}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </aside>
         </section>
 
-        <section className="public-home__motion" aria-labelledby="motion-stack-title">
-          <div className="public-home__heading">
-            <p className="public-home__eyebrow">{copy.sections.motion.eyebrow}</p>
-            <h2 id="motion-stack-title">{copy.sections.motion.title}</h2>
-            <p>{copy.sections.motion.body}</p>
+        {/* ─── Manifesto ─── */}
+        <section className="public-home__manifesto" aria-label="Manifesto">
+          <div className="public-home__manifesto-inner">
+            <p className="public-home__manifesto-quote">{copy.manifesto.quote}</p>
+            <hr className="public-home__manifesto-rule" />
+            <p className="public-home__manifesto-block">{copy.manifesto.block}</p>
+            <span className="public-home__manifesto-signature">{copy.manifesto.signature}</span>
           </div>
+        </section>
 
-          <div className="public-home__motion-stage" aria-label={copy.sections.motion.stackLabel}>
-            <div className="public-home__motion-stage-inner">
-              <div className="public-home__motion-ribbon">
-                {visualCopy.motionChips.map(tag => (
-                  <span key={tag} className="public-home__motion-chip">{tag}</span>
-                ))}
-              </div>
+        {/* ─── 01 Visual Transform ─── */}
+        <section className="public-home__section" id="visual-transform">
+          <SectionHeading
+            eyebrow={copy.sections.visualTransform.eyebrow}
+            title={copy.sections.visualTransform.title}
+            body={copy.sections.visualTransform.body}
+          />
 
-              <div className="public-home__motion-scroll">
-                <div className="public-home__motion-scrollbar" aria-hidden="true" />
-                <div className="public-home__motion-timeline">
-                  {visualCopy.motionRows.map(row => (
-                    <div key={row.title} className="public-home__motion-row"><strong>{row.title}</strong><span>{row.body}</span></div>
-                  ))}
-                </div>
-              </div>
+          <div className="public-home__transform" aria-label="Telemetry to knowledge transformation">
+            <div className="public-home__transform-col">
+              <p className="public-home__transform-col-title">Raw Telemetry</p>
+              <div className="public-home__transform-item public-home__transform-item--raw">speed.csv — full lap trace</div>
+              <div className="public-home__transform-item public-home__transform-item--raw">GPS coordinates — position data</div>
+              <div className="public-home__transform-item public-home__transform-item--raw">Lean angle — IMU sensor feed</div>
+              <div className="public-home__transform-item public-home__transform-item--raw">RPM curve — ECU engine data</div>
+              <div className="public-home__transform-item public-home__transform-item--raw">Video — onboard camera</div>
+            </div>
+
+            <div className="public-home__transform-arrow-col">
+              <span className="public-home__transform-arrow-label">KDD</span>
+              <div className="public-home__transform-arrow-line" />
+            </div>
+
+            <div className="public-home__transform-col">
+              <p className="public-home__transform-col-title">Actionable Knowledge</p>
+              <div className="public-home__transform-item public-home__transform-item--knowledge">High lean + throttle event — causal link identified</div>
+              <div className="public-home__transform-item public-home__transform-item--knowledge">Causal hypothesis — brake release timing</div>
+              <div className="public-home__transform-item public-home__transform-item--knowledge">Exit Drive Validation — target defined</div>
+              <div className="public-home__transform-item public-home__transform-item--knowledge">Learning stored — pattern compounds</div>
             </div>
           </div>
+        </section>
 
-          <div className="public-home__grid-4" style={{ gridColumn: '1 / -1' }}>
-            {copy.sections.motion.cards.map(card => <Card key={card.title} {...card} />)}
-          </div>
+        {/* ─── 02 Pipeline / Decision Loop ─── */}
+        <section className="public-home__section" id="decision-loop">
+          <SectionHeading
+            eyebrow={copy.sections.pipelineStations.eyebrow}
+            title={copy.sections.pipelineStations.title}
+            body={copy.sections.pipelineStations.body}
+          />
 
-          <div className="public-home__grid-4" style={{ gridColumn: '1 / -1' }}>
-            {copy.sections.motion.stackRows.map(row => (
-              <div key={row} className="public-home__motion-stack-item">
-                <strong>{copy.sections.motion.stackLabel}</strong>
-                <span>{row}</span>
+          <div className="public-home__stations" aria-label="Decision loop stations">
+            {copy.sections.pipelineStations.stations.map(station => (
+              <div key={station.number} className="public-home__station">
+                <div className="public-home__station-marker">{station.number}</div>
+                <div className="public-home__station-content">
+                  <p className="public-home__station-label">{station.label}</p>
+                  <p className="public-home__station-detail">{station.detail}</p>
+                </div>
               </div>
             ))}
           </div>
         </section>
 
-        <SectionBlock
-          id="no-somos-telemetria"
-          heading={{ eyebrow: copy.sections.noTelemetry.eyebrow, title: copy.sections.noTelemetry.title, body: copy.sections.noTelemetry.body }}
-        >
-          <div className="public-home__grid-3">
-            {copy.sections.noTelemetry.cards.map(card => <Card key={card.title} {...card} />)}
-          </div>
-        </SectionBlock>
+        {/* ─── 03 T15 Bucine Narrative ─── */}
+        <section className="public-home__section" id="t15-bucine">
+          <SectionHeading
+            eyebrow={copy.sections.t15Bucine.eyebrow}
+            title={copy.sections.t15Bucine.title}
+            body={copy.sections.t15Bucine.body}
+          />
 
-        <SectionBlock
-          id="sistemas"
-          heading={{ eyebrow: copy.sections.systems.eyebrow, title: copy.sections.systems.title, body: copy.sections.systems.body }}
-        >
-          <div className="public-home__sources" aria-label="Telemetry systems">
-            {copy.sections.systems.sources.map(source => <span key={source} className="public-home__source">{source}</span>)}
+          <div className="public-home__narrative" aria-label="T15 Bucine story sequence">
+            {copy.sections.t15Bucine.steps.map((step, i) => (
+              <div key={step.label} className="public-home__narrative-step">
+                <p className="public-home__narrative-label">{step.label}</p>
+                <p className="public-home__narrative-detail">{step.detail}</p>
+              </div>
+            ))}
           </div>
-        </SectionBlock>
+        </section>
 
-        <SectionBlock
-          id="decisiones"
-          heading={{ eyebrow: copy.sections.decisions.eyebrow, title: copy.sections.decisions.title, body: copy.sections.decisions.body }}
-        >
-          <div className="public-home__grid-3">
-            {copy.sections.decisions.cards.map(card => <Card key={card.title} {...card} />)}
+        {/* ─── 04 Knowledge Network ─── */}
+        <section className="public-home__section" id="knowledge-network">
+          <SectionHeading
+            eyebrow={copy.sections.knowledgeNetwork.eyebrow}
+            title={copy.sections.knowledgeNetwork.title}
+            body={copy.sections.knowledgeNetwork.body}
+          />
+
+          <div className="public-home__network-visual">
+            <div className="public-home__network-panel public-home__network-panel--stays">
+              <p className="public-home__network-panel-title">{copy.sections.knowledgeNetwork.staysLabel}</p>
+              <ul className="public-home__network-list">
+                {copy.sections.knowledgeNetwork.staysItems.map(item => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+            <div className="public-home__network-panel public-home__network-panel--travels">
+              <p className="public-home__network-panel-title">{copy.sections.knowledgeNetwork.travelsLabel}</p>
+              <ul className="public-home__network-list">
+                {copy.sections.knowledgeNetwork.travelsItems.map(item => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
           </div>
-        </SectionBlock>
+        </section>
 
-        <SectionBlock
-          id="t15-bucine"
-          heading={{ eyebrow: copy.sections.example.eyebrow, title: copy.sections.example.title, body: copy.sections.example.body }}
-        >
-          <div className="public-home__grid-4">
-            {copy.sections.example.cards.map(card => <Card key={card.title} {...card} />)}
-          </div>
-        </SectionBlock>
-
-        <SectionBlock
-          id="knowledge-network"
-          heading={{ eyebrow: copy.sections.network.eyebrow, title: copy.sections.network.title, body: copy.sections.network.body }}
-        >
-          <div className="public-home__grid-3">
-            {copy.sections.network.cards.map(card => <Card key={card.title} {...card} />)}
-          </div>
-        </SectionBlock>
-
+        {/* ─── 05 Node Types ─── */}
         <SectionBlock
           id="node-types"
           heading={{ eyebrow: copy.sections.nodeTypes.eyebrow, title: copy.sections.nodeTypes.title, body: '' }}
@@ -1478,33 +1893,32 @@ export function HomePage() {
           </div>
         </SectionBlock>
 
-        <SectionBlock
-          id="audience"
-          heading={{ eyebrow: copy.sections.audience.eyebrow, title: copy.sections.audience.title, body: '' }}
-        >
-          <div className="public-home__grid-4">
-            {copy.sections.audience.cards.map(card => <Card key={card.title} {...card} />)}
+        {/* ─── 06 Founding Nodes ─── */}
+        <section className="public-home__section" id="founding-nodes">
+          <div className="public-home__founding">
+            <SectionHeading eyebrow={copy.sections.founding.eyebrow} title={copy.sections.founding.title} body={copy.sections.founding.body} />
+            <ul className="public-home__founding-list">
+              {copy.sections.founding.bullets.map(bullet => (
+                <li key={bullet}>
+                  <CheckCircle2 size={16} />
+                  <span>{bullet}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="public-home__founding-cta">
+              <a className="public-home__button public-home__button--primary" href="/founding-nodes">
+                {copy.nav.foundingNode}
+                <ArrowRight size={16} />
+              </a>
+            </div>
           </div>
-        </SectionBlock>
+        </section>
 
-        <SectionBlock
-          id="founding-nodes"
-          heading={{ eyebrow: copy.sections.founding.eyebrow, title: copy.sections.founding.title, body: copy.sections.founding.body }}
-        >
-          <ul className="public-home__founding-list">
-            {copy.sections.founding.bullets.map(bullet => (
-              <li key={bullet}>
-                <CheckCircle2 size={16} />
-                <span>{bullet}</span>
-              </li>
-            ))}
-          </ul>
-        </SectionBlock>
-
+        {/* ─── 07 Application Manual ─── */}
         <section className="public-home__section" id="application-manual" aria-labelledby="application-manual-title">
           <div className="public-home__manual-panel">
             <div className="public-home__heading" style={{ marginBottom: 0 }}>
-              <p className="public-home__eyebrow">{copy.sections.manual.eyebrow}</p>
+              <StationNumber number={copy.sections.manual.eyebrow} />
               <h2 id="application-manual-title">{copy.sections.manual.title}</h2>
               <p>{copy.sections.manual.body}</p>
             </div>
@@ -1515,16 +1929,17 @@ export function HomePage() {
           </div>
         </section>
 
+        {/* ─── Paper Reproducibility Kit ─── */}
         <section className="public-home__section" id="paper-reproducibility-kit" aria-labelledby="paper-reproducibility-kit-title">
           <div className="public-home__paper-kit">
             <div className="public-home__paper-copy">
               <div className="public-home__heading" style={{ marginBottom: 0 }}>
-                <p className="public-home__eyebrow">{visualCopy.paperEyebrow}</p>
-                <h2 id="paper-reproducibility-kit-title">{visualCopy.paperTitle}</h2>
+                <p className="public-home__eyebrow">{copy.sections.paperKit.eyebrow}</p>
+                <h2 id="paper-reproducibility-kit-title">{copy.sections.paperKit.title}</h2>
               </div>
-              <p className="public-home__paper-lead">{visualCopy.paperLead}</p>
+              <p className="public-home__paper-lead">{copy.sections.paperKit.body}</p>
               <ul className="public-home__evidence-list" aria-label="Paper kit contents">
-                {visualCopy.paperEvidence.map(item => (
+                {copy.sections.paperKit.evidence.map(item => (
                   <li key={item}>
                     <CheckCircle2 size={16} />
                     <span>{item}</span>
@@ -1532,15 +1947,15 @@ export function HomePage() {
                 ))}
               </ul>
               <div className="public-home__paper-note">
-                {visualCopy.paperNotePrefix} <span className="public-home__mono">build/main.pdf</span>. {visualCopy.paperNoteSuffix}
+                {copy.sections.paperKit.notePrefix} <span className="public-home__mono">build/main.pdf</span>. {copy.sections.paperKit.noteSuffix}
               </div>
             </div>
 
             <aside className="public-home__paper-aside" aria-label="Paper kit downloads and PoC summary">
-              <h3>{visualCopy.operatingPointTitle} <span className="public-home__mono">int4_32b_trackside</span></h3>
-              <p>{visualCopy.operatingPointBody}</p>
+              <h3>{copy.sections.paperKit.operatingPointTitle} <span className="public-home__mono">int4_32b_trackside</span></h3>
+              <p>{copy.sections.paperKit.operatingPointBody}</p>
               <ul className="public-home__evidence-list" aria-label="MotoGP telemetry demo values">
-                {visualCopy.telemetryDemo.map(item => (
+                {copy.sections.paperKit.telemetryDemo.map(item => (
                   <li key={item}>
                     <CheckCircle2 size={16} />
                     <span>{item}</span>
@@ -1548,7 +1963,7 @@ export function HomePage() {
                 ))}
               </ul>
               <div className="public-home__download-list" aria-label="Project evidence downloads">
-                {visualCopy.downloads.map(download => (
+                {copy.sections.paperKit.downloads.map(download => (
                   <a key={download.href} className="public-home__download-card" href={download.href} download>
                     <strong>
                       <Download size={15} />
@@ -1562,6 +1977,7 @@ export function HomePage() {
           </div>
         </section>
 
+        {/* ─── 08 Final CTA ─── */}
         <section className="public-home__final-cta" id="final-cta">
           <SectionHeading eyebrow={copy.sections.finalCta.eyebrow} title={copy.sections.finalCta.title} body={copy.sections.finalCta.body} />
           <div className="public-home__final-actions">

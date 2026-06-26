@@ -4,16 +4,16 @@ import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 import { getSessionContext } from '../domain/sessionContext';
 
 /**
- * Predictive Improvement Model — turns analysis into a forward projection:
+ * Predictive Improvement Model ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â turns analysis into a forward projection:
  * "if you do X at this Mugello corner, you gain Y". Select levers to build
  * a next-lap plan with transparent gain calculation, risk-aware scenarios
  * and Safety Guardian cross-check.
  *
- * Circuit: Mugello GP · 5.245 km · 15 turns · 1,141 m main straight
+ * Circuit: Mugello GP Ãƒâ€šÃ‚Â· 5.245 km Ãƒâ€šÃ‚Â· 15 turns Ãƒâ€šÃ‚Â· 1,141 m main straight
  * Class: KDD Prototype / AI Racing Simulation
  */
 
-const CURRENT_S = 117.842; // 1:57.842 — club-level R1, not a MotoGP prototype
+const CURRENT_S = 117.842; // 1:57.842 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â club-level R1, not a MotoGP prototype
 const OPTIMAL_S = 116.05;  // 1:56.050 theoretical best for this rider/bike
 
 const MODE_PRESETS = {
@@ -42,7 +42,7 @@ const MODE_ICONS: Record<ModeId, typeof Zap> = {
   'tyre-saving': BarChart3,
 };
 
-/* ── Lever model ─────────────────────────────────────── */
+/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Lever model ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */
 
 interface Lever {
   id: string;
@@ -51,7 +51,7 @@ interface Lever {
   gain: number;          // seconds saved (negative)
   difficulty: 'easy' | 'medium' | 'hard';
   risk: 'low' | 'low-medium' | 'medium' | 'medium-high' | 'high';
-  confidence: number;    // 0–1
+  confidence: number;    // 0ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“1
   reason: string;
   whyNotSelected?: string;
 }
@@ -65,7 +65,7 @@ const ALL_LEVERS: Lever[] = [
     difficulty: 'medium',
     risk: 'medium-high',
     confidence: 0.88,
-    reason: 'Late throttle pickup while still above 55° lean reduces drive onto the main straight.',
+    reason: 'Late throttle pickup while still above 55Ãƒâ€šÃ‚Â° lean reduces drive onto the main straight.',
   },
   {
     id: 't1-brake',
@@ -101,7 +101,7 @@ const ALL_LEVERS: Lever[] = [
   {
     id: 'setup-tc',
     action: 'Raise traction control +1 to stop slow-corner slip',
-    corner: 'Setup · Sector 3',
+    corner: 'Setup Ãƒâ€šÃ‚Â· Sector 3',
     gain: 0.090,
     difficulty: 'easy',
     risk: 'low',
@@ -111,7 +111,7 @@ const ALL_LEVERS: Lever[] = [
   },
   {
     id: 't8-lean',
-    action: 'Use less lean, 57° → 54°, with smoother steering',
+    action: 'Use less lean, 57Ãƒâ€šÃ‚Â° ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ 54Ãƒâ€šÃ‚Â°, with smoother steering',
     corner: 'T8/T9 Arrabbiata',
     gain: 0.074,
     difficulty: 'hard',
@@ -122,7 +122,7 @@ const ALL_LEVERS: Lever[] = [
   },
 ];
 
-/* ── Helpers ─────────────────────────────────────────── */
+/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Helpers ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */
 
 const fmt = (s: number) => {
   const m = Math.floor(s / 60);
@@ -148,7 +148,7 @@ function interactionPenalty(rawGain: number, count: number): number {
   return rawGain * 0.55; // 4+
 }
 
-/* ── Component ───────────────────────────────────────── */
+/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Component ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */
 
 export function PredictiveModelPage() {
   const [mode, setMode] = useState<ModeId>('attack-p2');
@@ -173,7 +173,7 @@ export function PredictiveModelPage() {
     return { rawGain: raw, penalty: pen, realisticGain: real, projected: proj, pctToOptimal: pct, modelConfidence: adj };
   }, [selected]);
 
-  /* Switch mode → reset selection */
+  /* Switch mode ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ reset selection */
   const applyMode = (m: ModeId) => {
     setMode(m);
     setPicked(new Set(MODE_PRESETS[m].selected));
@@ -187,22 +187,22 @@ export function PredictiveModelPage() {
 
   return (
     <div className="page">
-      {/* ── Header ── */}
+      {/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Header ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */}
       <div className="flex items-center justify-between mb-3">
         <div>
           <h1 className="page-title">Predictive Improvement Model</h1>
-          <p className="page-subtitle">{getSessionContext().circuitName} · Lap Time Optimizer AI · select your next-lap improvement plan</p>
+          <p className="page-subtitle">{getSessionContext().circuitName} Ãƒâ€šÃ‚Â· Lap Time Optimizer AI Ãƒâ€šÃ‚Â· select your next-lap improvement plan</p>
         </div>
         <span className="badge badge-blue"><Sparkles size={11} style={{ verticalAlign: -1, marginRight: 4 }} />KDD Prototype</span>
       </div>
 
-      {/* ── Circuit validation ── */}
+      {/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Circuit validation ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */}
       <div style={{ display: 'flex', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
-        <span className="badge badge-green" style={{ fontSize: 10 }}>{MUGELLO_CIRCUIT.shortName} GP · {MUGELLO_CIRCUIT.lengthKm} km · {MUGELLO_CIRCUIT.turns} turns · {MUGELLO_CIRCUIT.assetStatusLabel}</span>
+        <span className="badge badge-green" style={{ fontSize: 10 }}>{MUGELLO_CIRCUIT.shortName} GP Ãƒâ€šÃ‚Â· {MUGELLO_CIRCUIT.lengthKm} km Ãƒâ€šÃ‚Â· {MUGELLO_CIRCUIT.turns} turns Ãƒâ€šÃ‚Â· {MUGELLO_CIRCUIT.assetStatusLabel}</span>
         <span className="badge" style={{ fontSize: 10, background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)' }}>AI Racing Simulation</span>
       </div>
 
-      {/* ── Optimization mode selector ── */}
+      {/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Optimization mode selector ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */}
       <div className="card mb-4">
         <div className="card-header">
           <span className="card-title">Optimization mode</span>
@@ -220,7 +220,7 @@ export function PredictiveModelPage() {
                   border: `1px solid ${active ? 'var(--blue)' : 'var(--border)'}`,
                   background: active ? 'rgba(59,130,246,0.15)' : 'transparent',
                   color: active ? 'var(--blue)' : 'var(--text-dim)',
-                  transition: 'all 0.15s',
+                  transition: 'background  ease, color  ease, box-shadow  ease',
                 }}
               >
                 <Icon size={12} />
@@ -231,7 +231,7 @@ export function PredictiveModelPage() {
         </div>
       </div>
 
-      {/* ── Model Projection ── */}
+      {/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Model Projection ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */}
       <div className="card mb-4" style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.10), rgba(34,197,94,0.06))' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 22, flexWrap: 'wrap' }}>
           {/* Current */}
@@ -248,7 +248,7 @@ export function PredictiveModelPage() {
           {/* Gain */}
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: 40, fontWeight: 900, fontFamily: 'var(--font-mono)', color: 'var(--green)', lineHeight: 1 }}>
-              −{realisticGain.toFixed(3)}<span style={{ fontSize: 16 }}>s</span>
+              ÃƒÂ¢Ã‹â€ Ã¢â‚¬â„¢{realisticGain.toFixed(3)}<span style={{ fontSize: 16 }}>s</span>
             </div>
             <div style={{ fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
               FROM {picked.size} CHANGES
@@ -257,13 +257,13 @@ export function PredictiveModelPage() {
           {/* Model adjustment indicator */}
           {penalty > 0 && (
             <div style={{
-              padding: '4px 10px', borderRadius: 6,
+              padding: '4px 10px', borderRadius: 'var(--radius)',
               background: 'rgba(245,158,11,0.10)', border: '1px solid rgba(245,158,11,0.2)',
               fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--yellow)',
               display: 'flex', alignItems: 'center', gap: 6,
             }}>
               <Info size={12} />
-              Model adjustment: raw −{rawGain.toFixed(3)}s → {realisticGain.toFixed(3)}s net
+              Model adjustment: raw ÃƒÂ¢Ã‹â€ Ã¢â‚¬â„¢{rawGain.toFixed(3)}s ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ {realisticGain.toFixed(3)}s net
             </div>
           )}
           {/* Theoretical progress bar */}
@@ -280,7 +280,7 @@ export function PredictiveModelPage() {
           </div>
         </div>
 
-        {/* ── Gain calculation breakdown ── */}
+        {/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Gain calculation breakdown ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */}
         <div style={{ marginTop: 14, borderTop: '1px solid var(--border)', paddingTop: 12 }}>
           <button onClick={() => setShowCalc(v => !v)}
             style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: 11, display: 'flex', alignItems: 'center', gap: 6 }}
@@ -291,7 +291,7 @@ export function PredictiveModelPage() {
             <div style={{ marginTop: 8, fontFamily: 'var(--font-mono)', fontSize: 12, display: 'flex', flexDirection: 'column', gap: 4 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', maxWidth: 360 }}>
                 <span style={{ color: 'var(--text-muted)' }}>Raw selected gain</span>
-                <span style={{ color: 'var(--green)', fontWeight: 700 }}>−{rawGain.toFixed(3)}s</span>
+                <span style={{ color: 'var(--green)', fontWeight: 700 }}>ÃƒÂ¢Ã‹â€ Ã¢â‚¬â„¢{rawGain.toFixed(3)}s</span>
               </div>
               {penalty > 0 && (
                 <div style={{ display: 'flex', justifyContent: 'space-between', maxWidth: 360 }}>
@@ -301,7 +301,7 @@ export function PredictiveModelPage() {
               )}
               <div style={{ display: 'flex', justifyContent: 'space-between', maxWidth: 360, borderTop: '1px solid var(--border)', paddingTop: 4 }}>
                 <span style={{ color: 'var(--green)', fontWeight: 700 }}>Realistic combined gain</span>
-                <span style={{ color: 'var(--green)', fontWeight: 900 }}>−{realisticGain.toFixed(3)}s</span>
+                <span style={{ color: 'var(--green)', fontWeight: 900 }}>ÃƒÂ¢Ã‹â€ Ã¢â‚¬â„¢{realisticGain.toFixed(3)}s</span>
               </div>
               <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>
                 Gains are modelled independently. Overlapping changes (same corner, same phase) share benefit.
@@ -311,7 +311,7 @@ export function PredictiveModelPage() {
         </div>
       </div>
 
-      {/* ── Model confidence row ── */}
+      {/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Model confidence row ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */}
       <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
         <div className="card" style={{ flex: 1, minWidth: 160 }}>
           <div style={{ fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: 4 }}>MODEL CONFIDENCE</div>
@@ -341,7 +341,7 @@ export function PredictiveModelPage() {
         </div>
       </div>
 
-      {/* ── Improvement levers ── */}
+      {/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Improvement levers ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */}
       <div className="card mb-4">
         <div className="card-header">
           <span className="card-title">Improvement levers</span>
@@ -366,10 +366,10 @@ export function PredictiveModelPage() {
         </div>
       </div>
 
-      {/* ── Opportunity Map ── */}
+      {/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Opportunity Map ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */}
       <div className="card mb-4">
         <div className="card-header">
-          <span className="card-title">Opportunity Map · {getSessionContext().circuitName}</span>
+          <span className="card-title">Opportunity Map Ãƒâ€šÃ‚Â· {getSessionContext().circuitName}</span>
           <span className="badge badge-blue">real circuit geometry</span>
         </div>
         <div style={{ marginTop: 6 }}>
@@ -379,7 +379,7 @@ export function PredictiveModelPage() {
               const pct = (l.gain / ALL_LEVERS[0].gain) * 100;
               return (
                 <div key={l.id} style={{
-                  flex: 1, minWidth: 120, padding: '8px 10px', borderRadius: 6,
+                  flex: 1, minWidth: 120, padding: '8px 10px', borderRadius: 'var(--radius)',
                   background: picked.has(l.id) ? 'var(--green-dim)' : 'rgba(255,255,255,0.03)',
                   border: `1px solid ${picked.has(l.id) ? 'color-mix(in srgb, var(--green) 35%, transparent)' : 'var(--border)'}`,
                 }}>
@@ -388,29 +388,29 @@ export function PredictiveModelPage() {
                     <div style={{ flex: 1, height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.07)' }}>
                       <div style={{ width: `${pct}%`, height: '100%', borderRadius: 2, background: picked.has(l.id) ? 'var(--green)' : 'var(--blue)' }} />
                     </div>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, color: 'var(--green)' }}>−{l.gain.toFixed(3)}s</span>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, color: 'var(--green)' }}>ÃƒÂ¢Ã‹â€ Ã¢â‚¬â„¢{l.gain.toFixed(3)}s</span>
                   </div>
                 </div>
               );
             })}
           </div>
           <div style={{ display: 'flex', gap: 10, fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
-            <span>Gain ·</span><span style={{ color: 'var(--green)' }}>● selected</span>
-            <span style={{ color: 'var(--blue)' }}>● available</span>
+            <span>Gain Ãƒâ€šÃ‚Â·</span><span style={{ color: 'var(--green)' }}>ÃƒÂ¢Ã¢â‚¬â€Ã‚Â selected</span>
+            <span style={{ color: 'var(--blue)' }}>ÃƒÂ¢Ã¢â‚¬â€Ã‚Â available</span>
           </div>
         </div>
       </div>
 
       {/* Two-column layout for plan + safety */}
       <div style={{ display: 'flex', gap: 14, marginBottom: 16, flexWrap: 'wrap' }}>
-        {/* ── Plan Summary ── */}
+        {/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Plan Summary ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */}
         <div className="card" style={{ flex: 1.4, minWidth: 280 }}>
           <div className="card-header"><span className="card-title">Plan Summary</span></div>
           <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 6 }}>
             {[
               ['Selected plan', `${picked.size} changes`],
-              ['Focus', selected.length > 0 ? cornerExitFocus(selected) : '—'],
-              ['Expected gain', `−${realisticGain.toFixed(3)}s`],
+              ['Focus', selected.length > 0 ? cornerExitFocus(selected) : 'ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â'],
+              ['Expected gain', `ÃƒÂ¢Ã‹â€ Ã¢â‚¬â„¢${realisticGain.toFixed(3)}s`],
               ['Risk impact', `+${(picked.size * 3).toFixed(0)} points`],
               ['Safety mode', picked.size <= 2 ? 'Not required' : 'Recommended (rear tyre protection)'],
               ['Recommended execution', selected.length <= 2 ? 'Next lap' : 'Next 2 laps'],
@@ -423,14 +423,15 @@ export function PredictiveModelPage() {
           </div>
         </div>
 
-        {/* ── Safety Guardian Note ── */}
-        <div className="card" style={{ flex: 1, minWidth: 240, borderLeft: '3px solid var(--accent)' }}>
+        {/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Safety Guardian Note ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */}
+        <div className="card" style={{ flex: 1, minWidth: 240,
+ }}>
           <div className="card-header">
             <span className="card-title"><Brain size={14} style={{ verticalAlign: -2, marginRight: 4 }} />Safety Guardian</span>
           </div>
           <div style={{ marginTop: 6, fontSize: 12, lineHeight: 1.6 }}>
             <p style={{ color: 'var(--text-dim)' }}>
-              Do not combine earlier throttle at <strong>T15 Bucine</strong> with TC reduction while rear tyre remains above <strong>118°C</strong>.
+              Do not combine earlier throttle at <strong>T15 Bucine</strong> with TC reduction while rear tyre remains above <strong>118Ãƒâ€šÃ‚Â°C</strong>.
             </p>
             <div style={{ marginTop: 8, padding: '6px 8px', borderRadius: 4, background: 'rgba(250,204,21,0.08)', border: '1px solid rgba(250,204,21,0.15)' }}>
               <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}>
@@ -447,18 +448,18 @@ export function PredictiveModelPage() {
         </div>
       </div>
 
-      {/* ── Rider Coach Plan ── */}
+      {/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Rider Coach Plan ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */}
       <div className="card mb-4">
         <div className="card-header"><span className="card-title">Rider Coach Plan</span></div>
         <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 6 }}>
           {selected.slice(0, 3).map((l, i) => (
             <div key={l.id} style={{
-              display: 'flex', gap: 10, padding: '8px 10px', borderRadius: 6,
+              display: 'flex', gap: 10, padding: '8px 10px', borderRadius: 'var(--radius)',
               background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)',
             }}>
               <span style={{
                 width: 20, height: 20, borderRadius: '50%', display: 'grid', placeItems: 'center',
-                background: 'var(--blue)', color: '#0B0D12', fontFamily: 'var(--font-mono)',
+                background: 'var(--blue)', color: 'var(--bg-base)', fontFamily: 'var(--font-mono)',
                 fontSize: 10, fontWeight: 800, flexShrink: 0,
               }}>{i + 1}</span>
               <div>
@@ -471,7 +472,7 @@ export function PredictiveModelPage() {
         </div>
       </div>
 
-      {/* ── Alternative Plans ── */}
+      {/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Alternative Plans ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */}
       <div className="card mb-4">
         <div className="card-header">
           <span className="card-title">Alternative Plans</span>
@@ -489,7 +490,7 @@ export function PredictiveModelPage() {
                 }}
               >
                 <div style={{ fontSize: 11, fontWeight: 700, fontFamily: 'var(--font-mono)' }}>{MODE_LABELS[m]}</div>
-                <div style={{ fontSize: 13, fontWeight: 800, fontFamily: 'var(--font-mono)', color: 'var(--green)', marginTop: 2 }}>−{p.gain.toFixed(3)}s</div>
+                <div style={{ fontSize: 13, fontWeight: 800, fontFamily: 'var(--font-mono)', color: 'var(--green)', marginTop: 2 }}>ÃƒÂ¢Ã‹â€ Ã¢â‚¬â„¢{p.gain.toFixed(3)}s</div>
                 <div style={{ fontSize: 10, color: riskColorFromStr(p.risk), fontFamily: 'var(--font-mono)', marginTop: 2 }}>
                   Risk {p.risk}
                 </div>
@@ -499,7 +500,7 @@ export function PredictiveModelPage() {
         </div>
       </div>
 
-      {/* ── Model Integrity ── */}
+      {/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Model Integrity ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */}
       <div className="card">
         <div className="card-header"><span className="card-title">Model Integrity</span></div>
         <div style={{ marginTop: 6, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4, fontSize: 11, fontFamily: 'var(--font-mono)', maxWidth: 400 }}>
@@ -520,7 +521,7 @@ export function PredictiveModelPage() {
   );
 }
 
-/* ── Sub-components ──────────────────────────────────── */
+/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Sub-components ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */
 
 function LeverCard({ lever, picked, onToggle }: { lever: Lever; picked: boolean; onToggle: (id: string) => void }) {
   return (
@@ -540,7 +541,7 @@ function LeverCard({ lever, picked, onToggle }: { lever: Lever; picked: boolean;
           width: 20, height: 20, borderRadius: 5, flex: 'none', display: 'grid', placeItems: 'center',
           marginTop: 1,
           background: picked ? 'var(--green)' : 'rgba(255,255,255,0.06)',
-          color: '#0B0D12',
+          color: 'var(--bg-base)',
         }}>
           {picked ? <Check size={13} /> : <X size={11} style={{ color: 'var(--text-muted)', opacity: 0.4 }} />}
         </span>
@@ -573,7 +574,7 @@ function LeverCard({ lever, picked, onToggle }: { lever: Lever; picked: boolean;
         {/* Gain badge */}
         <div style={{ textAlign: 'right', flexShrink: 0 }}>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: 15, fontWeight: 800, color: 'var(--green)' }}>
-            −{lever.gain.toFixed(3)}<span style={{ fontSize: 10 }}>s</span>
+            ÃƒÂ¢Ã‹â€ Ã¢â‚¬â„¢{lever.gain.toFixed(3)}<span style={{ fontSize: 10 }}>s</span>
           </div>
         </div>
       </button>
@@ -594,7 +595,7 @@ const tagStyle = (color: string) => ({
   letterSpacing: '0.04em',
 });
 
-/* ── Helpers ─────────────────────────────────────────── */
+/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Helpers ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */
 
 function cornerExitFocus(levers: Lever[]): string {
   const exits = levers.filter(l => l.action.toLowerCase().includes('throttle') || l.action.toLowerCase().includes('exit'));

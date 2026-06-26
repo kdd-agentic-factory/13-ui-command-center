@@ -1,5 +1,5 @@
 /**
- * DataTrustPage — Telemetry Calibration & Data Trust Center.
+ * DataTrustPage â€” Telemetry Calibration & Data Trust Center.
  *
  * Validates, maps, syncs and scores the telemetry before advanced analysis is
  * allowed: a global Data Trust Score, channel mapping, automatic validation,
@@ -34,7 +34,7 @@ export function DataTrustPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><ShieldCheck size={18} /> Telemetry Calibration & Data Trust</h1>
-          <p className="page-subtitle">Sensor mapping · channel validation · data quality · trust score — {d.combo}</p>
+          <p className="page-subtitle">Sensor mapping Â· channel validation Â· data quality Â· trust score â€” {d.combo}</p>
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Data trust score</div>
@@ -55,7 +55,7 @@ export function DataTrustPage() {
           <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr auto auto', gap: '5px 10px', fontSize: 11, alignItems: 'center' }}>
             <span style={hdr}>Imported</span><span style={hdr}>Mapped to</span><span style={hdr}>Status</span><span style={{ ...hdr, textAlign: 'right' }}>Conf.</span>
             {d.channels.map(c => (
-              <Row key={c.imported} a={c.imported} b={`${c.mappedTo}${c.unit ? ` · ${c.unit}` : ''}`} status={c.status} conf={c.confidence} />
+              <Row key={c.imported} a={c.imported} b={`${c.mappedTo}${c.unit ? ` Â· ${c.unit}` : ''}`} status={c.status} conf={c.confidence} />
             ))}
           </div>
         </div>
@@ -94,7 +94,8 @@ export function DataTrustPage() {
       {/* Degraded modes */}
       <div style={{ display: 'grid', gridTemplateColumns: d.degraded.length > 1 ? '1fr 1fr' : '1fr', gap: 14, marginTop: 14 }}>
         {d.degraded.map(g => (
-          <div key={g.trigger} className="card" style={{ padding: 16, borderLeft: '3px solid var(--yellow)' }}>
+          <div key={g.trigger} className="card" style={{ padding: 16,
+ }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <AlertTriangle size={14} style={{ color: 'var(--yellow)' }} />
               <span style={{ fontSize: 12.5, fontWeight: 800, color: 'var(--text)', flex: 1 }}>{g.trigger}</span>
@@ -104,11 +105,11 @@ export function DataTrustPage() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
               <div>
                 <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--accent)', textTransform: 'uppercase', marginBottom: 3 }}>Disabled</div>
-                {g.disabled.map(x => <div key={x} style={{ fontSize: 10.5, color: 'var(--text-muted)' }}>· {x}</div>)}
+                {g.disabled.map(x => <div key={x} style={{ fontSize: 10.5, color: 'var(--text-muted)' }}>Â· {x}</div>)}
               </div>
               <div>
                 <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--green)', textTransform: 'uppercase', marginBottom: 3 }}>Still available</div>
-                {g.available.map(x => <div key={x} style={{ fontSize: 10.5, color: 'var(--text)' }}>· {x}</div>)}
+                {g.available.map(x => <div key={x} style={{ fontSize: 10.5, color: 'var(--text)' }}>Â· {x}</div>)}
               </div>
             </div>
           </div>
@@ -161,7 +162,7 @@ export function DataTrustPage() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
               <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', flex: 1 }}>KDD pipelines</span>
               {pipe && (pipe.state === 'live'
-                ? <span title="Live from the pipeline registry" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 9, fontFamily: MONO, color: 'var(--green)', border: '1px solid rgba(0,230,118,0.4)', borderRadius: 4, padding: '0 6px' }}><Wifi size={10} /> LIVE · {pipe.total}</span>
+                ? <span title="Live from the pipeline registry" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 9, fontFamily: MONO, color: 'var(--green)', border: '1px solid rgba(0,230,118,0.4)', borderRadius: 4, padding: '0 6px' }}><Wifi size={10} /> LIVE Â· {pipe.total}</span>
                 : pipe.state === 'reachable'
                   ? <span title="06-kdd-data-pipelines reachable but requires server-side credentials" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 9, fontFamily: MONO, color: 'var(--cyan)', border: '1px solid rgba(0,183,255,0.4)', borderRadius: 4, padding: '0 6px' }}><Wifi size={10} /> REACHABLE</span>
                   : <span title="pipelines service unreachable / asleep" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', border: '1px solid var(--border)', borderRadius: 4, padding: '0 6px' }}><WifiOff size={10} /> OFFLINE</span>
@@ -182,11 +183,12 @@ export function DataTrustPage() {
       {/* Oracle data trust + actions */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginTop: 14 }}>
         <div className="card" style={{ padding: 16, background: 'rgba(139,92,246,0.06)', border: '1px solid rgba(139,92,246,0.3)' }}>
-          <div style={{ ...cardHdr, color: '#8B5CF6' }}>Oracle data trust · {d.oracle.confidence}%</div>
-          {d.oracle.limitations.map(l => <div key={l} style={{ fontSize: 11, color: 'var(--text-muted)' }}>· {l}</div>)}
+          <div style={{ ...cardHdr, color: 'var(--violet)' }}>Oracle data trust Â· {d.oracle.confidence}%</div>
+          {d.oracle.limitations.map(l => <div key={l} style={{ fontSize: 11, color: 'var(--text-muted)' }}>Â· {l}</div>)}
           <div style={{ fontSize: 11, color: 'var(--text)', marginTop: 6 }}>{d.oracle.behaviour}</div>
         </div>
-        <div className="card" style={{ padding: 16, borderLeft: '3px solid var(--cyan)' }}>
+        <div className="card" style={{ padding: 16,
+ }}>
           <div style={cardHdr}>Recommended actions</div>
           <ol style={{ margin: 0, paddingLeft: 18, fontSize: 11.5, color: 'var(--text)', lineHeight: 1.7 }}>
             {d.recommendedActions.map(a => <li key={a}>{a}</li>)}
@@ -206,7 +208,7 @@ function Row({ a, b, status, conf }: { a: string; b: string; status: string; con
       <span style={{ fontFamily: MONO, fontSize: 10.5, color: 'var(--text-muted)' }}>{a}</span>
       <span style={{ fontSize: 11, color: 'var(--text)' }}>{b}</span>
       <span style={{ fontSize: 9.5, fontFamily: MONO, color: channelColor(status as never), border: `1px solid ${channelColor(status as never)}`, borderRadius: 3, padding: '0 5px' }}>{status}</span>
-      <span style={{ fontSize: 10, fontFamily: MONO, color: scoreColor(conf), textAlign: 'right' }}>{conf ? `${conf}%` : '—'}</span>
+      <span style={{ fontSize: 10, fontFamily: MONO, color: scoreColor(conf), textAlign: 'right' }}>{conf ? `${conf}%` : 'â€”'}</span>
     </>
   );
 }

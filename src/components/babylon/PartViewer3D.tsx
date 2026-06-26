@@ -7,10 +7,10 @@ import { createSafeEngine } from './safeEngine';
 import { parseStl, meshBounds } from '../../lib/stl';
 
 /**
- * 3D part preview before fabrication (Spec §8.3 — AI Part Generator + FEM/FEA).
+ * 3D part preview before fabrication (Spec Â§8.3 â€” AI Part Generator + FEM/FEA).
  *
  * Renders a part as an interactive (orbit/zoom) 3D mesh with an optional FEM
- * stress-field overlay (blue→red), a wireframe toggle for thickness/tolerance
+ * stress-field overlay (blueâ†’red), a wireframe toggle for thickness/tolerance
  * inspection, and the manufacturing tolerance. A real CAD part can be supplied
  * via `meshUrl` (STL); otherwise a representative procedural bracket is shown.
  */
@@ -79,7 +79,7 @@ function buildStlMesh(scene: Scene, buffer: ArrayBuffer): Mesh {
 
 export function PartViewer3D({
   partName,
-  materialColor = '#38BDF8',
+  materialColor = 'var(--cyan)',
   stressLevel = 0.4,
   toleranceMm = 0.05,
   meshUrl,
@@ -108,8 +108,8 @@ export function PartViewer3D({
         const spanY = (max[1] - min[1]) || 1, spanX = (max[0] - min[0]) || 1;
         const colors: number[] = [];
         for (let i = 0; i < positions.length; i += 3) {
-          const ny = (positions[i + 1] - min[1]) / spanY;               // height → bending
-          const nx = 1 - Math.abs((positions[i] - min[0]) / spanX - 0.5) * 2; // centre → root
+          const ny = (positions[i + 1] - min[1]) / spanY;               // height â†’ bending
+          const nx = 1 - Math.abs((positions[i] - min[0]) / spanX - 0.5) * 2; // centre â†’ root
           const local = 0.25 + 0.75 * (0.6 * ny + 0.4 * nx);
           const c = stressColor(local * stressLevel + (1 - stressLevel) * 0.15 * local);
           colors.push(c.r, c.g, c.b, 1);
@@ -131,7 +131,7 @@ export function PartViewer3D({
   useEffect(() => {
     if (!canvasRef.current) return;
     const engine = createSafeEngine(canvasRef.current, true);
-    if (!engine) return; // WebGL unavailable — keep the page alive
+    if (!engine) return; // WebGL unavailable â€” keep the page alive
     const scene = new Scene(engine);
     scene.clearColor = new Color4(0.04, 0.05, 0.08, 1);
     sceneRef.current = scene;
@@ -204,12 +204,12 @@ export function PartViewer3D({
           {wireframe ? 'Wireframe: ON' : 'Solid'}
         </button>
         <span style={{ fontSize: 11, color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }}>
-          {partName} · σpeak {peakPct}% yield · ±{toleranceMm.toFixed(2)} mm
+          {partName} Â· Ïƒpeak {peakPct}% yield Â· Â±{toleranceMm.toFixed(2)} mm
         </span>
       </div>
       {loadError && (
         <div style={{ fontSize: 10, color: 'var(--accent-warn, #f2cc1a)', marginTop: 4, fontFamily: 'var(--font-mono)' }}>
-          STL load failed ({loadError}) — showing reference geometry. Export the SLDPRT to STL.
+          STL load failed ({loadError}) â€” showing reference geometry. Export the SLDPRT to STL.
         </div>
       )}
       {showStress && (

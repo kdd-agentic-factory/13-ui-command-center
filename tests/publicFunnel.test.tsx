@@ -44,16 +44,16 @@ beforeEach(async () => {
 });
 
 describe('public landing copy', () => {
-  it('renders the editorial hero in English', () => {
+  it('renders the knowledge circuit hero in English', () => {
     render(<HomePage />);
 
-    expect(screen.getByRole('heading', { name: 'KDD Moto Intelligence' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'KDD' })).toBeInTheDocument();
     expect(screen.getByText('Decision Intelligence Layer for Motorcycle Performance')).toBeInTheDocument();
     expect(screen.getAllByRole('link', { name: 'Request early access' })[0]).toHaveAttribute('href', '/trial');
     expect(screen.getAllByRole('link', { name: 'Become a founding node' })[0]).toHaveAttribute('href', '/founding-nodes');
   });
 
-  it('renders the editorial hero in Spanish', async () => {
+  it('renders the knowledge circuit hero in Spanish', async () => {
     await i18n.changeLanguage('es');
     render(<HomePage />);
 

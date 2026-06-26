@@ -105,7 +105,8 @@ export function DevHubPage() {
             </div>
           ))}
         </div>
-        <div className="card" style={{ padding: 16, borderLeft: '3px solid var(--yellow)' }}>
+        <div className="card" style={{ padding: 16,
+ }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}><ShieldCheck size={14} style={{ color: 'var(--yellow)' }} /><span style={hdr}>Plugin sandbox</span></div>
           <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--text)' }}>{d.sandbox.plugin}</div>
           <div style={{ fontSize: 10.5, color: 'var(--text-muted)' }}>{d.sandbox.dataset}</div>

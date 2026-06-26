@@ -1,9 +1,9 @@
 /**
- * KnowledgeGraphPage — Garage Knowledge Graph.
+ * KnowledgeGraphPage â€” Garage Knowledge Graph.
  *
  * What the platform has LEARNED across sessions: for the active rider+bike+
  * circuit, the recurring limiter, the best proven fix, the measured result,
- * the confidence and the session count behind it — plus the recommended
+ * the confidence and the session count behind it â€” plus the recommended
  * starting setup for the next visit. The learning loop made visible.
  */
 import { Network, ArrowRight } from 'lucide-react';
@@ -28,21 +28,22 @@ export function KnowledgeGraphPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><Network size={18} /> Garage Knowledge Graph</h1>
-          <p className="page-subtitle">What KDD has learned · {garage.profile.rider.name} · {garage.profile.bike.brand} {garage.profile.bike.model} · {ctx.circuitName}</p>
+          <p className="page-subtitle">What KDD has learned Â· {garage.profile.rider.name} Â· {garage.profile.bike.brand} {garage.profile.bike.model} Â· {ctx.circuitName}</p>
         </div>
       </div>
 
       <div style={{ display: 'grid', gap: 14 }}>
         {patterns.map((p, i) => (
-          <div key={i} className="card" style={{ padding: 16, borderLeft: `3px solid ${CONF_COLOR[p.confidence]}` }}>
+          <div key={i} className="card" style={{ padding: 16,
+ }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
               <span style={{ fontSize: 10, fontFamily: MONO, color: 'var(--text-muted)', flex: 1 }}>{p.combo}</span>
               <span style={{ fontSize: 9.5, fontFamily: MONO, color: CONF_COLOR[p.confidence], border: `1px solid ${CONF_COLOR[p.confidence]}`, borderRadius: 4, padding: '1px 7px' }}>
-                {p.confidence.toUpperCase()} · {p.sessions} session{p.sessions === 1 ? '' : 's'}
+                {p.confidence.toUpperCase()} Â· {p.sessions} session{p.sessions === 1 ? '' : 's'}
               </span>
             </div>
 
-            {/* problem → fix → result chain */}
+            {/* problem â†’ fix â†’ result chain */}
             <div style={{ display: 'flex', alignItems: 'stretch', gap: 10, flexWrap: 'wrap' }}>
               <div style={{ flex: 1, minWidth: 200 }}>
                 <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Limiter</div>
@@ -64,7 +65,7 @@ export function KnowledgeGraphPage() {
               <span style={{ fontSize: 10.5, color: 'var(--text-muted)' }}>Next visit, start from</span>
               <span style={{ fontSize: 11, fontFamily: MONO, fontWeight: 700, color: 'var(--text)' }}>{p.recommendedSetup}</span>
               <button onClick={() => navigate('setup-lab')} style={{ marginLeft: 'auto', fontSize: 10, fontFamily: MONO, color: 'var(--cyan)', background: 'none', border: 'none', cursor: 'pointer' }}>
-                open in Setup Lab →
+                open in Setup Lab â†’
               </button>
             </div>
           </div>

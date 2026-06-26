@@ -34,7 +34,8 @@ export function CausalEnginePage() {
       </div>
 
       {/* verdict */}
-      <div className="card mb-4" style={{ padding: 14, borderLeft: '3px solid var(--cyan)' }}>
+      <div className="card mb-4" style={{ padding: 14,
+ }}>
         <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Observed problem · {c.problem}</div>
         <div style={{ fontSize: 12.5, color: 'var(--text)', marginTop: 4, lineHeight: 1.5 }}>{c.verdict}</div>
         <div style={{ fontSize: 12, color: 'var(--cyan)', fontStyle: 'italic', marginTop: 6 }}>“{c.punchline}”</div>
@@ -109,7 +110,8 @@ export function CausalEnginePage() {
           <div style={{ fontSize: 10.5, color: 'var(--text)', marginBottom: 6 }}>{c.experiment.successCriteria.join(' · ')}</div>
           <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{c.experiment.causalValidation}</div>
         </div>
-        <div className="card" style={{ padding: 16, borderLeft: '3px solid var(--green)' }}>
+        <div className="card" style={{ padding: 16,
+ }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
             <span style={{ ...hdr, flex: 1 }}>Causal result</span>
             <span style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--green)', border: '1px solid rgba(0,230,118,0.4)', borderRadius: 4, padding: '1px 8px' }}>{c.result.status.toUpperCase()}</span>
@@ -139,7 +141,8 @@ export function CausalEnginePage() {
           <div style={{ fontSize: 10.5, color: 'var(--text)', marginTop: 4 }}>{c.setupCheck.verdict}</div>
           <div style={{ fontSize: 10.5, color: 'var(--cyan)', marginTop: 2 }}>{c.setupCheck.decision}</div>
         </div>
-        <div className="card" style={{ padding: 16, borderLeft: '3px solid var(--accent)' }}>
+        <div className="card" style={{ padding: 16,
+ }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}><ShieldAlert size={13} style={{ color: 'var(--accent)' }} /><span style={hdr}>Causal risk analysis</span></div>
           <div style={{ fontSize: 11, color: 'var(--text)' }}>{c.riskAnalysis.observed}</div>
           <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>cause: {c.riskAnalysis.cause} · amp: {c.riskAnalysis.amplifier} · human: {c.riskAnalysis.humanFactor}</div>

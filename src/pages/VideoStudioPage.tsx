@@ -1,11 +1,11 @@
 /**
- * VideoStudioPage — Telemetry + Video Studio.
+ * VideoStudioPage ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Telemetry + Video Studio.
  *
  * One playhead drives a reconstructed onboard view (bike position on the real
  * circuit outline + a synced HUD) and the telemetry traces together. Scrub,
  * play/pause, pick a lap, toggle channels, jump to corner markers or curated
- * clips. Honest: there is no real footage — the onboard view is telemetry-
- * driven — and GPS-only ECU/IMU channels are flagged estimated.
+ * clips. Honest: there is no real footage ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â the onboard view is telemetry-
+ * driven ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â and GPS-only ECU/IMU channels are flagged estimated.
  */
 import { useState, useEffect, useMemo } from 'react';
 import { Video, Play, Pause, SkipBack } from 'lucide-react';
@@ -20,7 +20,7 @@ const W = 560, TRACE_H = 46;
 export function VideoStudioPage() {
   const garage = useGarage();
   const { ctx, datasetMismatch } = useSessionContext();
-  const [lap, setLap] = useState('Stint 03 · Lap 5 (best)');
+  const [lap, setLap] = useState('Stint 03 ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· Lap 5 (best)');
   const [t, setT] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [speedMult, setSpeedMult] = useState(1);
@@ -39,7 +39,7 @@ export function VideoStudioPage() {
 
   const frame = frameAt(track, t);
 
-  // onboard reconstruction — bike position on the real outline (fallback mugello)
+  // onboard reconstruction ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â bike position on the real outline (fallback mugello)
   const outlineId = sampleOutline(ctx.selectedCircuit, 2, 10, 10).length ? ctx.selectedCircuit : 'mugello';
   const PTS = useMemo(() => sampleOutline(outlineId, 90, 300, 175, 16), [outlineId]);
   const pos = PTS[Math.round(frame.distPct * (PTS.length - 1))] ?? PTS[0] ?? [150, 88];
@@ -59,16 +59,16 @@ export function VideoStudioPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><Video size={18} /> Telemetry + Video Studio</h1>
-          <p className="page-subtitle">Synced onboard view & telemetry — {track.combo} · {lap}</p>
+          <p className="page-subtitle">Synced onboard view & telemetry ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â {track.combo} ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· {lap}</p>
         </div>
         <select value={lap} onChange={e => { setLap(e.target.value); setT(0); }}
-          style={{ fontSize: 11, fontFamily: MONO, background: 'var(--bg-surface)', color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 6, padding: '5px 8px' }}>
+          style={{ fontSize: 11, fontFamily: MONO, background: 'var(--bg-surface)', color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '5px 8px' }}>
           {track.lapOptions.map(o => <option key={o} value={o}>{o}</option>)}
         </select>
       </div>
 
       <div style={{ marginBottom: 12, padding: '7px 11px', borderRadius: 7, background: 'rgba(252,211,77,0.06)', border: '1px solid rgba(252,211,77,0.25)', fontSize: 10.5, color: 'var(--text)' }}>
-        Reconstructed onboard view — telemetry-driven (no raw footage in this dataset).{garage.telemetryLimited && ' GPS-only bike: ECU/IMU channels are estimated.'}{datasetMismatch && ' Circuit has no dataset — showing the Mugello reference layout.'}
+        Reconstructed onboard view ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â telemetry-driven (no raw footage in this dataset).{garage.telemetryLimited && ' GPS-only bike: ECU/IMU channels are estimated.'}{datasetMismatch && ' Circuit has no dataset ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â showing the Mugello reference layout.'}
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: 16, alignItems: 'start' }}>
@@ -85,11 +85,11 @@ export function VideoStudioPage() {
             <span style={{ fontSize: 30, fontWeight: 800, fontFamily: MONO, color: 'var(--text)' }}>{frame.speed}</span>
             <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>km/h</span>
             <span style={{ marginLeft: 'auto', fontSize: 11, fontFamily: MONO, color: 'var(--text-muted)' }}>gear</span>
-            <span style={{ fontSize: 22, fontWeight: 800, fontFamily: MONO, color: '#A855F7' }}>{frame.gear}</span>
+            <span style={{ fontSize: 22, fontWeight: 800, fontFamily: MONO, color: 'var(--purple)' }}>{frame.gear}</span>
           </div>
           <div style={{ display: 'flex', gap: 14, fontSize: 11, fontFamily: MONO, color: 'var(--text-muted)', marginTop: 2 }}>
-            <span>lean <span style={{ color: 'var(--yellow)' }}>{frame.lean}°</span></span>
-            <span>rpm <span style={{ color: '#FF6A00' }}>{frame.rpm.toLocaleString()}</span></span>
+            <span>lean <span style={{ color: 'var(--yellow)' }}>{frame.lean}ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°</span></span>
+            <span>rpm <span style={{ color: 'var(--thermal)' }}>{frame.rpm.toLocaleString()}</span></span>
             <span>slip <span style={{ color: frame.rearSlip >= 10 ? 'var(--accent)' : 'var(--text)' }}>{frame.rearSlip}%</span></span>
           </div>
           {/* throttle / brake bars */}
@@ -109,13 +109,13 @@ export function VideoStudioPage() {
           {/* transport */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
             <button onClick={() => setT(0)} title="restart" style={btn}><SkipBack size={14} /></button>
-            <button onClick={() => setPlaying(p => !p)} style={{ ...btn, background: 'var(--cyan)', color: '#001018', borderColor: 'var(--cyan)' }}>
+            <button onClick={() => setPlaying(p => !p)} style={{ ...btn, background: 'var(--cyan)', color: 'var(--bg-base)', borderColor: 'var(--cyan)' }}>
               {playing ? <Pause size={14} /> : <Play size={14} />}
             </button>
             <span style={{ fontSize: 12, fontFamily: MONO, color: 'var(--text)' }}>{formatClock(t)} / {formatClock(track.duration)}</span>
             <div style={{ marginLeft: 'auto', display: 'flex', gap: 4 }}>
               {[0.5, 1, 2].map(s => (
-                <button key={s} onClick={() => setSpeedMult(s)} style={{ ...btn, padding: '3px 7px', fontSize: 10, fontFamily: MONO, background: speedMult === s ? 'rgba(0,183,255,0.12)' : 'transparent', color: speedMult === s ? 'var(--cyan)' : 'var(--text-muted)', borderColor: speedMult === s ? 'var(--cyan)' : 'var(--border)' }}>{s}×</button>
+                <button key={s} onClick={() => setSpeedMult(s)} style={{ ...btn, padding: '3px 7px', fontSize: 10, fontFamily: MONO, background: speedMult === s ? 'rgba(0,183,255,0.12)' : 'transparent', color: speedMult === s ? 'var(--cyan)' : 'var(--text-muted)', borderColor: speedMult === s ? 'var(--cyan)' : 'var(--border)' }}>{s}ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â</button>
               ))}
             </div>
           </div>
@@ -130,7 +130,7 @@ export function VideoStudioPage() {
                   style={{ fontSize: 9.5, fontFamily: MONO, padding: '2px 8px', borderRadius: 5, cursor: 'pointer',
                     background: on ? `${ch.color}22` : 'transparent', border: `1px solid ${on ? ch.color : 'var(--border)'}`,
                     color: on ? ch.color : 'var(--text-muted)' }}>
-                  {ch.label} <span style={{ color: on ? ch.color : 'var(--text-muted)' }}>{Math.round(Number(frame[ch.id]))}{ch.unit}</span>{est ? ' ·est' : ''}
+                  {ch.label} <span style={{ color: on ? ch.color : 'var(--text-muted)' }}>{Math.round(Number(frame[ch.id]))}{ch.unit}</span>{est ? ' ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â·est' : ''}
                 </button>
               );
             })}
@@ -183,7 +183,8 @@ export function VideoStudioPage() {
             const color = clip.severity === 'loss' ? 'var(--accent)' : clip.severity === 'gain' ? 'var(--green)' : 'var(--cyan)';
             return (
               <button key={clip.id} onClick={() => setT(clip.t)}
-                style={{ textAlign: 'left', display: 'flex', gap: 10, alignItems: 'flex-start', padding: 10, borderRadius: 8, cursor: 'pointer', background: 'transparent', border: `1px solid var(--border)`, borderLeft: `3px solid ${color}` }}>
+                style={{ textAlign: 'left', display: 'flex', gap: 10, alignItems: 'flex-start', padding: 10, borderRadius: 8, cursor: 'pointer', background: 'transparent', border: `1px solid var(--border)`,
+ }}>
                 <span style={{ fontSize: 10, fontFamily: MONO, color, whiteSpace: 'nowrap' }}>{formatClock(clip.t)}</span>
                 <span>
                   <span style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--text)' }}>{clip.corner}</span>
@@ -201,5 +202,5 @@ export function VideoStudioPage() {
 const btn: React.CSSProperties = {
   display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 4,
   background: 'transparent', border: '1px solid var(--border)', color: 'var(--text)',
-  borderRadius: 6, padding: '5px 8px', cursor: 'pointer',
+  borderRadius: 'var(--radius)', padding: '5px 8px', cursor: 'pointer',
 };

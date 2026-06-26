@@ -1,5 +1,5 @@
 /**
- * IntroSequence — "the telemetry lap": the award entry of KDD Moto Intelligence.
+ * IntroSequence Ã¢â‚¬â€ "the telemetry lap": the award entry of KDD Moto Intelligence.
  *
  * Beat chain (~4.5s, declarative CSS timings):
  *   0.25s  the cyan racing line draws the real Mugello silhouette while a
@@ -85,9 +85,9 @@ export function IntroSequence({ onDone }: { onDone?: () => void }) {
 
         {/* Live numbers under the lap */}
         <div style={{ display: 'flex', justifyContent: 'center', gap: 26, margin: '6px 0 18px', fontFamily: MONO, fontSize: 11.5 }} aria-hidden>
-          <span style={{ color: '#00B7FF' }} className="metric-num">{speed} km/h</span>
-          <span style={{ color: '#FFD600' }} className="metric-num">{lean}° lean</span>
-          <span style={{ color: '#00E676' }} className="metric-num">{grip}% grip</span>
+          <span style={{ color: 'var(--cyan)' }} className="metric-num">{speed} km/h</span>
+          <span style={{ color: 'var(--yellow)' }} className="metric-num">{lean}Ã‚Â° lean</span>
+          <span style={{ color: 'var(--grip)' }} className="metric-num">{grip}% grip</span>
         </div>
 
         {/* Title reveal */}
@@ -102,7 +102,7 @@ export function IntroSequence({ onDone }: { onDone?: () => void }) {
         {/* Capability chips */}
         <div className="iseq-chips" style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: 8, marginTop: 16 }}>
           {['LIVE TELEMETRY', 'CIRCUIT INTELLIGENCE', 'DIGITAL TWIN', 'ORACLE PIT-WALL'].map(c => (
-            <span key={c} style={{ fontFamily: MONO, fontSize: 9.5, letterSpacing: '0.1em', color: '#00B7FF', border: '1px solid rgba(0,183,255,0.35)', borderRadius: 999, padding: '4px 12px' }}>
+            <span key={c} style={{ fontFamily: MONO, fontSize: 9.5, letterSpacing: '0.1em', color: 'var(--cyan)', border: '1px solid rgba(0,183,255,0.35)', borderRadius: 999, padding: '4px 12px' }}>
               {c}
             </span>
           ))}
@@ -116,7 +116,7 @@ export function IntroSequence({ onDone }: { onDone?: () => void }) {
           color: 'var(--text-muted)', background: 'rgba(255,255,255,0.04)',
           border: '1px solid var(--border)', borderRadius: 999, padding: '6px 14px',
         }}>
-        SKIP INTRO →
+        SKIP INTRO Ã¢â€ â€™
       </button>
     </div>
   );

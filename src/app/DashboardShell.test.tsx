@@ -85,8 +85,8 @@ describe('DashboardShell dashboard tab restore', () => {
       profile: {
         defaultTab: 'overview' as TabId,
         allowedTabs: ['overview', 'telemetry'] as TabId[],
-        color: '#E03737',
-        icon: '⚙️',
+        color: 'var(--accent)',
+        icon: 'âš™ï¸',
         nameKey: 'profiles.raceEngineer.name',
       },
       logout: vi.fn(),
@@ -110,8 +110,8 @@ describe('DashboardShell dashboard tab restore', () => {
       profile: {
         defaultTab: 'overview' as TabId,
         allowedTabs: ['overview', 'telemetry'] as TabId[],
-        color: '#E03737',
-        icon: '⚙️',
+        color: 'var(--accent)',
+        icon: 'âš™ï¸',
         nameKey: 'profiles.raceEngineer.name',
       },
       logout: vi.fn(),

@@ -1,5 +1,5 @@
 /**
- * DataSourceGatePage — step 3 of the entry workflow (Circuit → Mode → DATA →
+ * DataSourceGatePage â€” step 3 of the entry workflow (Circuit â†’ Mode â†’ DATA â†’
  * Launch). Before opening the pit-wall the session declares where its data
  * comes from: live sources, uploaded files, demo samples or simulation only.
  * The choice lands in the context object as setup.dataSource.
@@ -28,8 +28,8 @@ export function DataSourceGatePage({ ctx, onBack, onContinue }: Props) {
   const [choice, setChoice] = useState<'live' | 'upload' | 'demo' | 'simulation'>(initial);
 
   const OPTIONS = [
-    { id: 'live' as const, icon: Wifi, label: 'Continue with live data', desc: 'GPS · IMU · ECU streaming at 10 Hz' },
-    { id: 'upload' as const, icon: Upload, label: 'Upload session files', desc: IMPORT_FORMATS.join(' · ') },
+    { id: 'live' as const, icon: Wifi, label: 'Continue with live data', desc: 'GPS Â· IMU Â· ECU streaming at 10 Hz' },
+    { id: 'upload' as const, icon: Upload, label: 'Upload session files', desc: IMPORT_FORMATS.join(' Â· ') },
     { id: 'demo' as const, icon: PlayCircle, label: 'Use demo data', desc: 'Reproducible scripted sample session' },
     { id: 'simulation' as const, icon: FlaskConical, label: 'Simulation only', desc: 'AI-generated baseline, no sensors' },
   ];
@@ -45,7 +45,7 @@ export function DataSourceGatePage({ ctx, onBack, onContinue }: Props) {
           <h1 style={{ fontSize: 22, fontWeight: 800, letterSpacing: '0.04em', color: 'var(--text)', margin: 0 }}>DATA SOURCE SETUP</h1>
         </div>
         <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 20 }}>
-          {ctx.circuitName} · {ctx.sessionMode} — declare where this session's data comes from before the pit-wall opens.
+          {ctx.circuitName} Â· {ctx.sessionMode} â€” declare where this session's data comes from before the pit-wall opens.
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 18, alignItems: 'start' }}>
@@ -57,7 +57,7 @@ export function DataSourceGatePage({ ctx, onBack, onContinue }: Props) {
                 <button key={o.id} onClick={() => setChoice(o.id)}
                   style={{
                     display: 'flex', gap: 12, alignItems: 'center', textAlign: 'left', cursor: 'pointer',
-                    padding: '14px 16px', borderRadius: 10,
+                    padding: '14px 16px', borderRadius: 'var(--radius-lg)',
                     background: on ? 'rgba(224,55,55,0.07)' : 'rgba(255,255,255,0.02)',
                     border: `1px solid ${on ? 'rgba(224,55,55,0.4)' : 'var(--border)'}`,
                   }}>

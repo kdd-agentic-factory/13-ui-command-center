@@ -19,24 +19,24 @@ type BlueprintStatus = keyof typeof STATUS_LABELS;
 
 function statusStyle(status: BlueprintStatus) {
   if (status === 'generating') {
-    return { bg: 'rgba(251,191,36,0.14)', border: 'rgba(251,191,36,0.28)', color: '#FBBF24' };
+    return { bg: 'var(--yellow-dim)', border: 'var(--yellow-border)', color: 'var(--yellow)' };
   }
 
   if (status === 'done') {
-    return { bg: 'rgba(34,197,94,0.14)', border: 'rgba(34,197,94,0.28)', color: '#22C55E' };
+    return { bg: 'var(--green-dim)', border: 'var(--green-border)', color: 'var(--green)' };
   }
 
   if (status === 'error') {
-    return { bg: 'rgba(239,68,68,0.14)', border: 'rgba(239,68,68,0.28)', color: '#EF4444' };
+    return { bg: 'var(--accent-dim)', border: 'var(--accent-glow)', color: 'var(--accent)' };
   }
 
-  return { bg: 'rgba(255,255,255,0.05)', border: 'rgba(255,255,255,0.10)', color: 'var(--text-muted)' };
+  return { bg: 'var(--surface-faint)', border: 'var(--border)', color: 'var(--text-muted)' };
 }
 
 export function BlueprintBriefPanel({ request }: BlueprintBriefPanelProps) {
   const { brief, error, status, isGenerating, generateBlueprint, clearBrief } = useBlueprintBrief();
   const context = [
-    `${request.dimensions.x}×${request.dimensions.y}×${request.dimensions.z} mm`,
+    `${request.dimensions.x}Ãƒâ€”${request.dimensions.y}Ãƒâ€”${request.dimensions.z} mm`,
     `${request.dimensions.loadKg} kg load`,
     request.material,
   ];
@@ -51,22 +51,22 @@ export function BlueprintBriefPanel({ request }: BlueprintBriefPanelProps) {
     <div style={{
       marginTop: 14,
       paddingTop: 12,
-      borderTop: '1px solid rgba(255,255,255,0.06)',
+      borderTop: '1px solid var(--surface-soft)',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <FileText size={13} style={{ color: '#38BDF8' }} />
+          <FileText size={13} style={{ color: 'var(--cyan)' }} />
           <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text)' }}>BLUEPRINT BRIEF</span>
-          <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>
-            {context.join(' · ')}
+          <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+            {context.join(' Ã‚Â· ')}
           </span>
         </div>
         <span style={{
           display: 'inline-flex', alignItems: 'center', gap: 4,
-          padding: '3px 8px', borderRadius: 999,
+          padding: '3px 8px', borderRadius: 'var(--radius-pill)',
           background: badge.bg, border: `1px solid ${badge.border}`,
           color: badge.color, fontSize: 10, fontWeight: 700,
-          fontFamily: 'JetBrains Mono,monospace',
+          fontFamily: 'var(--font-mono)',
         }}>
           {status === 'generating' ? <Loader2 size={10} style={{ animation: 'spin 1s linear infinite' }} /> : null}
           {STATUS_LABELS[status]}
@@ -81,17 +81,17 @@ export function BlueprintBriefPanel({ request }: BlueprintBriefPanelProps) {
           style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
             padding: '8px 14px',
-            background: isGenerating ? 'rgba(56,189,248,0.08)' : 'rgba(56,189,248,0.15)',
-            border: '1px solid rgba(56,189,248,0.28)',
-            borderRadius: 6, cursor: isGenerating ? 'not-allowed' : 'pointer',
-            color: isGenerating ? 'rgba(56,189,248,0.55)' : '#38BDF8',
+            background: isGenerating ? 'var(--surface-faint)' : 'var(--cyan-dim)',
+            border: '1px solid var(--cyan)',
+            borderRadius: 'var(--radius)', cursor: isGenerating ? 'not-allowed' : 'pointer',
+            color: isGenerating ? 'var(--text-muted)' : 'var(--cyan)',
             fontSize: 11, fontWeight: 700,
-            fontFamily: 'JetBrains Mono,monospace',
+            fontFamily: 'var(--font-mono)',
             letterSpacing: '0.05em',
           }}
         >
           {isGenerating ? <Loader2 size={12} style={{ animation: 'spin 1s linear infinite' }} /> : <Sparkles size={12} />}
-          {isGenerating ? 'GENERATING BRIEF…' : 'GENERATE BLUEPRINT'}
+          {isGenerating ? 'GENERATING BRIEFÃ¢â‚¬Â¦' : 'GENERATE BLUEPRINT'}
         </button>
 
         <a
@@ -101,12 +101,12 @@ export function BlueprintBriefPanel({ request }: BlueprintBriefPanelProps) {
           style={{
             display: 'inline-flex', alignItems: 'center', gap: 6,
             padding: '8px 12px',
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.10)',
-            borderRadius: 6,
+            background: 'var(--surface-faint)',
+            border: '1px solid var(--border)',
+            borderRadius: 'var(--radius)',
             color: 'var(--text)',
             fontSize: 11,
-            fontFamily: 'JetBrains Mono,monospace',
+            fontFamily: 'var(--font-mono)',
             textDecoration: 'none',
           }}
         >
@@ -121,11 +121,11 @@ export function BlueprintBriefPanel({ request }: BlueprintBriefPanelProps) {
             style={{
               display: 'inline-flex', alignItems: 'center', gap: 6,
               padding: '8px 12px',
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.10)',
-              borderRadius: 6, cursor: 'pointer',
+              background: 'var(--surface-faint)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--radius)', cursor: 'pointer',
               color: 'var(--text-muted)',
-              fontSize: 11, fontFamily: 'JetBrains Mono,monospace',
+              fontSize: 11, fontFamily: 'var(--font-mono)',
             }}
           >
             <RotateCcw size={12} /> Clear
@@ -137,12 +137,12 @@ export function BlueprintBriefPanel({ request }: BlueprintBriefPanelProps) {
         <div style={{
           marginTop: 10,
           padding: '8px 10px',
-          borderRadius: 6,
-          border: '1px solid rgba(239,68,68,0.24)',
-          background: 'rgba(239,68,68,0.08)',
-          color: '#FCA5A5',
+          borderRadius: 'var(--radius)',
+          border: '1px solid var(--accent-glow)',
+          background: 'var(--accent-dim)',
+          color: 'var(--accent)',
           fontSize: 11,
-          fontFamily: 'JetBrains Mono,monospace',
+          fontFamily: 'var(--font-mono)',
         }}>
           <AlertTriangle size={11} style={{ marginRight: 6, verticalAlign: 'text-bottom' }} />
           {error}
@@ -154,17 +154,17 @@ export function BlueprintBriefPanel({ request }: BlueprintBriefPanelProps) {
           marginTop: 10,
           marginBottom: 0,
           padding: '10px 12px',
-          borderRadius: 6,
-          background: 'rgba(0,0,0,0.26)',
-          border: '1px solid rgba(255,255,255,0.08)',
+          borderRadius: 'var(--radius)',
+          background: 'var(--ink-faint)',
+          border: '1px solid var(--border)',
           color: 'var(--text)',
           fontSize: 11,
           lineHeight: 1.55,
           whiteSpace: 'pre-wrap',
-          fontFamily: 'JetBrains Mono,monospace',
+          fontFamily: 'var(--font-mono)',
           minHeight: 64,
         }}>
-          {brief || 'Streaming blueprint brief…'}
+          {brief || 'Streaming blueprint briefÃ¢â‚¬Â¦'}
         </pre>
       )}
 
@@ -173,7 +173,7 @@ export function BlueprintBriefPanel({ request }: BlueprintBriefPanelProps) {
           marginTop: 10,
           fontSize: 11,
           color: 'var(--text-muted)',
-          fontFamily: 'JetBrains Mono,monospace',
+          fontFamily: 'var(--font-mono)',
         }}>
           Generate a compact design brief before running the full part pipeline.
         </div>
@@ -185,9 +185,9 @@ export function BlueprintBriefPanel({ request }: BlueprintBriefPanelProps) {
           display: 'flex',
           alignItems: 'center',
           gap: 6,
-          color: '#22C55E',
+          color: 'var(--green)',
           fontSize: 10,
-          fontFamily: 'JetBrains Mono,monospace',
+          fontFamily: 'var(--font-mono)',
         }}>
           <CheckCircle size={11} /> Blueprint ready for iteration.
         </div>
@@ -199,9 +199,9 @@ export function BlueprintBriefPanel({ request }: BlueprintBriefPanelProps) {
           display: 'flex',
           alignItems: 'center',
           gap: 6,
-          color: '#EF4444',
+          color: 'var(--accent)',
           fontSize: 10,
-          fontFamily: 'JetBrains Mono,monospace',
+          fontFamily: 'var(--font-mono)',
         }}>
           <XCircle size={11} /> Blueprint generation failed.
         </div>

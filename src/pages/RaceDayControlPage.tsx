@@ -1,8 +1,8 @@
 /**
- * RaceDayControlPage — KDD Race Day Control (unified race-day surface).
+ * RaceDayControlPage â€” KDD Race Day Control (unified race-day surface).
  *
- * Composes the five race-day modules — Strategy, Weather, Tyres, Tyre Pressure
- * and Fuel — into one status board. Each card shows the module's headline + key
+ * Composes the five race-day modules â€” Strategy, Weather, Tyres, Tyre Pressure
+ * and Fuel â€” into one status board. Each card shows the module's headline + key
  * metric, is colour-coded by status, and links straight to that module. The
  * watch item (worst status) is called out at the top.
  */
@@ -29,7 +29,7 @@ export function RaceDayControlPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><ClipboardList size={18} /> Race Day Control</h1>
-          <p className="page-subtitle">Strategy · Weather · Tyres · Pressure · Fuel — one board · {r.raceLaps} laps — {r.combo}</p>
+          <p className="page-subtitle">Strategy Â· Weather Â· Tyres Â· Pressure Â· Fuel â€” one board Â· {r.raceLaps} laps â€” {r.combo}</p>
         </div>
         <div style={{ display: 'flex', gap: 16, textAlign: 'right' }}>
           {[['green', r.counts.good, 'var(--green)'], ['watch', r.counts.warn, 'var(--yellow)'], ['risk', r.counts.bad, 'var(--accent)']].map(([k, v, c]) => (
@@ -39,7 +39,8 @@ export function RaceDayControlPage() {
       </div>
 
       {/* verdict / watch item */}
-      <div className="card mb-4" style={{ padding: 14, borderLeft: `3px solid ${cardStatusColor(r.priority.status)}` }}>
+      <div className="card mb-4" style={{ padding: 14,
+ }}>
         <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 4 }}>KDD verdict</div>
         <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)' }}>{r.verdict}</div>
         <div style={{ fontSize: 11, color: 'var(--accent)', marginTop: 4, fontStyle: 'italic' }}>{r.punchline}</div>
@@ -49,7 +50,7 @@ export function RaceDayControlPage() {
       {r.priority.status !== 'good' && (
         <button onClick={() => navigate(r.priority.tab)} style={{ width: '100%', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 10, padding: 12, marginBottom: 14, background: 'var(--bg-surface)', border: `1px solid ${cardStatusColor(r.priority.status)}`, borderRadius: 8, cursor: 'pointer' }}>
           <AlertTriangle size={16} style={{ color: cardStatusColor(r.priority.status), flexShrink: 0 }} />
-          <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Watch item: <b style={{ color: 'var(--text)' }}>{r.priority.title}</b> — {r.priority.headline}</span>
+          <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Watch item: <b style={{ color: 'var(--text)' }}>{r.priority.title}</b> â€” {r.priority.headline}</span>
           <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10, fontFamily: MONO, color: cardStatusColor(r.priority.status) }}>open <ChevronRight size={13} /></span>
         </button>
       )}
@@ -73,7 +74,7 @@ export function RaceDayControlPage() {
       </div>
 
       <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', marginTop: 14, fontStyle: 'italic' }}>
-        Each card is sourced live from its own module — open it for the full picture. Composed view, deterministic.
+        Each card is sourced live from its own module â€” open it for the full picture. Composed view, deterministic.
       </div>
     </div>
   );

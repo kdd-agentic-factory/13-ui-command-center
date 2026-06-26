@@ -1,12 +1,12 @@
 /**
- * Rider Comparison (engineer Phase 3 #1) — head-to-head, corner-by-corner
+ * Rider Comparison (engineer Phase 3 #1) Ã¢â‚¬â€ head-to-head, corner-by-corner
  * comparison against another rider or your own best lap at Mugello.
  *
  * Surfaces where you gain and lose: entry speed, apex speed, exit speed,
  * brake point, throttle pickup, lean angle, rear grip, sector splits.
  *
- * Built on the §10 Rival Intelligence model with real Mugello geometry.
- * CRITICAL: No Jarama references — all 15 Mugello corners only.
+ * Built on the Ã‚Â§10 Rival Intelligence model with real Mugello geometry.
+ * CRITICAL: No Jarama references Ã¢â‚¬â€ all 15 Mugello corners only.
  */
 
 import { useMemo, useState } from 'react';
@@ -20,12 +20,12 @@ import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { MUGELLO_CIRCUIT, validRaceLap } from '../domain/sessionTruth';
 import { getActiveCircuit } from '../domain/circuits';
 
-// ── Mugello constants (from sessionTruth) ──────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Mugello constants (from sessionTruth) Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 const FUEL_CRITICAL_THRESHOLD = 2.5;
 const MAIN_STRAIGHT_M = MUGELLO_CIRCUIT.mainStraightKm * 1000;
 
-// ── Mugello corner data ────────────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Mugello corner data Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 interface CornerPhase {
   entryKmh: number;
@@ -33,7 +33,7 @@ interface CornerPhase {
   exitKmh: number;
   brakeDelta: number;   // m later than reference
   throttlePickup: number; // s late
-  leanAngle: number;    // °
+  leanAngle: number;    // Ã‚Â°
   rearGrip: number;     // %
 }
 
@@ -74,7 +74,7 @@ const TARGETS: { id: ComparisonTarget; label: string; rider: string }[] = [
   { id: 'Ideal Lap', label: 'Theoretical Ideal', rider: 'Ideal' },
 ];
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Helpers Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 function deltaColor(d: number): string {
   if (d <= -0.02) return 'var(--green)';
@@ -82,7 +82,7 @@ function deltaColor(d: number): string {
   return 'var(--text-dim)';
 }
 
-// ── Sector labels for Mugello ──────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Sector labels for Mugello Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 const SECTOR_LABELS: Record<number, { name: string; from: string; to: string }> = {
   1: { name: 'S1', from: 'Start/Finish', to: 'Poggio Secco' },
@@ -90,7 +90,7 @@ const SECTOR_LABELS: Record<number, { name: string; from: string; to: string }> 
   3: { name: 'S3', from: 'Scarperia',    to: 'Bucine' },
 };
 
-// ── Corner types ───────────────────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Corner types Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 type LossPhase = 'entry' | 'apex' | 'exit' | 'brake' | 'throttle' | 'setup';
 type CornerStatus = 'loss' | 'gain' | 'neutral';
@@ -115,7 +115,7 @@ function getStatus(d: number): CornerStatus {
   return 'neutral';
 }
 
-// ── Race Header Component ────────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Race Header Component Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 function RaceHeader({
   lap, totalLaps, pos, gap, speed, fuel, fuelValid,
@@ -139,10 +139,10 @@ function RaceHeader({
         <div>
           <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--accent)', fontFamily: 'JetBrains Mono,monospace', textTransform: 'uppercase' }}>RACE</div>
           <div style={{ fontSize: 12, fontFamily: 'JetBrains Mono,monospace', color: 'var(--text)' }}>
-            GP {getActiveCircuit().name} · {getActiveCircuit().country} · Round 7/20 · 2026
+            GP {getActiveCircuit().name} Ã‚Â· {getActiveCircuit().country} Ã‚Â· Round 7/20 Ã‚Â· 2026
           </div>
           <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', marginTop: 2 }}>
-            {MUGELLO_CIRCUIT.lengthKm} km · {MUGELLO_CIRCUIT.turns} turns · main straight {MAIN_STRAIGHT_M} m
+            {MUGELLO_CIRCUIT.lengthKm} km Ã‚Â· {MUGELLO_CIRCUIT.turns} turns Ã‚Â· main straight {MAIN_STRAIGHT_M} m
           </div>
         </div>
 
@@ -169,7 +169,7 @@ function RaceHeader({
           </div>
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', letterSpacing: '0.06em' }}>GAP</div>
-            <div className="text-mono" style={{ fontSize: 16, fontWeight: 700, color: gap.includes('leader') ? 'var(--green)' : gap.startsWith('–') ? 'var(--green)' : 'var(--accent)', lineHeight: 1.1 }}>
+            <div className="text-mono" style={{ fontSize: 16, fontWeight: 700, color: gap.includes('leader') ? 'var(--green)' : gap.startsWith('Ã¢â‚¬â€œ') ? 'var(--green)' : 'var(--accent)', lineHeight: 1.1 }}>
               {gap.includes('leader') ? 'LEADER' : `${gap}s`}
             </div>
           </div>
@@ -187,7 +187,7 @@ function RaceHeader({
                   {fuel.toFixed(1)}<span style={{ fontSize: 11, color: 'var(--text-muted)' }}> kg</span>
                 </div>
                 <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--accent)', fontFamily: 'JetBrains Mono,monospace', animation: 'pulse 1.5s ease-in-out infinite' }}>
-                  DATA ERROR · sensor
+                  DATA ERROR Ã‚Â· sensor
                 </div>
               </>
             ) : (
@@ -197,11 +197,11 @@ function RaceHeader({
                 </div>
                 {fuelCritical ? (
                   <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--accent)', fontFamily: 'JetBrains Mono,monospace', animation: 'pulse 1.5s ease-in-out infinite' }}>
-                    CRITICAL · {fuelRange} lap range
+                    CRITICAL Ã‚Â· {fuelRange} lap range
                   </div>
                 ) : (
                   <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>
-                    Target OK · ~{fuelRange} laps
+                    Target OK Ã‚Â· ~{fuelRange} laps
                   </div>
                 )}
               </>
@@ -230,7 +230,7 @@ function RaceHeader({
       {/* Fuel invalid banner */}
       {fuelInvalid && (
         <div style={{
-          marginTop: 8, padding: '6px 12px', borderRadius: 6,
+          marginTop: 8, padding: '6px 12px', borderRadius: 'var(--radius)',
           background: 'rgba(224,55,55,0.12)',
           border: '1px solid rgba(224,55,55,0.25)',
           fontSize: 12, color: 'var(--accent)', fontFamily: 'JetBrains Mono,monospace',
@@ -238,15 +238,15 @@ function RaceHeader({
         }}>
           <AlertTriangle size={14} />
           {fuel < 1.0 && speed > 50
-            ? `FUEL DATA ERROR — Fuel reads ${fuel.toFixed(1)} kg while bike is moving at ${speed} km/h. Sensor validation required.`
-            : `FUEL DATA ERROR — Fuel sensor reading ${fuel.toFixed(1)} kg is outside valid range.`}
+            ? `FUEL DATA ERROR Ã¢â‚¬â€ Fuel reads ${fuel.toFixed(1)} kg while bike is moving at ${speed} km/h. Sensor validation required.`
+            : `FUEL DATA ERROR Ã¢â‚¬â€ Fuel sensor reading ${fuel.toFixed(1)} kg is outside valid range.`}
         </div>
       )}
     </div>
   );
 }
 
-// ── Corner Detail Card ───────────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Corner Detail Card Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 function CornerDetailCard({ corner, isOpen, onToggle }: {
   corner: MugelloCorner;
@@ -272,7 +272,7 @@ function CornerDetailCard({ corner, isOpen, onToggle }: {
         onClick={onToggle}
       >
         <div style={{
-          width: 28, height: 28, borderRadius: 6, flex: 'none',
+          width: 28, height: 28, borderRadius: 'var(--radius)', flex: 'none',
           display: 'grid', placeItems: 'center',
           background: status === 'loss'
             ? 'var(--accent-dim)' : status === 'gain'
@@ -285,7 +285,7 @@ function CornerDetailCard({ corner, isOpen, onToggle }: {
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: 13, fontWeight: 700 }}>{corner.name}</div>
           <div style={{ fontSize: 10, color: 'var(--text-dim)', fontFamily: 'JetBrains Mono,monospace' }}>
-            {corner.type === 'kink' ? 'kink' : `${corner.type} · ${SECTOR_LABELS[corner.sector].name}`}
+            {corner.type === 'kink' ? 'kink' : `${corner.type} Ã‚Â· ${SECTOR_LABELS[corner.sector].name}`}
           </div>
         </div>
         <div style={{
@@ -294,7 +294,7 @@ function CornerDetailCard({ corner, isOpen, onToggle }: {
           color: deltaColor(-corner.delta),
         }}>
           {corner.delta <= -0.02 ? <TrendingUp size={13} /> : corner.delta >= 0.02 ? <TrendingDown size={13} /> : <Info size={13} />}
-          {corner.delta <= -0.02 ? '−' : '+'}{Math.abs(corner.delta).toFixed(3)}s
+          {corner.delta <= -0.02 ? 'Ã¢Ë†â€™' : '+'}{Math.abs(corner.delta).toFixed(3)}s
         </div>
         <ChevronDown size={14} style={{
           color: 'var(--text-muted)', flex: 'none',
@@ -315,7 +315,7 @@ function CornerDetailCard({ corner, isOpen, onToggle }: {
               <div key={p.label} style={{
                 padding: '8px 10px',
                 background: 'rgba(255,255,255,0.03)',
-                borderRadius: 6,
+                borderRadius: 'var(--radius)',
                 textAlign: 'center',
               }}>
                 <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', letterSpacing: '0.06em', marginBottom: 4 }}>{p.label}</div>
@@ -341,7 +341,7 @@ function CornerDetailCard({ corner, isOpen, onToggle }: {
             {[
               { label: 'Brake point', you: `${corner.you.brakeDelta}m late`, rival: `${corner.rival.brakeDelta}m late`, better: corner.you.brakeDelta <= corner.rival.brakeDelta },
               { label: 'Throttle pickup', you: `${corner.you.throttlePickup.toFixed(2)}s`, rival: `${corner.rival.throttlePickup.toFixed(2)}s`, better: corner.you.throttlePickup <= corner.rival.throttlePickup },
-              { label: 'Lean angle', you: `${corner.you.leanAngle}°`, rival: `${corner.rival.leanAngle}°`, better: corner.you.leanAngle <= corner.rival.leanAngle },
+              { label: 'Lean angle', you: `${corner.you.leanAngle}Ã‚Â°`, rival: `${corner.rival.leanAngle}Ã‚Â°`, better: corner.you.leanAngle <= corner.rival.leanAngle },
               { label: 'Rear grip', you: `${corner.you.rearGrip}%`, rival: `${corner.rival.rearGrip}%`, better: corner.you.rearGrip >= corner.rival.rearGrip },
             ].map(r => (
               <div key={r.label} style={{
@@ -365,7 +365,7 @@ function CornerDetailCard({ corner, isOpen, onToggle }: {
             fontSize: 11, fontFamily: 'JetBrains Mono,monospace',
             color: status === 'loss' ? 'var(--accent)' : status === 'gain' ? 'var(--green)' : 'var(--text-dim)',
           }}>
-            Main phase: <strong>{phase}</strong> · Status: <strong>{status.toUpperCase()}</strong>
+            Main phase: <strong>{phase}</strong> Ã‚Â· Status: <strong>{status.toUpperCase()}</strong>
           </div>
         </div>
       )}
@@ -373,7 +373,7 @@ function CornerDetailCard({ corner, isOpen, onToggle }: {
   );
 }
 
-// ── Selected Corner Full Analysis ─────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Selected Corner Full Analysis Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 function SelectedCornerAnalysis({ corner }: { corner: MugelloCorner }) {
   const entryDiff  = corner.rival.entryKmh - corner.you.entryKmh;
@@ -394,7 +394,7 @@ function SelectedCornerAnalysis({ corner }: { corner: MugelloCorner }) {
       <div className="card-header">
         <span className="card-title flex items-center gap-2">
           <Zap size={14} style={{ color: isCritical ? 'var(--accent)' : 'var(--blue)' }} />
-          SELECTED CORNER · T{corner.n} {corner.name}
+          SELECTED CORNER Ã‚Â· T{corner.n} {corner.name}
         </span>
         {isCritical && (
           <span className="badge" style={{ background: 'var(--accent-dim)', color: 'var(--accent)', fontFamily: 'JetBrains Mono,monospace' }}>
@@ -410,9 +410,9 @@ function SelectedCornerAnalysis({ corner }: { corner: MugelloCorner }) {
           { label: 'Exit speed',    you: `${corner.you.exitKmh} km/h`,   rival: `${corner.rival.exitKmh} km/h`,   diff: exitDiff },
           { label: 'Brake point',   you: `+${corner.you.brakeDelta}m`,    rival: `+${corner.rival.brakeDelta}m`,    diff: brakeDiff },
           { label: 'Throttle pickup', you: `+${corner.you.throttlePickup.toFixed(2)}s`, rival: `+${corner.rival.throttlePickup.toFixed(2)}s`, diff: throttleDiff },
-          { label: 'Lean angle',    you: `${corner.you.leanAngle}°`,     rival: `${corner.rival.leanAngle}°`,     diff: leanDiff },
+          { label: 'Lean angle',    you: `${corner.you.leanAngle}Ã‚Â°`,     rival: `${corner.rival.leanAngle}Ã‚Â°`,     diff: leanDiff },
           { label: 'Rear grip',     you: `${corner.you.rearGrip}%`,      rival: `${corner.rival.rearGrip}%`,      diff: gripDiff },
-          { label: 'Time loss',     you: `${Math.abs(corner.delta).toFixed(3)}s`, rival: '—', diff: corner.delta },
+          { label: 'Time loss',     you: `${Math.abs(corner.delta).toFixed(3)}s`, rival: 'Ã¢â‚¬â€', diff: corner.delta },
         ].map(r => (
           <div key={r.label} style={{
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
@@ -423,7 +423,7 @@ function SelectedCornerAnalysis({ corner }: { corner: MugelloCorner }) {
             <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>{r.label}</span>
             <div style={{ display: 'flex', gap: 8, fontFamily: 'JetBrains Mono,monospace', fontSize: 11, fontWeight: 600 }}>
               <span style={{ color: 'var(--accent)' }}>{r.you}</span>
-              {r.rival !== '—' && <span style={{ color: 'var(--text-dim)' }}>vs</span>}
+              {r.rival !== 'Ã¢â‚¬â€' && <span style={{ color: 'var(--text-dim)' }}>vs</span>}
               <span style={{ color: r.label === 'Time loss' ? 'var(--accent)' : 'var(--blue)' }}>{r.rival}</span>
             </div>
           </div>
@@ -433,7 +433,7 @@ function SelectedCornerAnalysis({ corner }: { corner: MugelloCorner }) {
       {/* AI recommendation */}
       {isCritical && (
         <div style={{
-          marginTop: 12, padding: '10px 12px', borderRadius: 6,
+          marginTop: 12, padding: '10px 12px', borderRadius: 'var(--radius)',
           background: 'rgba(224,55,55,0.08)',
           border: '1px solid rgba(224,55,55,0.2)',
         }}>
@@ -442,8 +442,8 @@ function SelectedCornerAnalysis({ corner }: { corner: MugelloCorner }) {
           </div>
           <div style={{ fontSize: 12, lineHeight: 1.5, color: 'var(--text-dim)' }}>
             <strong>Issue:</strong> {Math.abs(apexDiff)} km/h slower at apex and {Math.abs(exitDiff)} km/h slower on exit.<br />
-            <strong>Cause:</strong> Late throttle pickup ({corner.you.throttlePickup.toFixed(2)}s) while still carrying {corner.you.leanAngle}° lean. Rear grip drops to {corner.you.rearGrip}%.<br />
-            <strong>Recommended action:</strong> Rotate earlier, reduce lean by ~{Math.max(2, Math.round(leanDiff))}°, open throttle 0.3s earlier with smoother pickup. If rear slip persists, raise TC +1 only for S3.
+            <strong>Cause:</strong> Late throttle pickup ({corner.you.throttlePickup.toFixed(2)}s) while still carrying {corner.you.leanAngle}Ã‚Â° lean. Rear grip drops to {corner.you.rearGrip}%.<br />
+            <strong>Recommended action:</strong> Rotate earlier, reduce lean by ~{Math.max(2, Math.round(leanDiff))}Ã‚Â°, open throttle 0.3s earlier with smoother pickup. If rear slip persists, raise TC +1 only for S3.
           </div>
         </div>
       )}
@@ -451,7 +451,7 @@ function SelectedCornerAnalysis({ corner }: { corner: MugelloCorner }) {
   );
 }
 
-// ── Data Integrity ────────────────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Data Integrity Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 function DataIntegrity({ lap, fuel, fuelValid, lapOk }: {
   lap: number; fuel: number; fuelValid: boolean; lapOk: boolean;
@@ -508,14 +508,14 @@ function DataIntegrity({ lap, fuel, fuelValid, lapOk }: {
       </div>
       {allOk && (
         <div style={{ marginTop: 8, fontSize: 11, color: 'var(--green)', fontFamily: 'JetBrains Mono,monospace' }}>
-          ✓ All systems validated · No warnings
+          Ã¢Å“â€œ All systems validated Ã‚Â· No warnings
         </div>
       )}
     </div>
   );
 }
 
-// ── Main Component ────────────────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Main Component Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 export function RiderComparisonPage() {
   const navigate = useNavigate();
@@ -575,9 +575,9 @@ export function RiderComparisonPage() {
   return (
     <div className="page">
 
-      {/* ═══════════════════════════════════════════════════════════════════════ */}
+      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
       {/* RACE HEADER                                                           */}
-      {/* ═══════════════════════════════════════════════════════════════════════ */}
+      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
       <RaceHeader
         lap={t.lapCount}
         totalLaps={MUGELLO_CIRCUIT.raceLaps}
@@ -588,14 +588,14 @@ export function RiderComparisonPage() {
         fuelValid={t.fuelValid}
       />
 
-      {/* ═══════════════════════════════════════════════════════════════════════ */}
+      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
       {/* PAGE HEADER                                                           */}
-      {/* ═══════════════════════════════════════════════════════════════════════ */}
+      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
       <div className="flex items-center justify-between mb-4">
         <div>
           <h1 className="page-title">Rider Comparison</h1>
           <p className="page-subtitle">
-            {getActiveCircuit().name} · head-to-head · sector, corner, speed, brake, throttle and line comparison
+            {getActiveCircuit().name} Ã‚Â· head-to-head Ã‚Â· sector, corner, speed, brake, throttle and line comparison
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -604,14 +604,14 @@ export function RiderComparisonPage() {
               key={tg.id}
               onClick={() => setTarget(tg.id)}
               style={{
-                padding: '4px 10px', borderRadius: 6,
+                padding: '4px 10px', borderRadius: 'var(--radius)',
                 background: target === tg.id ? 'rgba(224,55,55,0.15)' : 'rgba(255,255,255,0.04)',
                 border: `1px solid ${target === tg.id ? 'rgba(224,55,55,0.3)' : 'rgba(255,255,255,0.08)'}`,
                 cursor: 'pointer',
                 color: target === tg.id ? 'var(--accent)' : 'var(--text-muted)',
                 fontSize: 10, fontFamily: 'JetBrains Mono,monospace',
                 letterSpacing: '0.04em', fontWeight: 600,
-                transition: 'all 0.15s',
+                transition: 'background  ease, color  ease, box-shadow  ease',
               }}
             >
               {tg.label}
@@ -620,9 +620,9 @@ export function RiderComparisonPage() {
         </div>
       </div>
 
-      {/* ═══════════════════════════════════════════════════════════════════════ */}
+      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
       {/* COMPARISON MODE STRIP                                                  */}
-      {/* ═══════════════════════════════════════════════════════════════════════ */}
+      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
       {target !== 'Best Lap' && target !== 'Ideal Lap' && (
         <div style={{
           marginBottom: 16, padding: '8px 12px', borderRadius: 8,
@@ -634,12 +634,12 @@ export function RiderComparisonPage() {
           </span>
           {target === 'P2' && (
             <span style={{ fontSize: 11, fontFamily: 'JetBrains Mono,monospace', color: 'var(--green)' }}>
-              Gap to P2: +0.900s · You are faster in S3 by −0.010s · Opportunity: Bucine exit and main straight slipstream.
+              Gap to P2: +0.900s Ã‚Â· You are faster in S3 by Ã¢Ë†â€™0.010s Ã‚Â· Opportunity: Bucine exit and main straight slipstream.
             </span>
           )}
           {target === 'P4' && (
             <span style={{ fontSize: 11, fontFamily: 'JetBrains Mono,monospace', color: 'var(--accent)' }}>
-              Gap to P4: 0.363s · J. Martin is faster in T1 and T15 · Risk: overtake into San Donato.
+              Gap to P4: 0.363s Ã‚Â· J. Martin is faster in T1 and T15 Ã‚Â· Risk: overtake into San Donato.
             </span>
           )}
           {target === 'P1' && (
@@ -650,16 +650,16 @@ export function RiderComparisonPage() {
         </div>
       )}
 
-      {/* ═══════════════════════════════════════════════════════════════════════ */}
+      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
       {/* COMPARISON SUMMARY                                                     */}
-      {/* ═══════════════════════════════════════════════════════════════════════ */}
+      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
       <div className="card mb-4" style={{
         background: `linear-gradient(135deg, ${youBehind ? 'rgba(224,55,55,0.10)' : 'rgba(34,197,94,0.10)'}, rgba(255,255,255,0.02))`,
       }}>
         <div className="card-header">
           <span className="card-title flex items-center gap-2">
             <Users size={14} style={{ color: 'var(--accent)' }} />
-            You vs {rivalLabel} · {target}
+            You vs {rivalLabel} Ã‚Â· {target}
           </span>
           <span className="badge" style={{
             background: youBehind ? 'var(--accent-dim)' : 'var(--green-dim)',
@@ -673,19 +673,19 @@ export function RiderComparisonPage() {
           <div className="stat-tile">
             <div className="stat-tile__label">Net delta</div>
             <span className="stat-tile__value" style={{ fontSize: 26, color: deltaColor(-total) }}>
-              {total > 0 ? '+' : '−'}{Math.abs(total).toFixed(3)}<span className="stat-tile__unit">s</span>
+              {total > 0 ? '+' : 'Ã¢Ë†â€™'}{Math.abs(total).toFixed(3)}<span className="stat-tile__unit">s</span>
             </span>
           </div>
           <div className="stat-tile">
             <div className="stat-tile__label">Biggest loss</div>
             <span className="stat-tile__value" style={{ fontSize: 14, color: 'var(--accent)' }}>
-              T{worst.n} · {worst.name}
+              T{worst.n} Ã‚Â· {worst.name}
             </span>
           </div>
           <div className="stat-tile">
             <div className="stat-tile__label">Biggest gain</div>
             <span className="stat-tile__value" style={{ fontSize: 14, color: 'var(--green)' }}>
-              T{best.n} · {best.name}
+              T{best.n} Ã‚Â· {best.name}
             </span>
           </div>
           <div className="stat-tile">
@@ -701,10 +701,10 @@ export function RiderComparisonPage() {
           {sectors.map(sec => (
             <div key={sec.s} className="stat-tile" style={{ textAlign: 'center' }}>
               <div className="stat-tile__label">
-                {sec.label.name} · {sec.label.from} → {sec.label.to}
+                {sec.label.name} Ã‚Â· {sec.label.from} Ã¢â€ â€™ {sec.label.to}
               </div>
               <span className="stat-tile__value" style={{ fontSize: 18, color: deltaColor(-sec.delta) }}>
-                {sec.delta > 0 ? '+' : '−'}{Math.abs(sec.delta).toFixed(3)}s
+                {sec.delta > 0 ? '+' : 'Ã¢Ë†â€™'}{Math.abs(sec.delta).toFixed(3)}s
               </span>
               {Math.abs(sec.delta) > 0.05 && (
                 <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', marginTop: 2 }}>
@@ -719,7 +719,7 @@ export function RiderComparisonPage() {
 
         {/* AI Summary */}
         <div style={{
-          marginTop: 10, padding: '8px 12px', borderRadius: 6,
+          marginTop: 10, padding: '8px 12px', borderRadius: 'var(--radius)',
           background: 'rgba(56,189,248,0.06)',
           border: '1px solid rgba(56,189,248,0.15)',
           display: 'flex', alignItems: 'flex-start', gap: 8,
@@ -731,24 +731,24 @@ export function RiderComparisonPage() {
         </div>
       </div>
 
-      {/* ═══════════════════════════════════════════════════════════════════════ */}
+      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
       {/* SELECTED CORNER DETAIL                                                 */}
-      {/* ═══════════════════════════════════════════════════════════════════════ */}
+      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
       {selectedCorner !== null && (() => {
         const corner = MUGELLO_CORNERS.find(c => c.n === selectedCorner);
         if (!corner) return null;
         return <SelectedCornerAnalysis corner={corner} />;
       })()}
 
-      {/* ═══════════════════════════════════════════════════════════════════════ */}
+      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
       {/* CORNER-BY-CORNER TABLE                                                 */}
-      {/* ═══════════════════════════════════════════════════════════════════════ */}
+      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
       <div className="flex items-center justify-between mt-4 mb-2">
         <span className="card-title">
-          CORNER-BY-CORNER DELTA · {rivalLabel}
+          CORNER-BY-CORNER DELTA Ã‚Â· {rivalLabel}
         </span>
         <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>
-          {cornersAhead}/{MUGELLO_CORNERS.length} ahead · net {total > 0 ? '+' : '−'}{Math.abs(total).toFixed(3)}s
+          {cornersAhead}/{MUGELLO_CORNERS.length} ahead Ã‚Â· net {total > 0 ? '+' : 'Ã¢Ë†â€™'}{Math.abs(total).toFixed(3)}s
         </span>
       </div>
 
@@ -776,7 +776,7 @@ export function RiderComparisonPage() {
       }}>
         <Trophy size={16} style={{ color: 'var(--accent)', flex: 'none' }} />
         <span style={{ fontSize: 13 }}>
-          <strong>Biggest opportunity: T{worst.n} ({worst.name})</strong> — {Math.abs(worst.rival.apexKmh - worst.you.apexKmh)} km/h slower at apex and {Math.abs(worst.rival.exitKmh - worst.you.exitKmh)} km/h slower on exit. Rotate earlier, reduce lean, pick up throttle earlier to recover {Math.abs(worst.delta).toFixed(3)}s.
+          <strong>Biggest opportunity: T{worst.n} ({worst.name})</strong> Ã¢â‚¬â€ {Math.abs(worst.rival.apexKmh - worst.you.apexKmh)} km/h slower at apex and {Math.abs(worst.rival.exitKmh - worst.you.exitKmh)} km/h slower on exit. Rotate earlier, reduce lean, pick up throttle earlier to recover {Math.abs(worst.delta).toFixed(3)}s.
         </span>
         <button
           className="btn btn-sm"
@@ -787,18 +787,18 @@ export function RiderComparisonPage() {
         </button>
       </div>
 
-      {/* ═══════════════════════════════════════════════════════════════════════ */}
+      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
       {/* RACING LINE OVERLAY (conceptual)                                       */}
-      {/* ═══════════════════════════════════════════════════════════════════════ */}
+      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
       <div className="card mt-4">
         <div className="card-header">
           <span className="card-title flex items-center gap-2">
             <MapPin size={14} style={{ color: 'var(--blue)' }} />
-            RACING LINE OVERLAY · MUGELLO
+            RACING LINE OVERLAY Ã‚Â· MUGELLO
           </span>
         </div>
         <div style={{ marginTop: 6, fontSize: 13, color: 'var(--text-dim)', lineHeight: 1.6 }}>
-          <p style={{ marginBottom: 8 }}>{MUGELLO_CIRCUIT.assetStatusLabel} · {MUGELLO_CIRCUIT.turns} turns</p>
+          <p style={{ marginBottom: 8 }}>{MUGELLO_CIRCUIT.assetStatusLabel} Ã‚Â· {MUGELLO_CIRCUIT.turns} turns</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
             {['You', 'Rival', 'Ideal line', 'Brake markers', 'Throttle pickup', 'Apex', 'Rear slip events'].map(layer => (
               <span key={layer} style={{
@@ -807,7 +807,7 @@ export function RiderComparisonPage() {
                 border: '1px solid rgba(56,189,248,0.2)',
                 color: 'var(--blue)', fontFamily: 'JetBrains Mono,monospace',
               }}>
-                ✓ {layer}
+                Ã¢Å“â€œ {layer}
               </span>
             ))}
           </div>
@@ -817,7 +817,7 @@ export function RiderComparisonPage() {
             const isLoss = corner.delta >= 0.02;
             return (
               <div style={{
-                padding: '8px 10px', borderRadius: 6,
+                padding: '8px 10px', borderRadius: 'var(--radius)',
                 background: 'rgba(255,255,255,0.03)',
                 fontSize: 12,
               }}>
@@ -831,9 +831,9 @@ export function RiderComparisonPage() {
         </div>
       </div>
 
-      {/* ═══════════════════════════════════════════════════════════════════════ */}
+      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
       {/* DATA INTEGRITY                                                         */}
-      {/* ═══════════════════════════════════════════════════════════════════════ */}
+      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
       <div className="mt-4">
         <DataIntegrity
           lap={t.lapCount}

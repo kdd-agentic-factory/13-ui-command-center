@@ -62,7 +62,7 @@ describe('public landing canvas motion', () => {
         title="Designs"
         subtitle="Subtitle"
         cards={[
-          { eyebrow: 'A', title: 'One', body: 'Body one', accent: '#94a3b8' },
+          { eyebrow: 'A', title: 'One', body: 'Body one', accent: 'var(--text-dim)' },
           { eyebrow: 'B', title: 'Two', body: 'Body two', accent: '#a5b4fc' },
           { eyebrow: 'C', title: 'Three', body: 'Body three', accent: '#86efac' },
         ]}
@@ -138,7 +138,7 @@ describe('public landing canvas motion', () => {
         title="Designs"
         subtitle="Subtitle"
         cards={[
-          { eyebrow: 'A', title: 'One', body: 'Body one', accent: '#94a3b8' },
+          { eyebrow: 'A', title: 'One', body: 'Body one', accent: 'var(--text-dim)' },
           { eyebrow: 'B', title: 'Two', body: 'Body two', accent: '#a5b4fc' },
           { eyebrow: 'C', title: 'Three', body: 'Body three', accent: '#86efac' },
         ]}
@@ -166,7 +166,7 @@ describe('public landing canvas motion', () => {
         title="Designs"
         subtitle="Subtitle"
         cards={[
-          { eyebrow: 'A', title: 'One', body: 'Body one', accent: '#94a3b8' },
+          { eyebrow: 'A', title: 'One', body: 'Body one', accent: 'var(--text-dim)' },
           { eyebrow: 'B', title: 'Two', body: 'Body two', accent: '#a5b4fc' },
           { eyebrow: 'C', title: 'Three', body: 'Body three', accent: '#86efac' },
         ]}
@@ -270,7 +270,7 @@ describe('public landing canvas motion', () => {
         title="Designs"
         subtitle="Subtitle"
         cards={[
-          { eyebrow: 'A', title: 'One', body: 'Body one', accent: '#94a3b8' },
+          { eyebrow: 'A', title: 'One', body: 'Body one', accent: 'var(--text-dim)' },
           { eyebrow: 'B', title: 'Two', body: 'Body two', accent: '#a5b4fc' },
           { eyebrow: 'C', title: 'Three', body: 'Body three', accent: '#86efac' },
         ]}
@@ -291,7 +291,7 @@ describe('public landing canvas motion', () => {
         title="Designs"
         subtitle="Subtitle"
         cards={[
-          { eyebrow: 'A', title: 'One', body: 'Body one', accent: '#94a3b8' },
+          { eyebrow: 'A', title: 'One', body: 'Body one', accent: 'var(--text-dim)' },
           { eyebrow: 'B', title: 'Two', body: 'Body two', accent: '#a5b4fc' },
           { eyebrow: 'C', title: 'Three', body: 'Body three', accent: '#86efac' },
         ]}

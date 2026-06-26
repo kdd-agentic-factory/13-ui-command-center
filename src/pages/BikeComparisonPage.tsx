@@ -42,7 +42,8 @@ export function BikeComparisonPage() {
         <div style={{ display: 'grid', gridTemplateColumns: `200px repeat(${rows.length}, 1fr)`, borderBottom: '1px solid var(--border)' }}>
           <div style={{ padding: '12px 14px', fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Metric</div>
           {rows.map(r => (
-            <div key={r.bikeId} style={{ padding: '12px 14px', borderLeft: '1px solid var(--border)', background: r.bikeId === garage.profile.bike.id ? 'rgba(0,183,255,0.06)' : 'transparent' }}>
+            <div key={r.bikeId} style={{ padding: '12px 14px',
+ background: r.bikeId === garage.profile.bike.id ? 'rgba(0,183,255,0.06)' : 'transparent' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <Bike size={13} style={{ color: r.bikeId === garage.profile.bike.id ? 'var(--cyan)' : 'var(--text-muted)' }} />
                 <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--text)' }}>{r.label}</span>
@@ -57,7 +58,8 @@ export function BikeComparisonPage() {
           <div key={label} style={{ display: 'grid', gridTemplateColumns: `200px repeat(${rows.length}, 1fr)`, borderBottom: i < METRICS.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
             <div style={{ padding: '11px 14px', fontSize: 11.5, color: 'var(--text-muted)' }}>{label}</div>
             {rows.map(r => (
-              <div key={r.bikeId} style={{ padding: '11px 14px', borderLeft: '1px solid var(--border)', fontSize: 13, fontFamily: MONO, fontWeight: 700, color: color(r), background: r.bikeId === garage.profile.bike.id ? 'rgba(0,183,255,0.04)' : 'transparent' }}>
+              <div key={r.bikeId} style={{ padding: '11px 14px',
+ fontSize: 13, fontFamily: MONO, fontWeight: 700, color: color(r), background: r.bikeId === garage.profile.bike.id ? 'rgba(0,183,255,0.04)' : 'transparent' }}>
                 {val(r)}
               </div>
             ))}

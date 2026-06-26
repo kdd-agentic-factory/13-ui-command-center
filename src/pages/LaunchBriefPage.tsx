@@ -1,5 +1,5 @@
 /**
- * LaunchBriefPage — final gate screen (Circuit → Mode → Data → LAUNCH).
+ * LaunchBriefPage Ã¢â‚¬â€ final gate screen (Circuit Ã¢â€ â€™ Mode Ã¢â€ â€™ Data Ã¢â€ â€™ LAUNCH).
  * The pre-flight summary: circuit, mode, rider, data, active modules and
  * Oracle status, then a single Launch action. Total-control feeling before
  * the digital pit-wall opens.
@@ -28,14 +28,14 @@ export function LaunchBriefPage({ circuit, ctx, onBack, onLaunch }: Props) {
     .map(id => MODULE_LABELS[id]!);
 
   const facts: Array<[string, string]> = [
-    ['Circuit', `${circuit.name} ${circuit.layout} Layout · ${circuit.status}`],
-    ['Mode', `${ctx.sessionMode} · ${ctx.dashboardProfile.replace(/_/g, ' ')}`],
-    ['Rider', ctx.setup.rider ?? 'Rubén Juárez'],
+    ['Circuit', `${circuit.name} ${circuit.layout} Layout Ã‚Â· ${circuit.status}`],
+    ['Mode', `${ctx.sessionMode} Ã‚Â· ${ctx.dashboardProfile.replace(/_/g, ' ')}`],
+    ['Rider', ctx.setup.rider ?? 'RubÃƒÂ©n JuÃƒÂ¡rez'],
     ['Bike', ctx.setup.bike ?? 'Yamaha R1'],
     ['Data', ctx.setup.dataSource === 'upload' ? 'Uploaded session files'
       : ctx.setup.dataSource === 'demo' ? 'Demo sample (reproducible)'
         : ctx.setup.dataSource === 'simulation' ? 'Simulation only'
-          : 'GPS · IMU · ECU · live 10 Hz'],
+          : 'GPS Ã‚Â· IMU Ã‚Â· ECU Ã‚Â· live 10 Hz'],
   ];
 
   return (
@@ -78,7 +78,7 @@ export function LaunchBriefPage({ circuit, ctx, onBack, onLaunch }: Props) {
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 18 }}>
             {activeModules.map(m => (
-              <span key={m} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 10.5, fontFamily: MONO, color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 6, padding: '4px 9px', background: 'rgba(255,255,255,0.03)' }}>
+              <span key={m} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 10.5, fontFamily: MONO, color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '4px 9px', background: 'rgba(255,255,255,0.03)' }}>
                 <CheckCircle2 size={10} style={{ color: 'var(--green)' }} />{m}
               </span>
             ))}
@@ -86,7 +86,7 @@ export function LaunchBriefPage({ circuit, ctx, onBack, onLaunch }: Props) {
 
           {/* Oracle status + launch */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11, fontFamily: MONO, color: '#8B5CF6' }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11, fontFamily: MONO, color: 'var(--violet)' }}>
               <Bot size={13} /> Oracle status: Ready
             </span>
             <button className="btn-primary" onClick={onLaunch}

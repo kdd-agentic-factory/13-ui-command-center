@@ -35,7 +35,8 @@ export function ChassisPage() {
       </div>
 
       {/* verdict */}
-      <div className="card mb-4" style={{ padding: 14, borderLeft: '3px solid var(--accent)' }}>
+      <div className="card mb-4" style={{ padding: 14,
+ }}>
         <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 4 }}>KDD verdict</div>
         <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)' }}>{c.verdict}</div>
         <div style={{ fontSize: 11, color: 'var(--accent)', marginTop: 4, fontStyle: 'italic' }}>{c.punchline}</div>
@@ -99,7 +100,8 @@ export function ChassisPage() {
             </div>
           ))}
         </div>
-        <div className="card" style={{ padding: 16, borderLeft: '3px solid var(--green)' }}>
+        <div className="card" style={{ padding: 16,
+ }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}><ListChecks size={14} style={{ color: 'var(--green)' }} /><span style={hdr}>Recommended changes</span></div>
           {c.changes.map((ch, i) => (
             <div key={i} style={{ display: 'flex', alignItems: 'baseline', gap: 8, fontSize: 10.5, marginBottom: 6 }}>

@@ -24,17 +24,17 @@ export class PublicLandingPage extends BasePage {
 
   async expectEditorialLandingContent(): Promise<void> {
     await expect(this.page).toHaveTitle('KDD Knowledge Network — Decision Intelligence Layer for Motorcycle Performance');
-    await expect(this.page.getByRole('heading', { name: 'KDD Moto Intelligence' })).toBeVisible();
+    await expect(this.page.getByRole('heading', { name: 'KDD' })).toBeVisible();
     await expect(this.page.getByText('We do not replace your telemetry. We turn it into actionable knowledge.')).toBeVisible();
-    await expect(this.page.getByRole('heading', { name: 'From signal to validated learning' })).toBeVisible();
-    await expect(this.page.getByRole('heading', { name: 'Not another telemetry system' })).toBeVisible();
+    await expect(this.page.getByRole('heading', { name: 'The Decision Loop' })).toBeVisible();
+    await expect(this.page.getByRole('heading', { name: 'T15 Bucine — How the circuit works' })).toBeVisible();
     await expect(this.earlyAccessLink).toHaveAttribute('href', '/trial');
     await expect(this.foundingNodeLink).toHaveAttribute('href', '/founding-nodes');
-    await expect(this.page.getByRole('heading', { name: 'KDD Knowledge Network' }).nth(1)).toBeVisible();
-    await expect(this.page.getByRole('heading', { name: 'Private Node / Team Node / Federated Node' })).toBeVisible();
-    await expect(this.page.getByRole('heading', { name: 'Application manual' })).toBeVisible();
+    await expect(this.page.getByRole('heading', { name: 'Raw data protected, learning travels' })).toBeVisible();
+    await expect(this.page.getByRole('heading', { name: 'Node Modes' })).toBeVisible();
+    await expect(this.page.getByRole('heading', { name: 'Application Manual' })).toBeVisible();
     await expect(this.manualLink).toHaveAttribute('href', '/kdd-application-manual.md');
-    await expect(this.page.getByRole('heading', { name: 'Paper Reproducibility Kit and generated evidence' })).toBeVisible();
+    await expect(this.page.getByRole('heading', { name: 'Paper Reproducibility Kit' })).toBeVisible();
     await expect(this.page.getByText('build/main.pdf')).toBeVisible();
     await expect(this.page.getByRole('heading', { name: /Accepted operating point: int4_32b_trackside/ })).toBeVisible();
     await expect(this.resultsSummaryLink).toHaveAttribute('href', '/paper-kit/results-summary.pdf');

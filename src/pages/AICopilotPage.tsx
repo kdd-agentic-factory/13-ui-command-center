@@ -1,12 +1,12 @@
 /**
- * AICopilotPage — Race Engineering AI Copilot.
+ * AICopilotPage Ã¢â‚¬â€ Race Engineering AI Copilot.
  *
  * Expert improvements:
- *   • Live context sidebar — telemetry snapshot always visible alongside chat
- *   • Categorized quick prompts — Strategy / Tyres / Rivals / Setup
- *   • Rich message rendering — numbers/positions/laps highlighted
- *   • Conversation statistics — token estimate + message count
- *   • Category chips for toggling prompt categories
+ *   Ã¢â‚¬Â¢ Live context sidebar Ã¢â‚¬â€ telemetry snapshot always visible alongside chat
+ *   Ã¢â‚¬Â¢ Categorized quick prompts Ã¢â‚¬â€ Strategy / Tyres / Rivals / Setup
+ *   Ã¢â‚¬Â¢ Rich message rendering Ã¢â‚¬â€ numbers/positions/laps highlighted
+ *   Ã¢â‚¬Â¢ Conversation statistics Ã¢â‚¬â€ token estimate + message count
+ *   Ã¢â‚¬Â¢ Category chips for toggling prompt categories
  */
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { Bot, Send, Trash2, Zap, ChevronDown, ChevronUp } from 'lucide-react';
@@ -17,7 +17,7 @@ import { COPILOT_SEED_KEY } from '../context/NavContext';
 import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 import { getSessionContext } from '../domain/sessionContext';
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Helpers Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 function formatLap(s: number) {
   return `${Math.floor(s / 60)}:${(s % 60).toFixed(3).padStart(6, '0')}`;
@@ -48,7 +48,7 @@ function HighlightedMessage({ text }: { text: string }) {
   );
 }
 
-// ── Auto-briefing templates ───────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Auto-briefing templates Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 interface BriefingTpl {
   label: string; icon: string; color: string;
@@ -57,23 +57,23 @@ interface BriefingTpl {
 
 const BRIEFINGS: BriefingTpl[] = [
   {
-    label: 'Race Start Brief', icon: '🚦', color: 'var(--green)',
+    label: 'Race Start Brief', icon: 'Ã°Å¸Å¡Â¦', color: 'var(--green)',
     build: (lap, pos, grip, fuel) =>
       `Provide a complete race start briefing for Lap ${lap}: Position P${pos}, rear SOFT tyre (~${grip.toFixed(0)}% grip), ${fuel.toFixed(1)} kg fuel. Cover: (1) tyre management plan for the first stint, (2) gap management vs rivals, (3) pit window recommendation, (4) key corners to protect rear grip at Mugello.`,
   },
   {
-    label: 'Mid-Race Analysis', icon: '📊', color: 'var(--blue)',
+    label: 'Mid-Race Analysis', icon: 'Ã°Å¸â€œÅ ', color: 'var(--blue)',
     build: (lap, pos, grip, fuel, lastLap) =>
       `Mid-race analysis at Lap ${lap}: P${pos}, rear grip ~${grip.toFixed(0)}%, fuel ${fuel.toFixed(1)} kg, last lap ${lastLap}. Analyze: (1) pace vs Digital Twin model delta, (2) best remaining stint options, (3) undercut vs overcut timing, (4) championship points impact of current trajectory.`,
   },
   {
-    label: 'Final Stint Plan', icon: '🏁', color: 'var(--accent)',
+    label: 'Final Stint Plan', icon: 'Ã°Å¸ÂÂ', color: 'var(--accent)',
     build: (lap, pos, grip, fuel) =>
       `Final stint plan from Lap ${lap}: P${pos}, ~${grip.toFixed(0)}% rear grip, ${fuel.toFixed(1)} kg fuel. Give: (1) lap-by-lap fuel and tyre management, (2) attack or defend position decision, (3) exact engine map recommendation, (4) championship risk assessment and any safety margins.`,
   },
 ];
 
-// ── Quick prompt categories ───────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Quick prompt categories Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 type PromptCategory = 'strategy' | 'tyres' | 'rivals' | 'setup';
 
@@ -81,37 +81,37 @@ const QUICK_PROMPTS: Record<PromptCategory, string[]> = {
   strategy: [
     'Should I pit now or extend the stint?',
     'Optimal pit lap for 1-stop strategy?',
-    '2-stop vs 1-stop — time delta analysis',
-    'Undercut window vs P2 — when to pull the trigger?',
+    '2-stop vs 1-stop Ã¢â‚¬â€ time delta analysis',
+    'Undercut window vs P2 Ã¢â‚¬â€ when to pull the trigger?',
   ],
   tyres: [
-    'Rear tyre cliff prediction — laps remaining?',
+    'Rear tyre cliff prediction Ã¢â‚¬â€ laps remaining?',
     'How does current soft degradation compare to model?',
-    'Front vs rear grip balance — any setup changes needed?',
+    'Front vs rear grip balance Ã¢â‚¬â€ any setup changes needed?',
     'Hard tyre stint pace estimate for final 10 laps',
   ],
   rivals: [
     'Compare my race pace to the riders ahead over last 5 laps',
     "What's the gap trend to P2 in last 3 laps?",
     "What engine map is Martin likely using on Straight 1?",
-    'P4 closing pace — how many laps until DRS zone?',
+    'P4 closing pace Ã¢â‚¬â€ how many laps until DRS zone?',
   ],
   setup: [
     'TC level recommendation for current rear temp?',
-    'Engine map for saving 0.2 kg/lap — pace cost?',
+    'Engine map for saving 0.2 kg/lap Ã¢â‚¬â€ pace cost?',
     'Braking adjustment for T10 to recover front grip',
     'Why is traction control firing more in T7?',
   ],
 };
 
 const CATEGORY_LABELS: Record<PromptCategory, string> = {
-  strategy: '📋 Strategy',
-  tyres:    '🔴 Tyres',
-  rivals:   '👥 Rivals',
-  setup:    '⚙️ Setup',
+  strategy: 'Ã°Å¸â€œâ€¹ Strategy',
+  tyres:    'Ã°Å¸â€Â´ Tyres',
+  rivals:   'Ã°Å¸â€˜Â¥ Rivals',
+  setup:    'Ã¢Å¡â„¢Ã¯Â¸Â Setup',
 };
 
-// ── Live metric bar ───────────────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Live metric bar Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 function LiveMetricBar({ lap, pos, gap, speed, gear, grip, fuel, lastLap }: {
   lap: number; pos: number; gap: string; speed: number;
@@ -147,21 +147,21 @@ function LiveMetricBar({ lap, pos, gap, speed, gear, grip, fuel, lastLap }: {
   );
 }
 
-// ── Tyre thermal mini sidebar ─────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Tyre thermal mini sidebar Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 function TyreThermalMini({ fl, fr, rl, rr }: { fl: number; fr: number; rl: number; rr: number }) {
   const bg = (t: number) => {
-    if (t < 56) return '#60A5FA';
-    if (t < 72) return '#34D399';
-    if (t < 93) return '#FCD34D';
-    if (t < 109) return '#F97316';
-    return '#EF4444';
+    if (t < 56) return 'var(--blue)';
+    if (t < 72) return 'var(--green)';
+    if (t < 93) return 'var(--yellow)';
+    if (t < 109) return 'var(--orange)';
+    return 'var(--accent)';
   };
   return (
     <div style={{ padding:'8px 10px', display:'grid', gridTemplateColumns:'1fr 1fr', gap:4 }}>
       {([['FL',fl],['FR',fr],['RL',rl],['RR',rr]] as [string, number][]).map(([label, temp]) => (
         <div key={label} style={{ background:bg(temp), borderRadius:4, padding:'5px 0', textAlign:'center' }}>
-          <div style={{ fontSize:10, fontWeight:800, color:'#111', fontFamily:'JetBrains Mono,monospace' }}>{Math.round(temp)}°</div>
+          <div style={{ fontSize:10, fontWeight:800, color:'var(--bg-base)', fontFamily:'JetBrains Mono,monospace' }}>{Math.round(temp)}Ã‚Â°</div>
           <div style={{ fontSize:8, color:'rgba(0,0,0,0.55)', fontFamily:'JetBrains Mono,monospace' }}>{label}</div>
         </div>
       ))}
@@ -169,7 +169,7 @@ function TyreThermalMini({ fl, fr, rl, rr }: { fl: number; fr: number; rl: numbe
   );
 }
 
-// ── Context sidebar tile ──────────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Context sidebar tile Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 function CtxTile({ label, value, color, unit }: {
   label: string; value: string | number; color?: string; unit?: string;
@@ -190,7 +190,7 @@ function CtxTile({ label, value, color, unit }: {
   );
 }
 
-// ── Page component ────────────────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Page component Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 export function AICopilotPage() {
   const t = useLiveTelemetry();
@@ -204,18 +204,18 @@ export function AICopilotPage() {
   const rearGrip = Math.max(0, 96 - rearWear * 0.52);
   const lapDelta  = t.lastLap - t.bestLap;
 
-  const systemPrompt = `You are the KDD Rider Coach AI, an expert motorcycle race strategist and telemetry analyst inside KDD Moto Intelligence — the AI telemetry and rider-performance platform.
+  const systemPrompt = `You are the KDD Rider Coach AI, an expert motorcycle race strategist and telemetry analyst inside KDD Moto Intelligence Ã¢â‚¬â€ the AI telemetry and rider-performance platform.
 
-## Live Race Context — GP Mugello, Italy
+## Live Race Context Ã¢â‚¬â€ GP Mugello, Italy
 - Lap: ${t.lapCount} / 23  |  Position: P${t.position}  |  Gap to P2: ${t.gap}
 - Last lap: ${formatLap(t.lastLap)}  |  Personal best: ${formatLap(t.bestLap)}  |  Delta: ${lapDelta >= 0 ? '+' : ''}${lapDelta.toFixed(3)}s
-- Rear tyre: ${t.rearCompound} · ${t.rearTyreAge} laps old · ~${rearWear.toFixed(1)}% wear · ~${rearGrip.toFixed(1)}% grip remaining
-- Front tyre: ${t.frontCompound} · ${t.rearTyreAge} laps old
-- Tyre temps: FL ${t.tireFrontLeft}° / FR ${t.tireFrontRight}° / RL ${t.tireRearLeft}° / RR ${t.tireRearRight}°
+- Rear tyre: ${t.rearCompound} Ã‚Â· ${t.rearTyreAge} laps old Ã‚Â· ~${rearWear.toFixed(1)}% wear Ã‚Â· ~${rearGrip.toFixed(1)}% grip remaining
+- Front tyre: ${t.frontCompound} Ã‚Â· ${t.rearTyreAge} laps old
+- Tyre temps: FL ${t.tireFrontLeft}Ã‚Â° / FR ${t.tireFrontRight}Ã‚Â° / RL ${t.tireRearLeft}Ã‚Â° / RR ${t.tireRearRight}Ã‚Â°
 - Speed: ${t.speed} km/h  |  Gear: ${t.gear}  |  RPM: ${t.rpm.toLocaleString()}
-- Throttle: ${t.throttle}%  |  Brake: ${t.brake}%  |  Lean: ${t.leanAngle.toFixed(1)}°
+- Throttle: ${t.throttle}%  |  Brake: ${t.brake}%  |  Lean: ${t.leanAngle.toFixed(1)}Ã‚Â°
 - Fuel: ${t.fuelLoad.toFixed(1)} kg remaining (~${(t.fuelLoad / 2.18).toFixed(1)} laps)
-- Track: ${getSessionContext().circuitName} · 48°C asphalt · Grip level HIGH
+- Track: ${getSessionContext().circuitName} Ã‚Â· 48Ã‚Â°C asphalt Ã‚Â· Grip level HIGH
 
 ## Your Capabilities
 - Race strategy optimization (tyre, fuel, pit window timing)
@@ -228,7 +228,7 @@ export function AICopilotPage() {
 ## Response Style
 - Race engineers need fast, actionable answers. Be concise.
 - Use bullet points. Reference exact numbers (laps, times, percentages).
-- Never fabricate data — say "insufficient data" when needed.
+- Never fabricate data Ã¢â‚¬â€ say "insufficient data" when needed.
 - Always reference the live race context above.
 - Today: ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}.`;
 
@@ -270,7 +270,7 @@ export function AICopilotPage() {
   return (
     <div className="copilot-page" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
 
-      {/* ── Header ──────────────────────────────────────────────────────────── */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ Header Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
         padding: '12px 20px', borderBottom: '1px solid var(--border)',
@@ -281,10 +281,10 @@ export function AICopilotPage() {
           <div>
             <div style={{ fontWeight: 700, fontSize: 15 }}>Race Engineering AI Copilot</div>
             <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-              Powered by InsForge Gateway · gpt-4o-mini
+              Powered by InsForge Gateway Ã‚Â· gpt-4o-mini
               {msgCount > 0 && (
                 <span style={{ marginLeft: 8 }}>
-                  · {msgCount} messages · ~{estimatedTokens.toLocaleString()} tokens
+                  Ã‚Â· {msgCount} messages Ã‚Â· ~{estimatedTokens.toLocaleString()} tokens
                 </span>
               )}
             </div>
@@ -336,10 +336,10 @@ export function AICopilotPage() {
         </div>
       </div>
 
-      {/* ── Body: chat + optional context sidebar ───────────────────────────── */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ Body: chat + optional context sidebar Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden', minHeight: 0 }}>
 
-        {/* ── Messages ──────────────────────────────────────────────────────── */}
+        {/* Ã¢â€â‚¬Ã¢â€â‚¬ Messages Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           <div className="copilot-messages" ref={scrollRef} style={{ flex: 1 }}>
             {isEmpty ? (
@@ -351,7 +351,7 @@ export function AICopilotPage() {
                   Select a category and pick a question, or type your own.
                 </p>
 
-                {/* Featured structured coaching insight (problem → evidence → impact → action) */}
+                {/* Featured structured coaching insight (problem Ã¢â€ â€™ evidence Ã¢â€ â€™ impact Ã¢â€ â€™ action) */}
                 <div style={{ width: '100%', maxWidth: 640, margin: '0 auto 22px', textAlign: 'left' }}>
                   <RiderCoachInsight />
                 </div>
@@ -427,7 +427,7 @@ export function AICopilotPage() {
           {/* Persistent live telemetry strip above the composer */}
           <LiveMetricBar lap={t.lapCount} pos={t.position} gap={t.gap} speed={t.speed} gear={t.gear} grip={rearGrip} fuel={t.fuelLoad} lastLap={formatLap(t.lastLap)} />
 
-          {/* ── Input bar ───────────────────────────────────────────────────── */}
+          {/* Ã¢â€â‚¬Ã¢â€â‚¬ Input bar Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
           <form className="copilot-input-bar" onSubmit={handleSubmit} style={{ flexShrink: 0 }}>
             {/* Category quick-access when chat is active */}
             {!isEmpty && (
@@ -470,7 +470,7 @@ export function AICopilotPage() {
             <textarea
               ref={inputRef}
               className="copilot-textarea"
-              placeholder="Ask about race strategy, telemetry, tyres, rivals… (Enter to send, Shift+Enter for newline)"
+              placeholder="Ask about race strategy, telemetry, tyres, rivalsÃ¢â‚¬Â¦ (Enter to send, Shift+Enter for newline)"
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -487,11 +487,10 @@ export function AICopilotPage() {
           </form>
         </div>
 
-        {/* ── Live context sidebar ─────────────────────────────────────────── */}
+        {/* Ã¢â€â‚¬Ã¢â€â‚¬ Live context sidebar Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
         {showContext && (
           <div style={{
             width: 200, flexShrink: 0,
-            borderLeft: '1px solid var(--border)',
             background: 'var(--bg-surface)',
             overflowY: 'auto',
             display: 'flex', flexDirection: 'column',
@@ -529,9 +528,9 @@ export function AICopilotPage() {
             <CtxTile label="Age" value={`${t.rearTyreAge} laps`} />
             <CtxTile label="Grip Est." value={`${rearGrip.toFixed(1)}%`}
               color={rearGrip < 62 ? 'var(--accent)' : 'var(--green)'} />
-            <CtxTile label="RL Temp" value={`${t.tireRearLeft}°`}
+            <CtxTile label="RL Temp" value={`${t.tireRearLeft}Ã‚Â°`}
               color={t.tireRearLeft > 105 ? 'var(--accent)' : t.tireRearLeft > 90 ? 'var(--yellow)' : 'var(--text)'} />
-            <CtxTile label="RR Temp" value={`${t.tireRearRight}°`}
+            <CtxTile label="RR Temp" value={`${t.tireRearRight}Ã‚Â°`}
               color={t.tireRearRight > 105 ? 'var(--accent)' : t.tireRearRight > 90 ? 'var(--yellow)' : 'var(--text)'} />
 
             <div style={{
@@ -552,7 +551,7 @@ export function AICopilotPage() {
             />
             <CtxTile label="Fuel" value={`${t.fuelLoad.toFixed(1)} kg`}
               color={t.fuelLoad < 4 ? 'var(--accent)' : 'var(--text)'} />
-            <CtxTile label="Lean" value={`${t.leanAngle.toFixed(1)}°`}
+            <CtxTile label="Lean" value={`${t.leanAngle.toFixed(1)}Ã‚Â°`}
               color={t.leanAngle > 48 ? 'var(--accent)' : 'var(--text)'} />
           </div>
         )}

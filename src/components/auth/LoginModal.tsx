@@ -101,7 +101,7 @@ export function LoginModal({ onSuccess, onClose, profileLabel }: LoginModalProps
         onClick={e => e.stopPropagation()}
         style={{
           width: 'min(420px, 100%)', background: 'var(--card, #151820)',
-          border: '1px solid var(--border, #252a38)', borderRadius: 14,
+          border: '1px solid var(--border, #252a38)', borderRadius: 'var(--radius-xl)',
           padding: 24, position: 'relative', boxShadow: '0 24px 60px rgba(0,0,0,0.55)',
         }}
         >
@@ -184,7 +184,7 @@ function SubmitButton({ busy, label }: { busy: boolean; label: string }) {
     <button type="submit" disabled={busy}
             style={{
               marginTop: 4, padding: '10px 14px', borderRadius: 8, border: 'none',
-              background: 'var(--accent, #4fc3f7)', color: '#04141f', fontWeight: 700,
+              background: 'var(--accent, #4fc3f7)', color: 'var(--bg-base)', fontWeight: 700,
               fontSize: 14, cursor: busy ? 'default' : 'pointer', opacity: busy ? 0.7 : 1,
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
             }}>

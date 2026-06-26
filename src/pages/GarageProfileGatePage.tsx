@@ -1,10 +1,10 @@
 /**
- * GarageProfileGatePage — GARAGE PROFILE GATE (step 2 of the entry flow:
- * Circuit → GARAGE → Mode → Data → Launch).
+ * GarageProfileGatePage ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â GARAGE PROFILE GATE (step 2 of the entry flow:
+ * Circuit ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ GARAGE ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ Mode ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ Data ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ Launch).
  *
  * Picks the concrete rider + bike + setup + tyres the session will work on,
  * and shows the rider+bike+circuit readiness (FULL/PARTIAL/GENERIC/NEW/
- * GPS-ONLY) BEFORE the dashboard opens — so every module downstream knows
+ * GPS-ONLY) BEFORE the dashboard opens ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â so every module downstream knows
  * whose lap, on which machine, it is interpreting.
  */
 import { useMemo, useState } from 'react';
@@ -26,7 +26,7 @@ interface Props {
 }
 
 const MONO = 'JetBrains Mono, monospace';
-const CARD: React.CSSProperties = { background: 'rgba(255,255,255,0.035)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 12 };
+const CARD: React.CSSProperties = { background: 'rgba(255,255,255,0.035)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 'var(--radius-xl)' };
 const LABEL: React.CSSProperties = { fontFamily: MONO, fontSize: 10, letterSpacing: '0.12em', color: 'var(--text-muted)', textTransform: 'uppercase' };
 
 function PickRow<T extends { id: string }>({ items, sel, onSel, render }: {
@@ -89,10 +89,10 @@ export function GarageProfileGatePage({ circuit, onBack, onContinue }: Props) {
           <h1 style={{ fontSize: 22, fontWeight: 800, letterSpacing: '0.04em', color: 'var(--text)', margin: 0 }}>GARAGE PROFILE GATE</h1>
         </div>
         <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 20 }}>
-          {t('gates.garageSubtitle', 'Configure rider, bike, setup and tyres before opening the digital pit-box — KDD interprets a concrete combination, not a generic lap.')} · {circuit.name} {circuit.layout}
+          {t('gates.garageSubtitle', 'Configure rider, bike, setup and tyres before opening the digital pit-box ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â KDD interprets a concrete combination, not a generic lap.')} Ãƒâ€šÃ‚Â· {circuit.name} {circuit.layout}
         </div>
 
-        {/* Rider · Bike · Readiness */}
+        {/* Rider Ãƒâ€šÃ‚Â· Bike Ãƒâ€šÃ‚Â· Readiness */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14, marginBottom: 14 }}>
           {/* Rider */}
           <div style={{ ...CARD, padding: 16 }}>
@@ -101,17 +101,17 @@ export function GarageProfileGatePage({ circuit, onBack, onContinue }: Props) {
               <>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text)', flex: 1 }}>{r.name}</span>
-                  {r.hasStyleDNA && <span style={{ fontSize: 8.5, fontFamily: MONO, color: '#A78BFA' }}>DNA</span>}
+                  {r.hasStyleDNA && <span style={{ fontSize: 8.5, fontFamily: MONO, color: 'var(--violet)' }}>DNA</span>}
                 </div>
                 <div style={{ fontSize: 10, fontFamily: MONO, color: 'var(--text-muted)', marginTop: 2 }}>{r.archetype}</div>
-                <div style={{ fontSize: 10, fontFamily: MONO, color: 'var(--text-muted)' }}>consistency {r.consistency}% · risk {r.riskTendency}</div>
+                <div style={{ fontSize: 10, fontFamily: MONO, color: 'var(--text-muted)' }}>consistency {r.consistency}% Ãƒâ€šÃ‚Â· risk {r.riskTendency}</div>
               </>
             )} />
             <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
               <input value={newRider} onChange={e => setNewRider(e.target.value)} placeholder="New rider name"
                 onKeyDown={e => { if (e.key === 'Enter') createRider(); }}
-                style={{ flex: 1, background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', borderRadius: 6, padding: '5px 8px', color: 'var(--text)', fontSize: 11 }} />
-              <button onClick={createRider} style={{ fontSize: 16, lineHeight: 1, padding: '0 10px', borderRadius: 6, cursor: 'pointer', background: 'rgba(0,183,255,0.1)', border: '1px solid var(--cyan)', color: 'var(--cyan)' }}>+</button>
+                style={{ flex: 1, background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '5px 8px', color: 'var(--text)', fontSize: 11 }} />
+              <button onClick={createRider} style={{ fontSize: 16, lineHeight: 1, padding: '0 10px', borderRadius: 'var(--radius)', cursor: 'pointer', background: 'rgba(0,183,255,0.1)', border: '1px solid var(--cyan)', color: 'var(--cyan)' }}>+</button>
             </div>
           </div>
 
@@ -123,20 +123,20 @@ export function GarageProfileGatePage({ circuit, onBack, onContinue }: Props) {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text)', flex: 1 }}>{b.brand} {b.model}</span>
                   <span style={{ fontSize: 8.5, fontFamily: MONO, color: b.telemetry === 'full' ? 'var(--green)' : 'var(--accent)' }}>
-                    {b.telemetry === 'full' ? 'ECU·IMU·GPS' : 'GPS only'}
+                    {b.telemetry === 'full' ? 'ECUÃƒâ€šÃ‚Â·IMUÃƒâ€šÃ‚Â·GPS' : 'GPS only'}
                   </span>
                 </div>
-                <div style={{ fontSize: 10, fontFamily: MONO, color: 'var(--text-muted)', marginTop: 2 }}>{b.category} · {b.engine}</div>
-                <div style={{ fontSize: 10, fontFamily: MONO, color: 'var(--text-muted)' }}>{b.hasSetupBaseline ? 'setup baseline ✓' : 'generic setup'}</div>
+                <div style={{ fontSize: 10, fontFamily: MONO, color: 'var(--text-muted)', marginTop: 2 }}>{b.category} Ãƒâ€šÃ‚Â· {b.engine}</div>
+                <div style={{ fontSize: 10, fontFamily: MONO, color: 'var(--text-muted)' }}>{b.hasSetupBaseline ? 'setup baseline ÃƒÂ¢Ã…â€œÃ¢â‚¬Å“' : 'generic setup'}</div>
               </>
             )} />
             <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
               <input value={newBikeBrand} onChange={e => setNewBikeBrand(e.target.value)} placeholder="Brand"
-                style={{ width: 70, background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', borderRadius: 6, padding: '5px 8px', color: 'var(--text)', fontSize: 11 }} />
+                style={{ width: 70, background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '5px 8px', color: 'var(--text)', fontSize: 11 }} />
               <input value={newBikeModel} onChange={e => setNewBikeModel(e.target.value)} placeholder="Model"
                 onKeyDown={e => { if (e.key === 'Enter') createBike(); }}
-                style={{ flex: 1, background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', borderRadius: 6, padding: '5px 8px', color: 'var(--text)', fontSize: 11 }} />
-              <button onClick={createBike} style={{ fontSize: 16, lineHeight: 1, padding: '0 10px', borderRadius: 6, cursor: 'pointer', background: 'rgba(0,183,255,0.1)', border: '1px solid var(--cyan)', color: 'var(--cyan)' }}>+</button>
+                style={{ flex: 1, background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '5px 8px', color: 'var(--text)', fontSize: 11 }} />
+              <button onClick={createBike} style={{ fontSize: 16, lineHeight: 1, padding: '0 10px', borderRadius: 'var(--radius)', cursor: 'pointer', background: 'rgba(0,183,255,0.1)', border: '1px solid var(--cyan)', color: 'var(--cyan)' }}>+</button>
             </div>
           </div>
 
@@ -187,10 +187,10 @@ export function GarageProfileGatePage({ circuit, onBack, onContinue }: Props) {
               <span><span style={{ color: 'var(--text-muted)' }}>Rear </span>{profile.tyres.rear}</span>
             </div>
             <div style={{ fontSize: 11, fontFamily: MONO, color: 'var(--text-muted)', marginTop: 8 }}>
-              Hot target {profile.tyres.hotFront.toFixed(2)} / {profile.tyres.hotRear.toFixed(2)} bar · thermal window loaded
+              Hot target {profile.tyres.hotFront.toFixed(2)} / {profile.tyres.hotRear.toFixed(2)} bar Ãƒâ€šÃ‚Â· thermal window loaded
             </div>
             <div style={{ fontSize: 10, color: 'var(--yellow)', marginTop: 8 }}>
-              Rear soft may reach the thermal cliff after L13 if track temp exceeds 46°C.
+              Rear soft may reach the thermal cliff after L13 if track temp exceeds 46Ãƒâ€šÃ‚Â°C.
             </div>
           </div>
         </div>
@@ -198,7 +198,7 @@ export function GarageProfileGatePage({ circuit, onBack, onContinue }: Props) {
         {/* Context strip + continue */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <span style={{ fontSize: 10, fontFamily: MONO, color: 'var(--text-muted)' }}>
-            <CheckCircle2 size={10} style={{ verticalAlign: -1, marginRight: 4 }} />garage profile · {rider.name} · {bike.brand} {bike.model} · {profile.status}
+            <CheckCircle2 size={10} style={{ verticalAlign: -1, marginRight: 4 }} />garage profile Ãƒâ€šÃ‚Â· {rider.name} Ãƒâ€šÃ‚Â· {bike.brand} {bike.model} Ãƒâ€šÃ‚Â· {profile.status}
           </span>
           <button className="btn-primary" onClick={go}
             style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6, padding: '9px 18px' }}>

@@ -59,10 +59,10 @@ export function DesignsCanvas({ title, subtitle, cards, networkBody, steps, acti
   const stepSpacing = steps.length > 1 ? 952 / (steps.length - 1) : 0;
   const stepStart = steps.length > 1 ? 124 : 600;
   const orbitPoints = [
-    { x: 524, y: 176, r: 5.5, fill: '#5f6875' },
-    { x: 682, y: 146, r: 5, fill: '#8f1d2a' },
-    { x: 728, y: 292, r: 4.8, fill: '#c7ccd4' },
-    { x: 484, y: 318, r: 4.6, fill: '#e5e7eb' },
+    { x: 524, y: 176, r: 5.5, fill: 'var(--text-muted)' },
+    { x: 682, y: 146, r: 5, fill: 'var(--accent)' },
+    { x: 728, y: 292, r: 4.8, fill: 'var(--text-dim)' },
+    { x: 484, y: 318, r: 4.6, fill: 'var(--text)' },
   ];
 
   const cardControls = cards.map((card, index) => {
@@ -292,7 +292,7 @@ export function DesignsCanvas({ title, subtitle, cards, networkBody, steps, acti
             const titleLines = wrapSvgText(card.title, index === 2 ? 24 : 18, 2);
             const bodyLines = wrapSvgText(card.body, index === 2 ? 48 : 36, index === 2 ? 4 : 3);
             const isSelected = selectedCardId === `card-${index}`;
-            const metricLabel = index === 0 ? 'modelo' : index === 1 ? 'contexto' : 'síntesis';
+            const metricLabel = index === 0 ? 'modelo' : index === 1 ? 'contexto' : 'sÃƒÂ­ntesis';
             return (
               <g key={card.title}>
                 <rect x={slot.x} y={slot.y} width={slot.w} height={slot.h} rx="26" fill="rgba(15,23,42,0.94)" stroke={isSelected ? '#e2e8f0' : index === 0 ? 'rgba(148,163,184,0.2)' : index === 1 ? 'rgba(165,180,252,0.2)' : 'rgba(134,239,172,0.2)'} strokeWidth={isSelected ? '2' : '1'} />
@@ -322,13 +322,13 @@ export function DesignsCanvas({ title, subtitle, cards, networkBody, steps, acti
         <g>
           <rect x="52" y="654" width="1096" height="64" rx="22" fill="rgba(3,7,18,0.72)" stroke="rgba(148,163,184,0.12)" />
           <text x="78" y="689" fill="#f8fafc" fontSize="16" fontWeight="600">{networkBody}</text>
-          <text x="78" y="708" fill="#c7ccd4" fontSize="12">Camino compartido entre captura, lectura y síntesis</text>
+          <text x="78" y="708" fill="#c7ccd4" fontSize="12">Camino compartido entre captura, lectura y sÃƒÂ­ntesis</text>
           {steps.map((item, index) => {
             const x = stepStart + index * stepSpacing;
             return (
               <g key={item}>
                 <path d={`M ${x - 18} 675 H ${x + 88} a 12 12 0 0 1 0 24 H ${x - 18} a 12 12 0 0 1 0 -24 Z`} fill={index === 0 ? 'rgba(148,163,184,0.12)' : index === 1 ? 'rgba(165,180,252,0.12)' : 'rgba(134,239,172,0.12)'} stroke="rgba(148,163,184,0.12)" />
-                <circle cx={x - 2} cy="687" r="3.6" fill={index === 0 ? '#5f6875' : index === 1 ? '#8f1d2a' : '#c7ccd4'} />
+                <circle cx={x - 2} cy="687" r="3.6" fill={index === 0 ? 'var(--text-muted)' : index === 1 ? 'var(--accent)' : 'var(--text-dim)'} />
                 <text x={x + 43} y="691" textAnchor="middle" fill={index === 0 ? '#e2e8f0' : '#f8fafc'} fontSize="11" fontWeight="700">{item}</text>
               </g>
             );
@@ -340,7 +340,7 @@ export function DesignsCanvas({ title, subtitle, cards, networkBody, steps, acti
             const x = stepStart + index * stepSpacing;
             return (
               <g key={step}>
-                <circle cx={x} cy="724" r="9" fill={index === 0 ? '#5f6875' : index === 1 ? '#8f1d2a' : '#c7ccd4'} />
+                <circle cx={x} cy="724" r="9" fill={index === 0 ? 'var(--text-muted)' : index === 1 ? 'var(--accent)' : 'var(--text-dim)'} />
                 <text x={x + 18} y="729" fill="#94a3b8" fontSize="13">{step}</text>
               </g>
             );
@@ -376,7 +376,7 @@ export function DesignsCanvas({ title, subtitle, cards, networkBody, steps, acti
                 borderRadius: 26,
                 border: isPressed ? '1px solid rgba(226,232,240,0.58)' : '1px solid rgba(148,163,184,0.18)',
                 background: isPressed ? 'rgba(99,102,241,0.18)' : 'rgba(8,12,20,0.08)',
-                color: '#eef1f8',
+                color: 'var(--text)',
                 display: 'flex',
                 alignItems: 'flex-end',
                 justifyContent: 'flex-start',
@@ -388,9 +388,9 @@ export function DesignsCanvas({ title, subtitle, cards, networkBody, steps, acti
               }}
             >
               <span style={{ display: 'grid', gap: 2, textAlign: 'left' }}>
-                <span style={{ fontSize: 12, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#94a3b8', fontWeight: 700 }}>{card.eyebrow}</span>
+                <span style={{ fontSize: 12, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--text-dim)', fontWeight: 700 }}>{card.eyebrow}</span>
                 <span style={{ fontSize: 14, fontWeight: 700 }}>{card.title}</span>
-                <span style={{ fontSize: 11, color: isPressed ? '#e2e8f0' : '#94a3b8' }}>{isPressed ? 'Selected' : 'Activate'}</span>
+                <span style={{ fontSize: 11, color: isPressed ? '#e2e8f0' : 'var(--text-dim)' }}>{isPressed ? 'Selected' : 'Activate'}</span>
               </span>
             </button>
           );

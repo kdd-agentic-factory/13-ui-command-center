@@ -224,7 +224,7 @@ export function WorkflowCanvas({ title, subtitle, steps, active, mode, selectedI
             return (
               <g key={step} className="workflow-canvas__lane">
                 <line className="workflow-canvas__dash" x1={x} y1={laneY} x2={x} y2={226} stroke="rgba(148,163,184,0.14)" strokeWidth="1.4" strokeDasharray="4 8" />
-                <circle className="workflow-canvas__pulse workflow-canvas__node" cx={x} cy={226} r="16" fill={isSelected ? '#f8fafc' : index === 0 ? '#5f6875' : index === 1 ? '#8f1d2a' : index === 2 ? '#c7ccd4' : '#5f6875'} />
+                <circle className="workflow-canvas__pulse workflow-canvas__node" cx={x} cy={226} r="16" fill={isSelected ? '#f8fafc' : index === 0 ? 'var(--text-muted)' : index === 1 ? 'var(--accent)' : index === 2 ? 'var(--text-dim)' : 'var(--text-muted)'} />
                 <circle cx={x} cy={226} r="6" fill="#050914" />
                 <text x={x} y={271} textAnchor="middle" fill="#f8fafc" fontSize="15" fontWeight="700">
                   {wrapped.map((line, lineIndex) => (
@@ -250,7 +250,7 @@ export function WorkflowCanvas({ title, subtitle, steps, active, mode, selectedI
         <g>
           <rect x="52" y="332" width="1096" height="56" rx="20" fill="rgba(3,7,18,0.72)" stroke="rgba(148,163,184,0.12)" />
           <text x="78" y="362" fill="#f8fafc" fontSize="16" fontWeight="600">KDD converts telemetry into decisions, then validates the next chapter.</text>
-          <text x="78" y="382" fill="#c7ccd4" fontSize="12">Sense → Decide → Federate → Validate</text>
+          <text x="78" y="382" fill="#c7ccd4" fontSize="12">Sense ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ Decide ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ Federate ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ Validate</text>
           <g>
             {['Sense', 'Decide', 'Federate'].map((item, index) => (
               <g key={item} transform={`translate(${778 + index * 112}, 347)`}>
@@ -287,10 +287,10 @@ export function WorkflowCanvas({ title, subtitle, steps, active, mode, selectedI
                 width: `${(116 / 1200) * 100}%`,
                 height: '26%',
                 pointerEvents: 'auto',
-                borderRadius: 16,
+                borderRadius: 'var(--radius-xl)',
                 border: isPressed ? '1px solid rgba(226,232,240,0.58)' : '1px solid rgba(148,163,184,0.18)',
                 background: isPressed ? 'rgba(99,102,241,0.18)' : 'rgba(8,12,20,0.08)',
-                color: '#eef1f8',
+                color: 'var(--text)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -304,7 +304,7 @@ export function WorkflowCanvas({ title, subtitle, steps, active, mode, selectedI
               <span style={{ display: 'grid', gap: 2, textAlign: 'center' }}>
                 <span style={{ fontSize: 12, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--public-accent, #8f1d2a)', fontWeight: 700 }}>Step {index + 1}</span>
                 <span style={{ fontSize: 14, fontWeight: 700 }}>{step}</span>
-                <span style={{ fontSize: 11, color: isPressed ? '#e2e8f0' : '#c7ccd4' }}>{isPressed ? 'Selected' : 'Activate'}</span>
+                <span style={{ fontSize: 11, color: isPressed ? '#e2e8f0' : 'var(--text-dim)' }}>{isPressed ? 'Selected' : 'Activate'}</span>
               </span>
             </button>
           );

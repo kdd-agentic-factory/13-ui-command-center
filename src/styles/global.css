@@ -36,23 +36,39 @@
   --accent:      #E03737;
   --accent-dim:  rgba(224,55,55,0.12);
   --accent-glow: rgba(224,55,55,0.20);
+  --accent-hover:#cc3030;
+  --accent-active:#b82a2a;
 
   /* ── Semantic */
   --green:       #22C55E;
   --green-dim:   rgba(34,197,94,0.10);
+  --green-border:rgba(34,197,94,0.20);
   --yellow:      #F59E0B;
   --yellow-dim:  rgba(245,158,11,0.10);
+  --yellow-border:rgba(245,158,11,0.20);
   --blue:        #3B82F6;
   --blue-dim:    rgba(59,130,246,0.10);
+  --blue-border: rgba(59,130,246,0.20);
   --orange:      #F97316;
   --orange-dim:  rgba(249,115,22,0.10);
+  --orange-border:rgba(249,115,22,0.20);
   --purple:      #A855F7;
   --purple-dim:  rgba(168,85,247,0.10);
+  --purple-border:rgba(168,85,247,0.20);
   --cyan:        #00B7FF;  /* telemetry cyan (2026 cockpit palette) */
   --cyan-dim:    rgba(0,183,255,0.10);
+  --cyan-border: rgba(0,183,255,0.20);
+
+  /* ── Reusable alpha surfaces — keep repeated literals out of page code */
+  --surface-faint: rgba(255,255,255,0.04);
+  --surface-soft:  rgba(255,255,255,0.06);
+  --surface-strong:rgba(255,255,255,0.08);
+  --ink-faint:     rgba(0,0,0,0.26);
+  --ink-strong:    rgba(0,0,0,0.55);
+  --white:         #fff;
 
   /* ── Typography */
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Barlow', 'Rajdhani', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
 
   /* ── Sizes */
@@ -61,6 +77,7 @@
   --radius:    6px;
   --radius-lg: 10px;
   --radius-xl: 14px;
+  --radius-pill: 99px;
 
   /* ── Shadows */
   --shadow-sm: 0 2px 8px rgba(0,0,0,0.30);
@@ -68,11 +85,11 @@
   --shadow-lg: 0 8px 48px rgba(0,0,0,0.65);
   --shadow-card-hover: 0 8px 32px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.06);
 
-  /* ── Easing (Emil Kowalski) */
+  /* ── Easing (non-bouncy cockpit motion; token names preserved) */
   --ease-out:    cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-ui:     cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
 
   /* ── Duration */
   --dur-fast:  120ms;
@@ -148,7 +165,7 @@ a { color: inherit; text-decoration: none; }
   height: 28px;
   background: var(--accent);
   border-radius: 6px;
-  color: #fff;
+  color: var(--white);
   flex-shrink: 0;
 }
 
@@ -209,7 +226,7 @@ a { color: inherit; text-decoration: none; }
 
 @media (hover: hover) and (pointer: fine) {
   .sidebar-item:hover {
-    background: rgba(255,255,255,0.04);
+    background: var(--surface-faint);
     color: var(--text);
   }
 }
@@ -221,7 +238,7 @@ a { color: inherit; text-decoration: none; }
 */
 .sidebar-item-active {
   color: var(--text) !important;
-  background: rgba(255,255,255,0.06) !important;
+  background: var(--surface-soft) !important;
   font-weight: 600;
 }
 
@@ -266,7 +283,7 @@ a { color: inherit; text-decoration: none; }
 .sidebar-badge-red    { background: var(--accent-dim); color: var(--accent); }
 .sidebar-badge-green  { background: var(--green-dim);  color: var(--green); }
 .sidebar-badge-blue   { background: var(--blue-dim);   color: var(--blue); }
-.sidebar-badge-muted  { background: rgba(255,255,255,0.05); color: var(--text-dim); }
+.sidebar-badge-muted  { background: var(--surface-faint); color: var(--text-dim); }
 
 /* ── Sidebar: footer ──────────────────────────────────────────────────── */
 .sidebar-footer {
@@ -604,21 +621,23 @@ button:hover .mini-track path {
 .badge-yellow { background: rgba(245,158,11,0.10);  color: var(--yellow); border: 1px solid rgba(245,158,11,0.20); }
 .badge-blue   { background: rgba(59,130,246,0.10);  color: var(--blue);   border: 1px solid rgba(59,130,246,0.20); }
 .badge-orange { background: rgba(249,115,22,0.10);  color: var(--orange); border: 1px solid rgba(249,115,22,0.20); }
-.badge-muted  { background: rgba(255,255,255,0.04); color: var(--text-muted); border: 1px solid var(--border); }
+.badge-muted  { background: var(--surface-faint); color: var(--text-muted); border: 1px solid var(--border); }
 
 /* ── Progress bars ──────────────────────────────────────────────────────── */
 .bar-track {
   height: 6px;
-  background: rgba(255,255,255,0.06);
-  border-radius: 99px;
+  background: var(--surface-soft);
+  border-radius: var(--radius-pill);
   overflow: hidden;
 }
 
 .bar-fill {
   height: 100%;
-  border-radius: 99px;
+  border-radius: var(--radius-pill);
   background: var(--accent);
-  transition: width 0.3s ease;
+  transform-origin: left center;
+  transition: transform var(--dur-base) var(--ease-out);
+  will-change: transform;
 }
 
 .bar-fill.green  { background: var(--green); }
@@ -657,11 +676,11 @@ button:hover .mini-track path {
 
 .btn-primary {
   background: var(--accent);
-  color: #fff;
+  color: var(--white);
   border-color: var(--accent);
 }
-.btn-primary:hover { background: #cc3030; }
-.btn-primary:active { background: #b82a2a; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-primary:active { background: var(--accent-active); }
 
 .btn-ghost {
   background: transparent;
@@ -958,7 +977,7 @@ button:hover .mini-track path {
 }
 .copilot-msg-user .copilot-msg-content {
   background: var(--accent);
-  color: #fff;
+  color: var(--white);
   border-bottom-right-radius: 4px;
 }
 .copilot-msg-assistant .copilot-msg-content {
@@ -1007,7 +1026,7 @@ button:hover .mini-track path {
   width: 42px;
   height: 42px;
   background: var(--accent);
-  color: #fff;
+  color: var(--white);
   border-radius: 8px;
   align-self: flex-end;
   flex-shrink: 0;
@@ -1016,7 +1035,7 @@ button:hover .mini-track path {
               box-shadow var(--dur-fast) var(--ease-out);
 }
 .copilot-send:hover:not(:disabled) {
-  background: #cc3030;
+  background: var(--accent-hover);
   box-shadow: 0 0 20px rgba(224,55,55,0.35);
 }
 .copilot-send:active:not(:disabled) { transform: scale(0.96); }
@@ -1148,12 +1167,13 @@ button:hover .mini-track path {
 /* ── Scrollbar styling ──────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 99px; }
+::-webkit-scrollbar-thumb { background: var(--surface-strong); border-radius: var(--radius-pill); }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.16); }
 
-/* ── Bar fills — smoother with proper easing ─────────────────────────────── */
+/* ── Bar fills — prefer transform: scaleX(value) to avoid layout thrash.
+   Width remains markup-compatible for existing inline percentages. ───────── */
 .bar-fill {
-  transition: width var(--dur-base) var(--ease-out) !important;
+  transition: transform var(--dur-base) var(--ease-out) !important;
 }
 
 /* ── Telem numbers — tabular-nums to prevent layout shift ─────────────────── */
@@ -1292,7 +1312,7 @@ textarea:focus-visible {
 .landing-logo-icon {
   width: 64px;
   height: 64px;
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   background: rgba(224,55,55,0.15);
   border: 1px solid rgba(224,55,55,0.4);
   display: flex;
@@ -1371,7 +1391,7 @@ textarea:focus-visible {
 .profile-card-icon   { font-size: 2.5rem; line-height: 1; }
 .profile-card-name   { font-size: 15px; font-weight: 700; color: var(--text); }
 .profile-card-desc   { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
-.profile-card-modules{ font-size: 11px; color: var(--text-dim); font-family: var(--font-mono); font-weight: 600; padding: 3px 8px; border-radius: 99px; background: rgba(255,255,255,0.05); }
+.profile-card-modules{ font-size: 11px; color: var(--text-dim); font-family: var(--font-mono); font-weight: 600; padding: 3px 8px; border-radius: var(--radius-pill); background: var(--surface-faint); }
 .profile-card-check  { position: absolute; top: 10px; right: 10px; font-size: 14px; font-weight: 700; color: var(--profile-color, #E03737); }
 
 /* Enter button */
@@ -1563,7 +1583,7 @@ textarea:focus-visible {
 * { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.14) transparent; }
 *::-webkit-scrollbar { width: 8px; height: 8px; }
 *::-webkit-scrollbar-track { background: transparent; }
-*::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 99px; }
+*::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: var(--radius-pill); }
 *::-webkit-scrollbar-thumb:hover { background: rgba(0,183,255,0.35); }
 
 :focus-visible {

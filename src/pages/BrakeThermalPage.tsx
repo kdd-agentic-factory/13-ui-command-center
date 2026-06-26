@@ -38,7 +38,8 @@ export function BrakeThermalPage() {
       </div>
 
       {/* verdict */}
-      <div className="card mb-4" style={{ padding: 14, borderLeft: '3px solid var(--accent)' }}>
+      <div className="card mb-4" style={{ padding: 14,
+ }}>
         <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 4 }}>KDD verdict</div>
         <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)' }}>{b.verdict}</div>
         <div style={{ fontSize: 11, color: 'var(--accent)', marginTop: 4, fontStyle: 'italic' }}>{b.punchline}</div>
@@ -107,7 +108,8 @@ export function BrakeThermalPage() {
 
       {/* fade risk + recommendations */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.3fr', gap: 14, marginTop: 14 }}>
-        <div className="card" style={{ padding: 16, borderLeft: '3px solid var(--yellow)' }}>
+        <div className="card" style={{ padding: 16,
+ }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}><AlertTriangle size={14} style={{ color: 'var(--yellow)' }} /><span style={hdr}>Risk</span></div>
           {[['Fade (overheat)', b.fade.fadeRiskPct, 'var(--accent)'], ['Cold disc (lap 1 / wet)', b.fade.coldRiskPct, 'var(--cyan)']].map(([k, v, c]) => (
             <div key={k as string} style={{ marginBottom: 8 }}>

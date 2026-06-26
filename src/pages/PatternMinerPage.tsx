@@ -1,5 +1,5 @@
 /**
- * PatternMinerPage — Multi-Session Pattern Miner.
+ * PatternMinerPage ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Multi-Session Pattern Miner.
  *
  * Recurring losses/risks/setup-issues across many sessions, each with a source
  * split (rider / bike / circuit), the affected corners, validated corrections,
@@ -34,13 +34,14 @@ function SourceBar({ s }: { s: PatternCard['source'] }) {
 function PatternCardView({ p, onNav }: { p: PatternCard; onNav: (t: 'learning-path' | 'setup-lab') => void }) {
   const maxLoss = Math.max(...p.corners.map(c => c.loss), 0.01);
   return (
-    <div className="card" style={{ padding: 16, borderLeft: `3px solid ${riskColor(p.riskImpact)}` }}>
+    <div className="card" style={{ padding: 16,
+ }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
         <span style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text)', flex: 1 }}>{p.pattern}</span>
         <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--accent)', border: '1px solid var(--accent)', borderRadius: 999, padding: '1px 8px' }}>{p.detectedIn}</span>
       </div>
       <div style={{ fontSize: 10.5, fontFamily: MONO, color: 'var(--text-muted)', marginBottom: 10 }}>
-        {p.circuits.join(' · ')} · avg +{p.avgLoss.toFixed(2)}s/corner · risk <span style={{ color: riskColor(p.riskImpact) }}>{p.riskImpact}</span> · conf {p.confidence}%
+        {p.circuits.join(' Ãƒâ€šÃ‚Â· ')} Ãƒâ€šÃ‚Â· avg +{p.avgLoss.toFixed(2)}s/corner Ãƒâ€šÃ‚Â· risk <span style={{ color: riskColor(p.riskImpact) }}>{p.riskImpact}</span> Ãƒâ€šÃ‚Â· conf {p.confidence}%
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: 14 }}>
@@ -69,7 +70,7 @@ function PatternCardView({ p, onNav }: { p: PatternCard; onNav: (t: 'learning-pa
       </div>
 
       <div style={{ fontSize: 11.5, color: 'var(--text-muted)', margin: '10px 0 6px' }}><b style={{ color: 'var(--text)' }}>Diagnosis:</b> {p.diagnosis}</div>
-      <div style={{ padding: '8px 11px', borderRadius: 6, background: 'rgba(0,230,118,0.05)', border: '1px solid rgba(0,230,118,0.2)', fontSize: 11.5, color: 'var(--text)' }}>
+      <div style={{ padding: '8px 11px', borderRadius: 'var(--radius)', background: 'rgba(0,230,118,0.05)', border: '1px solid rgba(0,230,118,0.2)', fontSize: 11.5, color: 'var(--text)' }}>
         <b style={{ color: 'var(--green)' }}>Best validated correction:</b> {p.bestCorrection}
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
@@ -96,15 +97,15 @@ export function PatternMinerPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><Layers size={18} /> Multi-Session Pattern Miner</h1>
-          <p className="page-subtitle">Recurring patterns across sessions, circuits & conditions — {m.combo} · {m.scope}</p>
+          <p className="page-subtitle">Recurring patterns across sessions, circuits & conditions ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â {m.combo} Ãƒâ€šÃ‚Â· {m.scope}</p>
         </div>
       </div>
 
       {/* Oracle historical context */}
       <div className="card mb-4" style={{ padding: 14, background: 'rgba(139,92,246,0.06)', border: '1px solid rgba(139,92,246,0.3)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 5 }}>
-          <Sparkles size={14} style={{ color: '#8B5CF6' }} />
-          <span style={{ fontSize: 9, fontFamily: MONO, color: '#8B5CF6', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Oracle historical context</span>
+          <Sparkles size={14} style={{ color: 'var(--violet)' }} />
+          <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--violet)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Oracle historical context</span>
         </div>
         <div style={{ fontSize: 12, color: 'var(--text)', lineHeight: 1.55 }}>{m.oracleContext}</div>
       </div>
@@ -123,7 +124,7 @@ export function PatternMinerPage() {
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, fontSize: 11 }}>
                 <span style={{ flex: 1, color: 'var(--text)' }}>{c.metric}</span>
                 <span style={{ fontFamily: MONO, color: 'var(--text)' }}>{c.current}</span>
-                <span style={{ fontFamily: MONO, color: 'var(--text-muted)', fontSize: 9.5 }}>avg5 {c.avgLast5} · tgt {c.target}</span>
+                <span style={{ fontFamily: MONO, color: 'var(--text-muted)', fontSize: 9.5 }}>avg5 {c.avgLast5} Ãƒâ€šÃ‚Â· tgt {c.target}</span>
                 <span style={{ fontSize: 9.5, fontFamily: MONO, color: trendColor(c.trend) }}>{c.trend}</span>
               </div>
               <div style={{ height: 5, borderRadius: 3, background: 'rgba(255,255,255,0.06)', overflow: 'hidden', marginTop: 3, position: 'relative' }}>
@@ -151,7 +152,8 @@ export function PatternMinerPage() {
       </div>
 
       {/* Progress insight */}
-      <div className="card" style={{ padding: 16, marginTop: 14, borderLeft: '3px solid var(--green)' }}>
+      <div className="card" style={{ padding: 16, marginTop: 14,
+ }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 6 }}>
           <TrendingUp size={14} style={{ color: 'var(--green)' }} />
           <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Progress insight</span>

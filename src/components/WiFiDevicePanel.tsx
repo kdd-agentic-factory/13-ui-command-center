@@ -1,8 +1,8 @@
 /**
- * WiFiDevicePanel — AiM-style WiFi device discovery and connection.
+ * WiFiDevicePanel Ã¢â‚¬â€ AiM-style WiFi device discovery and connection.
  *
  * Simulates the AiM Wi-Fi connection workflow:
- *   Scanning → Devices found → Select device → Connecting → Connected
+ *   Scanning Ã¢â€ â€™ Devices found Ã¢â€ â€™ Select device Ã¢â€ â€™ Connecting Ã¢â€ â€™ Connected
  *
  * Animated with anime.js (scanning dots, connection progress).
  * Reference: AiM Wi-Fi 101 documentation workflow.
@@ -11,7 +11,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Wifi, WifiOff, CheckCircle, Loader2, Radio, X, Signal } from 'lucide-react';
 import { animate, stagger } from 'animejs';
 
-// ── Device definitions ────────────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Device definitions Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 interface AimDevice {
   id: string;
@@ -61,11 +61,11 @@ const DISCOVERED_DEVICES: AimDevice[] = [
   },
 ];
 
-// ── States ────────────────────────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ States Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 type PanelState = 'idle' | 'scanning' | 'found' | 'connecting' | 'connected' | 'error';
 
-// ── Sub-components ────────────────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Sub-components Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 function SignalBars({ level }: { level: number }) {
   return (
@@ -82,7 +82,7 @@ function SignalBars({ level }: { level: number }) {
   );
 }
 
-// ── Main component ────────────────────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Main component Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
 interface Props {
   onClose: () => void;
@@ -97,7 +97,7 @@ export function WiFiDevicePanel({ onClose, onConnected }: Props) {
   const dotsRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<{ value: number }>({ value: 0 });
 
-  // ── Scanning animation (anime.js) ────────────────────────────────────
+  // Ã¢â€â‚¬Ã¢â€â‚¬ Scanning animation (anime.js) Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   useEffect(() => {
     if (state !== 'scanning' || !dotsRef.current) return;
     const dots = dotsRef.current.querySelectorAll('.scan-dot');
@@ -134,7 +134,7 @@ export function WiFiDevicePanel({ onClose, onConnected }: Props) {
     return () => { clearTimeout(t); anim.pause(); };
   }, [state]);
 
-  // ── Connection progress (anime.js) ───────────────────────────────────
+  // Ã¢â€â‚¬Ã¢â€â‚¬ Connection progress (anime.js) Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   useEffect(() => {
     if (state !== 'connecting') return;
     const obj = progressRef.current;
@@ -157,7 +157,7 @@ export function WiFiDevicePanel({ onClose, onConnected }: Props) {
     return () => { anim.pause(); };
   }, [state, selected, onConnected]);
 
-  // ── Handlers ─────────────────────────────────────────────────────────
+  // Ã¢â€â‚¬Ã¢â€â‚¬ Handlers Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   function startScan() {
     setState('scanning');
     setSelected(null);
@@ -189,7 +189,7 @@ export function WiFiDevicePanel({ onClose, onConnected }: Props) {
         style={{
           background: 'var(--bg-card)',
           border: '1px solid var(--border-mid)',
-          borderRadius: 14,
+          borderRadius: 'var(--radius-xl)',
           width: '100%',
           maxWidth: 520,
           boxShadow: 'var(--shadow-lg)',
@@ -224,7 +224,7 @@ export function WiFiDevicePanel({ onClose, onConnected }: Props) {
                 AiM Device Connection
               </div>
               <div style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>
-                Wi-Fi 802.11 b/g/n · KDD RACE network
+                Wi-Fi 802.11 b/g/n Ã‚Â· KDD RACE network
               </div>
             </div>
           </div>
@@ -240,7 +240,7 @@ export function WiFiDevicePanel({ onClose, onConnected }: Props) {
         {/* Body */}
         <div style={{ padding: '18px 18px 14px' }}>
 
-          {/* ── IDLE state ─────────────────────────────────────────── */}
+          {/* Ã¢â€â‚¬Ã¢â€â‚¬ IDLE state Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
           {state === 'idle' && (
             <div style={{ textAlign: 'center', padding: '24px 0' }}>
               <div style={{ marginBottom: 12 }}>
@@ -262,7 +262,7 @@ export function WiFiDevicePanel({ onClose, onConnected }: Props) {
             </div>
           )}
 
-          {/* ── SCANNING state ──────────────────────────────────────── */}
+          {/* Ã¢â€â‚¬Ã¢â€â‚¬ SCANNING state Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
           {state === 'scanning' && (
             <div style={{ textAlign: 'center', padding: '24px 0' }}>
               <div ref={dotsRef} style={{ display: 'flex', gap: 10, justifyContent: 'center', marginBottom: 16 }}>
@@ -280,7 +280,7 @@ export function WiFiDevicePanel({ onClose, onConnected }: Props) {
                 ))}
               </div>
               <p style={{ fontSize: 13, color: 'var(--text-dim)' }}>
-                Scanning Wi-Fi network for AiM devices…
+                Scanning Wi-Fi network for AiM devicesÃ¢â‚¬Â¦
               </p>
               <p style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', marginTop: 6 }}>
                 subnet 192.168.1.0/24
@@ -288,7 +288,7 @@ export function WiFiDevicePanel({ onClose, onConnected }: Props) {
             </div>
           )}
 
-          {/* ── FOUND state ─────────────────────────────────────────── */}
+          {/* Ã¢â€â‚¬Ã¢â€â‚¬ FOUND state Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
           {(state === 'found' || state === 'connecting') && (
             <div>
               <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 12, letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'JetBrains Mono,monospace' }}>
@@ -324,7 +324,7 @@ export function WiFiDevicePanel({ onClose, onConnected }: Props) {
                           {dev.model}
                         </div>
                         <div style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>
-                          {dev.ip} · {dev.serial} · {dev.firmware}
+                          {dev.ip} Ã‚Â· {dev.serial} Ã‚Â· {dev.firmware}
                         </div>
                       </div>
                       <div style={{ textAlign: 'right', flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
@@ -334,7 +334,7 @@ export function WiFiDevicePanel({ onClose, onConnected }: Props) {
                             {dev.status.toUpperCase()}
                           </span>
                           <span style={{ fontSize: 10, color: dev.battery > 50 ? 'var(--green)' : 'var(--yellow)', fontFamily: 'JetBrains Mono,monospace' }}>
-                            🔋 {dev.battery}%
+                            Ã°Å¸â€â€¹ {dev.battery}%
                           </span>
                         </div>
                       </div>
@@ -347,7 +347,7 @@ export function WiFiDevicePanel({ onClose, onConnected }: Props) {
               {state === 'connecting' && selected && (
                 <div style={{ marginBottom: 14 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontSize: 12, color: 'var(--text-dim)' }}>
-                    <span>Connecting to {selected.model}…</span>
+                    <span>Connecting to {selected.model}Ã¢â‚¬Â¦</span>
                     <span style={{ fontFamily: 'JetBrains Mono,monospace', color: 'var(--blue)' }}>{progress}%</span>
                   </div>
                   <div className="bar-track">
@@ -375,7 +375,7 @@ export function WiFiDevicePanel({ onClose, onConnected }: Props) {
             </div>
           )}
 
-          {/* ── CONNECTED state ─────────────────────────────────────── */}
+          {/* Ã¢â€â‚¬Ã¢â€â‚¬ CONNECTED state Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
           {state === 'connected' && connectedDevice && (
             <div>
               <div style={{
@@ -391,10 +391,10 @@ export function WiFiDevicePanel({ onClose, onConnected }: Props) {
                 <CheckCircle size={24} style={{ color: 'var(--green)', flexShrink: 0 }} />
                 <div>
                   <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--green)' }}>
-                    Connected — {connectedDevice.model}
+                    Connected Ã¢â‚¬â€ {connectedDevice.model}
                   </div>
                   <div style={{ fontSize: 12, color: 'var(--text-dim)', marginTop: 2 }}>
-                    {connectedDevice.ip} · {connectedDevice.channel}
+                    {connectedDevice.ip} Ã‚Â· {connectedDevice.channel}
                   </div>
                 </div>
                 <SignalBars level={connectedDevice.signal} />
@@ -411,7 +411,7 @@ export function WiFiDevicePanel({ onClose, onConnected }: Props) {
                     padding: '10px 12px',
                     background: 'var(--bg-surface)',
                     border: '1px solid var(--border)',
-                    borderRadius: 6,
+                    borderRadius: 'var(--radius)',
                     textAlign: 'center',
                   }}>
                     <div style={{ fontSize: 9, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'JetBrains Mono,monospace', marginBottom: 4 }}>{s.label}</div>
