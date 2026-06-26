@@ -116,7 +116,7 @@ export function IntroSequence({ onDone }: { onDone?: () => void }) {
           color: 'var(--text-muted)', background: 'rgba(255,255,255,0.04)',
           border: '1px solid var(--border)', borderRadius: 999, padding: '6px 14px',
         }}>
-        SKIP INTRO Ã¢â€ â€™
+        SKIP INTRO →
       </button>
     </div>
   );

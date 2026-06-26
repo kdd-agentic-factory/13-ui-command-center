@@ -686,11 +686,11 @@ export function HomePage() {
         .public-home__button--primary {
           background: var(--red);
           color: #fff;
-          box-shadow: 0 4px 20px rgba(200, 23, 29, 0.25);
+          box-shadow: 0 4px 20px color-mix(in srgb, var(--red) 25%, transparent);
         }
 
         .public-home__button--primary:hover {
-          box-shadow: 0 8px 32px rgba(200, 23, 29, 0.35);
+          box-shadow: 0 8px 32px color-mix(in srgb, var(--red) 35%, transparent);
         }
 
         .public-home__button--secondary {
@@ -762,7 +762,7 @@ export function HomePage() {
           color: var(--text-muted);
           max-width: 440px;
           padding: 12px 16px;
-          border-radius: 12px;
+          border-radius: var(--home-radius-panel);
           border: 1px solid var(--border);
           background: rgba(255, 255, 255, 0.6);
         }
@@ -783,7 +783,7 @@ export function HomePage() {
           padding: 28px;
           border: 1px solid var(--border);
           background:
-            radial-gradient(circle at 72% 8%, rgba(200,23,29,0.06), transparent 40%),
+            radial-gradient(circle at 72% 8%, color-mix(in srgb, var(--red) 6%, transparent), transparent 40%),
             linear-gradient(180deg, rgba(255,255,255,0.92), rgba(244,241,234,0.85));
           border-radius: var(--home-radius-panel);
           box-shadow: 0 30px 80px rgba(11, 13, 15, 0.08);
@@ -829,7 +829,7 @@ export function HomePage() {
 
         .public-home__circuit-chip {
           padding: 6px 12px;
-          border-radius: 8px;
+          border-radius: var(--home-radius-card);
           font-size: 12px;
           font-weight: 600;
           border: 1px solid var(--border);
@@ -837,10 +837,10 @@ export function HomePage() {
           color: var(--text-secondary);
         }
 
-        .public-home__circuit-chip--data { border-color: rgba(43, 111, 158, 0.28); background: rgba(43, 111, 158, 0.08); }
+        .public-home__circuit-chip--data { border-color: color-mix(in srgb, var(--blue) 28%, transparent); background: color-mix(in srgb, var(--blue) 8%, transparent); }
         .public-home__circuit-chip--decision { border-color: var(--red); background: var(--surface-dark); color: var(--page); }
-        .public-home__circuit-chip--output { border-color: rgba(63, 125, 90, 0.30); background: rgba(63, 125, 90, 0.08); }
-        .public-home__circuit-chip--network { border-color: rgba(92, 74, 114, 0.30); background: rgba(92, 74, 114, 0.08); }
+        .public-home__circuit-chip--output { border-color: color-mix(in srgb, var(--green) 30%, transparent); background: color-mix(in srgb, var(--green) 8%, transparent); }
+        .public-home__circuit-chip--network { border-color: color-mix(in srgb, var(--violet) 30%, transparent); background: color-mix(in srgb, var(--violet) 8%, transparent); }
 
         .public-home__circuit-connector {
           display: flex;
@@ -867,7 +867,7 @@ export function HomePage() {
           background: var(--red);
           position: relative;
           z-index: 1;
-          box-shadow: 0 0 0 3px rgba(200, 23, 29, 0.12);
+          box-shadow: 0 0 0 3px color-mix(in srgb, var(--red) 12%, transparent);
         }
 
         .public-home__circuit-decision-box {
@@ -896,7 +896,7 @@ export function HomePage() {
           padding: 14px 16px;
           border-radius: var(--home-radius-panel);
           border: 1px dashed var(--violet);
-          background: rgba(92, 74, 114, 0.04);
+          background: color-mix(in srgb, var(--violet) 4%, transparent);
         }
 
         .public-home__circuit-network-label {
@@ -920,9 +920,9 @@ export function HomePage() {
           border-radius: 6px;
           font-size: 11px;
           font-weight: 600;
-          background: rgba(92, 74, 114, 0.08);
+          background: color-mix(in srgb, var(--violet) 8%, transparent);
           color: var(--violet);
-          border: 1px solid rgba(92, 74, 114, 0.15);
+          border: 1px solid color-mix(in srgb, var(--violet) 15%, transparent);
         }
 
         /* ─── Section (generic) ─── */
@@ -1032,21 +1032,21 @@ export function HomePage() {
         .public-home__transform-item {
           position: relative;
           padding: 12px 16px;
-          border-radius: 12px;
+          border-radius: var(--home-radius-panel);
           font-size: 13px;
           line-height: 1.45;
           border: 1px solid var(--border);
         }
 
         .public-home__transform-item--raw {
-          background: rgba(43, 111, 158, 0.06);
-          border-color: rgba(43, 111, 158, 0.22);
+          background: color-mix(in srgb, var(--blue) 6%, transparent);
+          border-color: color-mix(in srgb, var(--blue) 22%, transparent);
           color: var(--text-secondary);
         }
 
         .public-home__transform-item--knowledge {
-          background: rgba(63, 125, 90, 0.06);
-          border-color: rgba(63, 125, 90, 0.24);
+          background: color-mix(in srgb, var(--green) 6%, transparent);
+          border-color: color-mix(in srgb, var(--green) 24%, transparent);
           color: var(--text-secondary);
         }
 
@@ -1175,7 +1175,7 @@ export function HomePage() {
           bottom: 0;
           width: 2px;
           background: linear-gradient(180deg, var(--red), var(--amber), var(--green));
-          border-radius: 2px;
+          border-radius: var(--home-radius-pill);
         }
 
         .public-home__narrative-step {
@@ -1233,13 +1233,13 @@ export function HomePage() {
         }
 
         .public-home__network-panel--stays {
-          background: rgba(43, 111, 158, 0.04);
-          border-color: rgba(43, 111, 158, 0.15);
+          background: color-mix(in srgb, var(--blue) 4%, transparent);
+          border-color: color-mix(in srgb, var(--blue) 15%, transparent);
         }
 
         .public-home__network-panel--travels {
-          background: rgba(63, 125, 90, 0.04);
-          border-color: rgba(63, 125, 90, 0.15);
+          background: color-mix(in srgb, var(--green) 4%, transparent);
+          border-color: color-mix(in srgb, var(--green) 15%, transparent);
         }
 
         .public-home__network-panel-title {
@@ -1341,7 +1341,7 @@ export function HomePage() {
         }
 
         .public-home__founding .public-home__heading p {
-          color: rgba(244, 241, 234, 0.7);
+          color: color-mix(in srgb, var(--page) 70%, transparent);
         }
 
         .public-home__founding .public-home__station-number {
@@ -1361,7 +1361,7 @@ export function HomePage() {
           display: flex;
           gap: 12px;
           align-items: flex-start;
-          color: rgba(244, 241, 234, 0.85);
+          color: color-mix(in srgb, var(--page) 85%, transparent);
           line-height: 1.55;
           font-size: 15px;
         }
@@ -1385,7 +1385,7 @@ export function HomePage() {
           padding: 28px;
           border-radius: var(--home-radius-panel);
           border: 1px solid var(--border);
-          background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(247, 243, 236, 0.94));
+          background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), color-mix(in srgb, var(--surface-soft) 94%, transparent));
           margin-top: 20px;
         }
 
@@ -1499,8 +1499,8 @@ export function HomePage() {
         .public-home__paper-note {
           padding: 12px 14px;
           border-radius: var(--home-radius-panel);
-          border: 1px solid rgba(194, 122, 44, 0.24);
-          background: rgba(194, 122, 44, 0.08);
+          border: 1px solid color-mix(in srgb, var(--amber) 24%, transparent);
+          background: color-mix(in srgb, var(--amber) 8%, transparent);
           color: var(--text-muted);
           line-height: 1.6;
           font-size: 13px;
@@ -1541,7 +1541,7 @@ export function HomePage() {
         }
 
         .public-home__final-cta .public-home__heading p {
-          color: rgba(244, 241, 234, 0.7);
+          color: color-mix(in srgb, var(--page) 70%, transparent);
           max-width: 600px;
         }
 
@@ -1554,11 +1554,11 @@ export function HomePage() {
 
         .public-home__final-actions .public-home__button--secondary {
           color: var(--page);
-          border-color: rgba(244, 241, 234, 0.18);
+          border-color: color-mix(in srgb, var(--page) 18%, transparent);
         }
 
         .public-home__final-actions .public-home__button--secondary:hover {
-          border-color: rgba(244, 241, 234, 0.4);
+          border-color: color-mix(in srgb, var(--page) 40%, transparent);
         }
 
         /* ─── Responsive: 980px ─── */

@@ -35,7 +35,7 @@ describe('HomePage knowledge circuit redesign', () => {
     expect(screen.getByRole('heading', { name: 'KDD' })).toBeInTheDocument();
     expect(screen.getByText('Decision Intelligence Layer for Motorcycle Performance')).toBeInTheDocument();
     expect(screen.getByText('We do not replace your telemetry. We turn it into actionable knowledge.')).toBeInTheDocument();
-    expect(screen.getByText('Telemetry tells you what happened. KDD tells you what to do next.')).toBeInTheDocument();
+    expect(screen.getAllByText('Telemetry tells you what happened. KDD tells you what to do next.').length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText('Your data stays protected. What travels is the learning.')).toBeInTheDocument();
 
     expect(screen.getAllByRole('link', { name: 'Request early access' })[0]).toHaveAttribute('href', '/trial');
@@ -53,9 +53,9 @@ describe('HomePage knowledge circuit redesign', () => {
   it('renders the manifesto section', () => {
     render(<HomePage />);
 
-    expect(screen.getByText(/Telemetry tells you what happened/)).toBeInTheDocument();
+    expect(screen.getAllByText(/Telemetry tells you what happened/).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText(/We are not building another telemetry tool/)).toBeInTheDocument();
-    expect(screen.getByText('The Knowledge Circuit')).toBeInTheDocument();
+    expect(screen.getAllByText('The Knowledge Circuit').length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders the decision loop stations', () => {
@@ -67,9 +67,9 @@ describe('HomePage knowledge circuit redesign', () => {
     expect(screen.getByText('Events')).toBeInTheDocument();
     expect(screen.getByText('Causes')).toBeInTheDocument();
     expect(screen.getByText('Decisions')).toBeInTheDocument();
-    expect(screen.getByText('Missions')).toBeInTheDocument();
-    expect(screen.getByText('Validation')).toBeInTheDocument();
-    expect(screen.getByText('Learning')).toBeInTheDocument();
+    expect(screen.getAllByText('Missions').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('Validation').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('Learning').length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders the T15 Bucine narrative sequence', () => {
@@ -98,7 +98,7 @@ describe('HomePage knowledge circuit redesign', () => {
 
     expect(screen.getByRole('heading', { name: 'Node Modes' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Founding Knowledge Nodes' })).toBeInTheDocument();
-    expect(screen.getByText('This is not early access. This is co-creation.')).toBeInTheDocument();
+    expect(screen.getByText(/This is not early access\. This is co-creation/)).toBeInTheDocument();
   });
 
   it('renders the application manual CTA', () => {

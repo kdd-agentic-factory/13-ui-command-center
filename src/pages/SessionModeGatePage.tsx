@@ -1,5 +1,5 @@
 /**
- * SessionModeGatePage ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â SESSION MODE GATE.
+ * SessionModeGatePage — SESSION MODE GATE.
  *
  * Second mandatory gate (Landing ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ Circuit Gate ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ Session Mode Gate ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢
  * Dashboard). Knowing the circuit is not enough: this screen captures WHAT we
@@ -136,7 +136,7 @@ export function SessionModeGatePage({ circuit, onBack, onOpen }: Props) {
           <div>
             <div className="card" style={{ padding: 18, marginBottom: 14 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-                <span className="card-title" style={{ margin: 0 }}>{def.label} ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â SESSION SETUP</span>
+                <span className="card-title" style={{ margin: 0 }}>{def.label} —  SESSION SETUP</span>
                 <span className="badge" style={{ fontSize: 9.5, fontFamily: MONO, color: def.badgeColor, border: `1px solid ${def.badgeColor}`, background: 'transparent' }}>{def.badge}</span>
               </div>
               <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 10 }}>
