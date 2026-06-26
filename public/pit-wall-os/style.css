@@ -16,13 +16,13 @@
   --purple:   #A855F7;
   --blue:     #3B82F6;
   --text:     #E6EAF4;
-  --muted:    #8B92A8;
+  --muted:    #9BA3B8;
   --panel-surface: var(--card);
   --panel-radius: 10px;
   --radius-pill: 99px;
   --surface-faint: rgba(255,255,255,0.04);
   --surface-soft: rgba(255,255,255,0.06);
-  --font-sans: 'Barlow', 'Rajdhani', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Barlow Condensed', 'Rajdhani', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
 }
 
@@ -103,9 +103,9 @@ html, body {
 }
 
 .identity-sub {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   margin-top: 2px;
 }
 
@@ -144,9 +144,9 @@ html, body {
 .hud-right { right: 20px; }
 
 .panel-title {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   margin-bottom: 2px;
 }
 .panel-title.cyan  { color: var(--cyan); }
@@ -164,9 +164,9 @@ html, body {
 }
 
 .panel-label {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   color: var(--cyan);
   display: block;
 }
@@ -186,7 +186,7 @@ html, body {
 .metric-label {
   font-size: 11px;
   color: var(--muted);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
   font-weight: 500;
   margin-bottom: 3px;
 }
@@ -206,7 +206,7 @@ html, body {
 }
 
 .metric-unit {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   font-family: var(--font-mono);
 }
@@ -325,7 +325,7 @@ html, body {
 
 .formula-tag {
   font-size: 11px;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.08em;
   font-weight: 700;
   margin-bottom: 3px;
   display: block;
@@ -371,7 +371,7 @@ html, body {
 
 .convergence-label {
   font-size: 11px;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.08em;
   color: var(--muted);
   margin-top: 1px;
   font-family: var(--font-mono);
@@ -396,7 +396,7 @@ html, body {
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
   cursor: pointer;
   transition: all 0.2s ease;
   pointer-events: auto;
@@ -446,9 +446,9 @@ html, body {
   border-radius: var(--radius-pill);
   color: var(--red);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   cursor: pointer;
   pointer-events: auto;
   transition: all 0.2s ease;

@@ -8,10 +8,27 @@
   <!-- Typefaces -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 
   <!-- TailwindCSS (utility layer) -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: 'var(--cyan)',
+            bg: { base: 'var(--bg)', surface: 'var(--surface)', card: 'var(--card)' },
+            text: { DEFAULT: 'var(--text)', muted: 'var(--muted)' },
+          },
+          fontFamily: {
+            sans: ['Barlow Condensed', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
 
   <!-- Three.js r128 — stable build with global THREE object -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -28,7 +45,7 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 
-<body class="bg-[#0A0A0C] text-white overflow-hidden select-none">
+<body class="bg-bg-base text-text overflow-hidden select-none">
 
   <!-- ═══════════════════════════════════════════════════════
        LAYER 0  |  z-index: 0
@@ -69,8 +86,8 @@
 
     <!-- ╔══ TOP-RIGHT ══╗  Session & clock -->
     <div id="hud-session" class="hud-corner hud-tr">
-      <div class="mono-text text-[10px] text-gray-500 tracking-widest">SESSION ID</div>
-      <div class="mono-text text-base font-semibold text-[#0A84FF]" id="session-id">KDD-2026-05-26</div>
+      <div class="mono-text text-[11px] text-text-muted tracking-wider">SESSION ID</div>
+      <div class="mono-text text-base font-semibold text-accent" id="session-id">KDD-2026-05-26</div>
       <div class="mono-text text-xs text-gray-400 mt-0.5" id="hud-clock">--:--:--</div>
     </div>
 
@@ -188,7 +205,7 @@
       </div>
 
       <div class="topology-label">
-        <span class="mono-text text-[10px] text-gray-500">COMPONENT: Formula Student Upright · Al 6061-T6</span>
+        <span class="mono-text text-[11px] text-text-muted">COMPONENT: Formula Student Upright · Al 6061-T6</span>
       </div>
     </aside>
 
@@ -245,7 +262,7 @@
 
     <!-- ╔══ BOTTOM-LEFT ══╗  Module navigation -->
     <nav id="hud-nav" class="hud-corner hud-bl">
-      <div class="mono-text text-[10px] text-gray-500 tracking-widest mb-2">MÓDULOS ACTIVOS</div>
+      <div class="mono-text text-[11px] text-text-muted tracking-wider mb-2">MÓDULOS ACTIVOS</div>
       <div class="nav-links">
         <a href="http://localhost:8150" target="_blank" class="nav-link">
           <span class="nav-dot cyan"></span><span>Race Ops</span>
@@ -267,10 +284,10 @@
 
     <!-- ╔══ BOTTOM-RIGHT ══╗  Paper reference -->
     <div id="hud-paper" class="hud-corner hud-br">
-      <div class="mono-text text-[10px] text-gray-500 tracking-widest">RESEARCH PAPER</div>
+      <div class="mono-text text-[11px] text-text-muted tracking-wider">RESEARCH PAPER</div>
       <div class="paper-title">Physical & Digital Lightweighting</div>
-      <div class="mono-text text-[10px] text-[#0A84FF] mt-0.5">Convergencia SIMP × GPTQ-INT4</div>
-      <div class="mono-text text-[10px] text-gray-500 mt-0.5">KDD Agentic Race Engineering · 2026</div>
+      <div class="mono-text text-[11px] text-accent mt-0.5">Convergencia SIMP × GPTQ-INT4</div>
+      <div class="mono-text text-[11px] text-text-muted mt-0.5">KDD Agentic Race Engineering · 2026</div>
       <div class="paper-links mt-2">
         <span class="paper-tag">Formula Student</span>
         <span class="paper-tag">Edge AI</span>
