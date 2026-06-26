@@ -4,6 +4,10 @@ dist
 vite.config.js
 vite.config.d.ts
 
+# Playwright artifacts
+playwright-report/
+test-results/
+
 # Local environment — never commit real credentials
 .env
 .env.local

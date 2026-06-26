@@ -49,8 +49,8 @@ describe('public landing copy', () => {
 
     expect(screen.getByRole('heading', { name: 'KDD Moto Intelligence' })).toBeInTheDocument();
     expect(screen.getByText('Decision Intelligence Layer for Motorcycle Performance')).toBeInTheDocument();
-    expect(screen.getAllByRole('link', { name: 'Solicitar Early Access' })[0]).toHaveAttribute('href', '/trial');
-    expect(screen.getAllByRole('link', { name: 'Convertirme en Founding Node' })[0]).toHaveAttribute('href', '/founding-nodes');
+    expect(screen.getAllByRole('link', { name: 'Request early access' })[0]).toHaveAttribute('href', '/trial');
+    expect(screen.getAllByRole('link', { name: 'Become a founding node' })[0]).toHaveAttribute('href', '/founding-nodes');
   });
 
   it('renders the editorial hero in Spanish', async () => {
@@ -59,6 +59,8 @@ describe('public landing copy', () => {
 
     expect(screen.getByText('Capa de inteligencia de decisión para rendimiento de motocicleta')).toBeInTheDocument();
     expect(screen.getByText('No sustituimos tu telemetría. La convertimos en conocimiento accionable.')).toBeInTheDocument();
+    expect(screen.getAllByRole('link', { name: 'Solicitar acceso anticipado' })[0]).toHaveAttribute('href', '/trial');
+    expect(screen.getAllByRole('link', { name: 'Ser nodo fundador' })[0]).toHaveAttribute('href', '/founding-nodes');
   });
 });
 

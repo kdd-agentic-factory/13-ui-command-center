@@ -25,6 +25,7 @@ export default defineConfig({
     globals: true,
     pool: 'threads',
     minWorkers: 1,
-    maxWorkers: 1
+    maxWorkers: 1,
+    exclude: ['tests/e2e/**', 'node_modules/**']
   }
 });
