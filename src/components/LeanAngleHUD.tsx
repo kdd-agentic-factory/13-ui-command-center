@@ -22,7 +22,7 @@ interface LeanAngleHUDProps {
   rearTemp?: number;    // for AI note context (pass rear tyre temp)
 }
 
-const MAXÎ¸ = 64;
+const MAX_THETA = 64;
 const CX = 110, CY = 122, R = 94;
 const rad = (d: number) => (d * Math.PI) / 180;
 const pt = (deg: number, r: number) => [CX + r * Math.sin(rad(deg)), CY - r * Math.cos(rad(deg))];
@@ -39,7 +39,7 @@ export function LeanAngleHUD({
   leftAvg = 51.2, rightAvg = 48.7, phase, rearTemp,
 }: LeanAngleHUDProps) {
   const mag = Math.abs(lean);
-  const clamped = Math.max(-MAXÎ¸, Math.min(MAXÎ¸, lean));
+  const clamped = Math.max(-MAX_THETA, Math.min(MAX_THETA, lean));
   const risk = mag > 56 ? { t: 'HIGH', c: 'var(--accent)' } : mag > 50 ? { t: 'MEDIUM', c: 'var(--yellow)' } : { t: 'LOW', c: 'var(--green)' };
   const [nx, ny] = pt(clamped, R - 14);
   const asym = Math.abs(leftAvg - rightAvg);
@@ -59,7 +59,7 @@ export function LeanAngleHUD({
       <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap', marginTop: 6 }}>
         <svg width="220" height="140" viewBox="0 0 220 140" style={{ flex: 'none' }}>
           {/* background arc */}
-          <path d={arc(-MAXÎ¸, MAXÎ¸, R)} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="9" strokeLinecap="round" />
+          <path d={arc(-MAX_THETA, MAX_THETA, R)} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="9" strokeLinecap="round" />
           {/* target window (both sides) */}
           <path d={arc(targetLo, targetHi, R)} fill="none" stroke="var(--green)" strokeWidth="9" strokeLinecap="round" opacity="0.55" />
           <path d={arc(-targetHi, -targetLo, R)} fill="none" stroke="var(--green)" strokeWidth="9" strokeLinecap="round" opacity="0.55" />

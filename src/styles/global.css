@@ -9,7 +9,7 @@
 :root {
   color-scheme: dark;
   /* ── Typography stacks (racing display + UI + data) */
-  --font-display: 'Barlow Condensed', 'Rajdhani', 'Inter', system-ui, sans-serif;
+  --font-display: 'Barlow Condensed', 'Rajdhani', system-ui, sans-serif;
   --font-metric:  'Rajdhani', 'Barlow Condensed', 'JetBrains Mono', monospace;
   /* ── 2026 cockpit palette tokens (additive — legacy tokens stay valid) */
   --violet:      #8B5CF6;

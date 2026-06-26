@@ -541,7 +541,7 @@ export function HomePage() {
           top: 0;
           z-index: 20;
           padding: 14px 0 18px;
-          backdrop-filter: blur(18px);
+          background: color-mix(in srgb, var(--page) 94%, transparent);
           border-bottom: 1px solid var(--border);
           margin-bottom: 64px;
           flex-wrap: wrap;
