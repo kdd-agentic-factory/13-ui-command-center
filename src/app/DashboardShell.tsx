@@ -30,6 +30,8 @@ import {
   type SessionMode,
 } from '../domain/sessionContext';
 
+import { ErrorBoundary } from '../components/ErrorBoundary';
+
 import { OverviewPage } from '../pages/OverviewPage';
 import { LiveTelemetryPage } from '../pages/LiveTelemetryPage';
 import { CircuitIntelligencePage } from '../pages/CircuitIntelligencePage';
@@ -474,8 +476,8 @@ function DashboardShellContent() {
         <header className="app-header">
           <div className="header-gp">
             <span className={`badge ${sessionState.badgeClass}`} style={{ fontSize: 10, letterSpacing: '0.1em' }}>{sessionState.badgeLabel}</span>
-            <span className="header-gp-name">{RACE_SESSION.productName}</span>
-            <span className="header-gp-round" style={{ color: 'var(--text-muted)', fontSize: 12 }}>{RACE_SESSION.positioning}</span>
+            <span className="header-gp-name">{sessionCtx.circuitName}</span>
+            <span className="header-gp-round" style={{ color: 'var(--text-muted)', fontSize: 12 }}>{sessionCtx.sessionMode.toUpperCase()} MODE</span>
           </div>
           <div className="header-stats">
             <div className="header-stat">
@@ -485,7 +487,7 @@ function DashboardShellContent() {
             <div className="header-stat-sep" />
             <div className="header-stat">
               <span className="header-stat-label">CIRCUIT</span>
-              <span className="header-stat-val" style={{ fontSize: 14 }}>{MUGELLO_CIRCUIT.shortName}</span>
+              <span className="header-stat-val" style={{ fontSize: 14 }}>{sessionCtx.circuitName}</span>
             </div>
             <div className="header-stat-sep" />
             <div className="header-stat">
@@ -552,7 +554,11 @@ function DashboardShellContent() {
 }
 
 export function DashboardShell() {
-  return <DashboardShellContent />;
+  return (
+    <ErrorBoundary>
+      <DashboardShellContent />
+    </ErrorBoundary>
+  );
 }
 
 export default DashboardShell;

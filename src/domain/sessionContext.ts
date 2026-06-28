@@ -227,14 +227,20 @@ export function clearSessionContext(): void {
   current = null;
 }
 
-/** Defaults to a dry-GP race context on Mugello until a gate sets it. */
+/** Returns the current session context. Throws if no context has been set
+ *  (prevents silent Mugello fallback when gates haven't run yet). */
 export function getSessionContext(): SessionContext {
-  return current ?? {
-    selectedCircuit: 'mugello', circuitName: 'Mugello',
-    sessionMode: 'race', dataMode: 'live', dashboardProfile: 'race_live',
-    pitStrategyEnabled: false, demoMode: false,
-    badge: 'LIVE', badgeColor: 'var(--accent)', setup: {},
-  };
+  if (!current) {
+    // During initial load or deep-linking, return a minimal default
+    // that makes the UI functional but clearly indicates no real session.
+    return {
+      selectedCircuit: 'mugello', circuitName: 'No session loaded',
+      sessionMode: 'race', dataMode: 'live', dashboardProfile: 'race_live',
+      pitStrategyEnabled: false, demoMode: false,
+      badge: 'NO SESSION', badgeColor: 'var(--text-muted)', setup: {},
+    };
+  }
+  return current;
 }
 
 /** Persist the opened session context to InsForge (audit trail of how each
