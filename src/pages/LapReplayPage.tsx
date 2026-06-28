@@ -6,7 +6,7 @@ import { trackSpeed } from '../hooks/useLiveTelemetry';
 import { getSessionContext } from '../domain/sessionContext';
 
 /**
- * Lap Replay (engineer feedback #10) Ã¢â‚¬â€ scrub a recorded lap and watch the 3D
+ * Lap Replay (engineer feedback #10) — scrub a recorded lap and watch the 3D
  * track map + bike attitude move with it, with the synchronised telemetry
  * readout, the delta vs the best lap, and an event feed annotated by the AI.
  */
@@ -14,7 +14,7 @@ import { getSessionContext } from '../domain/sessionContext';
 const LAP_TIME_S = 101.882; // 1:41.882
 
 interface ReplayEvent {
-  pos: number;            // 0Ã¢â‚¬â€œ1 lap fraction
+  pos: number;            // 0——œ1 lap fraction
   t: string;              // mm:ss
   where: string;
   text: string;
@@ -23,14 +23,14 @@ interface ReplayEvent {
 
 const EVENTS: ReplayEvent[] = [
   { pos: 0.05, t: '00:07', where: 'Turn 1', text: 'Brake peak 43 bar', kind: 'brake' },
-  { pos: 0.10, t: '00:11', where: 'Turn 1', text: 'Max lean 56.4Ã‚Â°', kind: 'lean' },
+  { pos: 0.10, t: '00:11', where: 'Turn 1', text: 'Max lean 56.4—Â°', kind: 'lean' },
   { pos: 0.15, t: '00:15', where: 'Turn 2', text: 'Late throttle opening (+0.18 s)', kind: 'warn' },
   { pos: 0.20, t: '00:20', where: 'Turn 3', text: 'Rear slip detected on exit', kind: 'alert' },
-  { pos: 0.33, t: '00:34', where: 'Sector 1', text: 'Sector 1 complete Ã‚Â· +0.183 s', kind: 'sector' },
-  { pos: 0.52, t: '00:53', where: 'Turn 7', text: 'Throttle 0.40 s late Ã‚Â· Ã¢Ë†â€™0.284 s', kind: 'alert' },
-  { pos: 0.66, t: '01:08', where: 'Sector 2', text: 'Sector 2 complete Ã‚Â· +0.401 s', kind: 'sector' },
-  { pos: 0.88, t: '01:30', where: 'Turn 10', text: 'Clean exit Ã‚Â· on reference', kind: 'ok' },
-  { pos: 1.00, t: '01:41', where: 'Finish', text: 'Lap 1:41.882 Ã‚Â· +0.438 vs best', kind: 'sector' },
+  { pos: 0.33, t: '00:34', where: 'Sector 1', text: 'Sector 1 complete —· +0.183 s', kind: 'sector' },
+  { pos: 0.52, t: '00:53', where: 'Turn 7', text: 'Throttle 0.40 s late —· Ã¢Ë†—™0.284 s', kind: 'alert' },
+  { pos: 0.66, t: '01:08', where: 'Sector 2', text: 'Sector 2 complete —· +0.401 s', kind: 'sector' },
+  { pos: 0.88, t: '01:30', where: 'Turn 10', text: 'Clean exit —· on reference', kind: 'ok' },
+  { pos: 1.00, t: '01:41', where: 'Finish', text: 'Lap 1:41.882 —· +0.438 vs best', kind: 'sector' },
 ];
 
 const KIND_COLOR: Record<ReplayEvent['kind'], string> = {
@@ -78,7 +78,7 @@ export function LapReplayPage() {
   useEffect(() => {
     if (!playing) return;
     // Drive the replay with setInterval at ~20 fps rather than requestAnimationFrame
-    // at 60 fps: two Babylon engines (track map + bike) re-rendered 60Ãƒâ€”/s freezes
+    // at 60 fps: two Babylon engines (track map + bike) re-rendered 60â—”/s freezes
     // the tab. 20 fps state updates are plenty smooth (the WebGL scenes still render
     // at their own 60 fps) and keep the page responsive.
     const STEP = 1 / 20;                 // seconds per update
@@ -97,17 +97,17 @@ export function LapReplayPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">Lap Replay</h1>
-          <p className="page-subtitle">{getSessionContext().circuitName} Ã‚Â· Lap 08 Ã‚Â· 1:41.882 Ã‚Â· synchronised telemetry + AI notes</p>
+          <p className="page-subtitle">{getSessionContext().circuitName} —· Lap 08 —· 1:41.882 —· synchronised telemetry + AI notes</p>
         </div>
         <div className="flex items-center gap-2">
           <span className="badge" style={{ background: deltaPos ? 'var(--accent-dim)' : 'var(--green-dim)', color: deltaPos ? 'var(--accent)' : 'var(--green)' }}>
-            ÃŽâ€ {deltaPos ? '+' : ''}{s.delta.toFixed(3)} s vs best
+            ÃŽ— {deltaPos ? '+' : ''}{s.delta.toFixed(3)} s vs best
           </span>
         </div>
       </div>
 
       <div className="grid-2" style={{ gap: 16, alignItems: 'start' }}>
-        {/* Left Ã¢â‚¬â€ 3D map + transport */}
+        {/* Left — 3D map + transport */}
         <div className="card">
           <div className="card-header">
             <span className="card-title flex items-center gap-2"><Flag size={14} style={{ color: 'var(--accent)' }} /> Track position</span>
@@ -147,26 +147,26 @@ export function LapReplayPage() {
           </div>
         </div>
 
-        {/* Right Ã¢â‚¬â€ bike attitude + readouts + events */}
+        {/* Right — bike attitude + readouts + events */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div className="card">
             <div className="card-header">
               <span className="card-title flex items-center gap-2"><Activity size={14} style={{ color: 'var(--accent)' }} /> Bike attitude</span>
-              <span className="badge badge-green">LEAN {Math.abs(s.lean).toFixed(1)}Ã‚Â°</span>
+              <span className="badge badge-green">LEAN {Math.abs(s.lean).toFixed(1)}—Â°</span>
             </div>
             <DigitalTwinViewer3D leanAngle={s.lean} pitchAngle={s.brake * 0.08 - s.throttle * 0.04} height={220} />
             <div className="grid-4" style={{ marginTop: 12 }}>
               <Read label="Speed" value={s.speed} unit="km/h" color="var(--blue)" />
               <Read label="Gear" value={s.gear} />
               <Read label="RPM" value={s.rpm.toLocaleString()} />
-              <Read label="Lean" value={Math.abs(s.lean).toFixed(0)} unit="Ã‚Â°" color="var(--purple)" />
+              <Read label="Lean" value={Math.abs(s.lean).toFixed(0)} unit="—Â°" color="var(--purple)" />
             </div>
           </div>
 
           {/* Event feed */}
           <div className="card">
             <div className="card-header">
-              <span className="card-title flex items-center gap-2"><Gauge size={14} style={{ color: 'var(--accent)' }} /> Lap events Ã‚Â· Session Reporter AI</span>
+              <span className="card-title flex items-center gap-2"><Gauge size={14} style={{ color: 'var(--accent)' }} /> Lap events —· Session Reporter AI</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2, marginTop: 4 }}>
               {EVENTS.map((e, i) => {

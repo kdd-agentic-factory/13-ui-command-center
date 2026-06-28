@@ -1,5 +1,5 @@
 /**
- * LaunchBriefPage Ã¢â‚¬â€ final gate screen (Circuit Ã¢â€ â€™ Mode Ã¢â€ â€™ Data Ã¢â€ â€™ LAUNCH).
+ * LaunchBriefPage — final gate screen (Circuit Ã¢— —™ Mode Ã¢— —™ Data Ã¢— —™ LAUNCH).
  * The pre-flight summary: circuit, mode, rider, data, active modules and
  * Oracle status, then a single Launch action. Total-control feeling before
  * the digital pit-wall opens.
@@ -28,14 +28,14 @@ export function LaunchBriefPage({ circuit, ctx, onBack, onLaunch }: Props) {
     .map(id => MODULE_LABELS[id]!);
 
   const facts: Array<[string, string]> = [
-    ['Circuit', `${circuit.name} ${circuit.layout} Layout Ã‚Â· ${circuit.status}`],
-    ['Mode', `${ctx.sessionMode} Ã‚Â· ${ctx.dashboardProfile.replace(/_/g, ' ')}`],
-    ['Rider', ctx.setup.rider ?? 'RubÃƒÂ©n JuÃƒÂ¡rez'],
+    ['Circuit', `${circuit.name} ${circuit.layout} Layout —· ${circuit.status}`],
+    ['Mode', `${ctx.sessionMode} —· ${ctx.dashboardProfile.replace(/_/g, ' ')}`],
+    ['Rider', ctx.setup.rider ?? 'RubâÂ©n JuâÂ¡rez'],
     ['Bike', ctx.setup.bike ?? 'Yamaha R1'],
     ['Data', ctx.setup.dataSource === 'upload' ? 'Uploaded session files'
       : ctx.setup.dataSource === 'demo' ? 'Demo sample (reproducible)'
         : ctx.setup.dataSource === 'simulation' ? 'Simulation only'
-          : 'GPS Ã‚Â· IMU Ã‚Â· ECU Ã‚Â· live 10 Hz'],
+          : 'GPS —· IMU —· ECU —· live 10 Hz'],
   ];
 
   return (

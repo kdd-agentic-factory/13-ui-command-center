@@ -1,5 +1,5 @@
 /**
- * ExperimentEnginePage ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Performance Experiment Engine.
+ * ExperimentEnginePage â¢Ã¢—š¬—” Performance Experiment Engine.
  *
  * Every recommendation becomes a controlled on-track experiment: hypothesis +
  * confidence, change set, controlled variables, success criteria, expected
@@ -30,14 +30,14 @@ function ActiveExperiment({ exp, onNav }: { exp: Experiment; onNav: (t: 'black-b
  }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
         <FlaskConical size={16} style={{ color: 'var(--cyan)' }} />
-        <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Active experiment Ãƒâ€šÃ‚Â· {exp.id} Ãƒâ€šÃ‚Â· {exp.type}</span>
+        <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Active experiment â—š—· {exp.id} â—š—· {exp.type}</span>
         <span style={{ marginLeft: 'auto' }}><StatusPill status={exp.status} /></span>
       </div>
       <div style={{ fontSize: 17, fontWeight: 800, color: 'var(--text)' }}>{exp.title}</div>
       <div style={{ fontSize: 11.5, color: 'var(--text-muted)', marginTop: 2 }}>{exp.problem}</div>
 
       <div style={{ marginTop: 12, padding: '10px 12px', borderRadius: 8, background: 'rgba(139,92,246,0.06)', border: '1px solid rgba(139,92,246,0.25)' }}>
-        <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--violet)', textTransform: 'uppercase', marginBottom: 3 }}>Hypothesis Ãƒâ€šÃ‚Â· confidence {exp.confidence}%</div>
+        <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--violet)', textTransform: 'uppercase', marginBottom: 3 }}>Hypothesis â—š—· confidence {exp.confidence}%</div>
         <div style={{ fontSize: 12, color: 'var(--text)', lineHeight: 1.5 }}>{exp.hypothesis}</div>
       </div>
 
@@ -59,12 +59,12 @@ function ActiveExperiment({ exp, onNav }: { exp: Experiment; onNav: (t: 'black-b
       {exp.riderCue && (
         <div style={{ marginTop: 10, fontSize: 12, color: 'var(--text)' }}>
           <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', marginRight: 6 }}>Rider cue</span>
-          ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ{exp.riderCue}ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â
+          â¢Ã¢—š¬Ã…—œ{exp.riderCue}â¢Ã¢—š¬—”
         </div>
       )}
 
       <div style={{ marginTop: 12 }}>
-        <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>Live validation Ãƒâ€šÃ‚Â· {exp.targetLaps} laps vs {exp.baseline}</div>
+        <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>Live validation â—š—· {exp.targetLaps} laps vs {exp.baseline}</div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
           {exp.successCriteria.map(sc => (
             <span key={sc.metric} style={{ fontSize: 10, fontFamily: MONO, color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 5, padding: '3px 8px' }}>
@@ -78,7 +78,7 @@ function ActiveExperiment({ exp, onNav }: { exp: Experiment; onNav: (t: 'black-b
         <span style={{ fontSize: 11 }}><span style={{ color: 'var(--text-muted)' }}>Expected gain: </span><span style={{ color: 'var(--green)', fontFamily: MONO }}>{exp.expectedGain}</span></span>
         <span style={{ fontSize: 11 }}><span style={{ color: 'var(--text-muted)' }}>Risk: </span><span style={{ color: 'var(--yellow)' }}>{exp.risk}</span></span>
         <button onClick={() => onNav('black-box')} style={{ marginLeft: 'auto', fontSize: 10, fontFamily: MONO, color: 'var(--cyan)', background: 'none', border: '1px solid rgba(0,183,255,0.3)', borderRadius: 5, padding: '4px 9px', cursor: 'pointer' }}>
-          log in Black Box ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢
+          log in Black Box â¢—Â —â„¢
         </button>
       </div>
     </div>
@@ -91,12 +91,12 @@ function ResultCard({ exp, onNav }: { exp: Experiment; onNav: (t: 'knowledge') =
     <div className="card" style={{ padding: 16,
  }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-        <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)' }}>{exp.id} Ãƒâ€šÃ‚Â· {exp.type}</span>
+        <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)' }}>{exp.id} â—š—· {exp.type}</span>
         <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--text)', flex: 1 }}>{exp.title}</span>
         <StatusPill status={r.status} />
       </div>
 
-      {/* before ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ after table */}
+      {/* before â¢—Â —â„¢ after table */}
       <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr auto', gap: '4px 10px', fontSize: 11, marginBottom: 8 }}>
         <span style={{ fontSize: 8.5, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Metric</span>
         <span style={{ fontSize: 8.5, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Before</span>
@@ -119,7 +119,7 @@ function ResultCard({ exp, onNav }: { exp: Experiment; onNav: (t: 'knowledge') =
         <span style={{ fontSize: 11.5, color: 'var(--text-muted)', flex: 1 }}>{r.nextRecommendation}</span>
         {r.status !== 'rejected' && (
           <button onClick={() => onNav('knowledge')} style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--cyan)', background: 'none', border: 'none', cursor: 'pointer' }}>
-            ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ Knowledge Graph
+            â¢—Â —â„¢ Knowledge Graph
           </button>
         )}
       </div>
@@ -155,7 +155,7 @@ export function ExperimentEnginePage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><TestTubes size={18} /> Performance Experiment Engine</h1>
-          <p className="page-subtitle">Hypothesis Ãƒâ€šÃ‚Â· test plan Ãƒâ€šÃ‚Â· validation Ãƒâ€šÃ‚Â· learning loop ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â {garage.profile.rider.name} Ãƒâ€šÃ‚Â· {garage.profile.bike.brand} {garage.profile.bike.model} Ãƒâ€šÃ‚Â· {ctx.circuitName}</p>
+          <p className="page-subtitle">Hypothesis â—š—· test plan â—š—· validation â—š—· learning loop â¢Ã¢—š¬—” {garage.profile.rider.name} â—š—· {garage.profile.bike.brand} {garage.profile.bike.model} â—š—· {ctx.circuitName}</p>
         </div>
       </div>
 
@@ -164,7 +164,7 @@ export function ExperimentEnginePage() {
         {EXPERIMENT_LOOP.map((step, i) => (
           <span key={step} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
             <span style={{ color: i === EXPERIMENT_LOOP.length - 1 ? 'var(--cyan)' : 'var(--text-muted)' }}>{step}</span>
-            {i < EXPERIMENT_LOOP.length - 1 && <span style={{ color: 'rgba(255,255,255,0.2)' }}>ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢</span>}
+            {i < EXPERIMENT_LOOP.length - 1 && <span style={{ color: 'rgba(255,255,255,0.2)' }}>â¢—Â —â„¢</span>}
           </span>
         ))}
       </div>

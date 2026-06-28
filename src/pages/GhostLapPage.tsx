@@ -1,11 +1,11 @@
 /**
- * GhostLapPage Ã¢â‚¬â€ Ghost Lap & Ideal Line Simulator.
+ * GhostLapPage — Ghost Lap & Ideal Line Simulator.
  *
  * Compete against your ideal lap, not just the clock. Pick a ghost mode
  * (best / ideal / coach / rival / twin / safety / tyre), see the cumulative
  * gap build corner by corner, inspect a selected corner's line + throttle +
  * exit delta with a coach instruction, and let the Oracle pick the smartest
- * ghost Ã¢â‚¬â€ which is not always the fastest one.
+ * ghost — which is not always the fastest one.
  */
 import { useState } from 'react';
 import { Ghost, ChevronRight, Sparkles } from 'lucide-react';
@@ -19,7 +19,7 @@ export function GhostLapPage() {
   const garage = useGarage();
   const { ctx } = useSessionContext();
   const [modeId, setModeId] = useState('ideal-personal');
-  const [cornerIdx, setCornerIdx] = useState(3); // T15 Bucine Ã¢â‚¬â€ the main loss
+  const [cornerIdx, setCornerIdx] = useState(3); // T15 Bucine — the main loss
 
   const gl = buildGhostLap(
     garage.profile.rider.name,
@@ -36,11 +36,11 @@ export function GhostLapPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><Ghost size={18} /> Ghost Lap Simulator</h1>
-          <p className="page-subtitle">Ideal line Ã‚Â· telemetry overlay Ã‚Â· AI coaching Ã‚Â· risk-aware reference Ã¢â‚¬â€ {gl.combo}</p>
+          <p className="page-subtitle">Ideal line —· telemetry overlay —· AI coaching —· risk-aware reference — {gl.combo}</p>
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Potential gain</div>
-          <div style={{ fontSize: 18, fontWeight: 800, fontFamily: MONO, color: 'var(--green)' }}>Ã¢Ë†â€™{gl.potentialGain.toFixed(3)}s</div>
+          <div style={{ fontSize: 18, fontWeight: 800, fontFamily: MONO, color: 'var(--green)' }}>Ã¢Ë†—™{gl.potentialGain.toFixed(3)}s</div>
         </div>
       </div>
 
@@ -104,7 +104,7 @@ export function GhostLapPage() {
               <span style={{ width: 56, textAlign: 'right', fontSize: 10.5, fontFamily: MONO, color: p.gap === 0 ? 'var(--text-muted)' : 'var(--accent)' }}>+{p.gap.toFixed(3)}</span>
             </div>
           ))}
-          <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 6 }}>This is where the lap time is built Ã¢â‚¬â€ click a corner to inspect it.</div>
+          <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 6 }}>This is where the lap time is built — click a corner to inspect it.</div>
 
           <div style={{ marginTop: 14 }}>
             <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>Telemetry overlays</div>
@@ -113,7 +113,7 @@ export function GhostLapPage() {
                 const est = gl.estimatedOverlays.includes(c);
                 return (
                   <span key={c} style={{ fontSize: 9.5, fontFamily: MONO, color: est ? 'var(--text-muted)' : 'var(--text)', border: `1px solid ${est ? 'var(--border)' : 'rgba(0,183,255,0.3)'}`, borderRadius: 5, padding: '2px 7px' }}>
-                    {c}{est ? ' Ã‚Â· est' : ''}
+                    {c}{est ? ' —· est' : ''}
                   </span>
                 );
               })}

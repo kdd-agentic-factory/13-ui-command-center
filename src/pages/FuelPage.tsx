@@ -1,9 +1,9 @@
 /**
- * FuelPage â€” KDD Fuel & Energy Lab.
+ * FuelPage —” KDD Fuel & Energy Lab.
  *
  * Tank vs race sizing, per-lap consumption + safety margin, the fuel-weight
  * lap-time penalty, the lift-and-coast zones, the burn plan and the 2027
- * sustainable-fuel transition â€” turning fuel into a how-much-to-carry call.
+ * sustainable-fuel transition —” turning fuel into a how-much-to-carry call.
  */
 import { Fuel, Scale, Leaf, TrendingDown, ListChecks } from 'lucide-react';
 import { useGarage } from '../hooks/useGarage';
@@ -28,7 +28,7 @@ export function FuelPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><Fuel size={18} /> Fuel & Energy Lab</h1>
-          <p className="page-subtitle">{f.raceLaps} laps Â· {f.consumption.perLapL}L/lap Â· {f.tank.fullThrottlePct}% full throttle â€” {f.combo}</p>
+          <p className="page-subtitle">{f.raceLaps} laps · {f.consumption.perLapL}L/lap · {f.tank.fullThrottlePct}% full throttle —” {f.combo}</p>
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Margin</div>
@@ -83,7 +83,7 @@ export function FuelPage() {
           <div style={{ fontSize: 22, fontWeight: 800, fontFamily: MONO, color: 'var(--text)' }}>{f.weight.fuelMassKg} kg</div>
           <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)' }}>fuel at lights-out</div>
           <div style={{ fontSize: 11, color: 'var(--accent)', fontFamily: MONO, marginTop: 6 }}>âˆ’{f.weight.startEndDeltaS}s/lap heavier at the start</div>
-          <div style={{ fontSize: 9.5, color: 'var(--text-muted)', marginTop: 2 }}>~{f.weight.lapCostPerKgS}s/lap per kg Â· the bike quickens as the tank empties.</div>
+          <div style={{ fontSize: 9.5, color: 'var(--text-muted)', marginTop: 2 }}>~{f.weight.lapCostPerKgS}s/lap per kg · the bike quickens as the tank empties.</div>
         </div>
         <div className="card" style={{ padding: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}><TrendingDown size={14} style={{ color: 'var(--green)' }} /><span style={hdr}>Lift-and-coast zones</span></div>

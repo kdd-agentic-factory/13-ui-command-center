@@ -1,5 +1,5 @@
 /**
- * LeanAngleHUD (engineer report v2 Â§6) â€” lean is the identity metric of a
+ * LeanAngleHUD (engineer report v2 Â§6) —” lean is the identity metric of a
  * motorcycle, so it gets its own HUD: a semicircular gauge with the live lean,
  * the session max, the best-lap max, the apex target window, and a left/right
  * corner-average comparison (asymmetry tells you which side you trust less).
@@ -53,7 +53,7 @@ export function LeanAngleHUD({
     <div className="card">
       <div className="card-header">
         <span className="card-title">Lean Angle</span>
-        <span className="badge" style={{ background: `color-mix(in srgb, ${risk.c} 15%, transparent)`, color: risk.c }}>RISK Â· {risk.t}</span>
+        <span className="badge" style={{ background: `color-mix(in srgb, ${risk.c} 15%, transparent)`, color: risk.c }}>RISK · {risk.t}</span>
       </div>
 
       <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap', marginTop: 6 }}>
@@ -87,7 +87,7 @@ export function LeanAngleHUD({
             {[
               { l: 'Session max', v: `${maxLean.toFixed(1)}Â°`, c: 'var(--accent)' },
               { l: 'Best-lap max', v: `${bestMax.toFixed(1)}Â°`, c: 'var(--yellow)' },
-              { l: 'Apex target', v: `${targetLo}â€“${targetHi}Â°`, c: 'var(--green)' },
+              { l: 'Apex target', v: `${targetLo}—“${targetHi}Â°`, c: 'var(--green)' },
               { l: 'Current', v: `${mag.toFixed(1)}Â°`, c: risk.c },
             ].map(s => (
               <div key={s.l} className="stat-tile">
@@ -129,10 +129,10 @@ export function LeanAngleHUD({
               </div>
               <div style={{ color: 'var(--text-dim)' }}>
                 {isApproach && `Current lean is normal for ${phase}. Apex target applies mid-corner only.`}
-                {isApex && `Target apex lean: ${targetLo}â€“${targetHi}Â°. Stay within window.`}
+                {isApex && `Target apex lean: ${targetLo}—“${targetHi}Â°. Stay within window.`}
                 {isExit && `Reduce lean as throttle opens. Risk increases above 55Â° with rear tyre >116Â°C.`}
                 {!phase && `Apex target applies in mid-corner; lower values are normal on straights.`}
-                {rearTemp && rearTemp > 116 && <span style={{ color: 'var(--accent)' }}> Â· Rear tyre thermal risk active</span>}
+                {rearTemp && rearTemp > 116 && <span style={{ color: 'var(--accent)' }}> · Rear tyre thermal risk active</span>}
               </div>
             </div>
           )}

@@ -1,12 +1,12 @@
 /**
- * Crash-Risk Index (engineer Phase 3 #4) â€” real-time safety guardian for Mugello.
+ * Crash-Risk Index (engineer Phase 3 #4) —” real-time safety guardian for Mugello.
  *
  * Dynamic risk by corner, tyre, lean, grip, brake and surface. Not a decorative
- * "semaphore" â€” a decision tool with cause, evidence, action, time cost and
+ * "semaphore" —” a decision tool with cause, evidence, action, time cost and
  * estimated risk reduction.
  *
  * CRITICAL: No Jarama references. All 15 Mugello corners only.
- * Naming: "Front stability" not "Front grip" â€” avoids confusion (LOW risk â‰  low grip).
+ * Naming: "Front stability" not "Front grip" —” avoids confusion (LOW risk â‰  low grip).
  */
 
 import { useMemo } from 'react';
@@ -21,20 +21,20 @@ import { getActiveCircuit } from '../domain/circuits';
 import { activeRaceLaps } from '../domain/circuitDatasets';
 import { useGarage } from '../hooks/useGarage';
 
-// â”€â”€ Risk factors â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// —€—€ Risk factors —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
 
 interface Factor {
   id: string;
   label: string;
-  value: number;    // 0â€“100
+  value: number;    // 0—“100
   level: 'low' | 'med' | 'high';
   note: string;
   zone: string;
 }
 
 const FACTORS: Factor[] = [
-  { id: 'lean',       label: 'Lean margin',           value: 78, level: 'high',    note: 'Peaks 57Â° at T8/T9 Arrabbiata â€” close to tyre edge under high load.', zone: 'T8/T9' },
-  { id: 'rear-grip',  label: 'Rear grip',             value: 62, level: 'med',     note: 'Grip down 12% on exit phases â€” rear slip detected at T15 Bucine.', zone: 'T15' },
+  { id: 'lean',       label: 'Lean margin',           value: 78, level: 'high',    note: 'Peaks 57Â° at T8/T9 Arrabbiata —” close to tyre edge under high load.', zone: 'T8/T9' },
+  { id: 'rear-grip',  label: 'Rear grip',             value: 62, level: 'med',     note: 'Grip down 12% on exit phases —” rear slip detected at T15 Bucine.', zone: 'T15' },
   { id: 'front',      label: 'Front stability',       value: 30, level: 'low',     note: 'Front stable under heavy braking; no lock or major push at T1 San Donato.', zone: 'T1' },
   { id: 'tyre-therm', label: 'Tyre thermal load',     value: 64, level: 'med',     note: 'Rear soft at 118Â°C; thermal load rising after Lap 15.', zone: 'Rear' },
   { id: 'surface',    label: 'Track surface',         value: 38, level: 'low',     note: 'Dry and clean. No wet patches. Kerb risk medium at Biondetti 1/2.', zone: 'T13/T14' },
@@ -46,7 +46,7 @@ const FACTORS: Factor[] = [
   { id: 'kerb',       label: 'Kerb strike risk',      value: 48, level: 'med',     note: 'Biondetti 1/2 kerb approach inconsistent over last 3 laps.', zone: 'T13/T14' },
 ];
 
-// â”€â”€ Risk level helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// —€—€ Risk level helpers —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
 
 type RiskLevel = Factor['level'];
 
@@ -67,25 +67,25 @@ const LEVEL_TEXT: Record<RiskLevel, string> = {
   low: 'LOW', med: 'MEDIUM', high: 'HIGH',
 };
 
-// â”€â”€ Corner risk â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// —€—€ Corner risk —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
 
 interface CornerRisk {
   n: number;
   name: string;
-  score: number;    // 0â€“100
+  score: number;    // 0—“100
   cause: string;
   action: string;
 }
 
 const CORNER_RISKS: CornerRisk[] = [
-  { n: 15, name: 'Bucine',       score: 76, cause: 'Rear slip appears above 42% throttle while lean remains >55Â°',            action: 'Reduce lean 2â€“3Â° before throttle pickup' },
+  { n: 15, name: 'Bucine',       score: 76, cause: 'Rear slip appears above 42% throttle while lean remains >55Â°',            action: 'Reduce lean 2—“3Â° before throttle pickup' },
   { n: 8,  name: 'Arrabbiata 1', score: 72, cause: 'Sustained edge grip demand at 57Â° lean',                                  action: 'Hold smoother line, avoid tightening mid-corner' },
   { n: 9,  name: 'Arrabbiata 2', score: 69, cause: 'High lateral load with rear tyre above 116Â°C',                             action: 'Reduce steering correction, maintain neutral throttle' },
   { n: 1,  name: 'San Donato',   score: 63, cause: 'Brake pressure spike during turn-in',                                      action: 'Release brake pressure 5 m earlier' },
-  { n: 12, name: 'Correntaio',   score: 61, cause: 'Front chatter at corner entry â€” brake release instability',                action: 'Smooth brake release, avoid late line correction' },
+  { n: 12, name: 'Correntaio',   score: 61, cause: 'Front chatter at corner entry —” brake release instability',                action: 'Smooth brake release, avoid late line correction' },
 ];
 
-// â”€â”€ Near-misses â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// —€—€ Near-misses —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
 
 interface NearMiss {
   lap: number;
@@ -98,10 +98,10 @@ interface NearMiss {
 
 const NEAR_MISSES: NearMiss[] = [
   { lap: 14, corner: 'T15 Bucine',       text: 'Rear step-out on exit',          slip: 14, recovery: 'Throttle reduced from 44% to 28%', severity: 'Medium' },
-  { lap: 16, corner: 'T8 Arrabbiata 1', text: 'Front pushed wide at max lean',  slip: 0,  recovery: 'Lean angle 57Â° Â· line deviation +0.8 m', severity: 'Medium-High' },
+  { lap: 16, corner: 'T8 Arrabbiata 1', text: 'Front pushed wide at max lean',  slip: 0,  recovery: 'Lean angle 57Â° · line deviation +0.8 m', severity: 'Medium-High' },
 ];
 
-// â”€â”€ Risk timeline â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// —€—€ Risk timeline —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
 
 const TIMELINE: { lap: number; score: number; flag?: 'near-miss' }[] = [
   { lap: 10, score: 42 },
@@ -114,7 +114,7 @@ const TIMELINE: { lap: number; score: number; flag?: 'near-miss' }[] = [
   { lap: 17, score: 58 },
 ];
 
-// â”€â”€ Phase risk â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// —€—€ Phase risk —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
 
 interface PhaseRisk {
   phase: string;
@@ -128,7 +128,7 @@ const PHASE_RISKS: PhaseRisk[] = [
   { phase: 'Exit',  score: 76, issue: 'Rear slip at T15' },
 ];
 
-// â”€â”€ Main component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// —€—€ Main component —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
 
 export function CrashRiskPage() {
   const garage = useGarage();
@@ -154,10 +154,10 @@ export function CrashRiskPage() {
         <div>
           <h1 className="page-title">Crash-Risk Index</h1>
           <p className="page-subtitle">
-            {getActiveCircuit().name} {getActiveCircuit().layout} Â· Race Lap {t.lapCount}/{activeRaceLaps(getActiveCircuit())} Â· Safety Guardian AI
+            {getActiveCircuit().name} {getActiveCircuit().layout} · Race Lap {t.lapCount}/{activeRaceLaps(getActiveCircuit())} · Safety Guardian AI
           </p>
           <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', marginTop: 2 }}>
-            {getActiveCircuit().lengthKm} km Â· {getActiveCircuit().turns} turns Â· bike power {garage.powerClass} Â· rider risk {garage.profile.rider.riskTendency} Â· lean+throttle thresholds adjusted
+            {getActiveCircuit().lengthKm} km · {getActiveCircuit().turns} turns · bike power {garage.powerClass} · rider risk {garage.profile.rider.riskTendency} · lean+throttle thresholds adjusted
           </div>
         </div>
         <span className="badge" style={{
@@ -180,7 +180,7 @@ export function CrashRiskPage() {
               <TrendingUp size={10} style={{ verticalAlign: -1, color: 'var(--accent)' }} /> Trend +{trend} pts over last 3 laps
             </span>
             <span style={{ fontSize: 9, fontFamily: 'JetBrains Mono,monospace', color: 'var(--text-muted)' }}>
-              Low 0â€“39 Â· Medium 40â€“69 Â· High 70â€“100
+              Low 0—“39 · Medium 40—“69 · High 70—“100
             </span>
           </div>
         </div>
@@ -215,7 +215,7 @@ export function CrashRiskPage() {
               Rear grip loss under throttle while lean angle remains high
             </div>
             <div style={{ fontSize: 10, color: 'var(--accent)', fontFamily: 'JetBrains Mono,monospace', marginTop: 4 }}>
-              Concentration: T8 Â· T9 Â· T15
+              Concentration: T8 · T9 · T15
             </div>
           </div>
         </div>
@@ -226,7 +226,7 @@ export function CrashRiskPage() {
       {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <div className="grid-2" style={{ gap: 16, alignItems: 'start' }}>
 
-        {/* â”€â”€ Contributing Factors â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        {/* —€—€ Contributing Factors —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€ */}
         <div className="card">
           <div className="card-header">
             <span className="card-title flex items-center gap-2"><Gauge size={14} style={{ color: 'var(--blue)' }} /> Contributing Factors</span>
@@ -265,7 +265,7 @@ export function CrashRiskPage() {
           </div>
         </div>
 
-        {/* â”€â”€ Right column â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        {/* —€—€ Right column —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€ */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
           {/* Riskiest corners */}
@@ -282,7 +282,7 @@ export function CrashRiskPage() {
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
                     <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 12 }}>
-                      T{c.n} Â· {c.name}
+                      T{c.n} · {c.name}
                     </span>
                     <span style={{
                       fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: 14,
@@ -412,7 +412,7 @@ export function CrashRiskPage() {
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
                   <span style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 11, fontWeight: 700, color: 'var(--accent)' }}>
-                    Lap {m.lap} Â· {m.corner}
+                    Lap {m.lap} · {m.corner}
                   </span>
                   <span style={{
                     fontSize: 9, fontFamily: 'JetBrains Mono,monospace', fontWeight: 700,
@@ -437,11 +437,11 @@ export function CrashRiskPage() {
         {/* Crash-Risk Map */}
         <div className="card">
           <div className="card-header">
-            <span className="card-title flex items-center gap-2"><Info size={14} style={{ color: 'var(--blue)' }} /> Crash-Risk Map Â· {getActiveCircuit().name}</span>
+            <span className="card-title flex items-center gap-2"><Info size={14} style={{ color: 'var(--blue)' }} /> Crash-Risk Map · {getActiveCircuit().name}</span>
           </div>
           <div style={{ marginTop: 6, fontSize: 12, color: 'var(--text-dim)', lineHeight: 1.6 }}>
             <p style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', marginBottom: 8 }}>
-              {MUGELLO_CIRCUIT.assetStatusLabel} Â· {MUGELLO_CIRCUIT.turns} turns
+              {MUGELLO_CIRCUIT.assetStatusLabel} · {MUGELLO_CIRCUIT.turns} turns
             </p>
             <div style={{ marginBottom: 8 }}>
               <div style={{ fontSize: 10, fontWeight: 700, fontFamily: 'JetBrains Mono,monospace', color: 'var(--accent)', marginBottom: 4 }}>
@@ -470,7 +470,7 @@ export function CrashRiskPage() {
               ))}
             </div>
             <div style={{ marginTop: 8, fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>
-              Map crosses: lean Â· speed Â· grip Â· chatter Â· brake Â· throttle Â· surface
+              Map crosses: lean · speed · grip · chatter · brake · throttle · surface
             </div>
           </div>
         </div>
@@ -499,7 +499,7 @@ export function CrashRiskPage() {
             </div>
             <div className="stat-tile">
               <div className="stat-tile__label">Recommended safety mode</div>
-              <span className="stat-tile__value" style={{ fontSize: 14, color: 'var(--blue)' }}>Rear tyre protection Â· 2 laps</span>
+              <span className="stat-tile__value" style={{ fontSize: 14, color: 'var(--blue)' }}>Rear tyre protection · 2 laps</span>
             </div>
           </div>
         </div>
@@ -529,7 +529,7 @@ export function CrashRiskPage() {
             padding: '6px 8px', borderRadius: 4, background: 'rgba(34,197,94,0.05)',
             border: '1px solid rgba(34,197,94,0.1)',
           }}>
-            <strong>Expected effect:</strong> Risk -12 pts Â· Lap time impact +0.047s
+            <strong>Expected effect:</strong> Risk -12 pts · Lap time impact +0.047s
           </div>
         </div>
       </div>
@@ -585,7 +585,7 @@ export function CrashRiskPage() {
           <div style={{ fontSize: 11, color: 'var(--text-dim)', lineHeight: 1.6, marginBottom: 10 }}>
             <strong>Recommended actions:</strong>
             <ol style={{ margin: '4px 0 0 16px', padding: 0 }}>
-              <li>Reduce lean by 2â€“3Â° before throttle pickup at T15 Bucine.</li>
+              <li>Reduce lean by 2—“3Â° before throttle pickup at T15 Bucine.</li>
               <li>Avoid TC reduction while rear tyre remains above 116Â°C.</li>
               <li>Keep brake release smoother into T1 San Donato and T12 Correntaio.</li>
               <li>Avoid aggressive kerb use through Biondetti 1/2.</li>

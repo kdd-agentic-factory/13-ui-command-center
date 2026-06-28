@@ -1,9 +1,9 @@
 /**
- * FederatedPage Ã¢â‚¬â€ Federated Motorsport Intelligence.
+ * FederatedPage — Federated Motorsport Intelligence.
  *
  * Privacy-first comparative intelligence: percentiles, lap/corner/technique
  * benchmarks vs an anonymous similar-rider cohort, "riders like you improved
- * byÃ¢â‚¬Â¦", a learning benchmark and the federated Oracle context. In Private mode
+ * by—…", a learning benchmark and the federated Oracle context. In Private mode
  * comparisons are disabled (your data only); raw data is never exposed.
  */
 import { useState } from 'react';
@@ -26,11 +26,11 @@ export function FederatedPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><Network size={18} /> Federated Motorsport Intelligence</h1>
-          <p className="page-subtitle">Collective racing intelligence, private by design Ã¢â‚¬â€ {f.combo}</p>
+          <p className="page-subtitle">Collective racing intelligence, private by design — {f.combo}</p>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Overall percentile Ã‚Â· conf {f.confidence}%</div>
-          <div style={{ fontSize: 26, fontWeight: 800, fontFamily: MONO, color: percentileColor(f.overallPercentile) }}>{comparing ? `${f.overallPercentile}th` : 'Ã¢â‚¬â€'}</div>
+          <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Overall percentile —· conf {f.confidence}%</div>
+          <div style={{ fontSize: 26, fontWeight: 800, fontFamily: MONO, color: percentileColor(f.overallPercentile) }}>{comparing ? `${f.overallPercentile}th` : '—'}</div>
         </div>
       </div>
 
@@ -64,7 +64,7 @@ export function FederatedPage() {
       {!comparing ? (
         <div className="card" style={{ padding: 24, textAlign: 'center', color: 'var(--text-muted)' }}>
           <Lock size={20} style={{ color: 'var(--green)' }} />
-          <div style={{ fontSize: 13, color: 'var(--text)', marginTop: 8 }}>Private mode Ã¢â‚¬â€ comparisons disabled.</div>
+          <div style={{ fontSize: 13, color: 'var(--text)', marginTop: 8 }}>Private mode — comparisons disabled.</div>
           <div style={{ fontSize: 11, marginTop: 4 }}>KDD learns only from your own sessions. Switch to Team, Federated or Academy to benchmark against anonymous similar-rider patterns.</div>
         </div>
       ) : (
@@ -76,7 +76,7 @@ export function FederatedPage() {
               <span><span style={{ color: 'var(--text-muted)' }}>Strengths: </span><span style={{ color: 'var(--green)' }}>{f.strengths.join(', ')}</span></span>
               <span><span style={{ color: 'var(--text-muted)' }}>Weaknesses: </span><span style={{ color: 'var(--accent)' }}>{f.weaknesses.join(', ')}</span></span>
             </div>
-            <div style={{ fontSize: 11.5, marginTop: 6 }}><span style={{ color: 'var(--text-muted)' }}>Main opportunity: </span><b style={{ color: 'var(--text)' }}>{f.mainOpportunity}</b> Ã‚Â· est. gain to top 20%: <span style={{ color: 'var(--green)', fontFamily: MONO }}>{f.gainToTop20}</span></div>
+            <div style={{ fontSize: 11.5, marginTop: 6 }}><span style={{ color: 'var(--text-muted)' }}>Main opportunity: </span><b style={{ color: 'var(--text)' }}>{f.mainOpportunity}</b> —· est. gain to top 20%: <span style={{ color: 'var(--green)', fontFamily: MONO }}>{f.gainToTop20}</span></div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, alignItems: 'start' }}>
@@ -120,7 +120,7 @@ export function FederatedPage() {
 
           {/* corner benchmark */}
           <div className="card" style={{ padding: 16, marginTop: 14 }}>
-            <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 10 }}>Corner benchmark Ã‚Â· exit speed</div>
+            <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 10 }}>Corner benchmark —· exit speed</div>
             {f.corners.map(c => {
               const span = Math.max(1, c.top20 - Math.min(c.yours, c.median) + 4);
               const at = (v: number) => `${((v - (Math.min(c.yours, c.median) - 2)) / span) * 100}%`;
@@ -157,12 +157,12 @@ export function FederatedPage() {
                 <span><span style={{ color: 'var(--text-muted)' }}>Risk: </span><span style={{ color: 'var(--green)' }}>{f.ridersLikeYou.riskImpact}</span></span>
                 <span><span style={{ color: 'var(--text-muted)' }}>Conf: </span>{f.ridersLikeYou.confidence}</span>
               </div>
-              <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 4 }}>{f.ridersLikeYou.corners.join(' Ã‚Â· ')} Ã‚Â· based on anonymous aggregated sessions.</div>
+              <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 4 }}>{f.ridersLikeYou.corners.join(' —· ')} —· based on anonymous aggregated sessions.</div>
             </div>
             <div className="card" style={{ padding: 16 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
                 <TrendingUp size={13} style={{ color: 'var(--cyan)' }} />
-                <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Learning benchmark Ã‚Â· {f.learning.block}</span>
+                <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Learning benchmark —· {f.learning.block}</span>
               </div>
               <div style={{ display: 'flex', gap: 16, fontSize: 12 }}>
                 <span>you <b style={{ color: 'var(--green)' }}>{f.learning.yourProgress}</b></span>
@@ -177,7 +177,7 @@ export function FederatedPage() {
           <div className="card" style={{ padding: 16, marginTop: 14, background: 'rgba(139,92,246,0.06)', border: '1px solid rgba(139,92,246,0.3)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 6 }}>
               <Sparkles size={14} style={{ color: 'var(--violet)' }} />
-              <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--violet)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Oracle federated context Ã‚Â· {f.confidence}%</span>
+              <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--violet)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Oracle federated context —· {f.confidence}%</span>
             </div>
             <div style={{ fontSize: 12, color: 'var(--text)', lineHeight: 1.55 }}>{f.oracleContext}</div>
             <div style={{ fontSize: 11.5, color: 'var(--green)', marginTop: 6 }}>Recommended mission: {f.recommendedMission}</div>

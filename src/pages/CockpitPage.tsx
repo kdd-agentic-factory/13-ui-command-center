@@ -1,5 +1,5 @@
 /**
- * CockpitPage ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â Adaptive Pit-Wall Cockpit.
+ * CockpitPage â’—¢â¢—š—¬â¢Ã¢—š¬—” Adaptive Pit-Wall Cockpit.
  *
  * The dashboard that reorganises itself: a priority engine reads the context
  * and decides the cockpit mode, the primary panel, the supporting panels, a
@@ -42,7 +42,7 @@ export function CockpitPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><LayoutGrid size={18} /> Adaptive Pit-Wall Cockpit</h1>
-          <p className="page-subtitle">Context-aware dashboard for race decisions ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â the dashboard adapts to the track, not the other way round</p>
+          <p className="page-subtitle">Context-aware dashboard for race decisions â’—¢â¢—š—¬â¢Ã¢—š¬—” the dashboard adapts to the track, not the other way round</p>
         </div>
         <div style={{ display: 'flex', gap: 4 }}>
           {(['adaptive', 'hybrid', 'manual'] as LayoutMode[]).map(m => (
@@ -72,14 +72,14 @@ export function CockpitPage() {
  display: 'flex', alignItems: 'center', gap: 14 }}>
         <span style={{ fontSize: 16, fontWeight: 800, color: mm.color }}>{mm.label}</span>
         <span style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>{layoutOut.trigger}</span>
-        <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text)', fontStyle: 'italic' }}>ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“{layoutOut.oracleVerdict}ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â</span>
+        <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text)', fontStyle: 'italic' }}>â’—¢â¢—š—¬â—¦—{layoutOut.oracleVerdict}â’—¢â¢—š—¬â—š—”</span>
       </div>
 
       {/* hybrid suggestion */}
       {showSuggestion && (
         <div className="card" style={{ padding: '10px 14px', marginBottom: 14, background: 'rgba(139,92,246,0.07)', border: '1px solid rgba(139,92,246,0.35)', display: 'flex', alignItems: 'center', gap: 12 }}>
           <Sparkles size={15} style={{ color: 'var(--violet)' }} />
-          <span style={{ fontSize: 12, color: 'var(--text)' }}>KDD suggests switching to <b style={{ color: modeMeta(layoutOut.suggestion!.toMode).color }}>{modeMeta(layoutOut.suggestion!.toMode).label}</b> ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â {layoutOut.suggestion!.reason}</span>
+          <span style={{ fontSize: 12, color: 'var(--text)' }}>KDD suggests switching to <b style={{ color: modeMeta(layoutOut.suggestion!.toMode).color }}>{modeMeta(layoutOut.suggestion!.toMode).label}</b> â’—¢â¢—š—¬â¢Ã¢—š¬—” {layoutOut.suggestion!.reason}</span>
           <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
             <button onClick={() => setLayout('adaptive')} style={sBtn('var(--green)')}>Accept</button>
             <button onClick={() => setDismissed(true)} style={sBtn('var(--text-muted)')}>Ignore</button>
@@ -114,7 +114,7 @@ export function CockpitPage() {
           <div className="card" style={{ padding: 16, background: 'rgba(0,183,255,0.05)', border: '1px solid rgba(0,183,255,0.3)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
               <Zap size={15} style={{ color: 'var(--cyan)' }} />
-              <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--cyan)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Next best action ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· {layoutOut.nextBestAction.priority}</span>
+              <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--cyan)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Next best action â’—šâ—š—· {layoutOut.nextBestAction.priority}</span>
             </div>
             <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{layoutOut.nextBestAction.action}</div>
             <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>{layoutOut.nextBestAction.why}</div>
@@ -127,7 +127,7 @@ export function CockpitPage() {
 
         {/* priority engine */}
         <div className="card" style={{ padding: 16 }}>
-          <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 12 }}>Priority engine ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· live module scores</div>
+          <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 12 }}>Priority engine â’—šâ—š—· live module scores</div>
           {layoutOut.priorities.slice(0, 9).map(p => (
             <div key={p.tab} onClick={() => navigate(p.tab)} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 9, cursor: 'pointer' }}>
               <span style={{ width: 120, fontSize: 11, color: 'var(--text)' }}>{p.label}</span>
@@ -138,7 +138,7 @@ export function CockpitPage() {
             </div>
           ))}
           <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 6 }}>
-            {layout === 'manual' ? 'Manual layout ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â you pin the modules; the engine only advises.' : layout === 'hybrid' ? 'Hybrid ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â KDD suggests, you accept or pin.' : 'Adaptive ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â the cockpit reorganises automatically.'}
+            {layout === 'manual' ? 'Manual layout â’—¢â¢—š—¬â¢Ã¢—š¬—” you pin the modules; the engine only advises.' : layout === 'hybrid' ? 'Hybrid â’—¢â¢—š—¬â¢Ã¢—š¬—” KDD suggests, you accept or pin.' : 'Adaptive â’—¢â¢—š—¬â¢Ã¢—š¬—” the cockpit reorganises automatically.'}
           </div>
         </div>
       </div>

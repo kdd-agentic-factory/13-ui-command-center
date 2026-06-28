@@ -1,9 +1,9 @@
 /**
- * OverviewPage Ã¢â‚¬â€ Race Overview with full data validation, Mugello circuit map,
+ * OverviewPage — Race Overview with full data validation, Mugello circuit map,
  * AI strategy, tyre telemetry, gear distribution, pace model, stint progress,
  * race standings, championship projections, and data integrity monitoring.
  *
- * Data flow: useLiveTelemetry() Ã¢â€ â€™ TelemetryFrame Ã¢â€ â€™ validated sub-components
+ * Data flow: useLiveTelemetry() Ã¢— —™ TelemetryFrame Ã¢— —™ validated sub-components
  * Every consumer validates its data before rendering. Bogus values = blank with
  * error indicator, NOT wrong numbers.
  */
@@ -27,7 +27,7 @@ import {
   sessionDisplayState,
 } from '../domain/sessionTruth';
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Validation helpers Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// Ã¢——Ã¢—— Validation helpers Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
 
 /** Lap count that makes sense for a MotoGP race (1..23). Returns null if bogus. */
 function validLap(lap: number): number | null {
@@ -48,7 +48,7 @@ function posColor(pos: number): string {
   return pos === 1 ? 'var(--yellow)' : pos === 2 ? '#C0C0C0' : pos === 3 ? '#CD7F32' : 'var(--text-muted)';
 }
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Types Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// Ã¢——Ã¢—— Types Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
 
 interface Rival {
   pos: number; rider: string; team: string; num: number;
@@ -56,12 +56,12 @@ interface Rival {
   threatColor: string; basePos: number;
 }
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Constants Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// Ã¢——Ã¢—— Constants Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
 
 const RACE_LAPS = MUGELLO_CIRCUIT.raceLaps;
 const FUEL_PER_LAP = MUGELLO_CIRCUIT.fuelBurnKgPerLap;
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Base rivals Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// Ã¢——Ã¢—— Base rivals Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
 
 const BASE_RIVALS = [
   { basePos: 1, rider: 'M. Marquez',    team: 'Gresini Duc.',  num: 93, self: false },
@@ -73,8 +73,8 @@ const BASE_RIVALS = [
 
 /** Determine threat level and color for a rival vs our rider. */
 function calcThreat(r: typeof BASE_RIVALS[number], ourPos: number, lastLapDiff: string): { threat: string; color: string } {
-  if (r.self) return { threat: 'Ã¢â‚¬â€', color: 'var(--text-muted)' };
-  const faster = lastLapDiff.startsWith('Ã¢â‚¬â€œ');
+  if (r.self) return { threat: '—', color: 'var(--text-muted)' };
+  const faster = lastLapDiff.startsWith('——œ');
   const ahead = r.basePos < ourPos;
   // Rider ahead pulling away = low threat. Rider ahead but we're faster = target.
   // Rider behind closing = HIGH threat. Rider behind holding = low.
@@ -82,7 +82,7 @@ function calcThreat(r: typeof BASE_RIVALS[number], ourPos: number, lastLapDiff: 
     ? { threat: 'Pulling away', color: 'var(--green)' }
     : { threat: 'Target', color: 'var(--blue)' };
   return faster
-    ? { threat: 'Ã¢Å¡Â  Closing', color: 'var(--accent)' }
+    ? { threat: 'Ã¢šÂ  Closing', color: 'var(--accent)' }
     : { threat: 'Holding', color: 'var(--green)' };
 }
 
@@ -91,18 +91,18 @@ function buildRivals(position: number, gap: string): Rival[] {
   return BASE_RIVALS.map((r, i) => {
     const displayPos  = r.self ? position : i < position - 1 ? i + 1 : i + 1;
     const gapToLead   = r.self ? myGap : r.basePos === 1 ? 'LEADER' : `+${(r.basePos * 0.421).toFixed(3)}s`;
-    const lastLapDiff = r.self ? 'Ã¢â‚¬â€' : r.basePos < position
+    const lastLapDiff = r.self ? '—' : r.basePos < position
       ? `+${(Math.random() * 0.3).toFixed(3)}s`
-      : `Ã¢â‚¬â€œ${(Math.random() * 0.2).toFixed(3)}s`;
+      : `——œ${(Math.random() * 0.2).toFixed(3)}s`;
     const { threat, color } = calcThreat(r, position, lastLapDiff);
     return { ...r, pos: displayPos, gap: gapToLead, lastLapDiff, threat, threatColor: color };
   }).sort((a, b) => a.pos - b.pos);
 }
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Helpers Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// Ã¢——Ã¢—— Helpers Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
 
 function formatLap(s: number): string {
-  if (!validLapTime(s)) return 'Ã¢â‚¬â€.Ã¢â‚¬â€Ã¢â‚¬â€.Ã¢â‚¬â€Ã¢â‚¬â€Ã¢â‚¬â€';
+  if (!validLapTime(s)) return '—.——.———';
   const m = Math.floor(s / 60);
   const sec = (s % 60).toFixed(3).padStart(6, '0');
   return `${m}:${sec}`;
@@ -114,7 +114,7 @@ function fuelProjection(currentLap: number, fuelKg: number): number {
   return fuelKg - remainingLaps * FUEL_PER_LAP;
 }
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Sector delta bar Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// Ã¢——Ã¢—— Sector delta bar Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
 
 function SectorBar({ sector, delta, base }: { sector: string; delta: number; base: number }) {
   const pct = Math.min(100, Math.abs(delta / base) * 100 * 10);
@@ -143,10 +143,10 @@ function SectorBar({ sector, delta, base }: { sector: string; delta: number; bas
   );
 }
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Mugello circuit map Ã¢â‚¬â€ full SVG with 15 named corners, DRS zones Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// Ã¢——Ã¢—— Mugello circuit map — full SVG with 15 named corners, DRS zones Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
 
-/** Mugello track control points (GP line). Coordinates in 320Ãƒâ€”200 viewBox. */
-// REAL traced Mugello layout (sampleOutline), 23 points in the 320Ãƒâ€”200 viewBox.
+/** Mugello track control points (GP line). Coordinates in 320â—”200 viewBox. */
+// REAL traced Mugello layout (sampleOutline), 23 points in the 320â—”200 viewBox.
 // Sector polyline slices below assume ~thirds of this list.
 const MUGELLO_PTS: [number, number][] = sampleOutline('mugello', 22, 320, 200, 18);
 
@@ -169,8 +169,8 @@ const CORNERS: { name: string; pos: number; tag: string }[] = [
 
 /** DRS / overtake zones. */
 const DRS_ZONES: { label: string; start: number; end: number }[] = [
-  { label: 'DRS Z1', start: 0.70, end: 0.82 },  // Scarperia Ã¢â€ â€™ Palagio
-  { label: 'DRS Z2', start: 0.92, end: 0.99 },  // Final corner Ã¢â€ â€™ finish
+  { label: 'DRS Z1', start: 0.70, end: 0.82 },  // Scarperia Ã¢— —™ Palagio
+  { label: 'DRS Z2', start: 0.92, end: 0.99 },  // Final corner Ã¢— —™ finish
 ];
 
 function interpolateTrackPos(pts: [number, number][], frac: number): [number, number] {
@@ -225,7 +225,7 @@ function MugelloCircuit({ trackPos, lapAnomaly }: { trackPos: number; lapAnomaly
           fill="none" stroke="var(--green)" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" opacity="0.50"
         />
 
-        {/* DRS zones Ã¢â‚¬â€ dashed highlight */}
+        {/* DRS zones — dashed highlight */}
         {DRS_ZONES.map((z, i) => {
           const [sx, sy] = interpolateTrackPos(MUGELLO_PTS, z.start);
           const [ex, ey] = interpolateTrackPos(MUGELLO_PTS, z.end);
@@ -253,7 +253,7 @@ function MugelloCircuit({ trackPos, lapAnomaly }: { trackPos: number; lapAnomaly
           return <circle key={r.num} cx={rx} cy={ry} r="4" fill={r.color} opacity="0.82" />;
         })}
 
-        {/* KDD #47 Ã¢â‚¬â€ with anomaly glow if lap was anomalous */}
+        {/* KDD #47 — with anomaly glow if lap was anomalous */}
         <circle cx={kx} cy={ky} r="5.5" fill={lapAnomaly ? 'var(--orange)' : 'var(--accent)'}
           stroke="white" strokeWidth="1.5"
           style={{ filter: lapAnomaly ? 'drop-shadow(0 0 8px var(--orange))' : 'drop-shadow(0 0 5px var(--accent))' }} />
@@ -300,7 +300,7 @@ function MugelloCircuit({ trackPos, lapAnomaly }: { trackPos: number; lapAnomaly
   );
 }
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Championship standings Ã¢â‚¬â€ with live projection Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// Ã¢——Ã¢—— Championship standings — with live projection Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
 
 const CHAMPIONSHIP_DATA: { rider: string; num: number; pts: number; self: boolean }[] = [
   { rider: 'J. Martin',    num: 89, pts: 142, self: false },
@@ -363,17 +363,17 @@ function ChampionshipBars({ currentPos }: { currentPos: number }) {
         display:'flex', justifyContent:'space-between', alignItems:'center'
       }}>
         <span style={{ fontSize:10, color:'var(--text-dim)' }}>
-          If P{currentPos} holds Ã¢â€ â€™ <strong style={{ color:'var(--accent)' }}>{projectedPts} pts</strong>
+          If P{currentPos} holds Ã¢— —™ <strong style={{ color:'var(--accent)' }}>{projectedPts} pts</strong>
         </span>
         <span style={{ fontSize:10, color:'var(--text-muted)', fontFamily:'JetBrains Mono,monospace' }}>
-          {gap > 0 ? `Ã¢â‚¬â€œ${gap} pts` : 'CHAMPION'}
+          {gap > 0 ? `——œ${gap} pts` : 'CHAMPION'}
         </span>
       </div>
     </div>
   );
 }
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Stint progress Ã¢â‚¬â€ with session validation Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// Ã¢——Ã¢—— Stint progress — with session validation Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
 
 function StintProgress({ tyreAge, lapCount }: { tyreAge: number; lapCount: number }) {
   const valid = validLap(lapCount);
@@ -390,7 +390,7 @@ function StintProgress({ tyreAge, lapCount }: { tyreAge: number; lapCount: numbe
     return (
       <div style={{ padding:'12px', textAlign:'center', color:'var(--text-muted)', fontSize:12 }}>
         <AlertTriangle size={14} style={{ display:'inline', verticalAlign:'middle', marginRight:6 }} />
-        Stint data unavailable Ã¢â‚¬â€ waiting for lap data
+        Stint data unavailable — waiting for lap data
       </div>
     );
   }
@@ -408,7 +408,7 @@ function StintProgress({ tyreAge, lapCount }: { tyreAge: number; lapCount: numbe
       </div>
       <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:6 }}>
         {([
-          { label:'Pit Window',      value:`L${winOpen}Ã¢â‚¬â€œL${winClose}`, color:'var(--green)' },
+          { label:'Pit Window',      value:`L${winOpen}——œL${winClose}`, color:'var(--green)' },
           { label:'Optimal Pit',     value:`L${optPit}`,               color:'var(--green)' },
           { label:'Laps to Optimal', value:`${lapsLeft}`,              color:urgency },
           { label:'Race Laps Left',  value:`${raceLapsLeft}`,          color:'var(--text-muted)' },
@@ -427,7 +427,7 @@ function StintProgress({ tyreAge, lapCount }: { tyreAge: number; lapCount: numbe
   );
 }
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Data Integrity module Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// Ã¢——Ã¢—— Data Integrity module Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
 
 function DataIntegrity({ fuelValid, lapAnomaly, lapCount, lastLap, bestLap, sectorDeltasValidated, gearDistributionTotal }: {
   fuelValid: boolean; lapAnomaly: boolean; lapCount: number; lastLap: number; bestLap: number; sectorDeltasValidated: boolean; gearDistributionTotal: number;
@@ -482,7 +482,7 @@ function DataIntegrity({ fuelValid, lapAnomaly, lapCount, lastLap, bestLap, sect
   );
 }
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Race Standings table Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// Ã¢——Ã¢—— Race Standings table Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
 
 function RaceStandingsTable({ rivals, position }: { rivals: Rival[]; position: number }) {
   return (
@@ -517,7 +517,7 @@ function RaceStandingsTable({ rivals, position }: { rivals: Rival[]; position: n
             </td>
             <td className="mono" style={{
               fontSize: 12,
-              color: r.lastLapDiff === 'Ã¢â‚¬â€' ? 'var(--text-muted)' :
+              color: r.lastLapDiff === '—' ? 'var(--text-muted)' :
                 r.lastLapDiff.startsWith('+') ? 'var(--accent)' : 'var(--green)',
             }}>
               {r.lastLapDiff}
@@ -532,7 +532,7 @@ function RaceStandingsTable({ rivals, position }: { rivals: Rival[]; position: n
   );
 }
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ AI Strategy Call Ã¢â‚¬â€ dynamic, context-aware Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// Ã¢——Ã¢—— AI Strategy Call — dynamic, context-aware Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
 
 function AIStrategyCall({ position, lapCount, fuelLoad, lastLap, bestLap, lapAnomaly }: {
   position: number; lapCount: number; fuelLoad: number; lastLap: number; bestLap: number; lapAnomaly: boolean;
@@ -552,34 +552,34 @@ function AIStrategyCall({ position, lapCount, fuelLoad, lastLap, bestLap, lapAno
     strategies.push({ num: 1, text: `Hold P${position} and protect the rear tyre until Lap 8.`, urgency: 'medium' });
     strategies.push({ num: 2, text: 'Attack P2 in Sector 3 if gap drops below 0.4s.', urgency: 'low' });
   } else if (position < 3) {
-    strategies.push({ num: 1, text: `Defend P${position} Ã¢â‚¬â€ rivals have fresher tyres.`, urgency: 'high' });
+    strategies.push({ num: 1, text: `Defend P${position} — rivals have fresher tyres.`, urgency: 'high' });
   } else {
-    strategies.push({ num: 1, text: `P${position} Ã¢â‚¬â€ look ahead: gap management to P${position - 1}.`, urgency: 'medium' });
+    strategies.push({ num: 1, text: `P${position} — look ahead: gap management to P${position - 1}.`, urgency: 'medium' });
   }
 
   // Fuel advice
   if (fuelOk) {
     if (projected < 0) {
-      strategies.push({ num: strategies.length + 1, text: `Ã¢Å¡Â  FUEL CRITICAL: will be Ã¢â‚¬â€œ${Math.abs(projected).toFixed(1)}kg short. Engage Map 1 now.`, urgency: 'high' });
+      strategies.push({ num: strategies.length + 1, text: `Ã¢šÂ  FUEL CRITICAL: will be ——œ${Math.abs(projected).toFixed(1)}kg short. Engage Map 1 now.`, urgency: 'high' });
     } else if (projected < 2) {
       strategies.push({ num: strategies.length + 1, text: `Fuel tight: projected +${projected.toFixed(1)}kg at finish. Consider lift & coast.`, urgency: 'high' });
     } else {
-      strategies.push({ num: strategies.length + 1, text: `Fuel nominal Ã¢â‚¬â€ ${fuelLoad.toFixed(1)}kg remaining (${(fuelLoad / FUEL_PER_LAP).toFixed(1)} laps).`, urgency: 'low' });
+      strategies.push({ num: strategies.length + 1, text: `Fuel nominal — ${fuelLoad.toFixed(1)}kg remaining (${(fuelLoad / FUEL_PER_LAP).toFixed(1)} laps).`, urgency: 'low' });
     }
   }
 
   // Pit advice
   if (isEarly) {
-    strategies.push({ num: strategies.length + 1, text: 'Optimal pit remains Lap 11 Ã¢â‚¬â€ protect the rear.', urgency: 'low' });
+    strategies.push({ num: strategies.length + 1, text: 'Optimal pit remains Lap 11 — protect the rear.', urgency: 'low' });
   } else if (isMid) {
-    strategies.push({ num: strategies.length + 1, text: 'Pit window closing Ã¢â‚¬â€ plan box in 2Ã¢â‚¬â€œ3 laps.', urgency: 'high' });
+    strategies.push({ num: strategies.length + 1, text: 'Pit window closing — plan box in 2——œ3 laps.', urgency: 'high' });
   } else if (isLate) {
-    strategies.push({ num: strategies.length + 1, text: 'Last stint Ã¢â‚¬â€ push to finish. No pit planned.', urgency: 'medium' });
+    strategies.push({ num: strategies.length + 1, text: 'Last stint — push to finish. No pit planned.', urgency: 'medium' });
   }
 
   // Anomaly feedback
   if (lapAnomaly) {
-    strategies.push({ num: strategies.length + 1, text: 'Ã¢Å¡Â  Last lap flagged anomalous Ã¢â‚¬â€ check telemetry for off-track or traffic.', urgency: 'high' });
+    strategies.push({ num: strategies.length + 1, text: 'Ã¢šÂ  Last lap flagged anomalous — check telemetry for off-track or traffic.', urgency: 'high' });
   }
 
   // Pace vs best
@@ -604,7 +604,7 @@ function AIStrategyCall({ position, lapCount, fuelLoad, lastLap, bestLap, lapAno
         <div className="flex items-center gap-2">
           <span className="badge badge-blue">{confidence}% confidence</span>
           <span className="badge" style={{ background: `${riskColor}18`, color: riskColor, border: `1px solid ${riskColor}40` }}>
-            Risk Ã‚Â· {riskLabel}
+            Risk —· {riskLabel}
           </span>
         </div>
       </div>
@@ -628,7 +628,7 @@ function AIStrategyCall({ position, lapCount, fuelLoad, lastLap, bestLap, lapAno
   );
 }
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Gear Distribution Chart Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// Ã¢——Ã¢—— Gear Distribution Chart Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
 
 function GearDistribution({ currentGear }: { currentGear: number }) {
   const dist = buildGearDistribution(currentGear);
@@ -661,7 +661,7 @@ function GearDistribution({ currentGear }: { currentGear: number }) {
   );
 }
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Pace Model Chart Ã¢â‚¬â€ with anomaly marking Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// Ã¢——Ã¢—— Pace Model Chart — with anomaly marking Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
 
 function PaceModelChart({ lapCount, lastLap, bestLap, lapAnomaly }: {
   lapCount: number; lastLap: number; bestLap: number; lapAnomaly: boolean;
@@ -674,14 +674,14 @@ function PaceModelChart({ lapCount, lastLap, bestLap, lapAnomaly }: {
       <svg width="100%" height="100" viewBox="0 0 240 100" preserveAspectRatio="xMidYMid meet">
         {/* Zero line */}
         <line x1="25" y1="50" x2="235" y2="50" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
-        {/* Ã‚Â± labels */}
+        {/* —Â± labels */}
         <text x="2" y="32" fill="#535A6E" fontSize="8" fontFamily="JetBrains Mono,monospace">+0.15</text>
-        <text x="2" y="70" fill="#535A6E" fontSize="8" fontFamily="JetBrains Mono,monospace">Ã¢â‚¬â€œ0.15</text>
+        <text x="2" y="70" fill="#535A6E" fontSize="8" fontFamily="JetBrains Mono,monospace">——œ0.15</text>
         <text x="2" y="52" fill="#535A6E" fontSize="8" fontFamily="JetBrains Mono,monospace">0.00</text>
         {/* Delta bars for last N laps */}
         {Array.from({ length: count }, (_, i) => {
           const lap = lapCount - count + 1 + i;
-          // Simulated pace delta Ã¢â‚¬â€ degrades slightly each lap, last = current delta
+          // Simulated pace delta — degrades slightly each lap, last = current delta
           const simulated = Math.sin(lap * 0.9 + 1.2) * 0.06 + (i === count - 1 ? currentDelta * 0.3 : 0);
           const delta = Math.min(0.15, Math.max(-0.15, simulated));
           const barH = Math.abs(delta) * 350;
@@ -708,13 +708,13 @@ function PaceModelChart({ lapCount, lastLap, bestLap, lapAnomaly }: {
         })}
       </svg>
       <div style={{ fontSize: 11, color: 'var(--text-muted)', textAlign: 'center', marginTop: 2 }}>
-        Green = faster than model Ã‚Â· Red = slower Ã‚Â· <span style={{ color: 'var(--orange)' }}>Orange = anomaly</span>
+        Green = faster than model —· Red = slower —· <span style={{ color: 'var(--orange)' }}>Orange = anomaly</span>
       </div>
     </div>
   );
 }
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Tyre Display Ã¢â‚¬â€ with center temps and pressure Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// Ã¢——Ã¢—— Tyre Display — with center temps and pressure Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
 
 interface TyreDisplayProps {
   frontLeft: number; frontRight: number;
@@ -766,7 +766,7 @@ function TyreDisplay(props: TyreDisplayProps) {
             {isFront ? 'F' : 'R'}{side}
           </span>
           <span style={{ fontSize:9, fontFamily:'JetBrains Mono,monospace', color: tempColor, fontWeight:700 }}>
-            {temp}Ã‚Â°S / {center}Ã‚Â°C
+            {temp}—Â°S / {center}—Â°C
           </span>
         </div>
         <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:2, height:9, marginBottom:6, borderRadius:4, overflow:'hidden' }}>
@@ -790,7 +790,7 @@ function TyreDisplay(props: TyreDisplayProps) {
         {/* Front row */}
         <div>
           <div className="card-label" style={{ marginBottom: 4, fontSize: 10 }}>
-            Front Ã¢â‚¬â€ {props.frontCompound} Ã‚Â· Age: {props.frontAge} laps
+            Front — {props.frontCompound} —· Age: {props.frontAge} laps
           </div>
           <div style={{ display: 'flex', gap: 6 }}>
             {renderTyre('front', 'L', props.frontLeft, props.frontCompound, true)}
@@ -800,7 +800,7 @@ function TyreDisplay(props: TyreDisplayProps) {
         {/* Rear row */}
         <div>
           <div className="card-label" style={{ marginBottom: 4, fontSize: 10 }}>
-            Rear Ã¢â‚¬â€ {props.rearCompound} Ã‚Â· Age: {props.rearAge} laps
+            Rear — {props.rearCompound} —· Age: {props.rearAge} laps
           </div>
           <div style={{ display: 'flex', gap: 6 }}>
             {renderTyre('rear', 'L', props.rearLeft, props.rearCompound, false)}
@@ -810,13 +810,13 @@ function TyreDisplay(props: TyreDisplayProps) {
       </div>
       {/* Legend */}
       <div style={{ display:'flex', gap:8, marginTop:6, fontSize:9, color:'var(--text-dim)' }}>
-        <span>S = Surface Ã‚Â· C = Center Ã‚Â· visual blocks = inner flank / center / outer flank</span>
+        <span>S = Surface —· C = Center —· visual blocks = inner flank / center / outer flank</span>
       </div>
     </div>
   );
 }
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Main Page Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// Ã¢——Ã¢—— Main Page Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
 
 export function OverviewPage() {
   const session = useSessionContext();
@@ -824,9 +824,9 @@ export function OverviewPage() {
   const [activeTab, setActiveTab] = useState<'live' | 'telemetry'>('live');
   const sessionState = sessionDisplayState(t.lapCount);
 
-  // Ã¢â€â‚¬Ã¢â€â‚¬ Validation guard: if lap counter is bogus, show a clear error Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+  // Ã¢——Ã¢—— Validation guard: if lap counter is bogus, show a clear error Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
   const lapValid = validLap(t.lapCount);
-  const displayLap = lapValid !== null ? t.lapCount : 'Ã¢â‚¬â€';
+  const displayLap = lapValid !== null ? t.lapCount : '—';
 
   // Fuel projection
   const projectedFuel = validFuel(t.fuelLoad) ? fuelProjection(t.lapCount, t.fuelLoad) : null;
@@ -834,7 +834,7 @@ export function OverviewPage() {
 
   const rivals = buildRivals(t.position, t.gap);
 
-  // Lap delta analysis Ã¢â‚¬â€ only when data is valid
+  // Lap delta analysis — only when data is valid
   const lapDelta = validLapTime(t.lastLap) && validLapTime(t.bestLap)
     ? t.lastLap - t.bestLap
     : 0;
@@ -854,14 +854,14 @@ export function OverviewPage() {
   return (
     <div className="page">
 
-      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â HEADER with validation guard Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
+      {/* Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢Â HEADER with validation guard Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢Â */}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">{RACE_SESSION.productName}</h1>
           <p className="page-subtitle">
-            {RACE_SESSION.positioning} Ã‚Â· {RACE_SESSION.decisionPromise} Ã‚Â· {session.ctx.circuitName} {session.circuit.lengthKm} km Ã‚Â· {sessionState.activeRace ? `Lap ${displayLap} / ${RACE_LAPS}` : 'Pre-race/test state'}
+            {RACE_SESSION.positioning} —· {RACE_SESSION.decisionPromise} —· {session.ctx.circuitName} {session.circuit.lengthKm} km —· {sessionState.activeRace ? `Lap ${displayLap} / ${RACE_LAPS}` : 'Pre-race/test state'}
             {!lapValid && <span style={{ marginLeft:8, color:'var(--accent)', fontSize:11 }}>
-              Ã¢Å¡Â  Data validation active
+              Ã¢šÂ  Data validation active
             </span>}
           </p>
         </div>
@@ -895,11 +895,11 @@ export function OverviewPage() {
           <span className="badge badge-green">Decision first</span>
         </div>
         <div className="card-body" style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>
-          <strong style={{ color: 'var(--green)' }}>Primary call:</strong> Protect rear tyre through L1Ã¢â‚¬â€œL5; attack P2 at San Donato only if gap is under 0.6s. Data below is supporting evidence, not the product headline.
+          <strong style={{ color: 'var(--green)' }}>Primary call:</strong> Protect rear tyre through L1——œL5; attack P2 at San Donato only if gap is under 0.6s. Data below is supporting evidence, not the product headline.
         </div>
       </div>
 
-      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â KPI ROW Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
+      {/* Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢Â KPI ROW Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢Â */}
       <div className="grid-4 mb-4">
         <div className="stat-tile accent-border">
           <div className="stat-tile__label">Position</div>
@@ -910,7 +910,7 @@ export function OverviewPage() {
             </span>
           </div>
           <div className="stat-tile__delta" style={{ color: t.position <= 3 ? 'var(--green)' : 'var(--yellow)' }}>
-            {t.position <= 3 ? `Top ${t.position} Ã‚Â· points zone` : 'Outside top 3'}
+            {t.position <= 3 ? `Top ${t.position} —· points zone` : 'Outside top 3'}
           </div>
         </div>
         <div className="stat-tile green-border">
@@ -924,7 +924,7 @@ export function OverviewPage() {
             </>
           ) : (
             <>
-              <span className="stat-tile__value text-mono" style={{ fontSize: 20, color:'var(--accent)' }}>Ã¢â‚¬â€.Ã¢â‚¬â€Ã¢â‚¬â€.Ã¢â‚¬â€Ã¢â‚¬â€Ã¢â‚¬â€</span>
+              <span className="stat-tile__value text-mono" style={{ fontSize: 20, color:'var(--accent)' }}>—.——.———</span>
               <div className="stat-tile__delta" style={{ color:'var(--accent)' }}>Unavailable</div>
             </>
           )}
@@ -934,11 +934,11 @@ export function OverviewPage() {
           {validLapTime(t.bestLap) ? (
             <>
               <span className="stat-tile__value text-mono" style={{ fontSize: 20 }}>{formatLap(t.bestLap)}</span>
-              <div className="stat-tile__delta delta-pos">Ã¢Å¡Â¡ Personal best</div>
+              <div className="stat-tile__delta delta-pos">Ã¢šÂ¡ Personal best</div>
             </>
           ) : (
             <>
-              <span className="stat-tile__value text-mono" style={{ fontSize: 20, color:'var(--accent)' }}>Ã¢â‚¬â€.Ã¢â‚¬â€Ã¢â‚¬â€.Ã¢â‚¬â€Ã¢â‚¬â€Ã¢â‚¬â€</span>
+              <span className="stat-tile__value text-mono" style={{ fontSize: 20, color:'var(--accent)' }}>—.——.———</span>
               <div className="stat-tile__delta" style={{ color:'var(--accent)' }}>Unavailable</div>
             </>
           )}
@@ -953,21 +953,21 @@ export function OverviewPage() {
               <div className="stat-tile__delta" style={{ color: fuelCritical ? 'var(--accent)' : 'var(--text-dim)' }}>
                 {projectedFuel !== null && (
                   projectedFuel < 0
-                    ? `Ã¢Å¡Â  Short ${Math.abs(projectedFuel).toFixed(1)} kg at finish`
-                    : `Projected +${projectedFuel.toFixed(1)} kg Ã‚Â· @ ${FUEL_PER_LAP} kg/lap`
+                    ? `Ã¢šÂ  Short ${Math.abs(projectedFuel).toFixed(1)} kg at finish`
+                    : `Projected +${projectedFuel.toFixed(1)} kg —· @ ${FUEL_PER_LAP} kg/lap`
                 )}
               </div>
             </>
           ) : (
             <>
-              <span className="stat-tile__value" style={{ color:'var(--accent)' }}>Ã¢â‚¬â€<span className="stat-tile__unit">kg</span></span>
+              <span className="stat-tile__value" style={{ color:'var(--accent)' }}>—<span className="stat-tile__unit">kg</span></span>
               <div className="stat-tile__delta" style={{ color:'var(--accent)' }}>Sensor error</div>
             </>
           )}
         </div>
       </div>
 
-      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â AI STRATEGY CALL Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
+      {/* Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢Â AI STRATEGY CALL Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢Â */}
       <AIStrategyCall
         position={t.position}
         lapCount={t.lapCount}
@@ -977,7 +977,7 @@ export function OverviewPage() {
         lapAnomaly={t.lapAnomaly}
       />
 
-      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â MIDDLE GRID: Feed + Live Snapshot + Tyres Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
+      {/* Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢Â MIDDLE GRID: Feed + Live Snapshot + Tyres Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢Â */}
       <div className="grid-3-2 mb-4">
 
         {/* Left: detailed tyre operations panel */}
@@ -985,9 +985,9 @@ export function OverviewPage() {
           <div className="card-header">
             <span className="card-title flex items-center gap-2">
               <CircleDot size={14} style={{ color: 'var(--yellow)' }} />
-              Tyre Operations Ã‚Â· NeumÃƒÂ¡ticos
+              Tyre Operations —· NeumâÂ¡ticos
             </span>
-            <span className="badge badge-orange">pressure Ã‚Â· wear Ã‚Â· flank split</span>
+            <span className="badge badge-orange">pressure —· wear —· flank split</span>
           </div>
           <TyreDisplay
             frontLeft={t.tireFrontLeft}
@@ -1070,13 +1070,13 @@ export function OverviewPage() {
               <div style={{ paddingTop: 10, borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between' }}>
                 <span className="card-label">Lean Angle</span>
                 <span className="text-mono" style={{ fontSize: 13, color: t.leanAngle > 45 ? 'var(--accent)' : 'var(--text)' }}>
-                  {t.leanAngle.toFixed(1)}Ã‚Â°
+                  {t.leanAngle.toFixed(1)}—Â°
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Tyres Ã¢â‚¬â€ full display with center temps + pressure */}
+          {/* Tyres — full display with center temps + pressure */}
           <div className="card">
             <div className="card-header">
               <span className="card-title">Tyres</span>
@@ -1100,7 +1100,7 @@ export function OverviewPage() {
         </div>
       </div>
 
-      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â ANALYSIS ROW Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
+      {/* Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢Â ANALYSIS ROW Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢Â */}
       <div className="grid-3 mb-4">
 
         {/* Sector delta analysis */}
@@ -1108,7 +1108,7 @@ export function OverviewPage() {
           <div className="card-header">
             <span className="card-title flex items-center gap-2">
               <TrendingUp size={14} style={{ color: 'var(--blue)' }} />
-              Sector Delta Ã¢â‚¬â€ vs Best
+              Sector Delta — vs Best
             </span>
             <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Last lap</span>
           </div>
@@ -1150,7 +1150,7 @@ export function OverviewPage() {
         <div className="card">
           <div className="card-header">
             <span className="card-title">Pace vs Model</span>
-            <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Digital Twin ÃŽâ€</span>
+            <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Digital Twin ÃŽ—</span>
           </div>
           <PaceModelChart
             lapCount={t.lapCount}
@@ -1161,13 +1161,13 @@ export function OverviewPage() {
         </div>
       </div>
 
-      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â TRACK MAP + CHAMPIONSHIP + STINT Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
+      {/* Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢Â TRACK MAP + CHAMPIONSHIP + STINT Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢Â */}
       <div className="grid-2 mb-4">
         <div className="card">
           <div className="card-header">
-            <span className="card-title">Live Track Position Ã¢â‚¬â€ Mugello</span>
+            <span className="card-title">Live Track Position — Mugello</span>
             <span className="badge badge-muted" style={{ fontFamily:'JetBrains Mono,monospace' }}>
-              {Math.round(t.trackPos * 100)}% lap Ã‚Â· procedural map
+              {Math.round(t.trackPos * 100)}% lap —· procedural map
             </span>
           </div>
           <div className="card-body" style={{ flexDirection:'column' }}>
@@ -1197,22 +1197,22 @@ export function OverviewPage() {
         </div>
       </div>
 
-      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â RACE STANDINGS Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
+      {/* Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢Â RACE STANDINGS Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢Â */}
       <div className="card">
         <div className="card-header">
           <span className="card-title flex items-center gap-2">
             <Flag size={14} />
-            Race Standings Ã¢â‚¬â€ Lap {displayLap}
+            Race Standings — Lap {displayLap}
           </span>
           <span className="badge badge-muted">Top 5</span>
         </div>
         <RaceStandingsTable rivals={rivals} position={t.position} />
         <div style={{ padding: '8px 14px', fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-muted)', borderTop: '1px solid var(--border)' }}>
-          Pace vs you: Ã¢â‚¬â€œ = faster than your last lap Ã‚Â· Threat: pace + position relative to P{t.position}
+          Pace vs you: ——œ = faster than your last lap —· Threat: pace + position relative to P{t.position}
         </div>
       </div>
 
-      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â RACE DATA INTEGRITY Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
+      {/* Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢Â RACE DATA INTEGRITY Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢Â */}
       <div style={{ marginTop: 16 }}>
         <DataIntegrity
           fuelValid={t.fuelValid}

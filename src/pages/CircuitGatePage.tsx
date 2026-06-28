@@ -1,7 +1,7 @@
 /**
- * CircuitGatePage Ã¢â‚¬â€ CIRCUIT INTELLIGENCE GATE.
+ * CircuitGatePage — CIRCUIT INTELLIGENCE GATE.
  *
- * Mandatory technical entry to the platform (Landing Ã¢â€ â€™ Gate Ã¢â€ â€™ Dashboard).
+ * Mandatory technical entry to the platform (Landing Ã¢— —™ Gate Ã¢— —™ Dashboard).
  * The dashboard does not open until the session knows which circuit it is on
  * and what real data exists for it:
  *   - searchable circuit library with lifecycle states
@@ -9,8 +9,8 @@
  *   - validation checklist (geometry, length, corners, sectors, elevation,
  *     GPS, telemetry, digital twin, agent context)
  *   - dashboard mode derived from circuit state (full/limited/simulation/blocked)
- *   - creation flow for missing circuits: basic data Ã¢â€ â€™ upload formats Ã¢â€ â€™ AI
- *     reconstruction agents Ã¢â€ â€™ initial simulation Ã¢â€ â€™ SIMULATED status
+ *   - creation flow for missing circuits: basic data Ã¢— —™ upload formats Ã¢— —™ AI
+ *     reconstruction agents Ã¢— —™ initial simulation Ã¢— —™ SIMULATED status
  */
 import { useMemo, useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -38,7 +38,7 @@ interface Props {
 
 const MONO = 'JetBrains Mono, monospace';
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Small bits Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// Ã¢——Ã¢—— Small bits Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
 
 function StatusBadge({ status }: { status: CircuitStatus }) {
   const meta = STATUS_META[status];
@@ -61,7 +61,7 @@ function CheckRow({ label, ok, desc }: { label: string; ok: boolean; desc: strin
   );
 }
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Creation wizard Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// Ã¢——Ã¢—— Creation wizard Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
 
 const UPLOAD_FORMATS = ['GPX', 'KML', 'GeoJSON', 'CSV GPS trace', 'Telemetry CSV', 'AiM export', '2D datalogger export', 'Manual SVG', 'Onboard video'];
 const EXTRA_UPLOADS = ['Elevation profile', 'Sector definitions', 'Corner list', 'Racing line', 'Reference lap', 'Surface notes'];
@@ -111,13 +111,13 @@ function CreateCircuitWizard({ initialName, onCancel, onCreated }: {
   function finishCreate() {
     const record: CircuitRecord = {
       id: `custom-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
-      name, country: country || 'Ã¢â‚¬â€', layout,
+      name, country: country || '—', layout,
       lengthKm: parsedLength, turns: estTurns, direction, sectors: 3,
       mainStraightKm: null, geometryLoaded: true, elevationModel: 'estimated',
       cornerSetLoaded: estTurns, sectorMapLoaded: true, meshLoaded: false,
       gpsAlignment: 'ready', telemetrySessions: [], digitalTwinReady: true,
       agentContextReady: true, agentConfidence: 0.82, status: 'SIMULATED',
-      statusSummary: `GPS trace loaded Ã‚Â· AI-generated corners Ã‚Â· ${parsedLength.toFixed(3)} km`,
+      statusSummary: `GPS trace loaded —· AI-generated corners —· ${parsedLength.toFixed(3)} km`,
       keyZones: [
         { corner: 'T1', note: 'heavy braking (AI-detected)' },
         { corner: `T${Math.round(estTurns / 2)}`, note: 'long right-hander (AI-detected)' },
@@ -185,7 +185,7 @@ function CreateCircuitWizard({ initialName, onCancel, onCreated }: {
       {step === 2 && (
         <div>
           <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-            <Upload size={11} style={{ verticalAlign: -2, marginRight: 4 }} /> Upload track data Ã¢â‚¬â€ accepted formats
+            <Upload size={11} style={{ verticalAlign: -2, marginRight: 4 }} /> Upload track data — accepted formats
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 14 }}>
             {UPLOAD_FORMATS.map(f => {
@@ -222,7 +222,7 @@ function CreateCircuitWizard({ initialName, onCancel, onCreated }: {
       {step === 3 && (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           <div>
-            <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.08em' }}>AI Circuit Reconstruction Ã¢â‚¬â€ agents</div>
+            <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.08em' }}>AI Circuit Reconstruction — agents</div>
             {agents.map(a => (
               <div key={a.name} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '5px 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                 {a.state === 'done'
@@ -240,8 +240,8 @@ function CreateCircuitWizard({ initialName, onCancel, onCreated }: {
               <div style={{ marginTop: 10, fontSize: 11, fontFamily: MONO }}>
                 <span style={{ color: 'var(--text-muted)' }}>Confidence </span>
                 <span style={{ color: 'var(--violet)', fontWeight: 700 }}>82%</span>
-                <span style={{ color: 'var(--text-muted)' }}> Ã‚Â· Status </span>
-                <span style={{ color: 'var(--violet)', fontWeight: 700 }}>SIMULATED Ã¢â‚¬â€ requires engineer review</span>
+                <span style={{ color: 'var(--text-muted)' }}> —· Status </span>
+                <span style={{ color: 'var(--violet)', fontWeight: 700 }}>SIMULATED — requires engineer review</span>
               </div>
             )}
           </div>
@@ -249,7 +249,7 @@ function CreateCircuitWizard({ initialName, onCancel, onCreated }: {
             <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               <FlaskConical size={11} style={{ verticalAlign: -2, marginRight: 4 }} /> Initial circuit simulation
             </div>
-            {!sim && <div style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>Generated when the Digital Twin Agent finishesÃ¢â‚¬Â¦</div>}
+            {!sim && <div style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>Generated when the Digital Twin Agent finishes—…</div>}
             {sim && (
               <div style={{ fontSize: 11.5 }}>
                 <div style={{ marginBottom: 8 }}>
@@ -258,22 +258,22 @@ function CreateCircuitWizard({ initialName, onCancel, onCreated }: {
                 </div>
                 <div style={{ marginBottom: 8 }}>
                   <span style={{ color: 'var(--text-muted)' }}>Main performance zones</span>
-                  {sim.performanceZones.map(z => <div key={z} style={{ fontFamily: MONO, fontSize: 11, color: 'var(--green)' }}>Ã‚Â· {z}</div>)}
+                  {sim.performanceZones.map(z => <div key={z} style={{ fontFamily: MONO, fontSize: 11, color: 'var(--green)' }}>—· {z}</div>)}
                 </div>
                 <div style={{ marginBottom: 8 }}>
                   <span style={{ color: 'var(--text-muted)' }}>Risk zones</span>
-                  {sim.riskZones.map(z => <div key={z} style={{ fontFamily: MONO, fontSize: 11, color: 'var(--accent)' }}>Ã‚Â· {z}</div>)}
+                  {sim.riskZones.map(z => <div key={z} style={{ fontFamily: MONO, fontSize: 11, color: 'var(--accent)' }}>—· {z}</div>)}
                 </div>
                 <div style={{ marginBottom: 8 }}>
                   <span style={{ color: 'var(--text-muted)' }}>Suggested baseline setup</span>
-                  {sim.baselineSetup.map(z => <div key={z} style={{ fontFamily: MONO, fontSize: 11, color: 'var(--text)' }}>Ã‚Â· {z}</div>)}
+                  {sim.baselineSetup.map(z => <div key={z} style={{ fontFamily: MONO, fontSize: 11, color: 'var(--text)' }}>—· {z}</div>)}
                 </div>
                 <div style={{ marginBottom: 12 }}>
                   <span style={{ color: 'var(--text-muted)' }}>Recommended first stint</span>
                   <div style={{ fontFamily: MONO, fontSize: 11, color: 'var(--yellow)' }}>{sim.recommendedStint}</div>
                 </div>
                 <button className="btn-primary" onClick={finishCreate} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <Flag size={14} /> Save circuit Ã‚Â· SIMULATED
+                  <Flag size={14} /> Save circuit —· SIMULATED
                 </button>
               </div>
             )}
@@ -284,7 +284,7 @@ function CreateCircuitWizard({ initialName, onCancel, onCreated }: {
   );
 }
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Main gate Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// Ã¢——Ã¢—— Main gate Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
 
 export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Props) {
   const { t } = useTranslation();
@@ -332,7 +332,7 @@ export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Prop
             </h1>
           </div>
           <div style={{ fontSize: 12.5, color: 'var(--text-muted)', marginTop: 4 }}>
-            {t('gates.circuitSubtitle', 'Select, validate or create the circuit before opening the digital pit-box Ã¢â‚¬â€ the dashboard will not open until the session knows which track it is on.')}
+            {t('gates.circuitSubtitle', 'Select, validate or create the circuit before opening the digital pit-box — the dashboard will not open until the session knows which track it is on.')}
           </div>
         </div>
 
@@ -345,7 +345,7 @@ export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Prop
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: '340px 1fr', gap: 18, alignItems: 'start' }}>
 
-            {/* Ã¢â€â‚¬Ã¢â€â‚¬ Library column Ã¢â€â‚¬Ã¢â€â‚¬ */}
+            {/* Ã¢——Ã¢—— Library column Ã¢——Ã¢—— */}
             <div className="card" style={{ padding: 14 }}>
               <div style={{ position: 'relative', marginBottom: 12 }}>
                 <Search size={13} style={{ position: 'absolute', left: 10, top: 9, color: 'var(--text-muted)' }} />
@@ -360,7 +360,7 @@ export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Prop
                 />
               </div>
               <div style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>
-                Circuit library Ã‚Â· {results.length}
+                Circuit library —· {results.length}
               </div>
 
               {results.map(c => (
@@ -387,7 +387,7 @@ export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Prop
                     No circuit named “{query.trim()}” exists in your database.
                   </div>
                   <div style={{ fontSize: 10, color: 'var(--text-muted)', textAlign: 'left', marginBottom: 10 }}>
-                    Creation options: GPS/GPX trace Ã‚Â· telemetry CSV Ã‚Â· KML/GeoJSON Ã‚Â· draw manually Ã‚Â· AI reconstruction
+                    Creation options: GPS/GPX trace —· telemetry CSV —· KML/GeoJSON —· draw manually —· AI reconstruction
                   </div>
                 </div>
               )}
@@ -402,7 +402,7 @@ export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Prop
               </button>
             </div>
 
-            {/* Ã¢â€â‚¬Ã¢â€â‚¬ Selected circuit column Ã¢â€â‚¬Ã¢â€â‚¬ */}
+            {/* Ã¢——Ã¢—— Selected circuit column Ã¢——Ã¢—— */}
             {selected && (
               <div>
                 <div className="card" style={{ padding: 18, marginBottom: 14 }}>
@@ -448,10 +448,10 @@ export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Prop
                       {checks.map(c => <CheckRow key={c.label} {...c} />)}
                       <div style={{ marginTop: 10, fontSize: 11.5, fontFamily: MONO, color: allOk ? 'var(--green)' : 'var(--yellow)' }}>
                         {allOk
-                          ? 'Circuit ready for analysis Ã¢â‚¬â€ you can now open the dashboard.'
+                          ? 'Circuit ready for analysis — you can now open the dashboard.'
                           : mode === 'blocked'
                             ? 'Dashboard blocked until circuit validation is complete.'
-                            : `Validation incomplete Ã¢â‚¬â€ dashboard opens in ${modeMeta.label}.`}
+                            : `Validation incomplete — dashboard opens in ${modeMeta.label}.`}
                       </div>
                     </div>
 
@@ -474,12 +474,12 @@ export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Prop
                         </div>
                       )) : (
                         <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-                          No key zones loaded Ã¢â‚¬â€ run a validation stint or AI reconstruction to populate corner intelligence.
+                          No key zones loaded — run a validation stint or AI reconstruction to populate corner intelligence.
                         </div>
                       )}
                       <div style={{ marginTop: 10, fontSize: 10.5, fontFamily: MONO, color: 'var(--text-muted)' }}>
-                        Source: {selected.source} Ã‚Â· Last validated {selected.lastValidated}
-                        {selected.telemetrySessions.length > 0 && <> Ã‚Â· Telemetry: {selected.telemetrySessions.join(' Ã‚Â· ')}</>}
+                        Source: {selected.source} —· Last validated {selected.lastValidated}
+                        {selected.telemetrySessions.length > 0 && <> —· Telemetry: {selected.telemetrySessions.join(' —· ')}</>}
                       </div>
                     </div>
                   </div>
@@ -489,7 +489,7 @@ export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Prop
                 {showPreview && (
                   <div className="card" style={{ padding: 16, marginBottom: 14 }}>
                     <div style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>
-                      <Mountain size={11} style={{ verticalAlign: -2, marginRight: 4 }} /> Circuit preview Ã¢â‚¬â€ elevation & gradient profile
+                      <Mountain size={11} style={{ verticalAlign: -2, marginRight: 4 }} /> Circuit preview — elevation & gradient profile
                     </div>
                     <svg viewBox="0 0 600 90" style={{ width: '100%', height: 90 }} preserveAspectRatio="none">
                       {Array.from({ length: 60 }, (_, i) => {
@@ -503,14 +503,14 @@ export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Prop
                     <div style={{ display: 'flex', gap: 14, fontSize: 10, fontFamily: MONO, color: 'var(--text-muted)', marginTop: 6 }}>
                       <span>0 km</span>
                       <span style={{ flex: 1, textAlign: 'center' }}>
-                        {selected.keyZones.map(z => z.corner.split(' ')[0]).join(' Ã‚Â· ') || `${selected.turns} AI-detected corners Ã¢â‚¬â€ manual naming recommended`}
+                        {selected.keyZones.map(z => z.corner.split(' ')[0]).join(' —· ') || `${selected.turns} AI-detected corners — manual naming recommended`}
                       </span>
                       <span>{selected.lengthKm.toFixed(3)} km</span>
                     </div>
                     <div style={{ display: 'flex', gap: 12, marginTop: 8, fontSize: 10 }}>
-                      <span style={{ color: 'var(--green)' }}>Ã¢â€“Â  uphill</span>
-                      <span style={{ color: 'var(--accent)' }}>Ã¢â€“Â  downhill</span>
-                      <span style={{ color: 'var(--text-muted)' }}>Ã¢â€“Â  flat</span>
+                      <span style={{ color: 'var(--green)' }}>Ã¢—“Â  uphill</span>
+                      <span style={{ color: 'var(--accent)' }}>Ã¢—“Â  downhill</span>
+                      <span style={{ color: 'var(--text-muted)' }}>Ã¢—“Â  flat</span>
                     </div>
                   </div>
                 )}
@@ -524,7 +524,7 @@ export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Prop
                     </span>
                     {!allOk && (
                       <span style={{ fontSize: 11, fontFamily: 'JetBrains Mono, monospace', color: 'var(--yellow)' }}>
-                        Reason: {checks.find(c => !c.ok)?.label.toLowerCase()} Ã¢â‚¬â€ {checks.find(c => !c.ok)?.desc}
+                        Reason: {checks.find(c => !c.ok)?.label.toLowerCase()} — {checks.find(c => !c.ok)?.desc}
                       </span>
                     )}
                     <span style={{ fontSize: 11, color: 'var(--text-muted)', width: '100%' }}>{modeMeta.note}</span>
@@ -540,7 +540,7 @@ export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Prop
                       { label: showPreview ? 'Hide Track Preview' : 'Preview Track Map', icon: Eye, fn: () => setShowPreview(p => !p) },
                       { label: 'Run Pre-Session Simulation', icon: FlaskConical, fn: () => setShowPreview(true) },
                       { label: 'Upload New Telemetry', icon: Upload, fn: () => toast({ type: 'info', title: 'Upload queued', message: `Connect Data opens after launch with ${selected.name} locked as the session circuit.` }) },
-                      { label: 'Edit Circuit Data', icon: Wrench, fn: () => toast({ type: 'info', title: 'Edit requested', message: `${selected.name} geometry edit queued for engineer review Ã¢â‚¬â€ validation state frozen meanwhile.` }) },
+                      { label: 'Edit Circuit Data', icon: Wrench, fn: () => toast({ type: 'info', title: 'Edit requested', message: `${selected.name} geometry edit queued for engineer review — validation state frozen meanwhile.` }) },
                     ].map(({ label, icon: Icon, fn }) => (
                       <button key={label} onClick={fn}
                         style={{

@@ -1,5 +1,5 @@
 /**
- * PitRadioPage Ã¢â‚¬â€ Voice / Pit-Radio.
+ * PitRadioPage — Voice / Pit-Radio.
  *
  * The pit-to-rider channel as a timestamped transcript, the canned messages the
  * crew can push, and the voice commands the engineer can speak to drive the
@@ -30,10 +30,10 @@ export function PitRadioPage() {
     <div className="page">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="page-title flex items-center gap-2"><Radio size={18} /> Voice Ã‚Â· Pit-Radio</h1>
-          <p className="page-subtitle">Pit-to-rider channel & voice commands Ã¢â‚¬â€ {base.combo}</p>
+          <h1 className="page-title flex items-center gap-2"><Radio size={18} /> Voice —· Pit-Radio</h1>
+          <p className="page-subtitle">Pit-to-rider channel & voice commands — {base.combo}</p>
         </div>
-        <span style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--yellow)', border: '1px solid var(--yellow-border)', borderRadius: 'var(--radius)', padding: '2px 7px' }}>RADIO LOG Ã‚Â· no live audio</span>
+        <span style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--yellow)', border: '1px solid var(--yellow-border)', borderRadius: 'var(--radius)', padding: '2px 7px' }}>RADIO LOG —· no live audio</span>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: 16, alignItems: 'start' }}>

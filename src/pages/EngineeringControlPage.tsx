@@ -1,8 +1,8 @@
 /**
- * EngineeringControlPage â€” KDD Engineering Control (unified garage board).
+ * EngineeringControlPage —” KDD Engineering Control (unified garage board).
  *
- * Composes the six engineering pillars â€” Aero, Chassis, Brakes, Electronics,
- * Fuel and Gearing â€” into one readiness board. Each card shows the pillar's
+ * Composes the six engineering pillars —” Aero, Chassis, Brakes, Electronics,
+ * Fuel and Gearing —” into one readiness board. Each card shows the pillar's
  * headline + key metric, is colour-coded by status and links straight to that
  * lab. The open item (worst status) is called out at the top.
  */
@@ -29,7 +29,7 @@ export function EngineeringControlPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><SlidersHorizontal size={18} /> Engineering Control</h1>
-          <p className="page-subtitle">Aero Â· Chassis Â· Brakes Â· Electronics Â· Fuel Â· Gearing â€” one board â€” {e.combo}</p>
+          <p className="page-subtitle">Aero · Chassis · Brakes · Electronics · Fuel · Gearing —” one board —” {e.combo}</p>
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Setup readiness</div>
@@ -49,7 +49,7 @@ export function EngineeringControlPage() {
       {e.priority.status !== 'good' && (
         <button onClick={() => navigate(e.priority.tab)} style={{ width: '100%', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 10, padding: 12, marginBottom: 14, background: 'var(--bg-surface)', border: `1px solid ${engCardColor(e.priority.status)}`, borderRadius: 8, cursor: 'pointer' }}>
           <AlertTriangle size={16} style={{ color: engCardColor(e.priority.status), flexShrink: 0 }} />
-          <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Open item: <b style={{ color: 'var(--text)' }}>{e.priority.title}</b> â€” {e.priority.headline}</span>
+          <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Open item: <b style={{ color: 'var(--text)' }}>{e.priority.title}</b> —” {e.priority.headline}</span>
           <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10, fontFamily: MONO, color: engCardColor(e.priority.status) }}>open <ChevronRight size={13} /></span>
         </button>
       )}
@@ -73,7 +73,7 @@ export function EngineeringControlPage() {
       </div>
 
       <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', marginTop: 14, fontStyle: 'italic' }}>
-        Each card is sourced live from its own lab â€” open it to tune it. Composed view, deterministic.
+        Each card is sourced live from its own lab —” open it to tune it. Composed view, deterministic.
       </div>
     </div>
   );

@@ -1,10 +1,10 @@
 /**
- * Track-Live (engineer feedback #22) Ã¢â‚¬â€ Live Race HUD for the pit-wall screen.
+ * Track-Live (engineer feedback #22) — Live Race HUD for the pit-wall screen.
  * Real-time telemetry, contextual alerts (with cause + action), current zone,
  * rider coach AI per Mugello corner, track map, and tyre/degradation monitoring.
  *
  * CRITICAL RULE: session identity is MUGELLO. Any Jarama references are
- * incorrect Ã¢â‚¬â€ this is GP Mugello, Round 7 of 20, 2026 season.
+ * incorrect — this is GP Mugello, Round 7 of 20, 2026 season.
  */
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { DigitalTwinViewer3D, TrackMap3D } from '../components/babylon/lazy';
@@ -18,7 +18,7 @@ import { MUGELLO_CIRCUIT, sessionDisplayState } from '../domain/sessionTruth';
 import { useSessionContext } from '../hooks/useSessionContext';
 import { activeRaceLaps, sampleOutline } from '../domain/circuitDatasets';
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Mugello circuit data Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// Ã¢——Ã¢—— Mugello circuit data Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
 
 const MUGELLO_TRACK_KM = MUGELLO_CIRCUIT.lengthKm;
 const MUGELLO_TURNS = MUGELLO_CIRCUIT.turns;
@@ -44,15 +44,15 @@ const MUGELLO_CORNERS: { tag: string; name: string; pos: number }[] = [
 function zoneForPos(pos: number): { zone: string; phase: string } {
   if (pos < 0.05) return { zone: 'Main straight', phase: 'Full throttle' };
   if (pos < 0.10) return { zone: 'T1 San Donato approach', phase: 'Initial braking' };
-  if (pos < 0.14) return { zone: 'T1 San Donato', phase: 'Corner entry Ã¢â€ â€™ apex' };
+  if (pos < 0.14) return { zone: 'T1 San Donato', phase: 'Corner entry Ã¢— —™ apex' };
   if (pos < 0.20) return { zone: 'T2 Luco', phase: 'Exit acceleration' };
   if (pos < 0.28) return { zone: 'T3 Poggio Secco', phase: 'Mid-corner' };
   if (pos < 0.35) return { zone: 'T4 Biondetti 1', phase: 'Corner entry' };
   if (pos < 0.42) return { zone: 'T5 Biondetti 2', phase: 'Apex hold' };
-  if (pos < 0.49) return { zone: 'T6 Casanova', phase: 'Braking Ã¢â€ â€™ turn-in' };
+  if (pos < 0.49) return { zone: 'T6 Casanova', phase: 'Braking Ã¢— —™ turn-in' };
   if (pos < 0.56) return { zone: 'T7 Savelli', phase: 'Exit throttle pickup' };
   if (pos < 0.63) return { zone: 'T8 Arrabbiata 1', phase: 'High-speed entry' };
-  if (pos < 0.69) return { zone: 'T9 Arrabbiata 2', phase: 'Apex Ã¢â€ â€™ exit' };
+  if (pos < 0.69) return { zone: 'T9 Arrabbiata 2', phase: 'Apex Ã¢— —™ exit' };
   if (pos < 0.76) return { zone: 'T10 Scarperia', phase: 'Trail braking' };
   if (pos < 0.83) return { zone: 'T11 Palagio 1', phase: 'Corner entry' };
   if (pos < 0.89) return { zone: 'T12 Palagio 2', phase: 'Exit drive' };
@@ -70,7 +70,7 @@ function nextCorner(pos: number): { tag: string; name: string; distance: string 
   return { tag: 'T1', name: 'San Donato', distance: 'next lap' };
 }
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Grip/health from tyre temp Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// Ã¢——Ã¢—— Grip/health from tyre temp Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
 
 function tyreGripPct(temp: number): number {
   if (temp > 118) return Math.max(60, 100 - (temp - 100) * 1.8);
@@ -89,7 +89,7 @@ function degradationPerLap(age: number): number {
   return 1.3 + (age - 10) * 0.08;
 }
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Helpers Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// Ã¢——Ã¢—— Helpers Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
 
 function fmtLap(s: number): string {
   const m = Math.floor(s / 60);
@@ -99,7 +99,7 @@ function fmtLap(s: number): string {
 
 function parseGapValue(gapStr: string): number {
   if (gapStr === 'leader') return 0;
-  const num = parseFloat(gapStr.replace(/[+\-Ã¢â‚¬â€œ]/g, ''));
+  const num = parseFloat(gapStr.replace(/[+\-——œ]/g, ''));
   return isNaN(num) ? 0 : num;
 }
 
@@ -129,10 +129,10 @@ function Bar({ label, pct, color, sub }: { label: string; pct: number; color: st
   );
 }
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Mini Mugello track map Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// Ã¢——Ã¢—— Mini Mugello track map Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
 
 function MiniTrackMap({ trackPos, anomalyFlag }: { trackPos: number; anomalyFlag: boolean }) {
-  // REAL traced Mugello layout fitted to this panel's 200Ãƒâ€”130 viewBox.
+  // REAL traced Mugello layout fitted to this panel's 200â—”130 viewBox.
   const PTS: [number, number][] = sampleOutline('mugello', 22, 200, 130, 12);
 
   function interpolate(pts: [number, number][], frac: number): [number, number] {
@@ -167,7 +167,7 @@ function MiniTrackMap({ trackPos, anomalyFlag }: { trackPos: number; anomalyFlag
   );
 }
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Main page Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// Ã¢——Ã¢—— Main page Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
 
 export function TrackLivePage() {
   const session = useSessionContext();
@@ -179,27 +179,27 @@ export function TrackLivePage() {
   const sectorDelta = 0.183 * Math.sin(t.trackPos * 6.28) + 0.12 * Math.sin(t.trackPos * 13);
   const deltaPos = sectorDelta >= 0;
 
-  // Ã¢â€â‚¬Ã¢â€â‚¬ Alerts Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+  // Ã¢——Ã¢—— Alerts Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
   const tyreOverheating = rearTemp > 116;
   const safetyAlert = t.leanAngle > 58;
   const anomalyAlert = t.lapAnomaly;
 
-  // Ã¢â€â‚¬Ã¢â€â‚¬ Gaps Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+  // Ã¢——Ã¢—— Gaps Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
   const gapToLeader = parseGapValue(t.gap);
   // In P3: gap to P2 is ~40-60% of gap to leader (estimate)
   const gapToP2 = Math.max(0, gapToLeader * (0.4 + Math.sin(t.trackPos * 5) * 0.15));
 
-  // Ã¢â€â‚¬Ã¢â€â‚¬ Tyre data Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+  // Ã¢——Ã¢—— Tyre data Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
   const gripPct = tyreGripPct(rearTemp);
   const wearPct = tyreWearPct(t.rearTyreAge);
   const degPerLap = degradationPerLap(t.rearTyreAge);
   const thermalRisk = tyreOverheating ? 'HIGH' : rearTemp > 108 ? 'MEDIUM' : 'LOW';
 
-  // Ã¢â€â‚¬Ã¢â€â‚¬ Current zone & phase Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+  // Ã¢——Ã¢—— Current zone & phase Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
   const { zone, phase } = zoneForPos(t.trackPos);
   const next = nextCorner(t.trackPos);
 
-  // Ã¢â€â‚¬Ã¢â€â‚¬ Rider Coach corner context Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+  // Ã¢——Ã¢—— Rider Coach corner context Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
   // The coach focus is on T7 Savelli (the critical corner); show which corner
   // corresponds to the current track position.
   const nearestCorner = MUGELLO_CORNERS.reduce((prev, curr) =>
@@ -209,7 +209,7 @@ export function TrackLivePage() {
   return (
     <div className="page">
 
-      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â RACE HEADER Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
+      {/* Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢Â RACE HEADER Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢Â */}
       <div style={{
         marginBottom: 16, padding: '14px 18px', borderRadius: 'var(--radius-lg)',
         background: 'linear-gradient(135deg, rgba(224,55,55,0.12), rgba(0,0,0,0.3))',
@@ -218,10 +218,10 @@ export function TrackLivePage() {
       }}>
         <div>
           <div style={{ fontSize: 10, letterSpacing: '0.15em', color: 'var(--accent)', fontWeight: 700, textTransform: 'uppercase', marginBottom: 2 }}>
-            {sessionState.badgeLabel} Ã‚Â· GP Mugello Ã‚Â· Italy
+            {sessionState.badgeLabel} —· GP Mugello —· Italy
           </div>
           <div style={{ fontSize: 12, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-            Round 7/20 Ã‚Â· 2026 Ã‚Â· {MUGELLO_TRACK_KM} km Ã‚Â· {MUGELLO_TURNS} turns
+            Round 7/20 —· 2026 —· {MUGELLO_TRACK_KM} km —· {MUGELLO_TURNS} turns
           </div>
         </div>
         <div style={{ textAlign: 'right' }}>
@@ -236,23 +236,23 @@ export function TrackLivePage() {
         </div>
       </div>
 
-      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â TRACK-LIVE TITLE Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
+      {/* Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢Â TRACK-LIVE TITLE Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢Â */}
       <div className="flex items-center justify-between mb-4">
         <div>
           <h1 className="page-title">Track-Live</h1>
           <p className="page-subtitle">
-            {session.ctx.circuitName} Ã‚Â· {sessionState.activeRace ? `Race Lap ${t.lapCount}/${activeRaceLaps(session.circuit)}` : 'Pre-race/test telemetry'} Ã‚Â· {session.ctx.sessionMode === 'trackday' ? `${session.ctx.setup.rider ?? 'rider'} Ã‚Â· ${session.ctx.setup.bike ?? 'bike'} Ã‚Â· ${session.ctx.setup.stint ?? 'stint'}` : 'live pit-wall view'}
+            {session.ctx.circuitName} —· {sessionState.activeRace ? `Race Lap ${t.lapCount}/${activeRaceLaps(session.circuit)}` : 'Pre-race/test telemetry'} —· {session.ctx.sessionMode === 'trackday' ? `${session.ctx.setup.rider ?? 'rider'} —· ${session.ctx.setup.bike ?? 'bike'} —· ${session.ctx.setup.stint ?? 'stint'}` : 'live pit-wall view'}
             <span style={{ fontSize: 10, color: 'var(--text-dim)', marginLeft: 8 }}>
-              Ã‚Â· {MUGELLO_TRACK_KM} km Ã‚Â· Main straight {MUGELLO_MAIN_STRAIGHT_M} m Ã‚Â· procedural map
+              —· {MUGELLO_TRACK_KM} km —· Main straight {MUGELLO_MAIN_STRAIGHT_M} m —· procedural map
             </span>
           </p>
         </div>
         <span className="badge badge-red" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-          <Radio size={12} /> LIVE Ã‚Â· 10 Hz
+          <Radio size={12} /> LIVE —· 10 Hz
         </span>
       </div>
 
-      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â ALERT BANNERS Ã¢â‚¬â€ contextual Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
+      {/* Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢Â ALERT BANNERS — contextual Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢Â */}
       {(tyreOverheating || safetyAlert || anomalyAlert) && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
           {tyreOverheating && (
@@ -264,13 +264,13 @@ export function TrackLivePage() {
               <AlertTriangle size={18} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 2 }} />
               <div style={{ flex: 1 }}>
                 <div style={{ color: 'var(--accent)', fontWeight: 800, fontSize: 13, marginBottom: 2 }}>
-                  RED ALERT Ã‚Â· Rear tyre overheating ({rearTemp}Ã‚Â°C Ã‚Â· {t.rearCompound})
+                  RED ALERT —· Rear tyre overheating ({rearTemp}—Â°C —· {t.rearCompound})
                 </div>
                 <div style={{ color: 'rgba(224,55,55,0.8)', fontSize: 11, lineHeight: 1.5 }}>
-                  Affected: Rear tyre right shoulder Ã‚Â· High load through Arrabbiata 1/2 exit
+                  Affected: Rear tyre right shoulder —· High load through Arrabbiata 1/2 exit
                 </div>
                 <div style={{ color: 'rgba(224,55,55,0.8)', fontSize: 11, lineHeight: 1.5 }}>
-                  Action: Protect rear for 2 laps Ã‚Â· Avoid aggressive TC reduction Ã‚Â· Delay attack until temp &lt; 114Ã‚Â°C
+                  Action: Protect rear for 2 laps —· Avoid aggressive TC reduction —· Delay attack until temp &lt; 114—Â°C
                 </div>
               </div>
             </div>
@@ -282,7 +282,7 @@ export function TrackLivePage() {
               background: 'rgba(249,115,22,0.12)', border: '1px solid var(--orange)',
               color: 'var(--orange)', fontWeight: 700,
             }}>
-              <AlertTriangle size={16} /> LAP ANOMALY Ã‚Â· Lap {t.lapCount} flagged Ã¢â‚¬â€ check telemetry for off-track or traffic
+              <AlertTriangle size={16} /> LAP ANOMALY —· Lap {t.lapCount} flagged — check telemetry for off-track or traffic
             </div>
           )}
           {safetyAlert && (
@@ -292,13 +292,13 @@ export function TrackLivePage() {
               background: 'var(--yellow-dim)', border: '1px solid var(--yellow)',
               color: 'var(--yellow)', fontWeight: 700,
             }}>
-              <ShieldAlert size={16} /> CAUTION Ã‚Â· High lean angle ({t.leanAngle.toFixed(0)}Ã‚Â°) Ã¢â‚¬â€ crash-risk margin low
+              <ShieldAlert size={16} /> CAUTION —· High lean angle ({t.leanAngle.toFixed(0)}—Â°) — crash-risk margin low
             </div>
           )}
         </div>
       )}
 
-      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â TRACK STATUS STRIP Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
+      {/* Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢Â TRACK STATUS STRIP Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢Â */}
       <div className="card mb-4" style={{ padding: '10px 16px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
@@ -306,7 +306,7 @@ export function TrackLivePage() {
               <span style={{ width: 8, height: 8, borderRadius: '50%', background: sessionState.activeRace ? 'var(--green)' : 'var(--yellow)', display: 'inline-block' }} />
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, color: sessionState.activeRace ? 'var(--green)' : 'var(--yellow)' }}>{sessionState.flagLabel}</span>
             </div>
-            <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{sessionState.activeRace ? 'All sectors clear Ã‚Â· gap control active' : 'Pre-race/test stream Ã‚Â· race timing not started'}</span>
+            <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{sessionState.activeRace ? 'All sectors clear —· gap control active' : 'Pre-race/test stream —· race timing not started'}</span>
           </div>
           <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-dim)' }}>
             <Clock size={10} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 3 }} />
@@ -315,14 +315,14 @@ export function TrackLivePage() {
         </div>
       </div>
 
-      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â HERO: 3D bike + track map + lap/delta Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
+      {/* Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢Â HERO: 3D bike + track map + lap/delta Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢Â */}
       <div className="grid-3 mb-4" style={{ gap: 16, alignItems: 'stretch' }}>
         <div className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
           <Big label="CURRENT LAP TIME" value={fmtLap(t.lapTime)} />
           <div style={{ height: 1, background: 'rgba(255,255,255,0.08)' }} />
           <Big label="SECTOR DELTA vs personal best" value={`${deltaPos ? '+' : ''}${sectorDelta.toFixed(3)}`} unit="s" color={deltaPos ? 'var(--accent)' : 'var(--green)'} />
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-dim)', textAlign: 'center', marginTop: 2 }}>
-            Current zone: {zone} Ã‚Â· {phase}
+            Current zone: {zone} —· {phase}
           </div>
         </div>
         <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
@@ -333,20 +333,20 @@ export function TrackLivePage() {
         </div>
       </div>
 
-      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â BIG NUMBERS STRIP Ã¢â‚¬â€ with explicit gap labels Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
+      {/* Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢Â BIG NUMBERS STRIP — with explicit gap labels Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢Â */}
       <div className="card mb-4">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', gap: 10, padding: '6px 0' }}>
           <Big label="SPEED" value={t.speed} unit="km/h" color="var(--blue)" />
-          <Big label="LEAN" value={t.leanAngle.toFixed(0)} unit="Ã‚Â°" color="var(--purple)" />
+          <Big label="LEAN" value={t.leanAngle.toFixed(0)} unit="—Â°" color="var(--purple)" />
           <Big label="GEAR" value={t.gear} />
           <Big label="RPM" value={(t.rpm / 1000).toFixed(1)} unit="k" />
           <Big label="POS" value={`P${t.position}`} color="var(--accent)" />
           <Big label="GAP to P2" value={`+${gapToP2.toFixed(3)}`} unit="s" color="var(--yellow)" />
-          <Big label="GAP to leader" value={t.gap === 'leader' ? 'LEADER' : t.gap.includes('Ã¢â‚¬â€œ') ? t.gap : `${t.gap}s`} color="var(--orange)" />
+          <Big label="GAP to leader" value={t.gap === 'leader' ? 'LEADER' : t.gap.includes('——œ') ? t.gap : `${t.gap}s`} color="var(--orange)" />
         </div>
       </div>
 
-      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â MAIN CONTENT GRID Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
+      {/* Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢Â MAIN CONTENT GRID Ã¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢ÂÃ¢—¢Â */}
       <div className="grid-2 mb-4" style={{ gap: 16 }}>
 
         {/* LEFT: Lean Angle HUD + Throttle/Brake + Tyre status */}
@@ -359,7 +359,7 @@ export function TrackLivePage() {
           <div className="card">
             <div className="card-header">
               <span className="card-title">Throttle &amp; Brake</span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-dim)' }}>{zone} Ã‚Â· {phase}</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-dim)' }}>{zone} —· {phase}</span>
             </div>
             <div className="card-body" style={{ flexDirection: 'column', gap: 10 }}>
               <Bar
@@ -385,7 +385,7 @@ export function TrackLivePage() {
             </div>
           </div>
 
-          {/* Rear Tyre Ã¢â‚¬â€ detailed */}
+          {/* Rear Tyre — detailed */}
           <div className="card" style={{ borderColor: tyreOverheating ? 'color-mix(in srgb, var(--accent) 30%, transparent)' : undefined }}>
             <div className="card-header">
               <span className="card-title flex items-center gap-2">
@@ -393,7 +393,7 @@ export function TrackLivePage() {
                 Rear Tyre
               </span>
               <span className={`badge ${tyreOverheating ? 'badge-red' : 'badge-orange'}`}>
-                {t.rearCompound} Ã‚Â· Lap {t.rearTyreAge}
+                {t.rearCompound} —· Lap {t.rearTyreAge}
               </span>
             </div>
             <div className="card-body" style={{ flexDirection: 'column', gap: 8 }}>
@@ -401,7 +401,7 @@ export function TrackLivePage() {
                 <div className="stat-tile">
                   <div className="stat-tile__label">Temperature</div>
                   <span className="stat-tile__value" style={{ fontSize: 18, color: tyreOverheating ? 'var(--accent)' : 'var(--text)' }}>
-                    {rearTemp}Ã‚Â°<span style={{ fontSize: 11, color: 'var(--text-muted)' }}> surface</span>
+                    {rearTemp}—Â°<span style={{ fontSize: 11, color: 'var(--text-muted)' }}> surface</span>
                   </span>
                 </div>
                 <div className="stat-tile">
@@ -425,7 +425,7 @@ export function TrackLivePage() {
               </div>
               <div style={{ display: 'flex', gap: 8, fontSize: 10, color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }}>
                 <span>Thermal risk: <strong style={{ color: thermalRisk === 'HIGH' ? 'var(--accent)' : thermalRisk === 'MEDIUM' ? 'var(--yellow)' : 'var(--green)' }}>{thermalRisk}</strong></span>
-                <span>Ã‚Â· Deg: +{degPerLap.toFixed(1)}%/lap</span>
+                <span>—· Deg: +{degPerLap.toFixed(1)}%/lap</span>
               </div>
             </div>
           </div>
@@ -452,12 +452,12 @@ export function TrackLivePage() {
                 <span>Next: <strong style={{ color: 'var(--accent)' }}>{next.tag} {next.name}</strong></span>
               </div>
               <div style={{ fontSize: 9, color: 'var(--text-dim)', fontFamily: 'var(--font-mono)', textAlign: 'center' }}>
-                Coach focus: T7 Savelli exit Ã‚Â· Arrabbiata 1/2 high-load zone
+                Coach focus: T7 Savelli exit —· Arrabbiata 1/2 high-load zone
               </div>
             </div>
           </div>
 
-          {/* Rider Coach AI Ã¢â‚¬â€ with Mugello corner context */}
+          {/* Rider Coach AI — with Mugello corner context */}
           <RiderCoachInsight cornerName={`${nearestCorner.tag} ${nearestCorner.name}`} />
         </div>
       </div>

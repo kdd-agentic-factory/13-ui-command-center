@@ -1,8 +1,8 @@
 /**
- * TrackEvolutionPage â€” Track Evolution Model.
+ * TrackEvolutionPage —” Track Evolution Model.
  *
- * How the circuit's grip evolves across the session â€” rubbering in to a peak
- * window, then fading as track temperature climbs â€” with the best push-lap
+ * How the circuit's grip evolves across the session —” rubbering in to a peak
+ * window, then fading as track temperature climbs —” with the best push-lap
  * window marked and the limiter explained per phase.
  */
 import { TrendingUp } from 'lucide-react';
@@ -28,10 +28,10 @@ export function TrackEvolutionPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><TrendingUp size={18} /> Track Evolution Model</h1>
-          <p className="page-subtitle">Grip evolution & best window â€” {evo.combo} Â· {evo.laps} laps Â· ambient {evo.ambientC}Â°C</p>
+          <p className="page-subtitle">Grip evolution & best window —” {evo.combo} · {evo.laps} laps · ambient {evo.ambientC}Â°C</p>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Current Â· lap {evo.currentLap}</div>
+          <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Current · lap {evo.currentLap}</div>
           <div style={{ fontSize: 14, fontWeight: 800, color: phaseMeta(evo.currentPhase).color }}>{phaseMeta(evo.currentPhase).label}</div>
         </div>
       </div>
@@ -48,8 +48,8 @@ export function TrackEvolutionPage() {
           <line x1={x(evo.currentLap)} y1={0} x2={x(evo.currentLap)} y2={H} stroke="#fff" strokeWidth={1} />
         </svg>
         <div style={{ display: 'flex', gap: 16, fontSize: 10, fontFamily: MONO, color: 'var(--text-muted)', marginTop: 4 }}>
-          <span><span style={{ color: 'var(--green)' }}>â”€â”€</span> grip %</span>
-          <span><span style={{ color: 'var(--accent)' }}>â€“ â€“</span> track temp Â°C</span>
+          <span><span style={{ color: 'var(--green)' }}>—€—€</span> grip %</span>
+          <span><span style={{ color: 'var(--accent)' }}>—“ —“</span> track temp Â°C</span>
           <span style={{ marginLeft: 'auto' }}>lap 1 â†’ {evo.laps}</span>
         </div>
       </div>
@@ -59,7 +59,7 @@ export function TrackEvolutionPage() {
  }}>
           <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 4 }}>Recommendation</div>
           <div style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.5 }}>{evo.recommendation}</div>
-          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 8 }}>Best push window: <span style={{ color: 'var(--green)', fontFamily: MONO }}>laps {evo.peakWindow[0]}â€“{evo.peakWindow[1]}</span></div>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 8 }}>Best push window: <span style={{ color: 'var(--green)', fontFamily: MONO }}>laps {evo.peakWindow[0]}—“{evo.peakWindow[1]}</span></div>
         </div>
         <div className="card" style={{ padding: 16,
  }}>

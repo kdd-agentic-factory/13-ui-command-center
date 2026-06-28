@@ -63,7 +63,7 @@ interface DataSource {
 
 const BEFORE = {
   lap: '1:59.238',
-  loss: 'T15 Bucine Â· late throttle on exit',
+  loss: 'T15 Bucine · late throttle on exit',
 };
 
 const AFTER = {
@@ -91,30 +91,30 @@ const TIME_LOSS: LossItem[] = [
 
 const CRITICAL_CORNERS: CriticalCorner[] = [
   {
-    corner: 'T15 Â· Bucine',
+    corner: 'T15 · Bucine',
     loss: '+0.284s',
     issue: 'Late throttle + rear slip',
     phase: 'Exit',
-    evidence: 'Throttle 0.40s late Â· rear grip 78% Â· max lean 57Â°',
+    evidence: 'Throttle 0.40s late · rear grip 78% · max lean 57Â°',
   },
   {
-    corner: 'T1 Â· San Donato',
+    corner: 'T1 · San Donato',
     loss: '+0.216s',
     issue: 'Braking 9 m late',
     phase: 'Entry',
-    evidence: 'Front chatter 18 Hz Â· brake release too late',
+    evidence: 'Front chatter 18 Hz · brake release too late',
   },
   {
-    corner: 'T12 Â· Correntaio',
+    corner: 'T12 · Correntaio',
     loss: '+0.142s',
     issue: 'Wide entry and slow rotation',
     phase: 'Apex / exit',
-    evidence: 'Line deviation +0.6 m Â· exit speed -7 km/h',
+    evidence: 'Line deviation +0.6 m · exit speed -7 km/h',
   },
 ];
 
 const NEXT_STINT_PLAN = [
-  { title: 'T15 Bucine', body: 'Open throttle 0.3s earlier, but only after reducing lean below 54â€“55Â°.' },
+  { title: 'T15 Bucine', body: 'Open throttle 0.3s earlier, but only after reducing lean below 54—“55Â°.' },
   { title: 'Rear grip protection', body: 'Keep max lean below 55Â° on slow-corner exits and avoid sharp throttle pickup.' },
   { title: 'T1 San Donato', body: 'Brake 9 m earlier and release pressure more progressively to reduce front chatter.' },
   { title: 'Rear tyre validation', body: 'Check hot rear pressure immediately after the stint and compare against target range.' },
@@ -123,7 +123,7 @@ const NEXT_STINT_PLAN = [
 const RIDER_DIAGNOSIS: DiagnosisItem[] = [
   {
     title: 'Throttle timing',
-    body: 'Throttle opening is consistently 0.2â€“0.4s late on exit phases.',
+    body: 'Throttle opening is consistently 0.2—“0.4s late on exit phases.',
     zones: 'Affected zones: T15 Bucine, T12 Correntaio, T7 Savelli.',
   },
   {
@@ -170,12 +170,12 @@ const VALIDATION_TARGETS: ValidationTarget[] = [
 ];
 
 const DATA_SOURCES: DataSource[] = [
-  { icon: Gauge, label: 'GPS', detail: '10 Hz Â· validated race feed' },
-  { icon: Shield, label: 'IMU', detail: 'lean Â· acceleration Â· gyro' },
-  { icon: Cpu, label: 'ECU', detail: 'RPM Â· throttle Â· gear Â· brake demand' },
-  { icon: Thermometer, label: 'Tyre model', detail: 'temperature Â· pressure Â· grip estimate' },
+  { icon: Gauge, label: 'GPS', detail: '10 Hz · validated race feed' },
+  { icon: Shield, label: 'IMU', detail: 'lean · acceleration · gyro' },
+  { icon: Cpu, label: 'ECU', detail: 'RPM · throttle · gear · brake demand' },
+  { icon: Thermometer, label: 'Tyre model', detail: 'temperature · pressure · grip estimate' },
   { icon: FileSpreadsheet, label: 'CSV import', detail: '2D / AiM datalogger export' },
-  { icon: Video, label: 'Video', detail: 'optional Â· not synced' },
+  { icon: Video, label: 'Video', detail: 'optional · not synced' },
 ];
 
 const ACTIONS = [
@@ -226,7 +226,7 @@ export function SessionReportPage() {
       globalThis.print();
       return;
     }
-    toast({ type: 'success', title: label, message: 'Session Report Â· Stint 03 action queued for the race team.' });
+    toast({ type: 'success', title: label, message: 'Session Report · Stint 03 action queued for the race team.' });
   }
 
   return (
@@ -234,7 +234,7 @@ export function SessionReportPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">Session Report</h1>
-          <p className="page-subtitle">{session.ctx.circuitName} GP Â· {session.ctx.setup.stint ?? 'Stint 03'} Â· {session.ctx.setup.rider ?? 'RubÃ©n JuÃ¡rez'} Â· {session.ctx.setup.bike ?? 'Yamaha R1'}</p>
+          <p className="page-subtitle">{session.ctx.circuitName} GP · {session.ctx.setup.stint ?? 'Stint 03'} · {session.ctx.setup.rider ?? 'RubÃ©n JuÃ¡rez'} · {session.ctx.setup.bike ?? 'Yamaha R1'}</p>
         </div>
         <div className="flex items-center gap-2" style={{ flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           <span className="badge badge-blue">Post-stint</span>
@@ -248,10 +248,10 @@ export function SessionReportPage() {
  }}>
         <div className="card-body">
           <div className="grid-4">
-            <div><div className="card-label">Conditions</div><div style={{ fontSize: 13, fontWeight: 800 }}>Dry Â· Air 24Â°C Â· Track 38Â°C Â· Wind 8 km/h</div></div>
-            <div><div className="card-label">Circuit</div><div style={{ fontSize: 13, fontWeight: 800 }}>{MUGELLO_CIRCUIT.shortName} Â· {MUGELLO_CIRCUIT.lengthKm} km Â· {MUGELLO_CIRCUIT.turns} turns</div></div>
-            <div><div className="card-label">Report mode</div><div style={{ fontSize: 13, fontWeight: 800 }}>Post-stint Â· rider + engineering summary</div></div>
-            <div><div className="card-label">Generated</div><div style={{ fontSize: 13, fontWeight: 800 }}>Pit wall Â· 14:32:18</div></div>
+            <div><div className="card-label">Conditions</div><div style={{ fontSize: 13, fontWeight: 800 }}>Dry · Air 24Â°C · Track 38Â°C · Wind 8 km/h</div></div>
+            <div><div className="card-label">Circuit</div><div style={{ fontSize: 13, fontWeight: 800 }}>{MUGELLO_CIRCUIT.shortName} · {MUGELLO_CIRCUIT.lengthKm} km · {MUGELLO_CIRCUIT.turns} turns</div></div>
+            <div><div className="card-label">Report mode</div><div style={{ fontSize: 13, fontWeight: 800 }}>Post-stint · rider + engineering summary</div></div>
+            <div><div className="card-label">Generated</div><div style={{ fontSize: 13, fontWeight: 800 }}>Pit wall · 14:32:18</div></div>
           </div>
         </div>
       </div>
@@ -259,7 +259,7 @@ export function SessionReportPage() {
       <div className="card mb-4" style={{ background: 'linear-gradient(135deg, rgba(34,197,94,0.10), rgba(59,130,246,0.05))' }}>
         <div className="card-header">
           <span className="card-title flex items-center gap-2"><Target size={14} style={{ color: 'var(--green)' }} /> Executive Summary</span>
-          <span className="badge badge-green">Strong improvement Â· {AFTER.gain}s</span>
+          <span className="badge badge-green">Strong improvement · {AFTER.gain}s</span>
         </div>
         <div className="card-body">
           <div className="grid-4">
@@ -273,7 +273,7 @@ export function SessionReportPage() {
 
       <div className="card mb-4">
         <div className="card-header">
-          <span className="card-title flex items-center gap-2"><FileText size={14} style={{ color: 'var(--green)' }} /> Stint Outcome Â· Before â†’ After</span>
+          <span className="card-title flex items-center gap-2"><FileText size={14} style={{ color: 'var(--green)' }} /> Stint Outcome · Before â†’ After</span>
           <span className="badge badge-green">{AFTER.gain}s improvement</span>
         </div>
         <div className="card-body">
@@ -329,12 +329,12 @@ export function SessionReportPage() {
         <div className="card">
           <div className="card-header">
             <span className="card-title flex items-center gap-2"><Flag size={14} style={{ color: 'var(--blue)' }} /> Next Stint Plan</span>
-            <span className="badge badge-blue">focus Â· 4 actions</span>
+            <span className="badge badge-blue">focus · 4 actions</span>
           </div>
           <div className="card-body">
             {NEXT_STINT_PLAN.map((item, index) => <NumberedAction key={item.title} index={index + 1} title={item.title} body={item.body} />)}
             <div style={{ marginTop: 12, padding: '9px 11px', borderRadius: 8, border: '1px solid rgba(59,130,246,0.18)', background: 'rgba(59,130,246,0.07)', fontSize: 12, color: 'var(--text-muted)' }}>
-              <strong style={{ color: 'var(--blue)' }}>Validation lap:</strong> use laps 2â€“4 of the next stint for a clean comparison.
+              <strong style={{ color: 'var(--blue)' }}>Validation lap:</strong> use laps 2—“4 of the next stint for a clean comparison.
             </div>
           </div>
         </div>
@@ -343,7 +343,7 @@ export function SessionReportPage() {
       <div className="card mb-4">
         <div className="card-header">
           <span className="card-title flex items-center gap-2"><Flag size={14} style={{ color: 'var(--accent)' }} /> Critical Corners</span>
-          <span className="badge badge-red">3 found Â· Mugello map</span>
+          <span className="badge badge-red">3 found · Mugello map</span>
         </div>
         <div className="card-body">
           <div className="grid-3">
@@ -372,7 +372,7 @@ export function SessionReportPage() {
                 <StatTile label="Compound" value="Rear Soft / SC1" detail="race simulation tyre" color="var(--yellow)" />
                 <StatTile label="Cliff lap" value="L16" detail="estimated thermal cliff" color="var(--orange)" />
                 <StatTile label="Rear peak temp" value="118Â°C" detail="thermal load peak" color="var(--accent)" />
-                <StatTile label="Thermal zones" value="T8/T9 Â· T15" detail="Arrabbiata + Bucine" color="var(--blue)" />
+                <StatTile label="Thermal zones" value="T8/T9 · T15" detail="Arrabbiata + Bucine" color="var(--blue)" />
                 <StatTile label="Grip behaviour" value=">40% throttle" detail="loss during pickup" color="var(--text)" />
               </div>
               <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.55 }}>
@@ -396,7 +396,7 @@ export function SessionReportPage() {
           </div>
 
           <div className="card">
-            <div className="card-header"><span className="card-title">Data Sources</span><span className="badge badge-green">Connected Â· 94%</span></div>
+            <div className="card-header"><span className="card-title">Data Sources</span><span className="badge badge-green">Connected · 94%</span></div>
             <div className="card-body" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 9 }}>
               {DATA_SOURCES.map(source => {
                 const Icon = source.icon;
@@ -444,7 +444,7 @@ export function SessionReportPage() {
           </div>
 
           <div className="card" style={{ borderColor: 'color-mix(in srgb, var(--blue) 35%, transparent)' }}>
-            <div className="card-header"><span className="card-title">Session Reporter AI Â· Notes</span><span className="badge badge-blue">AI</span></div>
+            <div className="card-header"><span className="card-title">Session Reporter AI · Notes</span><span className="badge badge-blue">AI</span></div>
             <div className="card-body" style={{ fontSize: 13, lineHeight: 1.65, color: 'var(--text-muted)' }}>
               Solid, repeatable pace with a clear improvement theme: drive off the final sector and slow-corner exits.
               <br /><br />
@@ -466,7 +466,7 @@ export function SessionReportPage() {
             {VALIDATION_TARGETS.map(group => (
               <div key={group.area} style={{ padding: 12, border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', background: 'rgba(255,255,255,0.03)' }}>
                 <div style={{ fontSize: 13, fontWeight: 900, color: 'var(--text)', marginBottom: 8 }}>{group.area}</div>
-                {group.targets.map(target => <div key={target} style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 6 }}>â€¢ {target}</div>)}
+                {group.targets.map(target => <div key={target} style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 6 }}>—¢ {target}</div>)}
               </div>
             ))}
           </div>

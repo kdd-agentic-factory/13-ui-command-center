@@ -1,5 +1,5 @@
 /**
- * EdgeHubPage â€” KDD Trackside Edge Hub.
+ * EdgeHubPage —” KDD Trackside Edge Hub.
  *
  * Local pit-box operational status: connected devices + packet health, local
  * processing, offline-first capability, garage ready check, live event feed,
@@ -24,7 +24,7 @@ export function EdgeHubPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><Radio size={18} /> KDD Trackside Edge Hub</h1>
-          <p className="page-subtitle">Local telemetry gateway Â· edge processing Â· offline-first Â· secure sync â€” {e.combo}</p>
+          <p className="page-subtitle">Local telemetry gateway · edge processing · offline-first · secure sync —” {e.combo}</p>
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--green)', display: 'inline-flex', alignItems: 'center', gap: 5 }}><Wifi size={12} /> {e.hubStatus}</div>
@@ -33,14 +33,14 @@ export function EdgeHubPage() {
       </div>
 
       <div className="card mb-4" style={{ padding: '8px 12px', background: 'var(--yellow-dim)', border: '1px solid var(--yellow-border)', fontSize: 10.5, color: 'var(--text)' }}>
-        Representative edge state â€” no physical hardware is attached in this view; it shows how the trackside hub reports device health, packet loss, offline capability and cloud sync.
+        Representative edge state —” no physical hardware is attached in this view; it shows how the trackside hub reports device health, packet loss, offline capability and cloud sync.
       </div>
 
       {/* status row */}
       <div className="card mb-4" style={{ padding: 14, display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'center' }}>
         <div><div style={hdr}>Data trust</div><div style={{ fontSize: 20, fontWeight: 800, fontFamily: MONO, color: e.dataTrust >= 85 ? 'var(--green)' : 'var(--yellow)' }}>{e.dataTrust}%</div></div>
         <div style={{ flex: 1, minWidth: 200 }}>
-          <div style={hdr}>Cloud sync Â· {e.cloudSyncProgress}%</div>
+          <div style={hdr}>Cloud sync · {e.cloudSyncProgress}%</div>
           <div style={{ height: 7, borderRadius: 4, background: 'rgba(255,255,255,0.06)', overflow: 'hidden', marginTop: 4 }}>
             <div style={{ width: `${e.cloudSyncProgress}%`, height: '100%', background: 'linear-gradient(90deg, var(--cyan), var(--green))' }} />
           </div>
@@ -51,7 +51,7 @@ export function EdgeHubPage() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, alignItems: 'start' }}>
         {/* devices + packet health */}
         <div className="card" style={{ padding: 16 }}>
-          <div style={card}>Connected sources Â· packet health</div>
+          <div style={card}>Connected sources · packet health</div>
           {e.devices.map(d => {
             const pk = e.packets.find(p => p.source.toLowerCase().startsWith(d.name.split(' ')[0].toLowerCase()) || d.name.toLowerCase().includes(p.source.toLowerCase()));
             return (
@@ -59,7 +59,7 @@ export function EdgeHubPage() {
                 <span style={{ width: 9, height: 9, borderRadius: 999, background: deviceColor(d.status), flexShrink: 0 }} />
                 <span style={{ fontSize: 11.5, color: 'var(--text)', flex: 1 }}>{d.name}</span>
                 <span style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--text-muted)' }}>{d.detail}</span>
-                {pk && <span style={{ fontSize: 9, fontFamily: MONO, color: pk.status === 'OK' ? 'var(--green)' : 'var(--accent)', width: 70, textAlign: 'right' }}>{pk.rate} Â· {pk.packetLoss}%</span>}
+                {pk && <span style={{ fontSize: 9, fontFamily: MONO, color: pk.status === 'OK' ? 'var(--green)' : 'var(--accent)', width: 70, textAlign: 'right' }}>{pk.rate} · {pk.packetLoss}%</span>}
               </div>
             );
           })}
@@ -70,7 +70,7 @@ export function EdgeHubPage() {
  }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
             <span style={{ ...card, marginBottom: 0, flex: 1 }}>Garage ready check</span>
-            <span style={{ fontSize: 10, fontFamily: MONO, color: 'var(--green)', border: '1px solid rgba(0,230,118,0.4)', borderRadius: 4, padding: '1px 8px' }}>{e.readyStatus} Â· ready to start</span>
+            <span style={{ fontSize: 10, fontFamily: MONO, color: 'var(--green)', border: '1px solid rgba(0,230,118,0.4)', borderRadius: 4, padding: '1px 8px' }}>{e.readyStatus} · ready to start</span>
           </div>
           {e.garageReady.map(g => (
             <div key={g.item} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, marginBottom: 4 }}>
@@ -85,7 +85,7 @@ export function EdgeHubPage() {
       {/* local processing + offline-first */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginTop: 14 }}>
         <div className="card" style={{ padding: 16 }}>
-          <div style={card}>Local edge processing Â· active</div>
+          <div style={card}>Local edge processing · active</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
             {e.processing.map(p => <span key={p} style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--green)', border: '1px solid rgba(0,230,118,0.3)', borderRadius: 4, padding: '2px 7px' }}>{p}</span>)}
           </div>
@@ -95,11 +95,11 @@ export function EdgeHubPage() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
             <div>
               <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--green)', textTransform: 'uppercase', marginBottom: 3 }}>Available locally</div>
-              {e.offlineAvailable.slice(0, 8).map(x => <div key={x} style={{ fontSize: 10, color: 'var(--text)' }}>Â· {x}</div>)}
+              {e.offlineAvailable.slice(0, 8).map(x => <div key={x} style={{ fontSize: 10, color: 'var(--text)' }}>· {x}</div>)}
             </div>
             <div>
               <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 3 }}>Pending cloud</div>
-              {e.pendingCloud.map(x => <div key={x} style={{ fontSize: 10, color: 'var(--text-muted)' }}>Â· {x}</div>)}
+              {e.pendingCloud.map(x => <div key={x} style={{ fontSize: 10, color: 'var(--text-muted)' }}>· {x}</div>)}
             </div>
           </div>
         </div>
@@ -110,15 +110,15 @@ export function EdgeHubPage() {
         <div className="card" style={{ padding: 16,
  }}>
           <div style={card}>Live event feed</div>
-          <div style={{ fontSize: 11.5, color: 'var(--text)' }}><span style={{ color: 'var(--accent)' }}>NOW</span> Â· {e.liveFeed.now}</div>
-          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>Last lap Â· {e.liveFeed.lastLap}</div>
-          <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Trend Â· {e.liveFeed.trend}</div>
+          <div style={{ fontSize: 11.5, color: 'var(--text)' }}><span style={{ color: 'var(--accent)' }}>NOW</span> · {e.liveFeed.now}</div>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>Last lap · {e.liveFeed.lastLap}</div>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Trend · {e.liveFeed.trend}</div>
           <div style={{ fontSize: 11.5, color: 'var(--cyan)', marginTop: 4 }}>â†’ {e.liveFeed.recommendation}</div>
         </div>
         <div className="card" style={{ padding: 16 }}>
           <div style={card}>Video sync engine</div>
-          <div style={{ fontSize: 11.5, color: 'var(--text)' }}>{e.videoSync.camera} Â· {e.videoSync.status}</div>
-          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>offset +{e.videoSync.offsetS}s Â· {e.videoSync.markers} markers Â· {e.videoSync.ready ? 'ready for debrief' : 'not ready'}</div>
+          <div style={{ fontSize: 11.5, color: 'var(--text)' }}>{e.videoSync.camera} · {e.videoSync.status}</div>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>offset +{e.videoSync.offsetS}s · {e.videoSync.markers} markers · {e.videoSync.ready ? 'ready for debrief' : 'not ready'}</div>
         </div>
       </div>
 
@@ -127,7 +127,7 @@ export function EdgeHubPage() {
         <div className="card" style={{ padding: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
             <Cloud size={14} style={{ color: 'var(--cyan)' }} />
-            <span style={{ ...card, marginBottom: 0, flex: 1 }}>Edge â†’ cloud sync Â· {e.sync.progress}%</span>
+            <span style={{ ...card, marginBottom: 0, flex: 1 }}>Edge â†’ cloud sync · {e.sync.progress}%</span>
             <span style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--green)' }}>{e.sync.conflicts}</span>
           </div>
           <div style={{ height: 6, borderRadius: 3, background: 'rgba(255,255,255,0.06)', overflow: 'hidden', marginBottom: 8 }}>
@@ -143,9 +143,9 @@ export function EdgeHubPage() {
             <span style={{ ...card, marginBottom: 0 }}>Edge AI vs Cloud AI</span>
           </div>
           <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--green)', textTransform: 'uppercase', marginBottom: 3 }}>Edge (local)</div>
-          <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 6 }}>{e.edgeAI.join(' Â· ')}</div>
+          <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 6 }}>{e.edgeAI.join(' · ')}</div>
           <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--violet)', textTransform: 'uppercase', marginBottom: 3 }}>Cloud (heavy)</div>
-          <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{e.cloudAI.join(' Â· ')}</div>
+          <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{e.cloudAI.join(' · ')}</div>
         </div>
       </div>
 
@@ -175,8 +175,8 @@ export function EdgeHubPage() {
         <div className="card" style={{ padding: 16 }}>
           <div style={card}>Session buffer</div>
           <div style={{ fontSize: 20, fontWeight: 800, fontFamily: MONO, color: 'var(--text)' }}>{e.buffer.sizeGB} GB</div>
-          <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>{e.buffer.stored.join(' Â· ')}</div>
-          <div style={{ fontSize: 10.5, color: 'var(--yellow)', marginTop: 4 }}>{e.buffer.syncStatus} Â· {e.buffer.retentionDays} days local</div>
+          <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>{e.buffer.stored.join(' · ')}</div>
+          <div style={{ fontSize: 10.5, color: 'var(--yellow)', marginTop: 4 }}>{e.buffer.syncStatus} · {e.buffer.retentionDays} days local</div>
         </div>
       </div>
     </div>

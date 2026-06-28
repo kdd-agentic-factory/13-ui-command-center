@@ -6,7 +6,7 @@ import { useToast } from '../components/ToastProvider';
 import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 
 /**
- * Garage Setup Advisor (engineer feedback #8) â€” professional-grade setup
+ * Garage Setup Advisor (engineer feedback #8) —” professional-grade setup
  * hypothesis tool connecting on-track symptoms â†’ telemetry evidence â†’
  * rider/setup/track split â†’ proposed changes with delta/impact/risk â†’
  * next-stint validation targets.
@@ -15,7 +15,7 @@ import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
  * T7 Savelli, T10 Scarperia, T11 Palagio, T12 Correntaio, T15 Bucine.
  */
 
-/* â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* —€—€ Types —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€ */
 
 type Priority = 'High' | 'Medium' | 'Low';
 
@@ -37,7 +37,7 @@ interface SetupFinding {
   id: string;
   title: string;
   priority: Priority;
-  confidence: number;          // 0â€“1
+  confidence: number;          // 0—“1
   affectedZones: string[];
   telemetry: TelemetryPoint[];
   causeRider: string;
@@ -51,7 +51,7 @@ interface SetupFinding {
   trackPct: number;            // track / tyre contribution %
 }
 
-/* â”€â”€ Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* —€—€ Data —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€ */
 
 const FINDINGS: SetupFinding[] = [
   {
@@ -87,7 +87,7 @@ const FINDINGS: SetupFinding[] = [
         risk: 'slower direction change if overdone',
       },
     ],
-    validationAction: 'Check rear hot pressure immediately after stint. Target: 1.85â€“1.90 bar hot.',
+    validationAction: 'Check rear hot pressure immediately after stint. Target: 1.85—“1.90 bar hot.',
     riderPct: 55,
     setupPct: 35,
     trackPct: 10,
@@ -155,14 +155,14 @@ const FINDINGS: SetupFinding[] = [
         risk: 'may increase instability under braking and reduce rear grip on exit',
       },
     ],
-    validationAction: 'Optional test â€” try +1 mm rear ride height OR -1 mm front ride height. Do not apply both.',
+    validationAction: 'Optional test —” try +1 mm rear ride height OR -1 mm front ride height. Do not apply both.',
     riderPct: 30,
     setupPct: 50,
     trackPct: 20,
   },
 ];
 
-/* â”€â”€ Static setup baseline â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* —€—€ Static setup baseline —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€ */
 
 interface Param {
   key: string;
@@ -181,7 +181,7 @@ const PARAMS: Param[] = [
   { key: 'frontPreload', label: 'Front preload',  current: '0.75',    baseline: '0.75',  proposed: null,   delta: null,       impact: 'braking support acceptable',                                risk: 'no change', group: 'Front' },
   { key: 'frontComp',    label: 'Front compression (0.5-click)', current: '8.0 clicks', baseline: '8.0 clicks', proposed: '7.0 clicks', delta: '-1.0 softer', impact: 'reduce braking chatter',                                       risk: 'more fork dive', group: 'Front' },
   { key: 'frontRebound', label: 'Front rebound (0.5-click)',   current: '11.0 clicks', baseline: '11.0 clicks', proposed: '10.0 clicks', delta: '-1.0 softer', impact: 'improve front settling during brake release',                  risk: 'less trail-braking support', group: 'Front' },
-  { key: 'frontHeight',  label: 'Front ride height', current: '12.0 mm',   baseline: '12.0 mm',  proposed: null,   delta: null,       impact: 'geometry stable â€” no change recommended',                        risk: 'no change', group: 'Front' },
+  { key: 'frontHeight',  label: 'Front ride height', current: '12.0 mm',   baseline: '12.0 mm',  proposed: null,   delta: null,       impact: 'geometry stable —” no change recommended',                        risk: 'no change', group: 'Front' },
   // Rear
   { key: 'rearPreload',  label: 'Rear preload',     current: '1.00',    baseline: '1.00',  proposed: null,   delta: null,       impact: 'rear balance stable',                                           risk: 'no change', group: 'Rear' },
   { key: 'rearComp',     label: 'Rear comp hi/lo (0.5-click)', current: '6.0 / 9.0',   baseline: '6.0 / 9.0',  proposed: null,   delta: null,       impact: 'no complaint on entry',                                          risk: 'no change', group: 'Rear' },
@@ -189,10 +189,10 @@ const PARAMS: Param[] = [
   { key: 'rearHeight',   label: 'Rear ride height', current: '+2.0 mm',   baseline: '+2.0 mm',  proposed: '+3.0 mm (optional test)', delta: '+1.0 mm', impact: 'improve mid-corner rotation (understeer finding only)',           risk: 'may reduce rear grip on exit', group: 'Rear' },
   // Tyres
   { key: 'frontPress',   label: 'Front pressure',   current: '1.90 bar', baseline: '1.86 bar', proposed: '1.86 bar cold', delta: '-0.04 bar', impact: 'reduce hot pressure peak, lower chatter amplitude',              risk: 'less front support if too low', group: 'Tyres' },
-  { key: 'rearPress',    label: 'Rear pressure',    current: '1.70 bar', baseline: '1.72 bar', proposed: null,   delta: null,       impact: 'verify hot â€” do not change cold target yet',                      risk: 'monitor hot build-up', group: 'Tyres' },
+  { key: 'rearPress',    label: 'Rear pressure',    current: '1.70 bar', baseline: '1.72 bar', proposed: null,   delta: null,       impact: 'verify hot —” do not change cold target yet',                      risk: 'monitor hot build-up', group: 'Tyres' },
   // Electronics
   { key: 'tc',           label: 'Traction control',  current: 'Level 4', baseline: 'Level 4',  proposed: 'Level 5', delta: '+1',       impact: 'reduce rear slip on throttle pickup',                             risk: 'slight loss of exit drive', group: 'Electronics' },
-  { key: 'engineBrake',  label: 'Engine brake',     current: 'Level 2', baseline: 'Level 2',  proposed: null,   delta: null,       impact: 'keep â€” rear exit instability is not entry-related',               risk: 'no change', group: 'Electronics' },
+  { key: 'engineBrake',  label: 'Engine brake',     current: 'Level 2', baseline: 'Level 2',  proposed: null,   delta: null,       impact: 'keep —” rear exit instability is not entry-related',               risk: 'no change', group: 'Electronics' },
   { key: 'powerMap',     label: 'Power map',        current: 'Map B',   baseline: 'Map B',   proposed: null,   delta: null,       impact: 'no top-speed deficit detected',                                   risk: 'no change', group: 'Electronics' },
 ];
 
@@ -202,7 +202,7 @@ const PRIORITY_COLOR: Record<Priority, string> = {
   Low: 'var(--blue)',
 };
 
-/* â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* —€—€ Helpers —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€ */
 
 const pctBar = (pct: number, color: string, size = 60) => (
   <div style={{ width: size, height: 5, borderRadius: 3, background: 'var(--bg-surface)', overflow: 'hidden', display: 'inline-block', verticalAlign: 'middle' }}>
@@ -210,7 +210,7 @@ const pctBar = (pct: number, color: string, size = 60) => (
   </div>
 );
 
-/* â”€â”€ Page component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* —€—€ Page component —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€ */
 
 export function GarageSetupAdvisorPage() {
   const garage = useGarage();
@@ -234,15 +234,15 @@ export function GarageSetupAdvisorPage() {
           <div>
             <h1 className="page-title" style={{ fontSize: 20, letterSpacing: '-0.02em' }}>GARAGE SETUP ADVISOR</h1>
             <p className="page-subtitle" style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-              {garage.profile.bike.brand} {garage.profile.bike.model} Â· Performance issue â†’ setup hypothesis â†’ next-stint change
+              {garage.profile.bike.brand} {garage.profile.bike.model} · Performance issue â†’ setup hypothesis â†’ next-stint change
             </p>
             <div style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', marginTop: 2 }}>
-              Setup range: {garage.profile.setup.available ? `${garage.profile.bike.electronics.join(' Â· ')}` : 'generic category model â€” manufacturer electronics unavailable'}
+              Setup range: {garage.profile.setup.available ? `${garage.profile.bike.electronics.join(' · ')}` : 'generic category model —” manufacturer electronics unavailable'}
             </div>
           </div>
           <div style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-dim)' }}>
             <div>Stint 03</div>
-            <div style={{ color: 'var(--green)' }}>3 findings Â· {proposedCount} proposed changes Â· confidence 82%</div>
+            <div style={{ color: 'var(--green)' }}>3 findings · {proposedCount} proposed changes · confidence 82%</div>
           </div>
         </div>
 
@@ -257,27 +257,27 @@ export function GarageSetupAdvisorPage() {
           <span className="sep" style={{ width: 1, height: 14, background: 'var(--border)' }} />
           <span><span style={{ color: 'var(--text-muted)' }}>Bike</span> <strong style={{ color: 'var(--text)' }}>Yamaha R1</strong></span>
           <span className="sep" style={{ width: 1, height: 14, background: 'var(--border)' }} />
-          <span><span style={{ color: 'var(--text-muted)' }}>Condition</span> <strong style={{ color: 'var(--yellow)' }}>Dry</strong> Â· Track <strong>48Â°C</strong></span>
+          <span><span style={{ color: 'var(--text-muted)' }}>Condition</span> <strong style={{ color: 'var(--yellow)' }}>Dry</strong> · Track <strong>48Â°C</strong></span>
           <span className="sep" style={{ width: 1, height: 14, background: 'var(--border)' }} />
           <span><span style={{ color: 'var(--text-muted)' }}>Baseline</span> <strong>Race Baseline FP3</strong></span>
           <span className="sep" style={{ width: 1, height: 14, background: 'var(--border)' }} />
           <span><span style={{ color: 'var(--text-muted)' }}>Active</span> <strong style={{ color: 'var(--accent)' }}>Stint 03</strong></span>
           <span className="sep" style={{ width: 1, height: 14, background: 'var(--border)' }} />
-          <span><span style={{ color: 'var(--text-muted)' }}>Validation target</span> <strong style={{ color: 'var(--green)' }}>Next stint Â· Laps 1â€“3</strong></span>
+          <span><span style={{ color: 'var(--text-muted)' }}>Validation target</span> <strong style={{ color: 'var(--green)' }}>Next stint · Laps 1—“3</strong></span>
         </div>
       </div>
 
       {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
-      {/* TWO-COLUMN LAYOUT â€” Findings (left) Â· Setup Changes (right) */}
+      {/* TWO-COLUMN LAYOUT —” Findings (left) · Setup Changes (right) */}
       {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
 
       <div className="grid-2" style={{ gap: 16, alignItems: 'start' }}>
 
-        {/* â”€â”€â”€ LEFT: SETUP FINDINGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        {/* —€—€—€ LEFT: SETUP FINDINGS —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€ */}
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <div style={{ fontSize: 10, letterSpacing: '0.12em', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: 4 }}>
-            SETUP FINDINGS Â· STINT 03
+            SETUP FINDINGS · STINT 03
           </div>
 
           {FINDINGS.map(f => {
@@ -294,7 +294,7 @@ export function GarageSetupAdvisorPage() {
                 }}
                 onClick={() => setSelected(f.id)}
               >
-                {/* â”€â”€ Finding header â”€â”€ */}
+                {/* —€—€ Finding header —€—€ */}
                 <div className="flex items-center justify-between" style={{ marginBottom: open ? 10 : 0 }}>
                   <div className="flex items-center gap-2" style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>
                     <AlertTriangle size={14} style={{ color: PRIORITY_COLOR[f.priority], flex: 'none' }} />
@@ -412,11 +412,11 @@ export function GarageSetupAdvisorPage() {
           })}
         </div>
 
-        {/* â”€â”€â”€ RIGHT: SETUP CHANGE PLAN + CURRENT SETUP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        {/* —€—€—€ RIGHT: SETUP CHANGE PLAN + CURRENT SETUP —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€ */}
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 
-          {/* â”€â”€ Setup Change Plan â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+          {/* —€—€ Setup Change Plan —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€ */}
           <div className="card">
             <div className="card-header" style={{ marginBottom: 10 }}>
               <span className="card-title flex items-center gap-2"><Wrench size={14} style={{ color: 'var(--accent)' }} /> SETUP CHANGE PLAN</span>
@@ -459,14 +459,14 @@ export function GarageSetupAdvisorPage() {
               border: '1px dashed color-mix(in srgb, var(--green) 30%, transparent)',
               fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--text-dim)',
             }}>
-              <span style={{ color: 'var(--green)' }}>â–¸ Validation:</span> Check rear hot pressure after stint Â· Target 1.85â€“1.90 bar hot
+              <span style={{ color: 'var(--green)' }}>â–¸ Validation:</span> Check rear hot pressure after stint · Target 1.85—“1.90 bar hot
             </div>
           </div>
 
-          {/* â”€â”€ Current Setup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+          {/* —€—€ Current Setup —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€ */}
           <div className="card">
             <div className="card-header" style={{ marginBottom: 10 }}>
-              <span className="card-title flex items-center gap-2"><Settings size={14} style={{ color: 'var(--accent)' }} /> CURRENT SETUP Â· YAMAHA R1</span>
+              <span className="card-title flex items-center gap-2"><Settings size={14} style={{ color: 'var(--accent)' }} /> CURRENT SETUP · YAMAHA R1</span>
               <span className="badge badge-blue" style={{ fontSize: 10 }}>Baseline: Race Baseline FP3</span>
             </div>
             {groups.map(g => (
@@ -500,7 +500,7 @@ export function GarageSetupAdvisorPage() {
             ))}
           </div>
 
-          {/* â”€â”€ Predicted Impact â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+          {/* —€—€ Predicted Impact —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€ */}
           <div className="card">
             <div className="card-header" style={{ marginBottom: 8 }}>
               <span className="card-title flex items-center gap-2"><TrendingDown size={14} style={{ color: 'var(--green)' }} /> PREDICTED IMPACT</span>
@@ -533,12 +533,12 @@ export function GarageSetupAdvisorPage() {
       </div>
 
       {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
-      {/* FULL-WIDTH SECTIONS â€” Do Not Change Â· Safety Â· Validation */}
+      {/* FULL-WIDTH SECTIONS —” Do Not Change · Safety · Validation */}
       {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginTop: 16 }}>
 
-        {/* â”€â”€â”€ Do Not Change â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        {/* —€—€—€ Do Not Change —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€ */}
         <div className="card">
           <div className="card-header" style={{ marginBottom: 8 }}>
             <span className="card-title flex items-center gap-2"><Ban size={14} style={{ color: 'var(--green)' }} /> DO NOT CHANGE</span>
@@ -549,7 +549,7 @@ export function GarageSetupAdvisorPage() {
                 padding: '6px 8px', borderRadius: 4, fontSize: 11,
                 border: '1px solid var(--border)', background: 'rgba(255,255,255,0.02)',
               }}>
-                <div style={{ fontWeight: 600, color: 'var(--text)' }}>{p.label} Â· Keep {p.current}</div>
+                <div style={{ fontWeight: 600, color: 'var(--text)' }}>{p.label} · Keep {p.current}</div>
                 <div style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
                   Reason: {p.impact}
                 </div>
@@ -558,7 +558,7 @@ export function GarageSetupAdvisorPage() {
           </div>
         </div>
 
-        {/* â”€â”€â”€ Setup Safety Check â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        {/* —€—€—€ Setup Safety Check —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€ */}
         <div className="card">
           <div className="card-header" style={{ marginBottom: 8 }}>
             <span className="card-title flex items-center gap-2"><Shield size={14} style={{ color: 'var(--yellow)' }} /> SETUP SAFETY CHECK</span>
@@ -595,7 +595,7 @@ export function GarageSetupAdvisorPage() {
           </div>
         </div>
 
-        {/* â”€â”€â”€ Next-Stint Validation Targets â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        {/* —€—€—€ Next-Stint Validation Targets —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€ */}
         <div className="card">
           <div className="card-header" style={{ marginBottom: 8 }}>
             <span className="card-title flex items-center gap-2"><Target size={14} style={{ color: 'var(--accent)' }} /> NEXT-STINT VALIDATION</span>
@@ -625,13 +625,13 @@ export function GarageSetupAdvisorPage() {
               fontSize: 11, fontFamily: 'var(--font-mono)',
             }}>
               <span style={{ color: 'var(--accent)' }}>Rear hot pressure:</span>{' '}
-              <span style={{ color: 'var(--text-dim)' }}>Target 1.85â€“1.90 bar</span>
+              <span style={{ color: 'var(--text-dim)' }}>Target 1.85—“1.90 bar</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* â”€â”€ Apply to garage button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* —€—€ Apply to garage button —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€ */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
         <button
           className="btn btn-primary"

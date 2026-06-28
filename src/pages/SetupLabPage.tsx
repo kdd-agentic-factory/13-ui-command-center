@@ -1,5 +1,5 @@
 /**
- * SetupLabPage â€” version control for the bike setup.
+ * SetupLabPage —” version control for the bike setup.
  *
  * Left: the version timeline (baseline â†’ stints â†’ oracle rec â†’ engineer
  * commits) with status. Right: the diff of the selected version vs its parent,
@@ -36,7 +36,7 @@ export function SetupLabPage() {
   const parent = versions.find(v => v.id === sel.parentId);
 
   function onValidate() {
-    validateVersion(sel.id, 'Rear slip <10% confirmed Â· exit +4 km/h');
+    validateVersion(sel.id, 'Rear slip <10% confirmed · exit +4 km/h');
     toast({ type: 'success', title: 'Version validated', message: `${sel.label} promoted to validated.` });
     force(x => x + 1);
   }
@@ -56,7 +56,7 @@ export function SetupLabPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><GitBranch size={18} /> Setup Lab</h1>
-          <p className="page-subtitle">{garage.profile.bike.brand} {garage.profile.bike.model} Â· setup version control Â· {versions.length} versions</p>
+          <p className="page-subtitle">{garage.profile.bike.brand} {garage.profile.bike.model} · setup version control · {versions.length} versions</p>
         </div>
       </div>
 
@@ -114,7 +114,7 @@ export function SetupLabPage() {
 
             <div style={{ marginTop: 10, fontSize: 11, fontFamily: MONO }}>
               <span style={{ color: 'var(--text-muted)' }}>Result: </span>
-              <span style={{ color: sel.result === 'â€”' ? 'var(--yellow)' : 'var(--green)' }}>{sel.result}</span>
+              <span style={{ color: sel.result === '—”' ? 'var(--yellow)' : 'var(--green)' }}>{sel.result}</span>
             </div>
 
             <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>

@@ -1,5 +1,5 @@
 /**
- * DataCubePage â€” Telemetry Data Cube & Semantic Zoom.
+ * DataCubePage —” Telemetry Data Cube & Semantic Zoom.
  *
  * Navigate from the whole session to the exact channel where the lap is lost:
  * a laps Ã— corners delta matrix, semantic-zoom breadcrumb (Session â†’ Lap â†’
@@ -56,33 +56,33 @@ export function DataCubePage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><Boxes size={18} /> Telemetry Data Cube</h1>
-          <p className="page-subtitle">Semantic zoom Â· heatmaps Â· causeâ†’effect Â· synced traces â€” {cube.combo}</p>
+          <p className="page-subtitle">Semantic zoom · heatmaps · causeâ†’effect · synced traces —” {cube.combo}</p>
         </div>
         <div style={{ textAlign: 'right' }}>
           {cube.source === 'live' ? (
-            <span title={cube.live ? `${cube.live.sessionId} Â· ${cube.live.totalLaps} laps${cube.live.classification ? ` Â· ${cube.live.classification}` : ''}` : ''}
+            <span title={cube.live ? `${cube.live.sessionId} · ${cube.live.totalLaps} laps${cube.live.classification ? ` · ${cube.live.classification}` : ''}` : ''}
               style={badgeStyle('var(--green)', 'rgba(0,230,118,0.4)')}>
               <Wifi size={11} /> LIVE TELEMETRY
             </span>
           ) : cube.source === 'connected' ? (
-            <span title={`18-telemetry-dataset reachable Â· ${cube.catalogue?.sessions ?? 0} sessions for ${cube.catalogue?.circuits.join(', ')} â€” none for this circuit, header modelled`}
+            <span title={`18-telemetry-dataset reachable · ${cube.catalogue?.sessions ?? 0} sessions for ${cube.catalogue?.circuits.join(', ')} —” none for this circuit, header modelled`}
               style={badgeStyle('var(--cyan)', 'rgba(0,183,255,0.4)')}>
               <Wifi size={11} /> TELEMETRY CONNECTED
             </span>
           ) : (
-            <span title="18-telemetry-dataset unreachable / asleep â€” showing the deterministic model"
+            <span title="18-telemetry-dataset unreachable / asleep —” showing the deterministic model"
               style={badgeStyle('var(--text-muted)', 'var(--border)')}>
               <WifiOff size={11} /> SIMULATED
             </span>
           )}
           {cube.source === 'live' && cube.live && (
             <div style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--text-muted)', marginTop: 3 }}>
-              {cube.live.sessionId} Â· {cube.live.totalLaps} laps
+              {cube.live.sessionId} · {cube.live.totalLaps} laps
             </div>
           )}
           {cube.source === 'connected' && cube.catalogue && (
             <div style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--text-muted)', marginTop: 3 }}>
-              {cube.catalogue.sessions} real sessions Â· {cube.catalogue.circuits.join(', ')}
+              {cube.catalogue.sessions} real sessions · {cube.catalogue.circuits.join(', ')}
             </div>
           )}
         </div>
@@ -117,12 +117,12 @@ export function DataCubePage() {
       <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: 16, alignItems: 'start' }}>
         {/* matrix */}
         <div className="card" style={{ padding: 16 }}>
-          <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 12 }}>Laps Ã— corners Â· time-loss matrix (click a cell to zoom)</div>
+          <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 12 }}>Laps Ã— corners · time-loss matrix (click a cell to zoom)</div>
           {cube.source !== 'simulated' && (
             <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 10 }}>
               {cube.source === 'live'
                 ? 'Session header is live from telemetry; the per-corner matrix is modelled until the service exposes per-corner deltas.'
-                : 'Telemetry service connected (real session catalogue), but no session for this circuit â€” header and matrix are modelled.'}
+                : 'Telemetry service connected (real session catalogue), but no session for this circuit —” header and matrix are modelled.'}
             </div>
           )}
           <div style={{ display: 'grid', gridTemplateColumns: `48px repeat(${CUBE_CORNERS.length}, 1fr)`, gap: 6 }}>
@@ -147,7 +147,7 @@ export function DataCubePage() {
                     background: filter === f ? 'rgba(255,255,255,0.08)' : 'transparent', border: `1px solid ${filter === f ? 'var(--text)' : 'var(--border)'}`, color: filter === f ? 'var(--text)' : 'var(--text-muted)' }}>{f}</button>
               ))}
             </div>
-            <div style={{ fontSize: 11.5, color: 'var(--text)' }}>Top issue Â· <span style={{ color: 'var(--accent)' }}>{heatmapTopIssue(filter)}</span></div>
+            <div style={{ fontSize: 11.5, color: 'var(--text)' }}>Top issue · <span style={{ color: 'var(--accent)' }}>{heatmapTopIssue(filter)}</span></div>
           </div>
         </div>
 
@@ -187,7 +187,7 @@ export function DataCubePage() {
       {/* before/after + data story */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: 14, marginTop: 14 }}>
         <div className="card" style={{ padding: 16 }}>
-          <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 10 }}>Before / after Â· {cube.beforeAfter.improvement}</div>
+          <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 10 }}>Before / after · {cube.beforeAfter.improvement}</div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr auto auto', gap: '5px 12px', fontSize: 11.5 }}>
             <span style={{ fontSize: 8.5, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Metric</span>
             <span style={{ fontSize: 8.5, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', textAlign: 'right' }}>Before</span>

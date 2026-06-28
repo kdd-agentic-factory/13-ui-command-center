@@ -1,9 +1,9 @@
 /**
- * KnowledgeGraphPage â€” Garage Knowledge Graph.
+ * KnowledgeGraphPage —” Garage Knowledge Graph.
  *
  * What the platform has LEARNED across sessions: for the active rider+bike+
  * circuit, the recurring limiter, the best proven fix, the measured result,
- * the confidence and the session count behind it â€” plus the recommended
+ * the confidence and the session count behind it —” plus the recommended
  * starting setup for the next visit. The learning loop made visible.
  */
 import { Network, ArrowRight } from 'lucide-react';
@@ -28,7 +28,7 @@ export function KnowledgeGraphPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><Network size={18} /> Garage Knowledge Graph</h1>
-          <p className="page-subtitle">What KDD has learned Â· {garage.profile.rider.name} Â· {garage.profile.bike.brand} {garage.profile.bike.model} Â· {ctx.circuitName}</p>
+          <p className="page-subtitle">What KDD has learned · {garage.profile.rider.name} · {garage.profile.bike.brand} {garage.profile.bike.model} · {ctx.circuitName}</p>
         </div>
       </div>
 
@@ -39,7 +39,7 @@ export function KnowledgeGraphPage() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
               <span style={{ fontSize: 10, fontFamily: MONO, color: 'var(--text-muted)', flex: 1 }}>{p.combo}</span>
               <span style={{ fontSize: 9.5, fontFamily: MONO, color: CONF_COLOR[p.confidence], border: `1px solid ${CONF_COLOR[p.confidence]}`, borderRadius: 4, padding: '1px 7px' }}>
-                {p.confidence.toUpperCase()} Â· {p.sessions} session{p.sessions === 1 ? '' : 's'}
+                {p.confidence.toUpperCase()} · {p.sessions} session{p.sessions === 1 ? '' : 's'}
               </span>
             </div>
 

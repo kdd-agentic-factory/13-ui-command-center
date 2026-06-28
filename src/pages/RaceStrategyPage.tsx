@@ -1,10 +1,10 @@
 /**
- * RaceStrategyPage â€” KDD Race Strategy Command.
+ * RaceStrategyPage —” KDD Race Strategy Command.
  *
  * The pit-wall decision surface: race sizing, tyre-degradation curve, the
  * pit / flag-to-flag window, ranked strategy options, undercut/overcut maths
  * vs a named rival, the armed weather trigger, a push/manage pace plan and the
- * live decision rules â€” ending in one defensible call.
+ * live decision rules —” ending in one defensible call.
  */
 import { Flag, Circle, CloudRain, Swords, Timer, ListChecks, Gauge } from 'lucide-react';
 import { useGarage } from '../hooks/useGarage';
@@ -29,7 +29,7 @@ export function RaceStrategyPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><Flag size={18} /> Race Strategy Command</h1>
-          <p className="page-subtitle">Recommended: {s.recommendedStrategy} â€” {s.combo}</p>
+          <p className="page-subtitle">Recommended: {s.recommendedStrategy} —” {s.combo}</p>
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Confidence</div>
@@ -47,14 +47,14 @@ export function RaceStrategyPage() {
 
       {/* race sizing */}
       <div className="card mb-4" style={{ padding: 12, display: 'flex', gap: 26, flexWrap: 'wrap' }}>
-        {[['Race laps', s.raceLaps], ['Distance', `${s.raceKm} km`], ['Lap length', `${s.lengthKm} km`], ['Window', `L${s.pitWindow.openLap}â€“${s.pitWindow.closeLap}`], ['Optimal', `L${s.pitWindow.optimalLap}`]].map(([k, v]) => (
+        {[['Race laps', s.raceLaps], ['Distance', `${s.raceKm} km`], ['Lap length', `${s.lengthKm} km`], ['Window', `L${s.pitWindow.openLap}—“${s.pitWindow.closeLap}`], ['Optimal', `L${s.pitWindow.optimalLap}`]].map(([k, v]) => (
         <div key={k as string}><div style={{ fontSize: 16, fontWeight: 800, fontFamily: MONO, color: 'var(--text)' }}>{v}</div><div style={{ fontSize: 8.5, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>{k}</div></div>
         ))}
       </div>
 
       {/* tyre deg curve */}
       <div className="card" style={{ padding: 16, marginBottom: 14 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}><Timer size={14} style={{ color: 'var(--cyan)' }} /><span style={hdr}>Rear tyre degradation Â· pace lost vs fresh (s/lap)</span></div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}><Timer size={14} style={{ color: 'var(--cyan)' }} /><span style={hdr}>Rear tyre degradation · pace lost vs fresh (s/lap)</span></div>
         <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 88 }}>
           {s.degCurve.map(d => {
             const past = d.lap > s.pitWindow.closeLap - 1;
@@ -85,7 +85,7 @@ export function RaceStrategyPage() {
           ))}
         </div>
         <div className="card" style={{ padding: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}><Gauge size={14} style={{ color: 'var(--violet)' }} /><span style={hdr}>Strategy options Â· ranked</span></div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}><Gauge size={14} style={{ color: 'var(--violet)' }} /><span style={hdr}>Strategy options · ranked</span></div>
           {s.options.map(o => (
             <div key={o.id} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, marginBottom: 6, opacity: o.recommended ? 1 : 0.82 }}>
               <span style={{ width: 7, height: 7, borderRadius: 999, background: o.recommended ? 'var(--green)' : 'var(--text-muted)', flexShrink: 0 }} />
@@ -101,7 +101,7 @@ export function RaceStrategyPage() {
       {/* rival + weather */}
       <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: 14, marginTop: 14 }}>
         <div className="card" style={{ padding: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}><Swords size={14} style={{ color: 'var(--accent)' }} /><span style={hdr}>Rival battle Â· undercut vs overcut</span></div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}><Swords size={14} style={{ color: 'var(--accent)' }} /><span style={hdr}>Rival battle · undercut vs overcut</span></div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 6 }}>
             <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{s.rival.rival}</span>
             <span style={{ fontFamily: MONO, fontSize: 12, color: 'var(--text)' }}>+{s.rival.gap.toFixed(1)}s</span>
@@ -127,7 +127,7 @@ export function RaceStrategyPage() {
 
       {/* phase plan */}
       <div className="card" style={{ padding: 16, marginTop: 14 }}>
-        <div style={hdr}>Pace plan Â· push / manage by phase</div>
+        <div style={hdr}>Pace plan · push / manage by phase</div>
         <div style={{ display: 'grid', gridTemplateColumns: `repeat(${s.phasePlan.length}, 1fr)`, gap: 10, marginTop: 8 }}>
           {s.phasePlan.map(p => (
             <div key={p.phase} style={{ borderTop: `2px solid ${modeColor(p.mode)}`, paddingTop: 6 }}>
@@ -154,7 +154,7 @@ export function RaceStrategyPage() {
         <div className="card" style={{ padding: 16 }}>
           <div style={hdr}>Contingencies</div>
           {s.contingency.map((c, i) => (
-            <div key={i} style={{ fontSize: 10.5, color: 'var(--text-muted)', marginBottom: 5 }}>â€¢ {c}</div>
+            <div key={i} style={{ fontSize: 10.5, color: 'var(--text-muted)', marginBottom: 5 }}>—¢ {c}</div>
           ))}
         </div>
       </div>

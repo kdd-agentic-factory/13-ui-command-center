@@ -1,5 +1,5 @@
 /**
- * RiderLearningPathPage â€” Rider Learning Path.
+ * RiderLearningPathPage —” Rider Learning Path.
  *
  * A medium-term development plan for the active rider+bike: skill scores, the
  * active training block (focus + drills + success criteria), session-over-
@@ -53,7 +53,7 @@ export function RiderLearningPathPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><GraduationCap size={18} /> Rider Learning Path</h1>
-          <p className="page-subtitle">Development plan from telemetry, style & past sessions Â· {lp.combo}</p>
+          <p className="page-subtitle">Development plan from telemetry, style & past sessions · {lp.combo}</p>
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Current level</div>
@@ -64,7 +64,7 @@ export function RiderLearningPathPage() {
 
       {lp.telemetryLimited && (
         <div style={{ marginBottom: 14, padding: '8px 12px', borderRadius: 'var(--radius)', background: 'var(--yellow-dim)', border: '1px solid var(--yellow-border)', fontSize: 10.5, color: 'var(--text)' }}>
-          GPS-only bike â€” throttle / lean / exit-drive scores are estimated (marked EST). The active block trains a measurable skill only.
+          GPS-only bike —” throttle / lean / exit-drive scores are estimated (marked EST). The active block trains a measurable skill only.
         </div>
       )}
 
@@ -105,7 +105,7 @@ export function RiderLearningPathPage() {
           <div className="card" style={{ padding: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
               <TrendingUp size={15} style={{ color: 'var(--green)' }} />
-              <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Progress update Â· {lp.progress.skill}</span>
+              <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Progress update · {lp.progress.skill}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
               <span style={{ fontSize: 13, fontFamily: MONO, color: 'var(--text-muted)' }}>{lp.progress.previous}</span>

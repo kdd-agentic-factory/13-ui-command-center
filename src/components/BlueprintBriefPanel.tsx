@@ -36,7 +36,7 @@ function statusStyle(status: BlueprintStatus) {
 export function BlueprintBriefPanel({ request }: BlueprintBriefPanelProps) {
   const { brief, error, status, isGenerating, generateBlueprint, clearBrief } = useBlueprintBrief();
   const context = [
-    `${request.dimensions.x}Ãƒâ€”${request.dimensions.y}Ãƒâ€”${request.dimensions.z} mm`,
+    `${request.dimensions.x}â—”${request.dimensions.y}â—”${request.dimensions.z} mm`,
     `${request.dimensions.loadKg} kg load`,
     request.material,
   ];
@@ -58,7 +58,7 @@ export function BlueprintBriefPanel({ request }: BlueprintBriefPanelProps) {
           <FileText size={13} style={{ color: 'var(--cyan)' }} />
           <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text)' }}>BLUEPRINT BRIEF</span>
           <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-            {context.join(' Ã‚Â· ')}
+            {context.join(' —· ')}
           </span>
         </div>
         <span style={{
@@ -91,7 +91,7 @@ export function BlueprintBriefPanel({ request }: BlueprintBriefPanelProps) {
           }}
         >
           {isGenerating ? <Loader2 size={12} style={{ animation: 'spin 1s linear infinite' }} /> : <Sparkles size={12} />}
-          {isGenerating ? 'GENERATING BRIEFÃ¢â‚¬Â¦' : 'GENERATE BLUEPRINT'}
+          {isGenerating ? 'GENERATING BRIEF—…' : 'GENERATE BLUEPRINT'}
         </button>
 
         <a
@@ -164,7 +164,7 @@ export function BlueprintBriefPanel({ request }: BlueprintBriefPanelProps) {
           fontFamily: 'var(--font-mono)',
           minHeight: 64,
         }}>
-          {brief || 'Streaming blueprint briefÃ¢â‚¬Â¦'}
+          {brief || 'Streaming blueprint brief—…'}
         </pre>
       )}
 

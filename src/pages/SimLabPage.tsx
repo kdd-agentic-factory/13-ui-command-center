@@ -1,5 +1,5 @@
 /**
- * SimLabPage â€” Sim-to-Real Racing Lab.
+ * SimLabPage —” Sim-to-Real Racing Lab.
  *
  * Rehearse a stint before going out: a scenario with predicted outcome, the
  * expected telemetry signature, a simulated session planner + virtual test day,
@@ -24,26 +24,26 @@ export function SimLabPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><FlaskRound size={18} /> Sim-to-Real Racing Lab</h1>
-          <p className="page-subtitle">Test virtually Â· validate on track Â· learn automatically â€” {s.combo}</p>
+          <p className="page-subtitle">Test virtually · validate on track · learn automatically —” {s.combo}</p>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Predicted lap Â· conf {s.confidence}%</div>
+          <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Predicted lap · conf {s.confidence}%</div>
           <div style={{ fontSize: 22, fontWeight: 800, fontFamily: MONO, color: 'var(--cyan)' }}>{s.predictedLap}</div>
         </div>
       </div>
 
       <div className="card mb-4" style={{ padding: '10px 14px' }}>
         <span style={{ fontSize: 12.5, color: 'var(--text)' }}><b>Objective:</b> {s.objective}</span>
-        <span style={{ color: 'var(--text-muted)' }}> Â· Recommended real test: </span><span style={{ color: 'var(--green)', fontWeight: 700 }}>{s.recommendedTest}</span>
+        <span style={{ color: 'var(--text-muted)' }}> · Recommended real test: </span><span style={{ color: 'var(--green)', fontWeight: 700 }}>{s.recommendedTest}</span>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, alignItems: 'start' }}>
         {/* Scenario + signature */}
         <div className="card" style={{ padding: 16 }}>
-          <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 10 }}>Simulation scenario Â· conf {s.scenario.confidence}%</div>
+          <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 10 }}>Simulation scenario · conf {s.scenario.confidence}%</div>
           <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.7 }}>
             Setup: <span style={{ color: 'var(--text)' }}>{s.scenario.setup}</span><br />
-            Tyres: <span style={{ color: 'var(--text)' }}>{s.scenario.tyres}</span> Â· Track {s.scenario.trackTempC}Â°C Â· {s.scenario.stintLaps} laps<br />
+            Tyres: <span style={{ color: 'var(--text)' }}>{s.scenario.tyres}</span> · Track {s.scenario.trackTempC}Â°C · {s.scenario.stintLaps} laps<br />
             Rider focus: <span style={{ color: 'var(--cyan)' }}>{s.scenario.riderFocus}</span>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginTop: 10, fontSize: 11.5 }}>
@@ -52,7 +52,7 @@ export function SimLabPage() {
             <div><span style={{ color: 'var(--text-muted)' }}>Lap: </span><span style={{ color: 'var(--green)', fontFamily: MONO }}>{s.scenario.lapGain}</span></div>
             <div><span style={{ color: 'var(--text-muted)' }}>Risk: </span><span style={{ color: 'var(--green)', fontFamily: MONO }}>{s.scenario.riskDelta}</span></div>
           </div>
-          <div style={{ fontFamily: MONO, fontSize: 9, color: 'var(--text-muted)', textTransform: 'uppercase', margin: '12px 0 6px' }}>Expected telemetry signature Â· what to look for</div>
+          <div style={{ fontFamily: MONO, fontSize: 9, color: 'var(--text-muted)', textTransform: 'uppercase', margin: '12px 0 6px' }}>Expected telemetry signature · what to look for</div>
           {s.signature.map(r => (
             <div key={r.channel} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, marginBottom: 3 }}>
               <span style={{ flex: 1, color: 'var(--text)' }}>{r.channel}</span>
@@ -68,7 +68,7 @@ export function SimLabPage() {
  }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
             <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', flex: 1 }}>Sim-to-real validation</span>
-            <span style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--green)' }}>{s.validationStatus} Â· error {s.modelError}</span>
+            <span style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--green)' }}>{s.validationStatus} · error {s.modelError}</span>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr 1fr auto', gap: '5px 10px', fontSize: 11.5 }}>
             {['Metric', 'Predicted', 'Actual', ''].map(h => <span key={h} style={{ fontSize: 8.5, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>{h}</span>)}
@@ -122,7 +122,7 @@ export function SimLabPage() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 14, marginTop: 14 }}>
         <div className="card" style={{ padding: 16 }}>
           <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 8 }}>Setup A/B simulation</div>
-          <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>A: {s.setupAB.a} Â· B: <span style={{ color: 'var(--text)' }}>{s.setupAB.b}</span></div>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>A: {s.setupAB.a} · B: <span style={{ color: 'var(--text)' }}>{s.setupAB.b}</span></div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, margin: '6px 0' }}>
             {s.setupAB.diff.map(d => <span key={d} style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--green)', border: '1px solid rgba(0,230,118,0.3)', borderRadius: 4, padding: '1px 6px' }}>{d}</span>)}
           </div>
@@ -134,13 +134,13 @@ export function SimLabPage() {
           {s.tyres.map(t => (
             <div key={t.compound} style={{ fontSize: 11, marginBottom: 4 }}>
               <span style={{ fontWeight: 700, color: 'var(--text)' }}>{t.compound}</span>
-              <span style={{ color: 'var(--text-muted)' }}> Â· window {t.window} Â· cliff {t.cliff} Â· {t.bestFor}</span>
+              <span style={{ color: 'var(--text-muted)' }}> · window {t.window} · cliff {t.cliff} · {t.bestFor}</span>
             </div>
           ))}
         </div>
         <div className="card" style={{ padding: 16 }}>
-          <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 8 }}>Rider fatigue simulation Â· {s.fatigue.stintLaps} laps</div>
-          {s.fatigue.effects.map(e => <div key={e} style={{ fontSize: 10.5, color: 'var(--text-muted)' }}>Â· {e}</div>)}
+          <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 8 }}>Rider fatigue simulation · {s.fatigue.stintLaps} laps</div>
+          {s.fatigue.effects.map(e => <div key={e} style={{ fontSize: 10.5, color: 'var(--text-muted)' }}>· {e}</div>)}
           <div style={{ fontSize: 11, color: 'var(--green)', marginTop: 4 }}>{s.fatigue.adjustment}</div>
         </div>
         <div className="card" style={{ padding: 16,

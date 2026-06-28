@@ -292,7 +292,7 @@ export function DesignsCanvas({ title, subtitle, cards, networkBody, steps, acti
             const titleLines = wrapSvgText(card.title, index === 2 ? 24 : 18, 2);
             const bodyLines = wrapSvgText(card.body, index === 2 ? 48 : 36, index === 2 ? 4 : 3);
             const isSelected = selectedCardId === `card-${index}`;
-            const metricLabel = index === 0 ? 'modelo' : index === 1 ? 'contexto' : 'sÃƒÂ­ntesis';
+            const metricLabel = index === 0 ? 'modelo' : index === 1 ? 'contexto' : 'sâÂ­ntesis';
             return (
               <g key={card.title}>
                 <rect x={slot.x} y={slot.y} width={slot.w} height={slot.h} rx="26" fill="rgba(15,23,42,0.94)" stroke={isSelected ? '#e2e8f0' : index === 0 ? 'rgba(148,163,184,0.2)' : index === 1 ? 'rgba(165,180,252,0.2)' : 'rgba(134,239,172,0.2)'} strokeWidth={isSelected ? '2' : '1'} />
@@ -322,7 +322,7 @@ export function DesignsCanvas({ title, subtitle, cards, networkBody, steps, acti
         <g>
           <rect x="52" y="654" width="1096" height="64" rx="22" fill="rgba(3,7,18,0.72)" stroke="rgba(148,163,184,0.12)" />
           <text x="78" y="689" fill="#f8fafc" fontSize="16" fontWeight="600">{networkBody}</text>
-          <text x="78" y="708" fill="#c7ccd4" fontSize="12">Camino compartido entre captura, lectura y sÃƒÂ­ntesis</text>
+          <text x="78" y="708" fill="#c7ccd4" fontSize="12">Camino compartido entre captura, lectura y sâÂ­ntesis</text>
           {steps.map((item, index) => {
             const x = stepStart + index * stepSpacing;
             return (

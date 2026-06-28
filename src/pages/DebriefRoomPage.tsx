@@ -1,9 +1,9 @@
 /**
- * DebriefRoomPage â€” the AI Debrief Room.
+ * DebriefRoomPage —” the AI Debrief Room.
  *
  * A structured post-session debrief: the 5-point agenda (improved / lost /
  * why / change / validate) each delivered by the relevant advisor, the advisor
- * council, and an "ask the debrief" of curated questions answered in place â€”
+ * council, and an "ask the debrief" of curated questions answered in place —”
  * with a hand-off to the live Rider Coach for free-form follow-up.
  */
 import { useState, useEffect } from 'react';
@@ -57,19 +57,19 @@ export function DebriefRoomPage() {
         <div>
           <h1 className="page-title flex items-center gap-2"><MessagesSquare size={18} /> AI Debrief Room</h1>
           <p className="page-subtitle">
-            {ctx.circuitName} Â· {ctx.setup.stint ?? ctx.setup.session ?? 'Stint 03'} Â· {garage.profile.rider.name} Â· {garage.profile.bike.brand} {garage.profile.bike.model}
+            {ctx.circuitName} · {ctx.setup.stint ?? ctx.setup.session ?? 'Stint 03'} · {garage.profile.rider.name} · {garage.profile.bike.brand} {garage.profile.bike.model}
           </p>
         </div>
         {grounding && (
           grounding.state === 'grounded' ? (
             <span title="Answers grounded by retrieved knowledge-base evidence" style={gBadge('var(--green)', 'rgba(0,230,118,0.4)')}><Wifi size={11} /> KB GROUNDED</span>
           ) : grounding.state === 'reachable' ? (
-            <span title="03-rag reachable but requires server-side credentials â€” curated debrief shown" style={gBadge('var(--cyan)', 'rgba(0,183,255,0.4)')}><Wifi size={11} /> KB REACHABLE</span>
+            <span title="03-rag reachable but requires server-side credentials —” curated debrief shown" style={gBadge('var(--cyan)', 'rgba(0,183,255,0.4)')}><Wifi size={11} /> KB REACHABLE</span>
           ) : (
-            <span title="Knowledge layer unreachable / asleep â€” curated debrief shown" style={gBadge('var(--text-muted)', 'var(--border)')}><WifiOff size={11} /> KB OFFLINE</span>
+            <span title="Knowledge layer unreachable / asleep —” curated debrief shown" style={gBadge('var(--text-muted)', 'var(--border)')}><WifiOff size={11} /> KB OFFLINE</span>
           )
         )}
-        {!grounding && <span style={gBadge('var(--text-muted)', 'var(--border)')}><Loader2 size={11} className="spin" /> groundingâ€¦</span>}
+        {!grounding && <span style={gBadge('var(--text-muted)', 'var(--border)')}><Loader2 size={11} className="spin" /> grounding—¦</span>}
       </div>
 
       {/* Grounded evidence from the RAG knowledge layer */}
@@ -78,7 +78,7 @@ export function DebriefRoomPage() {
  }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
             <BookOpen size={13} style={{ color: 'var(--green)' }} />
-            <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Grounding evidence Â· knowledge base</span>
+            <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Grounding evidence · knowledge base</span>
           </div>
           {grounding.sources.map((s, i) => (
             <div key={i} style={{ display: 'flex', gap: 10, marginBottom: 7 }}>
@@ -119,7 +119,7 @@ export function DebriefRoomPage() {
               </div>
               {item.points.map(pt => (
                 <div key={pt} style={{ display: 'flex', gap: 7, fontSize: 11.5, color: 'var(--text-muted)', lineHeight: 1.5, paddingLeft: 22, marginTop: 2 }}>
-                  <span style={{ color: advisor(item.by).color }}>Â·</span>{pt}
+                  <span style={{ color: advisor(item.by).color }}>·</span>{pt}
                 </div>
               ))}
             </div>

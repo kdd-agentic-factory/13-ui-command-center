@@ -3,7 +3,7 @@ import { History, Trophy, TrendingDown, CloudSun, Droplets } from 'lucide-react'
 import { getSessionContext } from '../domain/sessionContext';
 
 /**
- * Circuit History (engineer Phase 3 #2) â€” your evolution at a track over time:
+ * Circuit History (engineer Phase 3 #2) —” your evolution at a track over time:
  * best-lap progression across sessions, the personal record, the full session
  * log with conditions, and how weather correlates with pace.
  */
@@ -47,7 +47,7 @@ export function CircuitHistoryPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">Circuit History</h1>
-          <p className="page-subtitle">{getSessionContext().circuitName} Â· your evolution over time Â· {SESSIONS.length} sessions logged</p>
+          <p className="page-subtitle">{getSessionContext().circuitName} · your evolution over time · {SESSIONS.length} sessions logged</p>
         </div>
         <select value={circuit} onChange={e => setCircuit(e.target.value)} className="btn btn-sm" style={{ cursor: 'pointer' }}>
           {CIRCUITS.map(c => <option key={c} value={c}>{c}</option>)}
@@ -59,7 +59,7 @@ export function CircuitHistoryPage() {
         <div className="card" style={{ background: 'linear-gradient(135deg, rgba(245,158,11,0.10), rgba(255,255,255,0.02))' }}>
           <div className="card-header"><span className="card-title flex items-center gap-2"><Trophy size={14} style={{ color: 'var(--yellow)' }} /> Personal record</span></div>
           <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 900, fontSize: 30, color: 'var(--yellow)', marginTop: 4 }}>{pb.bestLap}</div>
-          <div style={{ fontSize: 11, color: 'var(--text-dim)' }}>{pb.date} Â· {pb.type} Â· {pb.weather} {pb.tempC}Â°C</div>
+          <div style={{ fontSize: 11, color: 'var(--text-dim)' }}>{pb.date} · {pb.type} · {pb.weather} {pb.tempC}Â°C</div>
         </div>
         <div className="card">
           <div className="card-header"><span className="card-title flex items-center gap-2"><TrendingDown size={14} style={{ color: 'var(--green)' }} /> Total improvement</span></div>
@@ -69,11 +69,11 @@ export function CircuitHistoryPage() {
         <div className="card">
           <div className="card-header"><span className="card-title">Track benchmark</span></div>
           <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 900, fontSize: 30, marginTop: 4 }}>1:42.380</div>
-          <div style={{ fontSize: 11, color: 'var(--text-dim)' }}>lap record Â· you are +1.532s</div>
+          <div style={{ fontSize: 11, color: 'var(--text-dim)' }}>lap record · you are +1.532s</div>
         </div>
       </div>
 
-      {/* Progression chart (best lap per session â€” shorter bar = faster) */}
+      {/* Progression chart (best lap per session —” shorter bar = faster) */}
       <div className="card mb-4">
         <div className="card-header"><span className="card-title flex items-center gap-2"><History size={14} style={{ color: 'var(--accent)' }} /> Best-lap progression</span></div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 8 }}>
@@ -122,12 +122,12 @@ export function CircuitHistoryPage() {
         <div className="card">
           <div className="card-header"><span className="card-title flex items-center gap-2"><CloudSun size={14} style={{ color: 'var(--yellow)' }} /> Weather correlation</span></div>
           <p style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--text-dim)', margin: '6px 0 12px' }}>
-            Your pace tracks <strong style={{ color: 'var(--text)' }}>track temperature</strong> strongly: every session above 18Â°C beat the one before. The damp February day cost ~4 s â€” wet-weather craft is the biggest untapped gain.
+            Your pace tracks <strong style={{ color: 'var(--text)' }}>track temperature</strong> strongly: every session above 18Â°C beat the one before. The damp February day cost ~4 s —” wet-weather craft is the biggest untapped gain.
           </p>
           <div className="grid-3">
             <div className="stat-tile"><div className="stat-tile__label">Best (dry)</div><span className="stat-tile__value" style={{ fontSize: 16 }}>1:57.842</span></div>
             <div className="stat-tile"><div className="stat-tile__label">Best (damp)</div><span className="stat-tile__value" style={{ fontSize: 16, color: 'var(--blue)' }}>1:47.902</span></div>
-            <div className="stat-tile"><div className="stat-tile__label">Optimal TÂ°</div><span className="stat-tile__value" style={{ fontSize: 16 }}>24â€“26Â°C</span></div>
+            <div className="stat-tile"><div className="stat-tile__label">Optimal TÂ°</div><span className="stat-tile__value" style={{ fontSize: 16 }}>24—“26Â°C</span></div>
           </div>
         </div>
       </div>

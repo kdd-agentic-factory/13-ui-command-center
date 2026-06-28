@@ -100,7 +100,7 @@ const BASE_SCENARIOS: Scenario[] = [
     id: 'baseline',
     name: 'Race Baseline',
     color: 'var(--blue)',
-    desc: 'Safe default ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· Pit L11 ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ Hard',
+    desc: 'Safe default â’—šâ—š—· Pit L11 â’—¢â¢Ã¢—š¬—Â â¢Ã¢—š¬Ã¢—ž¢ Hard',
     lapTime: '1:33.41',
     pitLap: 11,
     finish: 'P3',
@@ -123,13 +123,13 @@ const BASE_SCENARIOS: Scenario[] = [
   },
   {
     id: 'early-pit',
-    name: 'Early Pit L9 ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ Hard',
+    name: 'Early Pit L9 â’—¢â¢Ã¢—š¬—Â â¢Ã¢—š¬Ã¢—ž¢ Hard',
     color: 'var(--green)',
-    desc: 'Undercut attempt ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· Traffic exposed',
+    desc: 'Undercut attempt â’—šâ—š—· Traffic exposed',
     lapTime: '1:33.68',
     pitLap: 9,
-    finish: 'P3ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œP4',
-    projectedRange: 'P3ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œP4',
+    finish: 'P3â’—¢â¢—š—¬â¢Ã¢—š¬Ã…—œP4',
+    projectedRange: 'P3â’—¢â¢—š—¬â¢Ã¢—š¬Ã…—œP4',
     totalTime: '1:28:31.4',
     fuelUsed: '19.8 kg',
     rearGrip: '42%',
@@ -148,13 +148,13 @@ const BASE_SCENARIOS: Scenario[] = [
   },
   {
     id: 'late-pit',
-    name: 'Late Pit L13 ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ Hard',
+    name: 'Late Pit L13 â’—¢â¢Ã¢—š¬—Â â¢Ã¢—š¬Ã¢—ž¢ Hard',
     color: 'var(--yellow)',
-    desc: 'Attack option ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· Track position gain',
+    desc: 'Attack option â’—šâ—š—· Track position gain',
     lapTime: '1:34.12',
     pitLap: 13,
-    finish: 'P2ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œP4',
-    projectedRange: 'P2ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œP4',
+    finish: 'P2â’—¢â¢—š—¬â¢Ã¢—š¬Ã…—œP4',
+    projectedRange: 'P2â’—¢â¢—š—¬â¢Ã¢—š¬Ã…—œP4',
     totalTime: '1:28:09.8',
     fuelUsed: '19.8 kg',
     rearGrip: '95%',
@@ -175,12 +175,12 @@ const BASE_SCENARIOS: Scenario[] = [
     id: '2stop',
     name: '2-Stop L9 + L17',
     color: 'var(--accent)',
-    desc: 'Maximum pace ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· Needs neutralisation',
+    desc: 'Maximum pace â’—šâ—š—· Needs neutralisation',
     lapTime: '1:32.88',
     pitLap: 9,
     pitLap2: 17,
-    finish: 'P1ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œP5',
-    projectedRange: 'P1ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œP5',
+    finish: 'P1â’—¢â¢—š—¬â¢Ã¢—š¬Ã…—œP5',
+    projectedRange: 'P1â’—¢â¢—š—¬â¢Ã¢—š¬Ã…—œP5',
     totalTime: '1:28:02.1',
     fuelUsed: '19.8 kg',
     rearGrip: '55%',
@@ -219,7 +219,7 @@ const FEATURE_IMPORTANCE: FeatureDriver[] = [
 ];
 
 const SENSITIVITY_ROWS: SensitivityRow[] = [
-  { condition: 'If rear tyre temp +5ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°C', effect: 'Baseline loses +6.8s race time. Late Pit L13 becomes high risk.', severity: RISK_LEVEL.HIGH },
+  { condition: 'If rear tyre temp +5â’—šâ—š—Â°C', effect: 'Baseline loses +6.8s race time. Late Pit L13 becomes high risk.', severity: RISK_LEVEL.HIGH },
   { condition: 'If safety car probability >18%', effect: '2-stop becomes viable.', severity: RISK_LEVEL.MEDIUM },
   { condition: 'If P2 pace drops by 0.15s/lap', effect: 'Late Pit L13 projects P2.', severity: RISK_LEVEL.LOW },
   { condition: 'If fuel save mode enabled', effect: 'Race time +2.1s. Thermal load -4%.', severity: RISK_LEVEL.MEDIUM },
@@ -413,7 +413,7 @@ function OutcomeProbPanel({ scenarios, activeId, onSelect }: { scenarios: Scenar
         <div key={s.id} onClick={() => onSelect(s.id)} style={{ marginBottom: 14, cursor: 'pointer', opacity: s.id === activeId ? 1 : 0.58 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5, gap: 8 }}>
             <span style={{ fontSize: 11, fontWeight: s.id === activeId ? 700 : 500, color: s.id === activeId ? s.color : 'var(--text-muted)' }}>{s.name}</span>
-            <span style={{ fontSize: 10, fontFamily: 'JetBrains Mono,monospace', color: 'var(--text-muted)' }}>P1 {s.winProb}% ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· Podium {s.podiumProb}% ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· {s.points} pts</span>
+            <span style={{ fontSize: 10, fontFamily: 'JetBrains Mono,monospace', color: 'var(--text-muted)' }}>P1 {s.winProb}% â’—šâ—š—· Podium {s.podiumProb}% â’—šâ—š—· {s.points} pts</span>
           </div>
           <div style={{ display: 'flex', height: 7, borderRadius: 4, overflow: 'hidden', background: 'rgba(255,255,255,0.04)' }}>
             <div style={{ width: `${s.winProb}%`, background: s.color }} />
@@ -459,7 +459,7 @@ export function DigitalTwinReportPage() {
   async function handleRerunSim() {
     if (simulating) return;
     setSimulating(true);
-    toast({ type: 'info', title: 'Simulation started', message: `Running 23-lap digital twin from Lap ${currentLap}ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦` });
+    toast({ type: 'info', title: 'Simulation started', message: `Running 23-lap digital twin from Lap ${currentLap}â’—¢â¢—š—¬â—š—…` });
 
     await new Promise<void>(resolve => globalThis.setTimeout(resolve, 1200));
 
@@ -467,14 +467,14 @@ export function DigitalTwinReportPage() {
     setScenarios(prev => prev.map(s => ({ ...s, lapTime: formatLapTime(parseLapTime(s.lapTime) + variation) })));
     setLastSimLap(currentLap);
     setSimulating(false);
-    toast({ type: 'success', title: 'Simulation complete', message: `23-lap model updated from Lap ${currentLap}. ÃƒÆ’Ã…Â½ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ${variation >= 0 ? '+' : ''}${variation.toFixed(3)}s.` });
+    toast({ type: 'success', title: 'Simulation complete', message: `23-lap model updated from Lap ${currentLap}. â’Ã…Â½â¢Ã¢—š¬—” ${variation >= 0 ? '+' : ''}${variation.toFixed(3)}s.` });
   }
 
   function handleWhatIfSim() {
     toast({
       type: 'info',
       title: 'What-if scenario staged',
-      message: `L${whatifPitLap} ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· ${whatifCompound} ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· ${whatifEngineMap} ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· ${whatifTCLevel} ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· ${whatifRiderPace}`,
+      message: `L${whatifPitLap} â’—šâ—š—· ${whatifCompound} â’—šâ—š—· ${whatifEngineMap} â’—šâ—š—· ${whatifTCLevel} â’—šâ—š—· ${whatifRiderPace}`,
     });
   }
 
@@ -483,7 +483,7 @@ export function DigitalTwinReportPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">{['race', 'simulation', 'demo'].includes(session.ctx.sessionMode) ? 'Digital Twin Report' : 'Session Digital Twin'}</h1>
-          <p className="page-subtitle">{session.ctx.circuitName} {['race', 'simulation', 'demo'].includes(session.ctx.sessionMode) ? 'race simulation' : 'session model ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â no race points or pit strategy in this mode'} ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· What-if scenarios ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· Lap-time model ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· KDD degradation prediction{session.ctx.dataMode !== 'live' ? ' ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· all outputs AI-estimated' : ''}{session.ctx.sessionMode === 'simulation' ? ` ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· circuit confidence ${Math.round(session.circuit.agentConfidence * 100)}%` : ''}</p>
+          <p className="page-subtitle">{session.ctx.circuitName} {['race', 'simulation', 'demo'].includes(session.ctx.sessionMode) ? 'race simulation' : 'session model â’—¢â¢—š—¬â¢Ã¢—š¬—” no race points or pit strategy in this mode'} â’—šâ—š—· What-if scenarios â’—šâ—š—· Lap-time model â’—šâ—š—· KDD degradation prediction{session.ctx.dataMode !== 'live' ? ' â’—šâ—š—· all outputs AI-estimated' : ''}{session.ctx.sessionMode === 'simulation' ? ` â’—šâ—š—· circuit confidence ${Math.round(session.circuit.agentConfidence * 100)}%` : ''}</p>
         </div>
         <div className="flex items-center gap-2" style={{ flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           <span className="badge badge-blue">Digital Twin v2.1</span>
@@ -560,10 +560,10 @@ export function DigitalTwinReportPage() {
         <div className="card-body">
           <div className="grid-4" style={{ marginBottom: 12 }}>
             {[
-              { label: 'Recommended', value: 'Late Pit L13 ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ Hard', badge: 'badge-green', text: 'Best balance between race time, podium probability and tyre risk.' },
+              { label: 'Recommended', value: 'Late Pit L13 â’—¢â¢Ã¢—š¬—Â â¢Ã¢—š¬Ã¢—ž¢ Hard', badge: 'badge-green', text: 'Best balance between race time, podium probability and tyre risk.' },
               { label: 'Avoid', value: '2-Stop L9 + L17', badge: 'badge-red', text: 'Only if safety car or neutralisation appears.' },
-              { label: 'Safe fallback', value: 'Race Baseline L11 ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ Hard', badge: 'badge-blue', text: 'Lowest variance and strongest expected-points profile.' },
-              { label: 'Aggressive option', value: 'Late Pit L13 ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ Hard', badge: 'badge-yellow', text: 'Attack P2 if rear thermal drift remains stable.' },
+              { label: 'Safe fallback', value: 'Race Baseline L11 â’—¢â¢Ã¢—š¬—Â â¢Ã¢—š¬Ã¢—ž¢ Hard', badge: 'badge-blue', text: 'Lowest variance and strongest expected-points profile.' },
+              { label: 'Aggressive option', value: 'Late Pit L13 â’—¢â¢Ã¢—š¬—Â â¢Ã¢—š¬Ã¢—ž¢ Hard', badge: 'badge-yellow', text: 'Attack P2 if rear thermal drift remains stable.' },
             ].map(item => (
               <div key={item.label} style={{ padding: 12, border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', background: 'rgba(255,255,255,0.03)' }}>
                 <span className={`badge ${item.badge}`} style={{ marginBottom: 8 }}>{item.label}</span>
@@ -573,7 +573,7 @@ export function DigitalTwinReportPage() {
             ))}
           </div>
           <div style={{ padding: '9px 12px', borderRadius: 8, background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.15)', fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.5 }}>
-            <strong style={{ color: 'var(--blue)' }}>Best expected result:</strong> Late Pit L13 ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· <strong style={{ color: 'var(--green)' }}>Lowest risk:</strong> Race Baseline ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· <strong style={{ color: 'var(--yellow)' }}>Highest win chance:</strong> 2-Stop ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· <strong style={{ color: 'var(--accent)' }}>Best points/risk balance:</strong> Late Pit L13
+            <strong style={{ color: 'var(--blue)' }}>Best expected result:</strong> Late Pit L13 â’—šâ—š—· <strong style={{ color: 'var(--green)' }}>Lowest risk:</strong> Race Baseline â’—šâ—š—· <strong style={{ color: 'var(--yellow)' }}>Highest win chance:</strong> 2-Stop â’—šâ—š—· <strong style={{ color: 'var(--accent)' }}>Best points/risk balance:</strong> Late Pit L13
           </div>
         </div>
       </div>
@@ -587,7 +587,7 @@ export function DigitalTwinReportPage() {
             </div>
             <div style={{ textAlign: 'right' }}>
               <div className="text-mono" style={{ fontSize: 15, fontWeight: 800, color: activeScenario === s.id ? s.color : 'var(--text)' }}>{s.finish}</div>
-              <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>Win {s.winProb}% ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· {s.points} pts</div>
+              <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>Win {s.winProb}% â’—šâ—š—· {s.points} pts</div>
             </div>
           </div>
         ))}
@@ -596,15 +596,15 @@ export function DigitalTwinReportPage() {
       <div className="grid-2 mb-4">
         <div className="card">
           <div className="card-header">
-            <span className="card-title">Active Scenario ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· {scenario.name}</span>
+            <span className="card-title">Active Scenario â’—šâ—š—· {scenario.name}</span>
             <button className="btn btn-primary btn-sm flex items-center gap-2" style={{ fontSize: 12 }} onClick={handleRerunSim} disabled={simulating}>
-              {simulating ? <><Loader2 size={12} style={{ animation: 'spin 0.8s linear infinite' }} />RunningÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦</> : <><Play size={12} />Re-run Sim</>}
+              {simulating ? <><Loader2 size={12} style={{ animation: 'spin 0.8s linear infinite' }} />Runningâ’—¢â¢—š—¬â—š—…</> : <><Play size={12} />Re-run Sim</>}
             </button>
           </div>
           <div className="card-body">
             <div style={{ marginBottom: 16 }}>
               <div className="card-label">Strategy</div>
-              <div style={{ fontSize: 15, fontWeight: 800, color: scenario.color }}>{pitStrategyEnabled ? `1-stop ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· Pit L${scenario.pitLap}${scenario.pitLap2 ? ` + L${scenario.pitLap2}` : ''} ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ Hard` : 'No scheduled tyre stop ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· manage rear temperature and edge grip'}</div>
+              <div style={{ fontSize: 15, fontWeight: 800, color: scenario.color }}>{pitStrategyEnabled ? `1-stop â’—šâ—š—· Pit L${scenario.pitLap}${scenario.pitLap2 ? ` + L${scenario.pitLap2}` : ''} â’—¢â¢Ã¢—š¬—Â â¢Ã¢—š¬Ã¢—ž¢ Hard` : 'No scheduled tyre stop â’—šâ—š—· manage rear temperature and edge grip'}</div>
             </div>
             <div className="grid-3" style={{ marginBottom: 18 }}>
               <StatTile label="Projected finish" value={scenario.finish} color={scenario.color} />
@@ -638,7 +638,7 @@ export function DigitalTwinReportPage() {
         <div className="card">
           <div className="card-header">
             <span className="card-title">All-Scenario Lap Time Overlay</span>
-            <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â±0.25s CI ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· PIT markers ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· cliff zone</span>
+            <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>â’—šâ—š—Â±0.25s CI â’—šâ—š—· PIT markers â’—šâ—š—· cliff zone</span>
           </div>
           <div style={{ background: 'var(--bg-surface)', padding: '8px 6px 0' }}>
             <MultiScenarioChart scenarios={scenarios} currentLap={currentLap} activeId={activeScenario} />
@@ -648,7 +648,7 @@ export function DigitalTwinReportPage() {
               {scenarios.map(s => (
                 <span key={s.id} onClick={() => setActiveScenario(s.id)} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 9, fontFamily: 'JetBrains Mono,monospace', color: activeScenario === s.id ? s.color : 'var(--text-muted)', fontWeight: activeScenario === s.id ? 800 : 500, cursor: 'pointer' }}>
                   <span style={{ display: 'inline-block', width: 14, height: activeScenario === s.id ? 3 : 1.5, background: s.color, borderRadius: 2, opacity: activeScenario === s.id ? 1 : 0.45 }} />
-                  {s.name.replace(' ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ Hard', '')}
+                  {s.name.replace(' â’—¢â¢Ã¢—š¬—Â â¢Ã¢—š¬Ã¢—ž¢ Hard', '')}
                 </span>
               ))}
             </div>
@@ -668,7 +668,7 @@ export function DigitalTwinReportPage() {
           <table className="data-table">
             <thead>
               <tr>
-                <th>Scenario</th><th>Pit Lap(s)</th><th>Best Lap</th><th>Race ÃƒÆ’Ã…Â½ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â</th><th>Rear grip finish</th><th>Projected</th><th>Win %</th><th>Podium %</th><th>Exp Pts</th><th>Risk</th><th>Recommendation</th>
+                <th>Scenario</th><th>Pit Lap(s)</th><th>Best Lap</th><th>Race â’Ã…Â½â¢Ã¢—š¬—”</th><th>Rear grip finish</th><th>Projected</th><th>Win %</th><th>Podium %</th><th>Exp Pts</th><th>Risk</th><th>Recommendation</th>
               </tr>
             </thead>
             <tbody>
@@ -700,7 +700,7 @@ export function DigitalTwinReportPage() {
         <div className="card">
           <div className="card-header">
             <span className="card-title flex items-center gap-2"><Target size={13} />Outcome Probability Model</span>
-            <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>Monte Carlo ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· 5,000 runs</span>
+            <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>Monte Carlo â’—šâ—š—· 5,000 runs</span>
           </div>
           <div className="card-body"><OutcomeProbPanel scenarios={scenarios} activeId={activeScenario} onSelect={setActiveScenario} /></div>
         </div>
@@ -754,8 +754,8 @@ export function DigitalTwinReportPage() {
 
       <div className="card mb-4">
         <div className="card-header">
-          <span className="card-title flex items-center gap-2"><BarChart2 size={13} />Model Drivers ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· SHAP Feature Importance</span>
-          <span className="badge badge-blue">GBM ensemble ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· 48 variables</span>
+          <span className="card-title flex items-center gap-2"><BarChart2 size={13} />Model Drivers â’—šâ—š—· SHAP Feature Importance</span>
+          <span className="badge badge-blue">GBM ensemble â’—šâ—š—· 48 variables</span>
         </div>
         <div className="card-body"><FeatureImportanceChart /></div>
       </div>
@@ -765,10 +765,10 @@ export function DigitalTwinReportPage() {
           <div className="card-header"><span className="card-title flex items-center gap-2"><Shield size={13} />Model Validation</span></div>
           <div className="card-body" style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.7 }}>
             <strong style={{ color: 'var(--text)' }}>Training samples:</strong> 847 race samples<br />
-            <strong style={{ color: 'var(--text)' }}>Current track match:</strong> Mugello ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· high similarity<br />
+            <strong style={{ color: 'var(--text)' }}>Current track match:</strong> Mugello â’—šâ—š—· high similarity<br />
             <strong style={{ color: 'var(--text)' }}>Prediction accuracy:</strong> 94.2% vs physical model<br />
             <strong style={{ color: 'var(--text)' }}>Current confidence:</strong> 86%<br />
-            <strong style={{ color: 'var(--text)' }}>Uncertainty drivers:</strong> rear tyre thermal drift ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· traffic after pit stop ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· P2/P4 pace variance
+            <strong style={{ color: 'var(--text)' }}>Uncertainty drivers:</strong> rear tyre thermal drift â’—šâ—š—· traffic after pit stop â’—šâ—š—· P2/P4 pace variance
           </div>
         </div>
 
@@ -800,7 +800,7 @@ export function DigitalTwinReportPage() {
       <div className="grid-3">
         <div className="insight-panel" style={{ ['--dot-color' as string]: 'var(--blue)' }}>
           <div className="insight-panel__title" style={{ color: 'var(--blue)' }}>Tyre Degradation Model</div>
-          <p className="insight-panel__body">INT4 quantized neural surrogate. Accuracy: 94.2% vs high-fidelity physical model on 847 race samples. Efficiency: -18% VRAM ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· -22% inference time vs FP32 baseline. Use case: fast scenario simulation during race window.</p>
+          <p className="insight-panel__body">INT4 quantized neural surrogate. Accuracy: 94.2% vs high-fidelity physical model on 847 race samples. Efficiency: -18% VRAM â’—šâ—š—· -22% inference time vs FP32 baseline. Use case: fast scenario simulation during race window.</p>
         </div>
         <div className="insight-panel" style={{ ['--dot-color' as string]: 'var(--green)' }}>
           <div className="insight-panel__title" style={{ color: 'var(--green)' }}>Chassis Model</div>

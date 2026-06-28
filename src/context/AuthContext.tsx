@@ -71,7 +71,7 @@ export const PROFILES: Profile[] = [
     accessCount: '2',
     allowedTabs: ['overview','live'],
     defaultTab: 'overview',
-    requiresAuth: false, // public read-only showcase â€” no login required
+    requiresAuth: false, // public read-only showcase —” no login required
   },
   {
     id: 'founding-node',

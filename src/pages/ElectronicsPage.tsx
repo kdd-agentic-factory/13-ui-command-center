@@ -1,9 +1,9 @@
 /**
- * ElectronicsPage â€” KDD Electronics Control Lab (ECU & rider aids).
+ * ElectronicsPage —” KDD Electronics Control Lab (ECU & rider aids).
  *
  * Power maps, the rider-aid levels with intervention telemetry, the launch /
  * holeshot + ride-height devices, the corner-by-corner electronics map and the
- * recommendations â€” turning "the bike feels nervous on exit" into a map change.
+ * recommendations —” turning "the bike feels nervous on exit" into a map change.
  */
 import { CircuitBoard, Gauge, Rocket, ArrowDownNarrowWide, ListChecks, Activity } from 'lucide-react';
 import { useGarage } from '../hooks/useGarage';
@@ -28,7 +28,7 @@ export function ElectronicsPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><CircuitBoard size={18} /> Electronics Control Lab</h1>
-          <p className="page-subtitle">ECU & rider aids Â· {chosenMap?.name} â€” {e.combo}</p>
+          <p className="page-subtitle">ECU & rider aids · {chosenMap?.name} —” {e.combo}</p>
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>TC cuts / lap</div>
@@ -60,12 +60,12 @@ export function ElectronicsPage() {
       {/* aids + intervention */}
       <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: 14 }}>
         <div className="card" style={{ padding: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}><Activity size={14} style={{ color: 'var(--cyan)' }} /><span style={hdr}>Rider aids Â· level</span></div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}><Activity size={14} style={{ color: 'var(--cyan)' }} /><span style={hdr}>Rider aids · level</span></div>
           {e.aids.map(a => (
             <div key={a.aid} style={{ marginBottom: 9 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 2 }}>
                 <span style={{ color: 'var(--text)', fontWeight: 600 }}>{a.aid}</span>
-                <span style={{ fontFamily: MONO, fontSize: 10 }}><b style={{ color: aidColor(a.status) }}>{a.level}</b><span style={{ color: 'var(--text-muted)' }}>/{a.max} Â· {a.status}</span></span>
+                <span style={{ fontFamily: MONO, fontSize: 10 }}><b style={{ color: aidColor(a.status) }}>{a.level}</b><span style={{ color: 'var(--text-muted)' }}>/{a.max} · {a.status}</span></span>
               </div>
               <div style={{ display: 'flex', gap: 2 }}>
                 {Array.from({ length: a.max }, (_, i) => (
@@ -88,7 +88,7 @@ export function ElectronicsPage() {
           <div className="card" style={{ padding: 16,
  }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 6 }}><Rocket size={14} style={{ color: 'var(--green)' }} /><span style={hdr}>Launch / holeshot</span></div>
-            <div style={{ fontSize: 11, color: 'var(--text)' }}>{e.launch.launchControl ? 'â— Launch control' : 'â—‹ Launch control'} Â· {e.launch.holeshotDevice ? 'â— Holeshot' : 'â—‹ Holeshot'}</div>
+            <div style={{ fontSize: 11, color: 'var(--text)' }}>{e.launch.launchControl ? 'â— Launch control' : 'â—‹ Launch control'} · {e.launch.holeshotDevice ? 'â— Holeshot' : 'â—‹ Holeshot'}</div>
             <div style={{ fontSize: 14, fontWeight: 800, fontFamily: MONO, color: 'var(--green)', margin: '2px 0' }}>âˆ’{e.launch.gainS.toFixed(2)}s into T1</div>
             <div style={{ fontSize: 9.5, color: 'var(--text-muted)' }}>{e.launch.note}</div>
           </div>
@@ -111,7 +111,7 @@ export function ElectronicsPage() {
               <span style={{ width: 34, textAlign: 'center', fontFamily: MONO, color: 'var(--text)' }}>{c.engineBrake}</span>
             </div>
           ))}
-          <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 4 }}>TC traction Â· AW anti-wheelie Â· EB engine braking (0â€“8).</div>
+          <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 4 }}>TC traction · AW anti-wheelie · EB engine braking (0—“8).</div>
         </div>
         <div className="card" style={{ padding: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}><ArrowDownNarrowWide size={14} style={{ color: 'var(--violet)' }} /><span style={hdr}>Ride-height device</span></div>

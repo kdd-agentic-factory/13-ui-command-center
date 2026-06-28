@@ -1,7 +1,7 @@
 /**
- * GlobalContextBar â€” the always-visible session truth in the dashboard topbar:
+ * GlobalContextBar —” the always-visible session truth in the dashboard topbar:
  *
- *   Circuit Â· Mode Â· Rider Â· Bike Â· DATA badge Â· Confidence
+ *   Circuit · Mode · Rider · Bike · DATA badge · Confidence
  *
  * Clicking it opens the DATA INTEGRITY CENTER: the global validation panel
  * (circuit match, lap state, fuel model, tyre model, telemetry sync, map
@@ -32,12 +32,12 @@ export function GlobalContextBar({ telem }: { telem: TelemetryFrame }) {
 
   const lapOk = telem.lapCount >= 0 && telem.lapCount <= MUGELLO_CIRCUIT.raceLaps && !telem.lapAnomaly;
   const checks: Check[] = [
-    { label: 'Session mode', ok: true, desc: `${ctx.sessionMode} Â· ${ctx.dashboardProfile.replace(/_/g, ' ')}` },
+    { label: 'Session mode', ok: true, desc: `${ctx.sessionMode} · ${ctx.dashboardProfile.replace(/_/g, ' ')}` },
     { label: 'Data mode', ok: true, desc: ctx.dataMode.toUpperCase() },
-    { label: 'Circuit match', ok: !datasetMismatch, desc: datasetMismatch ? `${ctx.circuitName} has no dataset â€” Mugello sample shown` : `${circuit.name} selected = loaded` },
+    { label: 'Circuit match', ok: !datasetMismatch, desc: datasetMismatch ? `${ctx.circuitName} has no dataset —” Mugello sample shown` : `${circuit.name} selected = loaded` },
     { label: 'Lap state', ok: lapOk, desc: telem.lapAnomaly ? 'Lap anomaly flagged' : `${telem.lapCount}/${MUGELLO_CIRCUIT.raceLaps}` },
     { label: 'Fuel model', ok: telem.fuelValid, desc: telem.fuelValid ? `${telem.fuelLoad.toFixed(1)} kg synced` : 'Fuel sensor out of range' },
-    { label: 'Tyre model', ok: true, desc: `${telem.frontCompound}/${telem.rearCompound} Â· ${circuit.id === 'mugello' ? 'thermal map loaded' : 'reference map'}` },
+    { label: 'Tyre model', ok: true, desc: `${telem.frontCompound}/${telem.rearCompound} · ${circuit.id === 'mugello' ? 'thermal map loaded' : 'reference map'}` },
     { label: 'Telemetry sync', ok: true, desc: ctx.setup.dataSource === 'upload' ? 'Uploaded session files' : ctx.dataMode },
     { label: 'Map geometry', ok: circuit.geometryLoaded, desc: circuit.meshLoaded ? '3D mesh loaded' : 'procedural map' },
   ];
@@ -84,8 +84,8 @@ export function GlobalContextBar({ telem }: { telem: TelemetryFrame }) {
           ))}
           <div style={{ marginTop: 8, fontSize: 10.5, fontFamily: MONO, color: failures ? 'var(--yellow)' : 'var(--green)' }}>
             {failures
-              ? 'Dashboard degraded â€” advanced predictions disabled until checks pass.'
-              : 'All checks pass â€” full dashboard available.'}
+              ? 'Dashboard degraded —” advanced predictions disabled until checks pass.'
+              : 'All checks pass —” full dashboard available.'}
           </div>
         </div>
       )}
