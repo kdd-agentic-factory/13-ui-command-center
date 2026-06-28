@@ -144,8 +144,8 @@ function DataLinkStatus({ showWifi, onToggleWifi }: {
           style={{
             display: 'flex', alignItems: 'center', gap: 5,
             padding: '3px 10px', borderRadius: 5,
-            background: showWifi ? 'rgba(56,189,248,0.15)' : 'rgba(255,255,255,0.04)',
-            border: `1px solid ${showWifi ? 'rgba(56,189,248,0.4)' : 'rgba(255,255,255,0.08)'}`,
+            background: showWifi ? 'color-mix(in srgb, var(--blue) 15%, transparent)' : 'rgba(255,255,255,0.04)',
+            border: `1px solid ${showWifi ? 'color-mix(in srgb, var(--blue) 40%, transparent)' : 'rgba(255,255,255,0.08)'}`,
             cursor: 'pointer', color: showWifi ? 'var(--cyan)' : 'var(--text-muted)',
             fontSize: 10, fontFamily: 'JetBrains Mono,monospace',
             transition: 'background  ease, color  ease, box-shadow  ease',
@@ -272,9 +272,11 @@ function RPMBar({ value }: { value: number }) {
   return (
     <div className="bar-track" style={{ height: 16 }}>
       <div className="bar-fill" style={{
-        width: `${pct}%`,
+        width: '100%',
         background: redline ? 'var(--accent)' : 'linear-gradient(90deg, var(--blue), var(--cyan))',
-        transition: 'width 0.1s',
+        transform: `scaleX(${pct / 100})`,
+        transformOrigin: 'left center',
+        transition: 'transform 0.1s var(--ease-ui)',
       }} />
     </div>
   );
@@ -327,10 +329,11 @@ function LapDeltaHistory({ records }: { records: LapRecord[] }) {
           return (
             <div key={r.lap} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <div style={{
-                width: '70%', height: `${Math.max(4, pct)}%`,
-                minHeight: 4, maxHeight: 48,
-                background: color, borderRadius: '2px 2px 0 0',
-                transition: 'height 0.4s cubic-bezier(0.16,1,0.3,1)',
+                width: '70%', height: 48,
+                background: color, borderRadius: 'var(--radius) var(--radius) 0 0',
+                transform: `scaleY(${Math.max(4, pct) / 100})`,
+                transformOrigin: 'bottom center',
+                transition: 'transform 0.4s var(--ease-ui)',
               }} />
             </div>
           );
@@ -467,9 +470,11 @@ function SectorTimingStrip({ trackPos }: { trackPos: number }) {
               }}>
                 <div style={{
                   position: 'absolute', left: 0, top: 0, height: '100%',
-                  width: `${((trackPos - sec.from) / (sec.to - sec.from)) * 100}%`,
+                  width: '100%',
                   background: 'white',
-                  transition: 'width 0.1s linear',
+                  transform: `scaleX(${((trackPos - sec.from) / (sec.to - sec.from))})`,
+                  transformOrigin: 'left center',
+                  transition: 'transform 0.1s linear',
                 }} />
               </div>
             )}
@@ -767,7 +772,7 @@ export function LiveTelemetryPage() {
       {/* DATA LINK STATUS */}
       <DataLinkStatus showWifi={showWifi} onToggleWifi={() => setShowWifi(v => !v)} />
       {garage.telemetryLimited && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 12px', borderRadius: 8, margin: '0 0 10px', background: 'rgba(225,6,0,0.06)', border: '1px solid var(--accent)', fontSize: 11, color: 'var(--text)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 12px', borderRadius: 8, margin: '0 0 10px', background: 'color-mix(in srgb, var(--accent) 6%, transparent)', border: '1px solid var(--accent)', fontSize: 11, color: 'var(--text)' }}>
           <Zap size={12} style={{ color: 'var(--accent)' }} />
           <strong style={{ color: 'var(--accent)', fontFamily: 'JetBrains Mono,monospace' }}>LIMITED TELEMETRY</strong>
           <span>{garage.profile.bike.brand} {garage.profile.bike.model} provides GPS only ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ECU channels (throttle, RPM, gear, TC) are estimated from GPS/IMU, not measured.</span>
@@ -904,7 +909,7 @@ export function LiveTelemetryPage() {
                     <span className="telem-md text-mono" style={{ color: 'var(--green)' }}>{t.throttle}%</span>
                   </div>
                   <div className="bar-track" style={{ height: 20 }}>
-                    <div className="bar-fill green" style={{ width: `${t.throttle}%`, transition: 'width 0.1s' }} />
+                    <div className="bar-fill green" style={{ width: '100%', transform: `scaleX(${t.throttle / 100})`, transformOrigin: 'left center', transition: 'transform 0.1s var(--ease-ui)' }} />
                   </div>
                 </div>
                 <div style={{ padding: 10, borderRadius: 8, border: '1px solid rgba(224,55,55,0.18)', background: 'rgba(224,55,55,0.05)' }}>
@@ -919,7 +924,7 @@ export function LiveTelemetryPage() {
                         <span className="telem-md text-mono" style={{ color: 'var(--accent)' }}>{(t.brakePressureFront * 0.11).toFixed(1)} bar</span>
                       </div>
                       <div className="bar-track" style={{ height: 14 }}>
-                        <div className="bar-fill" style={{ width: `${(t.brakePressureFront * 0.11).toFixed(1)} bar`, background: 'var(--accent)', transition: 'width 0.1s' }} />
+                        <div className="bar-fill" style={{ width: '100%', background: 'var(--accent)', transform: `scaleX(${Math.min(1, (t.brakePressureFront * 0.11) / 20)})`, transformOrigin: 'left center', transition: 'transform 0.1s var(--ease-ui)' }} />
                       </div>
                     </div>
                     <div>
@@ -928,7 +933,7 @@ export function LiveTelemetryPage() {
                         <span className="telem-md text-mono" style={{ color: 'var(--orange)' }}>{(t.brakePressureRear * 0.05).toFixed(1)} bar</span>
                       </div>
                       <div className="bar-track" style={{ height: 14 }}>
-                        <div className="bar-fill" style={{ width: `${(t.brakePressureRear * 0.05).toFixed(1)} bar`, background: 'var(--orange)', transition: 'width 0.1s' }} />
+                        <div className="bar-fill" style={{ width: '100%', background: 'var(--orange)', transform: `scaleX(${Math.min(1, (t.brakePressureRear * 0.05) / 20)})`, transformOrigin: 'left center', transition: 'transform 0.1s var(--ease-ui)' }} />
                       </div>
                     </div>
                   </div>
@@ -944,7 +949,7 @@ export function LiveTelemetryPage() {
                     </span>
                   </div>
                   <div className="bar-track" style={{ height: 20 }}>
-                    <div className="bar-fill" style={{ width: `${(t.leanAngle / 63) * 100}%`, background: 'var(--purple)', transition: 'width 0.1s' }} />
+                    <div className="bar-fill" style={{ width: '100%', background: 'var(--purple)', transform: `scaleX(${t.leanAngle / 63})`, transformOrigin: 'left center', transition: 'transform 0.1s var(--ease-ui)' }} />
                   </div>
                 </div>
               </div>
@@ -1205,7 +1210,7 @@ export function LiveTelemetryPage() {
                 <span style={{
                   fontSize: 9, fontFamily: 'JetBrains Mono,monospace',
                   padding: '2px 7px', borderRadius: 4,
-                  color: 'var(--blue)', background: 'rgba(56,189,248,0.12)',
+                  color: 'var(--blue)', background: 'color-mix(in srgb, var(--blue) 12%, transparent)',
                   letterSpacing: '0.04em',
                 }}>
                   {cursorIndex !== null ? `Cursor #${cursorIndex}` : 'Live now'}
@@ -1282,8 +1287,8 @@ export function LiveTelemetryPage() {
           {/* Analysis footer */}
           <div style={{
             padding: '10px 16px',
-            background: 'rgba(56,189,248,0.06)',
-            border: '1px solid rgba(56,189,248,0.15)',
+            background: 'color-mix(in srgb, var(--blue) 6%, transparent)',
+            border: '1px solid color-mix(in srgb, var(--blue) 15%, transparent)',
             borderRadius: 8, fontSize: 12,
             color: 'var(--text-muted)',
             fontFamily: 'JetBrains Mono,monospace',

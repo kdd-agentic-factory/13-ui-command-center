@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pit-Wall OS — KDD Moto Intelligence</title>
+  <title>Pit-Wall OS: KDD Moto Intelligence</title>
 
   <!-- Typefaces -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -30,16 +30,16 @@
     }
   </script>
 
-  <!-- Three.js r128 — stable build with global THREE object -->
+  <!-- Three.js r128: stable build with global THREE object -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-  <!-- Anime.js 3.2.1 — animation engine -->
+  <!-- Anime.js 3.2.1: animation engine -->
   <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
 
-  <!-- Chart.js 4 — 2D reactive charts -->
+  <!-- Chart.js 4: 2D reactive charts -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
-  <!-- Parallax.js 3.1.0 — depth-layer parallax -->
+  <!-- Parallax.js 3.1.0: depth-layer parallax -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/parallax/3.1.0/parallax.min.js"></script>
 
   <link rel="stylesheet" href="style.css" />
@@ -49,14 +49,14 @@
 
   <!-- ═══════════════════════════════════════════════════════
        LAYER 0  |  z-index: 0
-       Three.js WebGL canvas — 3D persistent scene
+       Three.js WebGL canvas: 3D persistent scene
        Never touched by UI events (pointer-events: none)
   ═══════════════════════════════════════════════════════ -->
   <canvas id="bg-3d-scene"></canvas>
 
   <!-- ═══════════════════════════════════════════════════════
        LAYER 10  |  z-index: 10
-       2D interactive charts — Chart.js panels
+        2D interactive charts: Chart.js panels
   ═══════════════════════════════════════════════════════ -->
   <div id="data-layer-2d">
     <div id="pareto-panel" class="glass-panel pareto-panel">
@@ -70,7 +70,7 @@
 
   <!-- ═══════════════════════════════════════════════════════
        LAYER 20  |  z-index: 20
-       HUD shell — all UI controls and text panels
+        HUD shell: all UI controls and text panels
   ═══════════════════════════════════════════════════════ -->
   <main id="ui-hud">
 
@@ -86,9 +86,9 @@
 
     <!-- ╔══ TOP-RIGHT ══╗  Session & clock -->
     <div id="hud-session" class="hud-corner hud-tr">
-      <div class="mono-text text-[11px] text-text-muted tracking-wider">SESSION ID</div>
+      <div class="mono-text text-xs text-text-muted tracking-wide">SESSION ID</div>
       <div class="mono-text text-base font-semibold text-accent" id="session-id">KDD-2026-05-26</div>
-      <div class="mono-text text-xs text-gray-400 mt-0.5" id="hud-clock">--:--:--</div>
+      <div class="mono-text text-xs text-text-muted mt-0.5" id="hud-clock">--:--:--</div>
     </div>
 
     <!-- ╔══ LEFT PANEL ══╗  Digital Lightweighting metrics -->
@@ -103,7 +103,7 @@
           <div class="metric-value-row">
             <span class="mono-text metric-number" id="val-vram">61.0</span>
             <span class="metric-unit">GB</span>
-            <span class="metric-delta" id="delta-vram">—</span>
+            <span class="metric-delta" id="delta-vram">0</span>
           </div>
           <div class="bar-track">
             <div class="bar-fill bar-vram" id="bar-vram" style="width: 100%"></div>
@@ -115,7 +115,7 @@
           <div class="metric-value-row">
             <span class="mono-text metric-number" id="val-throughput">26.0</span>
             <span class="metric-unit">tok/s</span>
-            <span class="metric-delta" id="delta-throughput">—</span>
+            <span class="metric-delta" id="delta-throughput">0</span>
           </div>
           <div class="bar-track">
             <div class="bar-fill bar-throughput" id="bar-throughput" style="width: 37%"></div>
@@ -127,7 +127,7 @@
           <div class="metric-value-row">
             <span class="mono-text metric-number" id="val-power">295</span>
             <span class="metric-unit">W</span>
-            <span class="metric-delta" id="delta-power">—</span>
+            <span class="metric-delta" id="delta-power">0</span>
           </div>
           <div class="bar-track">
             <div class="bar-fill bar-power" id="bar-power" style="width: 100%"></div>
@@ -186,7 +186,7 @@
           <div class="metric-label">SAFETY FACTOR</div>
           <div class="metric-value-row">
             <span class="mono-text metric-number green-val" id="val-sf">2.32</span>
-            <span class="metric-unit">—</span>
+            <span class="metric-unit">n/a</span>
           </div>
         </div>
 
@@ -195,7 +195,7 @@
           <div class="metric-value-row">
             <span class="mono-text metric-number" id="val-reduction">0.0</span>
             <span class="metric-unit">%</span>
-            <span class="metric-delta green" id="delta-mass">—</span>
+            <span class="metric-delta green" id="delta-mass">0</span>
           </div>
           <div class="bar-track">
             <div class="bar-fill bar-reduction" id="bar-reduction" style="width: 0%"></div>
@@ -205,7 +205,7 @@
       </div>
 
       <div class="topology-label">
-        <span class="mono-text text-[11px] text-text-muted">COMPONENT: Formula Student Upright · Al 6061-T6</span>
+        <span class="mono-text text-xs text-text-muted">COMPONENT: Formula Student Upright · Al 6061-T6</span>
       </div>
     </aside>
 
@@ -219,7 +219,7 @@
           <li data-depth="0.05" class="parallax-layer parallax-bg">
             <div class="math-glow-bg"></div>
           </li>
-          <!-- Physical formula — Stiffness matrix -->
+          <!-- Physical formula: Stiffness matrix -->
           <li data-depth="0.3" class="parallax-layer formula-layer formula-physical">
             <div class="formula-block">
               <div class="formula-tag physical">PHYSICAL · SIMP</div>
@@ -227,7 +227,7 @@
               <div class="formula-note mono-text">ρ<sub>e</sub> = (V<sub>e</sub>/V<sub>0</sub>) · ρ<sub>min</sub>..1</div>
             </div>
           </li>
-          <!-- Digital formula — Hessian matrix -->
+          <!-- Digital formula: Hessian matrix -->
           <li data-depth="0.65" class="parallax-layer formula-layer formula-digital">
             <div class="formula-block">
               <div class="formula-tag digital">DIGITAL · GPTQ</div>
@@ -235,7 +235,7 @@
               <div class="formula-note mono-text">λ<sub>i</sub>(H) → quant. error bound</div>
             </div>
           </li>
-          <!-- Convergence axiom — deepest layer -->
+          <!-- Convergence axiom: deepest layer -->
           <li data-depth="0.9" class="parallax-layer formula-layer formula-convergence">
             <div class="convergence-badge">
               <span class="mono-text convergence-eq">K ≡ H</span>
@@ -262,7 +262,7 @@
 
     <!-- ╔══ BOTTOM-LEFT ══╗  Module navigation -->
     <nav id="hud-nav" class="hud-corner hud-bl">
-      <div class="mono-text text-[11px] text-text-muted tracking-wider mb-2">MÓDULOS ACTIVOS</div>
+      <div class="mono-text text-xs text-text-muted tracking-wide mb-2">MÓDULOS ACTIVOS</div>
       <div class="nav-links">
         <a href="http://localhost:8150" target="_blank" class="nav-link">
           <span class="nav-dot cyan"></span><span>Race Ops</span>
@@ -284,10 +284,10 @@
 
     <!-- ╔══ BOTTOM-RIGHT ══╗  Paper reference -->
     <div id="hud-paper" class="hud-corner hud-br">
-      <div class="mono-text text-[11px] text-text-muted tracking-wider">RESEARCH PAPER</div>
+      <div class="mono-text text-xs text-text-muted tracking-wide">RESEARCH PAPER</div>
       <div class="paper-title">Physical & Digital Lightweighting</div>
-      <div class="mono-text text-[11px] text-accent mt-0.5">Convergencia SIMP × GPTQ-INT4</div>
-      <div class="mono-text text-[11px] text-text-muted mt-0.5">KDD Agentic Race Engineering · 2026</div>
+      <div class="mono-text text-xs text-accent mt-0.5">Convergencia SIMP × GPTQ-INT4</div>
+      <div class="mono-text text-xs text-text-muted mt-0.5">KDD Agentic Race Engineering · 2026</div>
       <div class="paper-links mt-2">
         <span class="paper-tag">Formula Student</span>
         <span class="paper-tag">Edge AI</span>

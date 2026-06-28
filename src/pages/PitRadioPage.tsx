@@ -33,7 +33,7 @@ export function PitRadioPage() {
           <h1 className="page-title flex items-center gap-2"><Radio size={18} /> Voice Ã‚Â· Pit-Radio</h1>
           <p className="page-subtitle">Pit-to-rider channel & voice commands Ã¢â‚¬â€ {base.combo}</p>
         </div>
-        <span style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--yellow)', border: '1px solid rgba(252,211,77,0.3)', borderRadius: 4, padding: '2px 7px' }}>RADIO LOG Ã‚Â· no live audio</span>
+        <span style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--yellow)', border: '1px solid var(--yellow-border)', borderRadius: 'var(--radius)', padding: '2px 7px' }}>RADIO LOG Ã‚Â· no live audio</span>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: 16, alignItems: 'start' }}>

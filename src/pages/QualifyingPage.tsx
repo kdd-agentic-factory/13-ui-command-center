@@ -96,7 +96,7 @@ export function QualifyingPage() {
               const best = e.minute === q.bestWindowMin;
               return (
                 <div key={e.minute} title={`min ${e.minute}: ${e.gripPct}% grip`} style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', height: '100%' }}>
-                  <span style={{ width: '100%', height: `${Math.max(6, h)}%`, background: best ? 'var(--green)' : 'var(--cyan)', borderRadius: '2px 2px 0 0' }} />
+                  <span style={{ width: '100%', height: `${Math.max(6, h)}%`, background: best ? 'var(--green)' : 'var(--cyan)', borderRadius: 'var(--radius) var(--radius) 0 0' }} />
                   <span style={{ fontSize: 8, fontFamily: MONO, color: best ? 'var(--green)' : 'var(--text-muted)', marginTop: 2 }}>{e.minute}'</span>
                 </div>
               );

@@ -173,7 +173,7 @@ export function SessionModeGatePage({ circuit, onBack, onOpen }: Props) {
                         style={{
                           display: 'block', width: '100%', textAlign: 'left', cursor: 'pointer',
                           padding: '10px 12px', borderRadius: 8, marginBottom: 6,
-                          background: on ? 'rgba(167,139,250,0.08)' : 'rgba(255,255,255,0.02)',
+                          background: on ? 'color-mix(in srgb, var(--violet) 8%, transparent)' : 'rgba(255,255,255,0.02)',
                           border: `1px solid ${on ? 'var(--violet)' : 'var(--border)'}`,
                         }}>
                         <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>
@@ -184,13 +184,13 @@ export function SessionModeGatePage({ circuit, onBack, onOpen }: Props) {
                         </div>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                           {p.highlights.map(h => (
-                            <span key={h} style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--violet)', border: '1px solid rgba(167,139,250,0.3)', borderRadius: 5, padding: '2px 7px' }}>{h}</span>
+                            <span key={h} style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--violet)', border: '1px solid color-mix(in srgb, var(--violet) 30%, transparent)', borderRadius: 5, padding: '2px 7px' }}>{h}</span>
                           ))}
                         </div>
                       </button>
                     );
                   })}
-                  <div style={{ marginTop: 8, padding: '8px 12px', borderRadius: 8, background: 'rgba(167,139,250,0.06)', border: '1px solid rgba(167,139,250,0.3)', fontSize: 11, color: 'var(--text)' }}>
+                  <div style={{ marginTop: 8, padding: '8px 12px', borderRadius: 8, background: 'color-mix(in srgb, var(--violet) 6%, transparent)', border: '1px solid color-mix(in srgb, var(--violet) 30%, transparent)', fontSize: 11, color: 'var(--text)' }}>
                     <AlertTriangle size={11} style={{ verticalAlign: -2, marginRight: 6, color: 'var(--violet)' }} />
                     <strong>DEMO DATA</strong> ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â not live; synthetic / historical sample. All values are illustrative. Every widget will carry the DEMO label and no real engineer-approval actions are available.
                   </div>
@@ -216,7 +216,7 @@ export function SessionModeGatePage({ circuit, onBack, onOpen }: Props) {
 
               {/* Simulation-mode confidence warning */}
               {mode === 'simulation' && (
-                <div style={{ marginTop: 12, padding: '8px 12px', borderRadius: 8, background: 'rgba(167,139,250,0.06)', border: '1px solid rgba(167,139,250,0.3)', fontSize: 11, color: 'var(--text)' }}>
+                <div style={{ marginTop: 12, padding: '8px 12px', borderRadius: 8, background: 'color-mix(in srgb, var(--violet) 6%, transparent)', border: '1px solid color-mix(in srgb, var(--violet) 30%, transparent)', fontSize: 11, color: 'var(--text)' }}>
                   <AlertTriangle size={11} style={{ verticalAlign: -2, marginRight: 6, color: 'var(--violet)' }} />
                   Simulation confidence <strong style={{ fontFamily: MONO }}>{Math.round(circuit.agentConfidence * 100)}%</strong> ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â predictions will be labelled AI-estimated. Run a validation stint before using advanced predictions.
                 </div>

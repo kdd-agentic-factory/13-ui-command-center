@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════
-   PIT-WALL OS — Global Stylesheet
+   PIT-WALL OS: Global Stylesheet
    Design system: Dark race HUD · governed racing typography
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -16,7 +16,7 @@
   --purple:   #A855F7;
   --blue:     #3B82F6;
   --text:     #E6EAF4;
-  --muted:    #9BA3B8;
+  --muted:    #8B92A8;
   --panel-surface: var(--card);
   --panel-radius: 10px;
   --radius-pill: 99px;
@@ -57,7 +57,7 @@ html, body {
   pointer-events: none;
 }
 
-/* Pareto chart panel — bottom-right quadrant of data layer */
+/* Pareto chart panel: bottom-right quadrant of data layer */
 .pareto-panel {
   position: absolute;
   right: 200px;
@@ -103,9 +103,9 @@ html, body {
 }
 
 .identity-sub {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   margin-top: 2px;
 }
 
@@ -144,16 +144,16 @@ html, body {
 .hud-right { right: 20px; }
 
 .panel-title {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
   margin-bottom: 2px;
 }
 .panel-title.cyan  { color: var(--cyan); }
 .panel-title.green { color: var(--green); }
 
 .panel-subtitle {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
   margin-bottom: 14px;
   letter-spacing: 0.04em;
@@ -164,15 +164,15 @@ html, body {
 }
 
 .panel-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
   color: var(--cyan);
   display: block;
 }
 
 .panel-sublabel {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
   display: block;
   margin-top: 1px;
@@ -184,9 +184,9 @@ html, body {
 .metric-item {}
 
 .metric-label {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   font-weight: 500;
   margin-bottom: 3px;
 }
@@ -198,7 +198,7 @@ html, body {
 }
 
 .metric-number {
-  font-size: 22px;
+  font-size: 28px;
   font-weight: 700;
   line-height: 1;
   color: var(--text);
@@ -206,13 +206,13 @@ html, body {
 }
 
 .metric-unit {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
   font-family: var(--font-mono);
 }
 
 .metric-delta {
-  font-size: 11px;
+  font-size: 12px;
   font-family: var(--font-mono);
   margin-left: auto;
 }
@@ -324,8 +324,8 @@ html, body {
 .formula-block { text-align: center; }
 
 .formula-tag {
-  font-size: 11px;
-  letter-spacing: 0.08em;
+  font-size: 12px;
+  letter-spacing: 0.04em;
   font-weight: 700;
   margin-bottom: 3px;
   display: block;
@@ -344,7 +344,7 @@ html, body {
 .formula-H { color: var(--cyan); }
 
 .formula-note {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
   margin-top: 2px;
 }
@@ -370,8 +370,8 @@ html, body {
 }
 
 .convergence-label {
-  font-size: 11px;
-  letter-spacing: 0.08em;
+  font-size: 12px;
+  letter-spacing: 0.04em;
   color: var(--muted);
   margin-top: 1px;
   font-family: var(--font-mono);
@@ -394,9 +394,9 @@ html, body {
   border-radius: var(--radius-pill);
   color: var(--text);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   cursor: pointer;
   transition: all 0.2s ease;
   pointer-events: auto;
@@ -446,9 +446,9 @@ html, body {
   border-radius: var(--radius-pill);
   color: var(--red);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   cursor: pointer;
   pointer-events: auto;
   transition: all 0.2s ease;
@@ -470,7 +470,7 @@ html, body {
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text);
   text-decoration: none;
   opacity: 0.7;
@@ -506,14 +506,14 @@ html, body {
 }
 
 .paper-tag {
-  font-size: 11px;
+  font-size: 12px;
   padding: 2px 6px;
   border-radius: var(--panel-radius);
   background: var(--surface-faint);
   border: 1px solid var(--border);
   color: var(--muted);
   font-family: var(--font-mono);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
 }
 
 /* ── Pareto chart sizing ─────────────────────────────────────────── */

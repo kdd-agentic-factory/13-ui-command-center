@@ -207,10 +207,10 @@ function GripBudgetMeter({ compound, lapAge }: { compound: CompoundId; lapAge: n
           {currentGrip.toFixed(1)}%
         </span>
       </div>
-      <div style={{ position: 'relative', height: 18, background: 'rgba(255,255,255,0.05)', borderRadius: 5 }}>
-        <div style={{ position:'absolute', left:0, top:0, bottom:0, width:`${c.cliffAt}%`, background:'rgba(224,55,55,0.18)', borderRadius:'5px 0 0 5px' }} />
-        <div style={{ position:'absolute', left:`${c.cliffAt}%`, top:0, bottom:0, width:`${100 - c.cliffAt}%`, background:'rgba(34,197,94,0.08)', borderRadius:'0 5px 5px 0' }} />
-        <div style={{ position:'absolute', left:0, top:0, bottom:0, width:`${currentGrip}%`, background:color, borderRadius:5, opacity:0.65, transition:'width 0.5s' }} />
+      <div style={{ position: 'relative', height: 18, background: 'rgba(255,255,255,0.05)', borderRadius: 'var(--radius)' }}>
+        <div style={{ position:'absolute', left:0, top:0, bottom:0, width:`${c.cliffAt}%`, background:'rgba(224,55,55,0.18)', borderRadius:'var(--radius) 0 0 var(--radius)' }} />
+        <div style={{ position:'absolute', left:`${c.cliffAt}%`, top:0, bottom:0, width:`${100 - c.cliffAt}%`, background:'rgba(34,197,94,0.08)', borderRadius:'0 var(--radius) var(--radius) 0' }} />
+        <div style={{ position:'absolute', left:0, top:0, bottom:0, width:'100%', background:color, borderRadius:'var(--radius)', opacity:0.65, transform:`scaleX(${currentGrip / 100})`, transformOrigin:'left center', transition:'transform 0.5s var(--ease-ui)' }} />
         <div style={{ position:'absolute', left:`${c.cliffAt}%`, top:0, bottom:0, width:2, background:'rgba(224,55,55,0.7)' }} />
         <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', fontSize:10, fontWeight:700, fontFamily:'JetBrains Mono,monospace', color:'white', textShadow:'0 1px 3px rgba(0,0,0,0.8)' }}>
           {currentGrip.toFixed(0)}% GRIP
@@ -1088,7 +1088,7 @@ export function TireDegradationPage() {
           <p style={{ color: 'var(--text-dim)', marginTop: 4 }}>
             Do not combine earlier throttle at <strong>T15 Bucine</strong> with TC reduction until rear temperature drops below <strong>116ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°C</strong>.
           </p>
-          <div style={{ marginTop: 8, padding: '6px 8px', borderRadius: 4, background: 'rgba(250,204,21,0.08)', border: '1px solid rgba(250,204,21,0.15)' }}>
+          <div style={{ marginTop: 8, padding: '6px 8px', borderRadius: 4, background: 'color-mix(in srgb, var(--yellow) 8%, transparent)', border: '1px solid color-mix(in srgb, var(--yellow) 15%, transparent)' }}>
             <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}>
               <AlertTriangle size={12} style={{ color: 'var(--yellow)', marginTop: 2, flexShrink: 0 }} />
               <div>

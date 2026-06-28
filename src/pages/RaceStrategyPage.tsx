@@ -61,7 +61,7 @@ export function RaceStrategyPage() {
             const cliff = d.paceDelta > maxDeg * 0.7;
             return (
               <div key={d.lap} title={`Lap ${d.lap}: +${d.paceDelta.toFixed(2)} s/lap`} style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', height: '100%' }}>
-                <span style={{ width: '100%', height: `${Math.max(4, (d.paceDelta / maxDeg) * 100)}%`, background: cliff ? 'var(--accent)' : past ? 'var(--yellow)' : 'var(--cyan)', borderRadius: '2px 2px 0 0' }} />
+                <span style={{ width: '100%', height: `${Math.max(4, (d.paceDelta / maxDeg) * 100)}%`, background: cliff ? 'var(--accent)' : past ? 'var(--yellow)' : 'var(--cyan)', borderRadius: 'var(--radius) var(--radius) 0 0' }} />
               </div>
             );
           })}

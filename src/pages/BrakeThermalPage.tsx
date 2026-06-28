@@ -67,7 +67,7 @@ export function BrakeThermalPage() {
             return (
               <div key={p.point} title={`${p.point}: ${p.tempC}°C`} style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', height: '100%', zIndex: 1 }}>
                 <span style={{ fontSize: 8, fontFamily: MONO, color: col }}>{p.tempC}°</span>
-                <span style={{ width: '70%', height: `${Math.max(4, pct(p.tempC))}%`, background: col, borderRadius: '2px 2px 0 0' }} />
+                <span style={{ width: '70%', height: `${Math.max(4, pct(p.tempC))}%`, background: col, borderRadius: 'var(--radius) var(--radius) 0 0' }} />
               </div>
             );
           })}

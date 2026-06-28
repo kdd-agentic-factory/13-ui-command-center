@@ -276,7 +276,7 @@ function SystemMassChart({ parts }: { parts: ComponentPart[] }) {
   const massBySystem = systems.map(sys => ({
     system: sys,
     mass: parts.filter(p => p.system === sys).reduce((a, p) => a + p.mass, 0),
-    color: SYSTEM_COLORS[sys] ?? '#888',
+    color: SYSTEM_COLORS[sys] ?? 'var(--text-muted)',
   })).sort((a, b) => b.mass - a.mass);
   const total = massBySystem.reduce((a, s) => a + s.mass, 0);
   return (
@@ -290,7 +290,7 @@ function SystemMassChart({ parts }: { parts: ComponentPart[] }) {
             </span>
           </div>
           <div style={{ height: 6, borderRadius: 3, background: 'rgba(255,255,255,0.04)', overflow: 'hidden' }}>
-            <div style={{ width: `${(s.mass / total) * 100}%`, height: '100%', background: s.color, borderRadius: 3, transition: 'width 0.5s' }} />
+            <div style={{ width: '100%', height: '100%', background: s.color, borderRadius: 3, transform: `scaleX(${s.mass / total})`, transformOrigin: 'left center', transition: 'transform 0.5s var(--ease-ui)' }} />
           </div>
         </div>
       ))}
@@ -326,7 +326,7 @@ function FEAStressPanel({ variants }: { variants: DesignVariant[] }) {
               <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', fontWeight: 700, color: sfColor }}>SF {sf}</span>
             </div>
             <div style={{ position: 'relative', height: 8, background: 'rgba(255,255,255,0.04)', borderRadius: 4, overflow: 'visible' }}>
-              <div style={{ width: `${stressPct}%`, height: '100%', background: sfNum >= 2.0 ? 'var(--green)' : sfNum >= 1.5 ? 'var(--yellow)' : 'var(--accent)', borderRadius: 4, transition: 'width 0.5s' }} />
+              <div style={{ width: '100%', height: '100%', background: sfNum >= 2.0 ? 'var(--green)' : sfNum >= 1.5 ? 'var(--yellow)' : 'var(--accent)', borderRadius: 4, transform: `scaleX(${stressPct / 100})`, transformOrigin: 'left center', transition: 'transform 0.5s var(--ease-ui)' }} />
               <div style={{ position: 'absolute', left: `${yieldPct}%`, top: -3, width: 2, height: 14, background: 'rgba(255,255,255,0.5)', borderRadius: 1 }} />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 3 }}>
@@ -372,7 +372,7 @@ function MassEvolutionChart({ variants }: { variants: DesignVariant[] }) {
                     </span>
                   </div>
                   <div style={{ height: 7, borderRadius: 3, background: 'rgba(255,255,255,0.04)', overflow: 'hidden' }}>
-                    <div style={{ width: `${pct}%`, height: '100%', background: barColor, borderRadius: 3, transition: 'width 0.5s' }} />
+                    <div style={{ width: '100%', height: '100%', background: barColor, borderRadius: 3, transform: `scaleX(${pct / 100})`, transformOrigin: 'left center', transition: 'transform 0.5s var(--ease-ui)' }} />
                   </div>
                 </div>
               );
@@ -607,7 +607,7 @@ export function PartDesignPage() {
               </div>
             ))}
           </div>
-          <div style={{ padding: '6px 8px', background: 'rgba(56,189,248,0.06)', borderRadius: 4, fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--text-dim)' }}>
+          <div style={{ padding: '6px 8px', background: 'color-mix(in srgb, var(--blue) 6%, transparent)', borderRadius: 4, fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--text-dim)' }}>
             <span style={{ color: 'var(--blue)' }}>ÃƒÂ¢Ã¢â‚¬â€œÃ‚Â¸ Recommendation:</span> Safe for practice validation. Winglet balance check recommended.
           </div>
         </div>
@@ -630,7 +630,7 @@ export function PartDesignPage() {
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                 padding: '6px 8px', borderRadius: 4, fontSize: 11, fontFamily: 'var(--font-mono)',
                 background: 'rgba(255,255,255,0.02)',
-                border: `1px solid ${p.status === 'printing' ? 'rgba(56,189,248,0.3)' : 'rgba(255,255,255,0.06)'}`,
+                border: `1px solid ${p.status === 'printing' ? 'color-mix(in srgb, var(--blue) 30%, transparent)' : 'rgba(255,255,255,0.06)'}`,
               }}>
                 <div>
                   <div style={{ fontWeight: 600, color: 'var(--text)' }}>{p.printer}</div>

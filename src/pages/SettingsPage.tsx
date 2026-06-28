@@ -198,9 +198,9 @@ function LatencyChart({ services }: { services: ServiceStatus[] }) {
             </div>
             <div style={{ height: 5, background: 'rgba(255,255,255,0.04)', borderRadius: 3, overflow: 'hidden' }}>
               <div style={{
-                width: `${pct}%`, height: '100%',
+                width: '100%', height: '100%',
                 background: color, borderRadius: 3,
-                transition: 'width 0.5s',
+                transition: 'transform 0.5s', transform: `scaleX(${pct / 100})`, transformOrigin: 'left',
               }} />
             </div>
           </div>

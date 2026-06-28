@@ -196,7 +196,7 @@ export const READINESS_META: Record<ReadinessStatus, { color: string; label: str
   'READY':    { color: 'var(--green)',  label: 'Full analysis available' },
   'PARTIAL':  { color: 'var(--yellow)', label: 'Limited — calibration recommended' },
   'GENERIC':  { color: 'var(--yellow)', label: 'Generic bike model' },
-  'NEW':      { color: '#A78BFA',       label: 'New rider — learning style' },
+  'NEW':      { color: 'var(--violet)', label: 'New rider — learning style' },
   'GPS-ONLY': { color: 'var(--accent)', label: 'GPS-only telemetry' },
 };
 

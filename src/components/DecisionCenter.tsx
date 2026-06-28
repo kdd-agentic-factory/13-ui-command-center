@@ -145,7 +145,7 @@ export function DecisionCenter({ lap }: { lap: number }) {
         style={{
           display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer',
           padding: '4px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700,
-          background: count ? 'rgba(225,6,0,0.10)' : 'rgba(255,255,255,0.03)',
+          background: count ? 'var(--accent-dim)' : 'rgba(255,255,255,0.03)',
           border: `1px solid ${count ? 'var(--accent)' : 'var(--border)'}`,
           color: count ? 'var(--accent)' : 'var(--text-muted)',
         }}>

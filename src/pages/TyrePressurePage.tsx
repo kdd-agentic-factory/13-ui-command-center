@@ -63,7 +63,7 @@ export function TyrePressurePage() {
           {t.curve.map(p => (
             <div key={p.phase} title={`${p.phase}: ${p.frontBar} bar`} style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', height: '100%', zIndex: 1 }}>
               <span style={{ fontSize: 8.5, fontFamily: MONO, color: p.aboveMin ? 'var(--green)' : 'var(--accent)' }}>{p.frontBar.toFixed(2)}</span>
-              <span style={{ width: '62%', height: `${Math.max(4, y(p.frontBar))}%`, background: p.aboveMin ? 'var(--green)' : 'var(--accent)', borderRadius: '2px 2px 0 0' }} />
+              <span style={{ width: '62%', height: `${Math.max(4, y(p.frontBar))}%`, background: p.aboveMin ? 'var(--green)' : 'var(--accent)', borderRadius: 'var(--radius) var(--radius) 0 0' }} />
             </div>
           ))}
         </div>

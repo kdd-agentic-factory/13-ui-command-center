@@ -720,8 +720,8 @@ export function RiderComparisonPage() {
         {/* AI Summary */}
         <div style={{
           marginTop: 10, padding: '8px 12px', borderRadius: 'var(--radius)',
-          background: 'rgba(56,189,248,0.06)',
-          border: '1px solid rgba(56,189,248,0.15)',
+          background: 'color-mix(in srgb, var(--blue) 6%, transparent)',
+          border: '1px solid color-mix(in srgb, var(--blue) 15%, transparent)',
           display: 'flex', alignItems: 'flex-start', gap: 8,
         }}>
           <Info size={14} style={{ color: 'var(--blue)', flex: 'none', marginTop: 1 }} />
@@ -803,8 +803,8 @@ export function RiderComparisonPage() {
             {['You', 'Rival', 'Ideal line', 'Brake markers', 'Throttle pickup', 'Apex', 'Rear slip events'].map(layer => (
               <span key={layer} style={{
                 padding: '2px 8px', borderRadius: 4, fontSize: 10,
-                background: 'rgba(56,189,248,0.08)',
-                border: '1px solid rgba(56,189,248,0.2)',
+                background: 'color-mix(in srgb, var(--blue) 8%, transparent)',
+                border: '1px solid color-mix(in srgb, var(--blue) 20%, transparent)',
                 color: 'var(--blue)', fontFamily: 'JetBrains Mono,monospace',
               }}>
                 Ã¢Å“â€œ {layer}

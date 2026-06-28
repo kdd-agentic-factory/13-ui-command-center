@@ -26,8 +26,8 @@ export function SessionContextStrip() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 14 }}>
       {nonLive && (
         <div style={{
-          display: 'flex', alignItems: 'center', gap: 8, padding: '7px 12px', borderRadius: 8,
-          background: 'rgba(167,139,250,0.06)', border: `1px solid ${badgeColor}`,
+          display: 'flex', alignItems: 'center', gap: 8, padding: '7px 12px', borderRadius: 'var(--radius)',
+          background: 'var(--purple-dim)', border: `1px solid ${badgeColor}`,
           fontSize: 11, color: 'var(--text)',
         }}>
           <Radio size={12} style={{ color: badgeColor, flexShrink: 0 }} />

@@ -48,7 +48,7 @@ export function WeatherPage() {
           {w.forecast.map(f => (
             <div key={f.min} title={`min ${f.min}: ${f.rainProb}% rain, ${f.trackTempC}°C`} style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', height: '100%' }}>
               <span style={{ fontSize: 8.5, fontFamily: MONO, color: f.rainProb >= 60 ? 'var(--accent)' : 'var(--text-muted)' }}>{f.rainProb}%</span>
-              <span style={{ width: '64%', height: `${f.rainProb}%`, background: skyColor(f.sky), borderRadius: '2px 2px 0 0' }} />
+              <span style={{ width: '64%', height: `${f.rainProb}%`, background: skyColor(f.sky), borderRadius: 'var(--radius) var(--radius) 0 0' }} />
               <span style={{ fontSize: 8, fontFamily: MONO, color: 'var(--text-muted)', marginTop: 2 }}>{f.min}'</span>
             </div>
           ))}

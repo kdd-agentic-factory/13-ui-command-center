@@ -351,7 +351,7 @@ export function WiFiDevicePanel({ onClose, onConnected }: Props) {
                     <span style={{ fontFamily: 'JetBrains Mono,monospace', color: 'var(--blue)' }}>{progress}%</span>
                   </div>
                   <div className="bar-track">
-                    <div className="bar-fill blue" style={{ width: `${progress}%`, transition: 'width 50ms linear' }} />
+                    <div className="bar-fill blue" style={{ width: '100%', transform: `scaleX(${progress / 100})`, transformOrigin: 'left', transition: 'transform 50ms linear' }} />
                   </div>
                 </div>
               )}

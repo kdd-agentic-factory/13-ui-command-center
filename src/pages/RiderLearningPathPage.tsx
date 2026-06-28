@@ -63,7 +63,7 @@ export function RiderLearningPathPage() {
       </div>
 
       {lp.telemetryLimited && (
-        <div style={{ marginBottom: 14, padding: '8px 12px', borderRadius: 8, background: 'rgba(252,211,77,0.07)', border: '1px solid rgba(252,211,77,0.3)', fontSize: 10.5, color: 'var(--text)' }}>
+        <div style={{ marginBottom: 14, padding: '8px 12px', borderRadius: 'var(--radius)', background: 'var(--yellow-dim)', border: '1px solid var(--yellow-border)', fontSize: 10.5, color: 'var(--text)' }}>
           GPS-only bike â€” throttle / lean / exit-drive scores are estimated (marked EST). The active block trains a measurable skill only.
         </div>
       )}

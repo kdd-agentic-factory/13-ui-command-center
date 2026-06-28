@@ -21,8 +21,8 @@ export interface Advisor {
 export const ADVISORS: Advisor[] = [
   { id: 'rider-mentor', name: 'Rider Mentor', role: 'Technique & coaching', color: '#00B7FF' },
   { id: 'telemetry-sage', name: 'Telemetry Sage', role: 'Data & traces', color: '#22C55E' },
-  { id: 'garage-engineer', name: 'Garage Engineer', role: 'Setup & mechanics', color: '#FCD34D' },
-  { id: 'safety-guardian', name: 'Safety Guardian', role: 'Risk & limits', color: '#E10600' },
+  { id: 'garage-engineer', name: 'Garage Engineer', role: 'Setup & mechanics', color: 'var(--yellow)' },
+  { id: 'safety-guardian', name: 'Safety Guardian', role: 'Risk & limits', color: 'var(--accent)' },
   { id: 'oracle-chief', name: 'Oracle Chief', role: 'Decision & strategy', color: '#8B5CF6' },
 ];
 

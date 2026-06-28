@@ -86,7 +86,7 @@ const QUICK_ACTIONS: QuickAction[] = [
   { label: 'PUSH HARD',    shortLabel: 'PUSH',     color: 'var(--accent)', bgColor: 'rgba(224,55,55,0.15)', message: 'ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ PUSH HARD ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Attack mode. Fuel map 8, TC1. Commit to overtake.', priority: 'high' },
   { label: 'SAVE FUEL',    shortLabel: 'FUEL',     color: 'var(--yellow)', bgColor: 'rgba(245,158,11,0.15)', message: 'ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂºÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â½ SAVE FUEL ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Engine map 4. Recover 0.15 kg/lap. No attack until L18.', priority: 'high' },
   { label: 'BOX THIS LAP', shortLabel: 'BOX',      color: 'var(--green)',  bgColor: 'rgba(34,197,94,0.15)', message: 'ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ BOX THIS LAP ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Confirm in-lap. Crew on standby. Hard rear ready.', priority: 'high' },
-  { label: 'STAY OUT',     shortLabel: 'STAY',     color: 'var(--blue)',       bgColor: 'rgba(96,165,250,0.15)', message: 'ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¹ STAY OUT ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Hold position. Monitor rear for 2 more laps before decision.', priority: 'high' },
+  { label: 'STAY OUT',     shortLabel: 'STAY',     color: 'var(--blue)',       bgColor: 'color-mix(in srgb, var(--blue) 15%, transparent)', message: 'ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¹ STAY OUT ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Hold position. Monitor rear for 2 more laps before decision.', priority: 'high' },
   { label: 'TC UP',        shortLabel: 'TC+',      color: 'var(--text-muted)', bgColor: 'rgba(255,255,255,0.05)', message: 'ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â² TC LEVEL UP ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Traction control +1 step. Protect rear for final stint.', priority: 'medium' },
   { label: 'TC DOWN',      shortLabel: 'TCÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¹ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢',      color: 'var(--text-muted)', bgColor: 'rgba(255,255,255,0.05)', message: 'ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼ TC LEVEL DOWN ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Traction control ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“1 step. More exit drive. Monitor temp.', priority: 'medium' },
 ];
@@ -203,7 +203,7 @@ function ActiveStrategyBoard({ lapCount, optPit }: { lapCount: number; optPit: n
           <span style={{ fontSize:11, fontFamily:'JetBrains Mono,monospace' }}>L{lapCount} ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ pit L{optPit}</span>
         </div>
         <div className="bar-track" style={{ height:8 }}>
-          <div style={{ width:`${stintPct}%`, height:8, background:barColor, borderRadius:4, transition:'width 0.4s' }} />
+          <div style={{ width:'100%', height:8, background:barColor, borderRadius:4, transform:`scaleX(${stintPct / 100})`, transformOrigin:'left center', transition:'transform 0.4s var(--ease-ui)' }} />
         </div>
       </div>
 
@@ -490,7 +490,7 @@ export function CrewChiefPage() {
             { l: 'Air', v: cleanAir ? 'CLEAN' : 'DIRTY', warn: !cleanAir },
           ].map(c => (
             <div key={c.l} style={{ flex: 1, minWidth: 92, textAlign: 'center', padding: '6px 8px',
-                                    borderRadius: 'var(--radius)', background: 'var(--bg-2, #0e1726)' }}>
+                                    borderRadius: 'var(--radius)', background: 'var(--surface-muted)' }}>
               <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{c.l}</div>
               <div style={{ fontFamily: 'JetBrains Mono,monospace', fontWeight: 700, fontSize: 13,
                             color: c.warn ? 'var(--accent)' : 'var(--text)' }}>{c.v}</div>
@@ -567,13 +567,13 @@ export function CrewChiefPage() {
             onKeyDown={e => { if (e.key === 'Enter') sendDirective(); }}
             placeholder="Free-text directive to dash (e.g. PUSH NOW ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· BOX-BOX ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· SAVE FUEL)ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¦"
             style={{ flex: 1, padding: '8px 10px', borderRadius: 8, border: '1px solid var(--border)',
-                     background: 'var(--bg-2, #0e1726)', color: 'var(--text)', fontSize: 12,
+                     background: 'var(--surface-muted)', color: 'var(--text)', fontSize: 12,
                      fontFamily: 'JetBrains Mono, monospace' }}
           />
           <button
             onClick={sendDirective}
             style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid var(--yellow)',
-                     background: 'rgba(234,179,8,0.15)', color: 'var(--yellow)', fontWeight: 800,
+                     background: 'color-mix(in srgb, var(--yellow) 15%, transparent)', color: 'var(--yellow)', fontWeight: 800,
                      fontSize: 12, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace' }}
           >
             Send ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â®ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢
@@ -709,7 +709,7 @@ export function CrewChiefPage() {
                     <td>
                       <span className="text-mono" style={{
                         fontWeight: 800, fontSize: 13,
-                        color: r.pos === 1 ? 'var(--yellow)' : r.pos === 2 ? '#C0C0C0' : r.pos === 3 ? '#CD7F32' : 'var(--text-muted)',
+                        color: r.pos === 1 ? 'var(--yellow)' : r.pos === 2 ? 'var(--text)' : r.pos === 3 ? 'var(--warning)' : 'var(--text-muted)',
                       }}>P{r.pos}</span>
                     </td>
                     <td>
@@ -857,7 +857,7 @@ export function CrewChiefPage() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
                 <div>
                   <div style={{ fontSize: 9, color: 'var(--text-muted)', letterSpacing: '0.15em', marginBottom: 4 }}>LAP</div>
-                  <div style={{ fontSize: 52, fontWeight: 800, color: 'var(--yellow)', lineHeight: 1, fontVariantNumeric: 'tabular-nums', textShadow: '0 0 20px rgba(255,255,0,0.25)' }}>
+                  <div style={{ fontSize: 52, fontWeight: 800, color: 'var(--yellow)', lineHeight: 1, fontVariantNumeric: 'tabular-nums', textShadow: '0 0 20px color-mix(in srgb, var(--yellow) 25%, transparent)' }}>
                     {t.lapCount}
                   </div>
                   <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 4 }}>of {MUGELLO_CIRCUIT.raceLaps}</div>
@@ -867,8 +867,8 @@ export function CrewChiefPage() {
                   <div style={{
                     fontSize: 52, fontWeight: 800, lineHeight: 1,
                     fontVariantNumeric: 'tabular-nums',
-                    color: t.position <= 3 ? '#FFFFFF' : '#FF8844',
-                    textShadow: t.position <= 3 ? '0 0 20px rgba(255,255,255,0.18)' : '0 0 20px rgba(255,136,68,0.25)',
+                    color: t.position <= 3 ? 'var(--text)' : 'var(--warning)',
+                    textShadow: t.position <= 3 ? '0 0 20px color-mix(in srgb, var(--text) 18%, transparent)' : '0 0 20px color-mix(in srgb, var(--warning) 25%, transparent)',
                   }}>
                     P{t.position}
                   </div>
@@ -881,9 +881,9 @@ export function CrewChiefPage() {
                 <div style={{ fontSize: 9, color: 'var(--text-muted)', letterSpacing: '0.15em', marginBottom: 4 }}>GAP</div>
                 <div style={{
                   fontSize: 30, fontWeight: 800,
-                  color: isNegGap ? '#FF4444' : '#44FF88',
+                  color: isNegGap ? 'var(--accent)' : 'var(--green)',
                   fontVariantNumeric: 'tabular-nums',
-                  textShadow: isNegGap ? '0 0 12px rgba(255,68,68,0.35)' : '0 0 12px rgba(68,255,136,0.35)',
+                  textShadow: isNegGap ? '0 0 12px color-mix(in srgb, var(--accent) 35%, transparent)' : '0 0 12px color-mix(in srgb, var(--green) 35%, transparent)',
                 }}>
                   {gapDisplay}
                 </div>
@@ -925,8 +925,8 @@ export function CrewChiefPage() {
           >
             <div
               onClick={e => e.stopPropagation()}
-              style={{ width: 460, maxWidth: '90vw', background: 'var(--bg-1, #0b1320)', borderRadius: 'var(--radius-xl)',
-                       border: '1px solid var(--accent, #38BDF8)', padding: 20, boxShadow: '0 10px 40px rgba(0,0,0,0.5)' }}
+              style={{ width: 460, maxWidth: '90vw', background: 'var(--surface)', borderRadius: 'var(--radius-xl)',
+                       border: '1px solid var(--accent)', padding: 20, boxShadow: '0 10px 40px rgba(0,0,0,0.5)' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
                 <AlertOctagon size={18} style={{ color: 'var(--accent)' }} />
@@ -944,7 +944,7 @@ export function CrewChiefPage() {
                 </button>
                 <button onClick={() => resolveDecision(open.id, 'overridden')}
                   style={{ flex: 1, padding: 10, borderRadius: 8, border: '1px solid var(--accent)',
-                           background: 'rgba(242,38,13,0.12)', color: 'var(--accent)', fontWeight: 800, cursor: 'pointer' }}>
+                            background: 'color-mix(in srgb, var(--accent) 12%, transparent)', color: 'var(--accent)', fontWeight: 800, cursor: 'pointer' }}>
                   ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â Override
                 </button>
                 <button onClick={() => setPopupDismissed(true)}

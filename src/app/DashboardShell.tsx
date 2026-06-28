@@ -27,6 +27,7 @@ import {
   resolveDashboardTab,
   setSessionContext,
   withDashboardTab,
+  type SessionMode,
 } from '../domain/sessionContext';
 
 import { OverviewPage } from '../pages/OverviewPage';
@@ -190,6 +191,26 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
 
 const ALL_TAB_IDS: TabId[] = ALL_NAV_SECTIONS.flatMap(section => section.items.map(item => item.id));
 
+const PRIMARY_TAB_IDS_BY_MODE: Record<SessionMode, readonly TabId[]> = {
+  race: ['cockpit', 'raceday', 'live', 'telemetry', 'strategy', 'rivals', 'tires', 'weather', 'crew', 'copilot', 'team', 'stewards'],
+  test: ['cockpit', 'telemetry', 'setup', 'advisor', 'engctrl', 'electronics', 'brakes', 'pressure', 'setup-lab', 'compare', 'team', 'trust'],
+  practice: ['cockpit', 'overview', 'live', 'telemetry', 'corners', 'track-evo', 'tires', 'pressure', 'setup', 'advisor', 'crew', 'copilot'],
+  trackday: ['cockpit', 'live', 'telemetry', 'corners', 'replay', 'ghost-lap', 'risk', 'tires', 'learning-path', 'human', 'copilot', 'report'],
+  replay: ['cockpit', 'replay', 'telemetry', 'corners', 'compare', 'ghost-lap', 'studio', 'report', 'debrief', 'black-box', 'style', 'knowledge'],
+  demo: ['cockpit', 'overview', 'live', 'telemetry', 'circuit', 'corners', 'replay', 'setup', 'twin', 'copilot', 'orchestrator', 'platform'],
+  'pre-gp': ['cockpit', 'pre-gp', 'circuit', 'weather', 'surface', 'strategy', 'rivals', 'tires', 'setup', 'advisor', 'sandbox', 'team'],
+  simulation: ['cockpit', 'twin', 'sandbox', 'sim-lab', 'causal', 'predict', 'circuit', 'surface', 'weather', 'setup', 'advisor', 'copilot'],
+};
+
+function filterSectionsByIds(sections: NavSectionDef[], ids: readonly TabId[]): NavSectionDef[] {
+  return sections
+    .map(section => ({
+      ...section,
+      items: section.items.filter(item => ids.includes(item.id)),
+    }))
+    .filter(section => section.items.length > 0);
+}
+
 function useClock(): string {
   const [time, setTime] = useState(() => new Date());
   useEffect(() => {
@@ -283,17 +304,26 @@ function DashboardShellContent() {
   const clock = useClock();
   const live = useServiceData();
 
-  const modeHidden = hiddenTabsForMode(sessionCtx.sessionMode);
-  const filteredSections = profile
+  const modeSecondaryTabIds = hiddenTabsForMode(sessionCtx.sessionMode);
+  const profileAllowedSections = profile
     ? ALL_NAV_SECTIONS
         .map(section => ({
           ...section,
-          items: section.items.filter(item => profile.allowedTabs.includes(item.id) && !modeHidden.includes(item.id)),
+          items: section.items.filter(item => profile.allowedTabs.includes(item.id)),
         }))
         .filter(section => section.items.length > 0)
     : [];
 
-  const allowedTabIds = filteredSections.flatMap(section => section.items.map(item => item.id));
+  const allowedTabIds = profileAllowedSections.flatMap(section => section.items.map(item => item.id));
+  const configuredPrimaryTabIds = PRIMARY_TAB_IDS_BY_MODE[sessionCtx.sessionMode].filter(id => !modeSecondaryTabIds.includes(id));
+  const configuredAllowedPrimaryTabIds = configuredPrimaryTabIds.filter(id => allowedTabIds.includes(id));
+  const primaryTabIds = configuredAllowedPrimaryTabIds.length > 0
+    ? configuredAllowedPrimaryTabIds
+    : allowedTabIds.slice(0, Math.min(allowedTabIds.length, 6));
+  const secondaryTabIds = allowedTabIds.filter(id => !primaryTabIds.includes(id));
+  const primarySections = filterSectionsByIds(profileAllowedSections, primaryTabIds);
+  const secondarySections = filterSectionsByIds(profileAllowedSections, secondaryTabIds);
+  const secondaryItemCount = secondaryTabIds.length;
   const modeDefaultTab = (sessionCtx.sessionMode === 'demo' ? getActiveDemoSession()?.focusTab : null) ?? defaultTabForMode(sessionCtx.sessionMode);
   const initialTab = resolveDashboardTab(
     sessionCtx.setup[DASHBOARD_TAB_SETUP_KEY],
@@ -304,6 +334,7 @@ function DashboardShellContent() {
   const [tab, setTab] = useState<TabId>(initialTab);
 
   const activeTab: TabId = allowedTabIds.includes(tab) ? tab : initialTab;
+  const secondaryHasActiveTab = secondaryTabIds.includes(activeTab);
 
   const isFullBleed = activeTab === 'copilot';
 
@@ -312,6 +343,7 @@ function DashboardShellContent() {
   }, [activeTab]);
 
   const navigateTo = useCallback((newTab: TabId) => {
+    if (!allowedTabIds.includes(newTab)) return;
     if (newTab === activeTab) return;
     setTransitioning(true);
     window.setTimeout(() => {
@@ -319,7 +351,7 @@ function DashboardShellContent() {
       setTab(newTab);
       setTransitioning(false);
     }, 100);
-  }, [activeTab]);
+  }, [activeTab, allowedTabIds]);
 
   function navigate(newTab: TabId, seed?: string) {
     if (seed) sessionStorage.setItem(COPILOT_SEED_KEY, seed);
@@ -367,7 +399,7 @@ function DashboardShellContent() {
         </div>
 
         <nav className="sidebar-nav">
-          {filteredSections.map(({ section, items }) => (
+          {primarySections.map(({ section, items }) => (
             <div key={section} className="sidebar-section">
               <div className="sidebar-section-title">{t(section)}</div>
               {items.map(item => {
@@ -389,6 +421,39 @@ function DashboardShellContent() {
               })}
             </div>
           ))}
+
+          {secondaryItemCount > 0 && (
+            <details className="sidebar-section sidebar-more" open={secondaryHasActiveTab}>
+              <summary className="sidebar-more-summary">
+                <span>More modules</span>
+                <span className="sidebar-more-count">{secondaryItemCount}</span>
+              </summary>
+              <div className="sidebar-more-body">
+                {secondarySections.map(({ section, items }) => (
+                  <div key={section} className="sidebar-more-group">
+                    <div className="sidebar-section-title sidebar-section-title-compact">{t(section)}</div>
+                    {items.map(item => {
+                      const Icon = item.icon;
+                      return (
+                        <button
+                          key={item.id}
+                          className={`sidebar-item sidebar-item-secondary${activeTab === item.id ? ' sidebar-item-active' : ''}`}
+                          onClick={() => navigateTo(item.id)}
+                        >
+                          <span className="sidebar-item-icon"><Icon size={15} /></span>
+                          <span className="sidebar-item-label">{t(item.labelKey)}</span>
+                          {item.badge && (
+                            <span className={`sidebar-badge sidebar-badge-${item.badgeColor ?? 'muted'}`}>{item.badge}</span>
+                          )}
+                          {activeTab === item.id && <ChevronRight size={12} className="sidebar-item-arrow" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            </details>
+          )}
         </nav>
 
         <div className="sidebar-footer">
@@ -473,7 +538,7 @@ function DashboardShellContent() {
           >
             <NavContext.Provider value={navigate}>
               <CommandPalette
-                items={filteredSections.flatMap(section => section.items.map(item => ({ id: item.id, label: t(item.labelKey), section: t(section.section) })))}
+                items={profileAllowedSections.flatMap(section => section.items.map(item => ({ id: item.id, label: t(item.labelKey), section: t(section.section) })))}
                 onNavigate={navigateTo}
               />
               <SessionContextStrip />

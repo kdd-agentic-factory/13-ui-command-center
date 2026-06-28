@@ -403,7 +403,7 @@ function StintProgress({ tyreAge, lapCount }: { tyreAge: number; lapCount: numbe
           <span style={{ fontSize:11, fontFamily:'JetBrains Mono,monospace' }}>{tyreAge} / 18 laps</span>
         </div>
         <div className="bar-track" style={{ height:8, borderRadius:3 }}>
-          <div style={{ width:`${stintPct}%`, height:8, background:barCol, borderRadius:3, transition:'width 0.4s' }} />
+          <div style={{ width:'100%', height:8, background:barCol, borderRadius:3, transform:`scaleX(${stintPct / 100})`, transformOrigin:'left', transition:'transform 0.4s' }} />
         </div>
       </div>
       <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:6 }}>

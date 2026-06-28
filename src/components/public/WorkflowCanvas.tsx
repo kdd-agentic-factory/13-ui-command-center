@@ -288,8 +288,8 @@ export function WorkflowCanvas({ title, subtitle, steps, active, mode, selectedI
                 height: '26%',
                 pointerEvents: 'auto',
                 borderRadius: 'var(--radius-xl)',
-                border: isPressed ? '1px solid rgba(226,232,240,0.58)' : '1px solid rgba(148,163,184,0.18)',
-                background: isPressed ? 'rgba(99,102,241,0.18)' : 'rgba(8,12,20,0.08)',
+                border: isPressed ? '1px solid rgba(226,232,240,0.58)' : '1px solid var(--border-bright)',
+                background: isPressed ? 'var(--blue-dim)' : 'rgba(8,12,20,0.08)',
                 color: 'var(--text)',
                 display: 'flex',
                 alignItems: 'center',
@@ -302,7 +302,7 @@ export function WorkflowCanvas({ title, subtitle, steps, active, mode, selectedI
               }}
             >
               <span style={{ display: 'grid', gap: 2, textAlign: 'center' }}>
-                <span style={{ fontSize: 12, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--public-accent, #8f1d2a)', fontWeight: 700 }}>Step {index + 1}</span>
+                <span style={{ fontSize: 12, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--accent-active)', fontWeight: 700 }}>Step {index + 1}</span>
                 <span style={{ fontSize: 14, fontWeight: 700 }}>{step}</span>
                 <span style={{ fontSize: 11, color: isPressed ? '#e2e8f0' : 'var(--text-dim)' }}>{isPressed ? 'Selected' : 'Activate'}</span>
               </span>

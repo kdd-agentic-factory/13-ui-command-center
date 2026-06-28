@@ -36,11 +36,11 @@ export interface ChannelDef {
 export const CHANNELS: ChannelDef[] = [
   { id: 'speed',    label: 'Speed',     unit: 'km/h', color: '#00B7FF', max: 300, estimatedOnGps: false },
   { id: 'throttle', label: 'Throttle',  unit: '%',    color: '#22C55E', max: 100, estimatedOnGps: true },
-  { id: 'brake',    label: 'Brake',     unit: '%',    color: '#E10600', max: 100, estimatedOnGps: true },
-  { id: 'lean',     label: 'Lean',      unit: '°',    color: '#FCD34D', max: 60,  estimatedOnGps: true },
+  { id: 'brake',    label: 'Brake',     unit: '%',    color: 'var(--accent)', max: 100, estimatedOnGps: true },
+  { id: 'lean',     label: 'Lean',      unit: '°',    color: 'var(--yellow)', max: 60,  estimatedOnGps: true },
   { id: 'gear',     label: 'Gear',      unit: '',     color: '#A855F7', max: 6,   estimatedOnGps: true },
   { id: 'rpm',      label: 'RPM',       unit: '',     color: '#FF6A00', max: 16000, estimatedOnGps: true },
-  { id: 'rearSlip', label: 'Rear slip', unit: '%',    color: '#FF4D8D', max: 20,  estimatedOnGps: true },
+  { id: 'rearSlip', label: 'Rear slip', unit: '%',    color: 'var(--accent)', max: 20,  estimatedOnGps: true },
 ];
 
 export interface CornerMark { name: string; pct: number; }

@@ -34,7 +34,7 @@ export function HumanPerformancePage() {
       </div>
 
       {/* honesty banner */}
-      <div className="card mb-4" style={{ padding: '8px 12px', background: 'rgba(252,211,77,0.06)', border: '1px solid rgba(252,211,77,0.3)', fontSize: 10.5, color: 'var(--text)' }}>
+      <div className="card mb-4" style={{ padding: '8px 12px', background: 'var(--yellow-dim)', border: '1px solid var(--yellow-border)', fontSize: 10.5, color: 'var(--text)' }}>
         <Activity size={11} style={{ verticalAlign: -1, marginRight: 5, color: 'var(--yellow)' }} />{h.dataSource}
       </div>
 

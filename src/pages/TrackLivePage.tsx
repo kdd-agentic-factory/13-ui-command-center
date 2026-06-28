@@ -122,7 +122,7 @@ function Bar({ label, pct, color, sub }: { label: string; pct: number; color: st
         <span style={{ color, fontWeight: 700 }}>{pct.toFixed(0)}%</span>
       </div>
       <div style={{ height: 12, borderRadius: 4, background: 'rgba(255,255,255,0.07)' }}>
-        <div style={{ width: `${pct}%`, height: '100%', borderRadius: 4, background: color, transition: 'width 0.1s linear' }} />
+        <div style={{ width: '100%', height: '100%', borderRadius: 4, background: color, transform: `scaleX(${pct / 100})`, transformOrigin: 'left', transition: 'transform 0.1s linear' }} />
       </div>
       {sub && <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-dim)', marginTop: 3 }}>{sub}</div>}
     </div>

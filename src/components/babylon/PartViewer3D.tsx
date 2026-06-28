@@ -208,14 +208,14 @@ export function PartViewer3D({
         </span>
       </div>
       {loadError && (
-        <div style={{ fontSize: 10, color: 'var(--accent-warn, #f2cc1a)', marginTop: 4, fontFamily: 'var(--font-mono)' }}>
+        <div style={{ fontSize: 10, color: 'var(--yellow)', marginTop: 4, fontFamily: 'var(--font-mono)' }}>
           STL load failed ({loadError}) â€” showing reference geometry. Export the SLDPRT to STL.
         </div>
       )}
       {showStress && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4, fontSize: 10, color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }}>
           <span>low</span>
-          <div style={{ flex: 1, height: 8, borderRadius: 4, background: 'linear-gradient(90deg,#1a40d9,#00bfd9,#33cc33,#f2cc1a,#f2260d)' }} />
+          <div style={{ flex: 1, height: 8, borderRadius: 4, background: 'linear-gradient(90deg, var(--blue), var(--cyan), var(--green), var(--yellow), var(--accent))' }} />
           <span>high</span>
         </div>
       )}

@@ -352,7 +352,7 @@ export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Prop
                 <input
                   value={query}
                   onChange={e => setQuery(e.target.value)}
-                  placeholder={t('gates.searchCircuit', 'Search circuitÃ¢â‚¬Â¦')}
+                  placeholder={t('gates.searchCircuit', 'Search circuit…')}
                   style={{
                     width: '100%', background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)',
                     borderRadius: 8, padding: '7px 10px 7px 30px', color: 'var(--text)', fontSize: 12.5,

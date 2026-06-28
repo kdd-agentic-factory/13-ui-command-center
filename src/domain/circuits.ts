@@ -63,8 +63,8 @@ export interface ValidationCheck {
 export const STATUS_META: Record<CircuitStatus, { color: string; badge: string; desc: string }> = {
   READY:        { color: 'var(--green)',  badge: 'badge-green',  desc: 'Everything validated.' },
   PARTIAL:      { color: 'var(--yellow)', badge: 'badge-yellow', desc: 'Missing elevation, sectors or telemetry.' },
-  SIMULATED:    { color: '#A78BFA',       badge: 'badge-blue',   desc: 'AI-built from incomplete data.' },
-  NEEDS_REVIEW: { color: '#FB923C',       badge: 'badge-yellow', desc: 'Requires manual engineer validation.' },
+  SIMULATED:    { color: 'var(--violet)', badge: 'badge-blue',   desc: 'AI-built from incomplete data.' },
+  NEEDS_REVIEW: { color: 'var(--orange)', badge: 'badge-yellow', desc: 'Requires manual engineer validation.' },
   INVALID:      { color: 'var(--accent)', badge: 'badge-red',    desc: 'Cannot be used yet.' },
 };
 
@@ -274,7 +274,7 @@ export function dashboardMode(status: CircuitStatus): DashboardMode {
 export const MODE_META: Record<DashboardMode, { label: string; note: string; color: string }> = {
   full:       { label: 'Full Dashboard',       note: 'All modules available.', color: 'var(--green)' },
   limited:    { label: 'Limited Dashboard',    note: 'Basic telemetry and 2D maps available. 3D, corner intelligence and advanced predictions locked until the circuit is completed.', color: 'var(--yellow)' },
-  simulation: { label: 'Simulation Dashboard', note: 'Predictions are AI-estimated. Validate with real data before race decisions.', color: '#A78BFA' },
+  simulation: { label: 'Simulation Dashboard', note: 'Predictions are AI-estimated. Validate with real data before race decisions.', color: 'var(--violet)' },
   blocked:    { label: 'Dashboard Blocked',    note: 'Closed-lap geometry missing. Complete circuit validation first.', color: 'var(--accent)' },
 };
 

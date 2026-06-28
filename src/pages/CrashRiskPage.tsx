@@ -252,9 +252,11 @@ export function CrashRiskPage() {
                 </div>
                 <div style={{ height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.07)' }}>
                   <div style={{
-                    width: `${f.value}%`, height: '100%', borderRadius: 2,
+                    width: '100%', height: '100%', borderRadius: 2,
                     background: LEVEL_COLOR[f.level],
-                    transition: 'width 0.4s',
+                    transform: `scaleX(${f.value / 100})`,
+                    transformOrigin: 'left center',
+                    transition: 'transform 0.4s var(--ease-ui)',
                   }} />
                 </div>
                 <div style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 2, lineHeight: 1.4 }}>{f.note}</div>
@@ -291,9 +293,11 @@ export function CrashRiskPage() {
                   </div>
                   <div style={{ height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.07)', marginBottom: 4 }}>
                     <div style={{
-                      width: `${c.score}%`, height: '100%', borderRadius: 2,
+                      width: '100%', height: '100%', borderRadius: 2,
                       background: c.score >= 70 ? 'var(--accent)' : 'var(--yellow)',
-                      transition: 'width 0.4s',
+                      transform: `scaleX(${c.score / 100})`,
+                      transformOrigin: 'left center',
+                      transition: 'transform 0.4s var(--ease-ui)',
                     }} />
                   </div>
                   <div style={{ fontSize: 10, color: 'var(--text-dim)', lineHeight: 1.4 }}>
@@ -356,12 +360,14 @@ export function CrashRiskPage() {
               return (
                 <div key={t.lap} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                   <div style={{
-                    width: '100%', height: `${pct}%`,
-                    minHeight: 4, maxHeight: 64, borderRadius: '2px 2px 0 0',
+                    width: '100%', height: 64,
+                    minHeight: 4, borderRadius: 'var(--radius) var(--radius) 0 0',
                     background: barColor,
                     opacity: t.flag ? 0.9 : 0.6,
                     border: t.flag ? '1px solid var(--accent)' : 'none',
-                    transition: 'height 0.4s',
+                    transform: `scaleY(${pct / 100})`,
+                    transformOrigin: 'bottom center',
+                    transition: 'transform 0.4s var(--ease-ui)',
                     position: 'relative',
                   }}>
                     {t.flag && (

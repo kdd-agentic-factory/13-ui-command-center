@@ -159,7 +159,7 @@ function ScoreBar({ label, value }: { label: string; value: number }) {
         <span style={{ fontSize: 11, fontWeight: 700, color: scoreColor(value), fontFamily: 'var(--font-mono)' }}>{value}/100</span>
       </div>
       <div style={{ height: 5, borderRadius: 3, background: 'rgba(255,255,255,0.07)', overflow: 'hidden' }}>
-        <div style={{ width: `${value}%`, height: '100%', background: scoreColor(value), borderRadius: 3, transition: 'width 0.5s' }} />
+        <div style={{ width: '100%', height: '100%', background: scoreColor(value), borderRadius: 3, transform: `scaleX(${value / 100})`, transformOrigin: 'left', transition: 'transform 0.5s' }} />
       </div>
     </div>
   );

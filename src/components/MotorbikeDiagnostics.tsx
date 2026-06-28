@@ -33,7 +33,7 @@ function Stat({ label, value, unit, warn }: { label: string; value: string | num
   return (
     <div className="stat-tile">
       <div className="stat-tile__label">{label}</div>
-      <span className="stat-tile__value" style={{ fontSize: 20, color: warn ? 'var(--accent, #f2260d)' : undefined }}>
+      <span className="stat-tile__value" style={{ fontSize: 20, color: warn ? 'var(--accent)' : undefined }}>
         {value}{unit && <span className="stat-tile__unit">{unit}</span>}
       </span>
     </div>

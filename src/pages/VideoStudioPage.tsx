@@ -67,7 +67,7 @@ export function VideoStudioPage() {
         </select>
       </div>
 
-      <div style={{ marginBottom: 12, padding: '7px 11px', borderRadius: 7, background: 'rgba(252,211,77,0.06)', border: '1px solid rgba(252,211,77,0.25)', fontSize: 10.5, color: 'var(--text)' }}>
+      <div style={{ marginBottom: 12, padding: '7px 11px', borderRadius: 'var(--radius)', background: 'var(--yellow-dim)', border: '1px solid var(--yellow-border)', fontSize: 10.5, color: 'var(--text)' }}>
         Reconstructed onboard view ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â telemetry-driven (no raw footage in this dataset).{garage.telemetryLimited && ' GPS-only bike: ECU/IMU channels are estimated.'}{datasetMismatch && ' Circuit has no dataset ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â showing the Mugello reference layout.'}
       </div>
 

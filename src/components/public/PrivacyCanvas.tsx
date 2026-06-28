@@ -49,15 +49,15 @@ export function PrivacyCanvas({ title, subtitle, cards, principles, active, mode
   };
 
   const slots = [
-    { x: 64, y: 182, w: 286, h: 156, stroke: 'rgba(148,163,184,0.2)', accent: 'var(--text-muted)', label: 'LOCAL' },
-    { x: 850, y: 182, w: 286, h: 156, stroke: 'rgba(143,29,42,0.22)', accent: 'var(--accent)', label: 'TEAM' },
-    { x: 376, y: 480, w: 448, h: 142, stroke: 'rgba(199,204,212,0.2)', accent: 'var(--text-dim)', label: 'FEDERATED' },
+    { x: 64, y: 182, w: 286, h: 156, stroke: 'var(--border-bright)', accent: 'var(--text-muted)', label: 'LOCAL' },
+    { x: 850, y: 182, w: 286, h: 156, stroke: 'color-mix(in srgb, var(--accent) 22%, transparent)', accent: 'var(--accent)', label: 'TEAM' },
+    { x: 376, y: 480, w: 448, h: 142, stroke: 'color-mix(in srgb, var(--text-dim) 20%, transparent)', accent: 'var(--text-dim)', label: 'FEDERATED' },
   ];
 
   const nodes = [
-    { x: 600, y: 258, r: 96, fill: 'rgba(15,23,42,0.95)' },
-    { x: 600, y: 258, r: 138, fill: 'rgba(15,23,42,0)' },
-    { x: 600, y: 258, r: 188, fill: 'rgba(15,23,42,0)' },
+    { x: 600, y: 258, r: 96, fill: 'var(--bg-surface)' },
+    { x: 600, y: 258, r: 138, fill: 'transparent' },
+    { x: 600, y: 258, r: 188, fill: 'transparent' },
   ];
 
   const cardControls = cards.map((card, index) => ({ card, controlId: `card-${index}`, slot: slots[index] }));
@@ -116,7 +116,7 @@ export function PrivacyCanvas({ title, subtitle, cards, principles, active, mode
       data-selected-item-id={selectedCardId}
       data-reduced-motion={String(reducedMotion)}
       style={{
-        borderTop: '1px solid rgba(148,163,184,0.12)',
+        borderTop: '1px solid var(--border-mid)',
         paddingTop: 20,
         opacity: diagramMode === 'active' ? 1 : 0.8,
         transform: diagramMode === 'active' ? 'translateY(0) scale(1)' : 'translateY(3px) scale(0.976)',
@@ -189,16 +189,16 @@ export function PrivacyCanvas({ title, subtitle, cards, principles, active, mode
             <stop offset="100%" stopColor="#c7ccd4" />
           </linearGradient>
           <radialGradient id={ids.glow} cx="50%" cy="50%" r="60%">
-            <stop offset="0%" stopColor="rgba(148,163,184,0.18)" />
-            <stop offset="46%" stopColor="rgba(165,180,252,0.1)" />
-            <stop offset="100%" stopColor="rgba(148,163,184,0)" />
+            <stop offset="0%" stopColor="color-mix(in srgb, var(--text-muted) 18%, transparent)" />
+            <stop offset="46%" stopColor="color-mix(in srgb, var(--purple) 10%, transparent)" />
+            <stop offset="100%" stopColor="transparent" />
           </radialGradient>
           <pattern id={ids.grid} width="56" height="56" patternUnits="userSpaceOnUse">
-            <path d="M56 0 H0 V56" fill="none" stroke="rgba(148,163,184,0.05)" strokeWidth="1" />
+             <path d="M56 0 H0 V56" fill="none" stroke="color-mix(in srgb, var(--text-muted) 5%, transparent)" strokeWidth="1" />
           </pattern>
           <linearGradient id={ids.shield} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="rgba(148,163,184,0.2)" />
-            <stop offset="100%" stopColor="rgba(134,239,172,0.08)" />
+             <stop offset="0%" stopColor="color-mix(in srgb, var(--text-muted) 20%, transparent)" />
+             <stop offset="100%" stopColor="color-mix(in srgb, var(--green) 8%, transparent)" />
           </linearGradient>
         </defs>
 
@@ -207,9 +207,9 @@ export function PrivacyCanvas({ title, subtitle, cards, principles, active, mode
         <rect width="1200" height="640" fill={`url(#${ids.glow})`} />
 
         <g opacity="0.7">
-          <circle cx="108" cy="124" r="112" fill="rgba(148,163,184,0.06)" />
-          <circle cx="1084" cy="140" r="116" fill="rgba(165,180,252,0.06)" />
-          <circle cx="978" cy="520" r="144" fill="rgba(134,239,172,0.06)" />
+          <circle cx="108" cy="124" r="112" fill="color-mix(in srgb, var(--text-muted) 6%, transparent)" />
+          <circle cx="1084" cy="140" r="116" fill="color-mix(in srgb, var(--purple) 6%, transparent)" />
+          <circle cx="978" cy="520" r="144" fill="color-mix(in srgb, var(--green) 6%, transparent)" />
         </g>
 
         <g>
@@ -219,9 +219,9 @@ export function PrivacyCanvas({ title, subtitle, cards, principles, active, mode
         </g>
 
         <g opacity="0.9">
-          <rect x="52" y="150" width="156" height="18" rx="9" fill="rgba(148,163,184,0.12)" />
-          <rect x="214" y="150" width="110" height="18" rx="9" fill="rgba(165,180,252,0.12)" />
-          <rect x="330" y="150" width="146" height="18" rx="9" fill="rgba(134,239,172,0.12)" />
+           <rect x="52" y="150" width="156" height="18" rx="9" fill="color-mix(in srgb, var(--text-muted) 12%, transparent)" />
+           <rect x="214" y="150" width="110" height="18" rx="9" fill="color-mix(in srgb, var(--purple) 12%, transparent)" />
+           <rect x="330" y="150" width="146" height="18" rx="9" fill="color-mix(in srgb, var(--green) 12%, transparent)" />
           <rect x="482" y="150" width="128" height="18" rx="9" fill="rgba(226,232,240,0.08)" />
         </g>
 
@@ -241,9 +241,9 @@ export function PrivacyCanvas({ title, subtitle, cards, principles, active, mode
           <text x="600" y="220" textAnchor="middle" fill="#f8fafc" fontSize="28" fontWeight="700">KDD</text>
           <text x="600" y="290" textAnchor="middle" fill="#cbd5e1" fontSize="14" letterSpacing="2">PRIVACY BY DESIGN</text>
           {[
-            { x: 600, y: 126, label: 'Private', fill: 'rgba(148,163,184,0.14)', stroke: 'rgba(148,163,184,0.3)' },
-            { x: 448, y: 362, label: 'Team', fill: 'rgba(165,180,252,0.14)', stroke: 'rgba(165,180,252,0.3)' },
-            { x: 752, y: 362, label: 'Federated', fill: 'rgba(134,239,172,0.14)', stroke: 'rgba(134,239,172,0.3)' },
+            { x: 600, y: 126, label: 'Private', fill: 'color-mix(in srgb, var(--text-muted) 14%, transparent)', stroke: 'color-mix(in srgb, var(--text-muted) 30%, transparent)' },
+            { x: 448, y: 362, label: 'Team', fill: 'color-mix(in srgb, var(--purple) 14%, transparent)', stroke: 'color-mix(in srgb, var(--purple) 30%, transparent)' },
+            { x: 752, y: 362, label: 'Federated', fill: 'color-mix(in srgb, var(--green) 14%, transparent)', stroke: 'color-mix(in srgb, var(--green) 30%, transparent)' },
           ].map(item => (
             <g key={item.label}>
               <path className="privacy-canvas__dash" d={`M 600 258 C ${item.x} ${item.y - 42}, ${item.x} ${item.y - 42}, ${item.x} ${item.y}`} fill="none" stroke={item.stroke} strokeWidth="1.5" strokeDasharray="5 8" />
@@ -337,8 +337,8 @@ export function PrivacyCanvas({ title, subtitle, cards, principles, active, mode
                 height: `${(slot.h / 640) * 100}%`,
                 pointerEvents: 'auto',
                 borderRadius: 26,
-                border: isPressed ? '1px solid rgba(226,232,240,0.58)' : '1px solid rgba(148,163,184,0.18)',
-                background: isPressed ? 'rgba(99,102,241,0.18)' : 'rgba(8,12,20,0.08)',
+                border: isPressed ? '1px solid color-mix(in srgb, var(--text) 58%, transparent)' : '1px solid var(--border-mid)',
+                background: isPressed ? 'color-mix(in srgb, var(--purple) 18%, transparent)' : 'color-mix(in srgb, var(--bg-base) 8%, transparent)',
                 color: 'var(--text)',
                 display: 'flex',
                 alignItems: 'flex-end',
@@ -351,7 +351,7 @@ export function PrivacyCanvas({ title, subtitle, cards, principles, active, mode
               }}
             >
               <span style={{ display: 'grid', gap: 2, textAlign: 'left' }}>
-                <span style={{ fontSize: 12, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--public-accent, #8f1d2a)', fontWeight: 700 }}>{slot.label}</span>
+                <span style={{ fontSize: 12, letterSpacing: '0.09em', textTransform: 'uppercase', color: 'var(--accent)', fontWeight: 700 }}>{slot.label}</span>
                 <span style={{ fontSize: 14, fontWeight: 700 }}>{card.title}</span>
                 <span style={{ fontSize: 11, color: isPressed ? '#e2e8f0' : 'var(--text-dim)' }}>{isPressed ? 'Selected' : 'Activate'}</span>
               </span>

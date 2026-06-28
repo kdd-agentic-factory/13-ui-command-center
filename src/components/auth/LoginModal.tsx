@@ -114,7 +114,7 @@ export function LoginModal({ onSuccess, onClose, profileLabel }: LoginModalProps
         </button>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-          <ShieldCheck size={20} style={{ color: 'var(--accent, #4fc3f7)' }} />
+          <ShieldCheck size={20} style={{ color: 'var(--accent)' }} />
           <h2 style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>{copy.titles[mode]}</h2>
         </div>
         {profileLabel && (
@@ -124,7 +124,7 @@ export function LoginModal({ onSuccess, onClose, profileLabel }: LoginModalProps
         )}
 
         {notice && <div style={{ fontSize: 12, color: 'var(--green,#22c55e)', marginBottom: 12 }}>{notice}</div>}
-        {error && <div style={{ fontSize: 12, color: 'var(--accent,#ef5350)', marginBottom: 12 }}>{error}</div>}
+        {error && <div style={{ fontSize: 12, color: 'var(--accent)', marginBottom: 12 }}>{error}</div>}
 
         {mode === 'verify' ? (
           <form onSubmit={handleVerify} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -166,7 +166,7 @@ export function LoginModal({ onSuccess, onClose, profileLabel }: LoginModalProps
 const inputStyle: React.CSSProperties = {
   width: '100%', padding: '9px 12px', borderRadius: 8,
   background: 'var(--bg, #0c0e14)', border: '1px solid var(--border, #252a38)',
-  color: 'var(--text, #e8eaed)', fontSize: 14, outline: 'none',
+  color: 'var(--text)', fontSize: 14, outline: 'none',
 };
 
 function Field({ label, children }: { label: string; children: ReactNode }) {
@@ -184,7 +184,7 @@ function SubmitButton({ busy, label }: { busy: boolean; label: string }) {
     <button type="submit" disabled={busy}
             style={{
               marginTop: 4, padding: '10px 14px', borderRadius: 8, border: 'none',
-              background: 'var(--accent, #4fc3f7)', color: 'var(--bg-base)', fontWeight: 700,
+              background: 'var(--accent)', color: 'var(--bg-base)', fontWeight: 700,
               fontSize: 14, cursor: busy ? 'default' : 'pointer', opacity: busy ? 0.7 : 1,
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
             }}>
@@ -197,7 +197,7 @@ function SubmitButton({ busy, label }: { busy: boolean; label: string }) {
 function Link({ onClick, children }: { onClick: () => void; children: ReactNode }) {
   return (
     <button type="button" onClick={onClick}
-            style={{ background: 'none', border: 'none', color: 'var(--accent, #4fc3f7)', cursor: 'pointer', fontSize: 12, padding: 0 }}>
+            style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: 12, padding: 0 }}>
       {children}
     </button>
   );

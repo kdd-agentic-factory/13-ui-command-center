@@ -510,7 +510,7 @@ function CircuitIntegrity({ fuelValid, fuelLoad, speed }: { fuelValid: boolean; 
               <div key={w.label} style={{
                 display: 'flex', gap: 8, alignItems: 'flex-start',
                 padding: '8px 10px',
-                background: w.critical ? 'rgba(224,55,55,0.08)' : 'rgba(251,191,36,0.08)',
+                background: w.critical ? 'var(--accent-dim)' : 'var(--yellow-dim)',
                 borderRadius: 'var(--radius)', marginBottom: 6,
               }}>
                 <AlertTriangle size={14} style={{ color: w.critical ? 'var(--accent)' : 'var(--yellow)', flexShrink: 0, marginTop: 1 }} />

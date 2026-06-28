@@ -272,7 +272,7 @@ export function PredictiveModelPage() {
               <span>current</span><span>theoretical best {fmt(OPTIMAL_S)}</span>
             </div>
             <div style={{ height: 10, borderRadius: 5, background: 'rgba(255,255,255,0.07)' }}>
-              <div style={{ width: `${pctToOptimal}%`, height: '100%', borderRadius: 5, background: 'linear-gradient(90deg, var(--blue), var(--green))', transition: 'width 0.3s' }} />
+              <div style={{ width: '100%', height: '100%', borderRadius: 5, background: 'linear-gradient(90deg, var(--blue), var(--green))', transform: `scaleX(${pctToOptimal / 100})`, transformOrigin: 'left center', transition: 'transform 0.3s var(--ease-ui)' }} />
             </div>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-dim)', marginTop: 4 }}>
               {pctToOptimal.toFixed(0)}% progress to theoretical best
@@ -433,7 +433,7 @@ export function PredictiveModelPage() {
             <p style={{ color: 'var(--text-dim)' }}>
               Do not combine earlier throttle at <strong>T15 Bucine</strong> with TC reduction while rear tyre remains above <strong>118Ãƒâ€šÃ‚Â°C</strong>.
             </p>
-            <div style={{ marginTop: 8, padding: '6px 8px', borderRadius: 4, background: 'rgba(250,204,21,0.08)', border: '1px solid rgba(250,204,21,0.15)' }}>
+            <div style={{ marginTop: 8, padding: '6px 8px', borderRadius: 4, background: 'color-mix(in srgb, var(--yellow) 8%, transparent)', border: '1px solid color-mix(in srgb, var(--yellow) 15%, transparent)' }}>
               <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}>
                 <AlertTriangle size={12} style={{ color: 'var(--yellow)', marginTop: 2, flexShrink: 0 }} />
                 <div>
@@ -564,7 +564,7 @@ function LeverCard({ lever, picked, onToggle }: { lever: Lever; picked: boolean;
           {!picked && lever.whyNotSelected && (
             <div style={{
               marginTop: 6, padding: '5px 7px', borderRadius: 4,
-              background: 'rgba(250,204,21,0.06)', border: '1px solid rgba(250,204,21,0.1)',
+              background: 'color-mix(in srgb, var(--yellow) 6%, transparent)', border: '1px solid color-mix(in srgb, var(--yellow) 10%, transparent)',
               fontSize: 10, color: 'var(--text-muted)', lineHeight: 1.5,
             }}>
               <strong style={{ color: 'var(--yellow)' }}>Why not selected:</strong> {lever.whyNotSelected}

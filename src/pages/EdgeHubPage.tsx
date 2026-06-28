@@ -32,7 +32,7 @@ export function EdgeHubPage() {
         </div>
       </div>
 
-      <div className="card mb-4" style={{ padding: '8px 12px', background: 'rgba(252,211,77,0.06)', border: '1px solid rgba(252,211,77,0.3)', fontSize: 10.5, color: 'var(--text)' }}>
+      <div className="card mb-4" style={{ padding: '8px 12px', background: 'var(--yellow-dim)', border: '1px solid var(--yellow-border)', fontSize: 10.5, color: 'var(--text)' }}>
         Representative edge state â€” no physical hardware is attached in this view; it shows how the trackside hub reports device health, packet loss, offline capability and cloud sync.
       </div>
 

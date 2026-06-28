@@ -54,7 +54,7 @@ export function BootSequence({ ctx, onDone }: Props) {
           </div>
         ))}
         <div style={{ marginTop: 12, height: 3, borderRadius: 99, background: 'rgba(255,255,255,0.07)' }}>
-          <div style={{ height: '100%', borderRadius: 99, width: `${(done / steps.length) * 100}%`, background: 'var(--cyan, #00B7FF)', transition: 'width 0.3s ease' }} />
+          <div style={{ height: '100%', borderRadius: 99, width: '100%', transform: `scaleX(${done / steps.length})`, transformOrigin: 'left', background: 'var(--cyan, #00B7FF)', transition: 'transform 0.3s ease' }} />
         </div>
       </div>
     </div>
