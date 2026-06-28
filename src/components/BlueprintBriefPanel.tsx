@@ -36,7 +36,7 @@ function statusStyle(status: BlueprintStatus) {
 export function BlueprintBriefPanel({ request }: BlueprintBriefPanelProps) {
   const { brief, error, status, isGenerating, generateBlueprint, clearBrief } = useBlueprintBrief();
   const context = [
-    `${request.dimensions.x}â—”${request.dimensions.y}â—”${request.dimensions.z} mm`,
+    `${request.dimensions.x}→${request.dimensions.y}→${request.dimensions.z} mm`,
     `${request.dimensions.loadKg} kg load`,
     request.material,
   ];

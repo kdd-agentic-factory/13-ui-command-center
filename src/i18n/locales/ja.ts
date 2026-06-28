@@ -4,7 +4,7 @@ const ja = {
     telemetry: 'ライブテレメトリー',
     circuit: 'サーキット情報',
     tires: 'タイヤ劣化',
-    setup: 'セットアップ管理',
+    setup: 'セットアップ管熐',
     parts: 'パーツ設計',
     twin: 'デジタルツイン',
     preGp: 'プレGP',

@@ -11,7 +11,7 @@ import type { TabId } from '../context/AuthContext';
 import { getSessionContext } from './sessionContext';
 import { MUGELLO_CIRCUIT } from './sessionTruth';
 
-// ── Deterministic PRNG (mulberry32) ──────────────────────────────────────────
+// ──── Deterministic PRNG (mulberry32) ────
 
 export function mulberry32(seed: number): () => number {
   let a = seed >>> 0;
@@ -23,7 +23,7 @@ export function mulberry32(seed: number): () => number {
   };
 }
 
-// ── Session specs ─────────────────────────────────────────────────────────────
+// ──── Session specs ────
 
 export interface DemoSessionSpec {
   id: string;            // matches DEMO_PACKAGES id
@@ -91,7 +91,7 @@ export function getActiveDemoSession(): DemoSessionSpec | null {
   return demoSession(ctx.setup.demoId ?? '');
 }
 
-// ── Deterministic frame parameters ────────────────────────────────────────────
+// ──── Deterministic frame parameters ────
 
 export interface DemoFrameParams {
   trackPos: number;

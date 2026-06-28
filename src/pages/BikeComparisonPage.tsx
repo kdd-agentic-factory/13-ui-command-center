@@ -3,7 +3,7 @@
  *
  * A rider with more than one machine needs to see which bike is faster, which
  * loads the rear harder and which has real data here. Honesty kept: bikes with
- * no session at this circuit show "—" and a 'generic model only' note rather
+ * no session at this circuit show "– and a 'generic model only' note rather
  * than invented numbers.
  */
 import { GitCompare, Bike, Zap } from 'lucide-react';
@@ -69,7 +69,7 @@ export function BikeComparisonPage() {
 
       <div style={{ marginTop: 12, padding: '10px 14px', borderRadius: 8, background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border)', fontSize: 11, color: 'var(--text-muted)' }}>
         <Zap size={11} style={{ verticalAlign: -1, marginRight: 5, color: 'var(--cyan)' }} />
-        Comparison uses real session data where available; bikes without a session at {ctx.circuitName} show "—" and run on a generic category model until calibrated.
+        Comparison uses real session data where available; bikes without a session at {ctx.circuitName} show "– and run on a generic category model until calibrated.
       </div>
     </div>
   );

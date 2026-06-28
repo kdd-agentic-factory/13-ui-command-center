@@ -8,7 +8,7 @@
  * fakes precision it doesn't have.
  */
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// ──── Types ────
 
 export interface RiderProfile {
   id: string;
@@ -66,7 +66,7 @@ export interface GarageProfile {
   reason: string;          // why not FULL (empty when READY)
 }
 
-// ── Seed libraries ────────────────────────────────────────────────────────────
+// ──── Seed libraries ────
 
 export const RIDERS: RiderProfile[] = [
   {
@@ -153,7 +153,7 @@ export function addBike(brand: string, model: string, telemetry: BikeProfile['te
   return b;
 }
 
-// ── Compatibility / readiness ─────────────────────────────────────────────────
+// ──── Compatibility readiness ────
 
 /** How trustworthy is analysis for this rider+bike+circuit combination. */
 export function buildGarageProfile(
@@ -200,7 +200,7 @@ export const READINESS_META: Record<ReadinessStatus, { color: string; label: str
   'GPS-ONLY': { color: 'var(--accent)', label: 'GPS-only telemetry' },
 };
 
-// ── Bike comparison (side-by-side) ───────────────────────────────────────────
+// ──── Bike comparison (side-by-side) ────
 
 export interface BikeCompareRow {
   bikeId: string; label: string;

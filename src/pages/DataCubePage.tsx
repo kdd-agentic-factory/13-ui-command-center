@@ -1,9 +1,9 @@
 /**
- * DataCubePage —” Telemetry Data Cube & Semantic Zoom.
+ * DataCubePage – Telemetry Data Cube & Semantic Zoom.
  *
  * Navigate from the whole session to the exact channel where the lap is lost:
- * a laps Ã— corners delta matrix, semantic-zoom breadcrumb (Session â†’ Lap â†’
- * Corner â†’ Phase â†’ Channel), performance lenses, heatmap filters, a causeâ†’
+ * a laps → corners delta matrix, semantic-zoom breadcrumb (Session → Lap →
+ * Corner → Phase → Channel), performance lenses, heatmap filters, a cause→
  * effect chain, before/after and an automatic data story.
  */
 import { useState, useEffect } from 'react';
@@ -56,7 +56,7 @@ export function DataCubePage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><Boxes size={18} /> Telemetry Data Cube</h1>
-          <p className="page-subtitle">Semantic zoom · heatmaps · causeâ†’effect · synced traces —” {cube.combo}</p>
+          <p className="page-subtitle">Semantic zoom · heatmaps · cause→effect · synced traces – {cube.combo}</p>
         </div>
         <div style={{ textAlign: 'right' }}>
           {cube.source === 'live' ? (
@@ -65,12 +65,12 @@ export function DataCubePage() {
               <Wifi size={11} /> LIVE TELEMETRY
             </span>
           ) : cube.source === 'connected' ? (
-            <span title={`18-telemetry-dataset reachable · ${cube.catalogue?.sessions ?? 0} sessions for ${cube.catalogue?.circuits.join(', ')} —” none for this circuit, header modelled`}
+            <span title={`18-telemetry-dataset reachable · ${cube.catalogue?.sessions ?? 0} sessions for ${cube.catalogue?.circuits.join(', ')} – none for this circuit, header modelled`}
               style={badgeStyle('var(--cyan)', 'rgba(0,183,255,0.4)')}>
               <Wifi size={11} /> TELEMETRY CONNECTED
             </span>
           ) : (
-            <span title="18-telemetry-dataset unreachable / asleep —” showing the deterministic model"
+            <span title="18-telemetry-dataset unreachable / asleep – showing the deterministic model"
               style={badgeStyle('var(--text-muted)', 'var(--border)')}>
               <WifiOff size={11} /> SIMULATED
             </span>
@@ -117,12 +117,12 @@ export function DataCubePage() {
       <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: 16, alignItems: 'start' }}>
         {/* matrix */}
         <div className="card" style={{ padding: 16 }}>
-          <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 12 }}>Laps Ã— corners · time-loss matrix (click a cell to zoom)</div>
+          <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 12 }}>Laps → corners · time-loss matrix (click a cell to zoom)</div>
           {cube.source !== 'simulated' && (
             <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 10 }}>
               {cube.source === 'live'
                 ? 'Session header is live from telemetry; the per-corner matrix is modelled until the service exposes per-corner deltas.'
-                : 'Telemetry service connected (real session catalogue), but no session for this circuit —” header and matrix are modelled.'}
+                : 'Telemetry service connected (real session catalogue), but no session for this circuit – header and matrix are modelled.'}
             </div>
           )}
           <div style={{ display: 'grid', gridTemplateColumns: `48px repeat(${CUBE_CORNERS.length}, 1fr)`, gap: 6 }}>
@@ -168,9 +168,9 @@ export function DataCubePage() {
             )}
           </div>
 
-          {/* cause â†’ effect */}
+          {/* cause → effect */}
           <div className="card" style={{ padding: 16 }}>
-            <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 10 }}>Cause â†’ effect</div>
+            <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 10 }}>Cause → effect</div>
             {cube.causeEffect.map((s, i) => (
               <div key={s.label}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11.5 }}>

@@ -1,9 +1,9 @@
 /**
- * ScenarioSandboxPage â’—¢â¢—š—¬â¢Ã¢—š¬—” interactive what-if on the digital twin.
+ * ScenarioSandboxPage ─¢─—¬ —  interactive what-if on the digital twin.
  *
  * Left: levers (setup, technique, conditions, stint plan). Right: live outputs
- * â’—¢â¢—š—¬â¢Ã¢—š¬—” projected lap time + delta, crash-risk, tyre life and an Oracle verdict â’—¢â¢—š—¬â¢Ã¢—š¬—”
- * recomputed deterministically on every change. "What happens if Iâ’—¢â¢—š—¬â—š—…?" before
+ // ──── " projected lap time + delta, crash-risk, tyre life and an Oracle verdict ────
+ * recomputed deterministically on every change. "What happens if I─¢─—¬─—…?" before
  * committing it to the bike.
  */
 import { useState } from 'react';
@@ -20,7 +20,7 @@ const LEVERS: LeverDef[] = [
   { key: 'earlierThrottle', label: 'Throttle earlier on exit', min: 0, max: 0.5, step: 0.05, unit: 's', fmt: v => v.toFixed(2) },
   { key: 'rearRebound', label: 'Rear rebound', min: -2, max: 4, step: 1, unit: 'clk', fmt: v => (v > 0 ? `+${v}` : `${v}`) },
   { key: 'tc', label: 'Traction control', min: -2, max: 3, step: 1, unit: 'step', fmt: v => (v > 0 ? `+${v}` : `${v}`) },
-  { key: 'trackTempDelta', label: 'Track temp', min: -10, max: 10, step: 1, unit: 'â’—šâ—š—Â°C', fmt: v => (v > 0 ? `+${v}` : `${v}`) },
+  { key: 'trackTempDelta', label: 'Track temp', min: -10, max: 10, step: 1, unit: '─š\u00b0C', fmt: v => (v > 0 ? `+${v}` : `${v}`) },
   { key: 'rearStintLaps', label: 'Rear soft laps used', min: 0, max: 22, step: 1, unit: 'laps' },
   { key: 'rainRisk', label: 'Rain risk', min: 0, max: 100, step: 5, unit: '%' },
 ];
@@ -75,7 +75,7 @@ export function ScenarioSandboxPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><FlaskConical size={18} /> Scenario Sandbox</h1>
-          <p className="page-subtitle">{garage.profile.bike.brand} {garage.profile.bike.model} â’—šâ—š—· interactive what-if on the digital twin</p>
+          <p className="page-subtitle">{garage.profile.bike.brand} {garage.profile.bike.model}  ◆  interactive what-if on the digital twin</p>
         </div>
         <button onClick={() => { setLevers({ ...DEFAULT_LEVERS }); setTwin(null); }}
           style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 12px', borderRadius: 8, cursor: 'pointer', fontSize: 11.5, background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', color: 'var(--text)' }}>
@@ -86,7 +86,7 @@ export function ScenarioSandboxPage() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, alignItems: 'start' }}>
         {/* Levers */}
         <div className="card" style={{ padding: 16 }}>
-          <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 12 }}>What ifâ’—¢â¢—š—¬â—š—…</div>
+          <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 12 }}>What if─¢─—¬─—…</div>
           {LEVERS.map(l => (
             <div key={l.key} style={{ marginBottom: 14 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
@@ -131,7 +131,7 @@ export function ScenarioSandboxPage() {
               <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', flex: 1 }}>Digital Twin validation</span>
               <button onClick={runTwin} disabled={validating}
                 style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11, fontFamily: MONO, color: 'var(--bg-base)', background: 'var(--cyan)', border: 'none', borderRadius: 'var(--radius)', padding: '6px 11px', cursor: validating ? 'default' : 'pointer', opacity: validating ? 0.6 : 1 }}>
-                {validating ? <Loader2 size={12} className="spin" /> : <GitBranch size={12} />} {validating ? 'Validatingâ’—¢â¢—š—¬â—š—…' : 'Validate with Digital Twin'}
+                {validating ? <Loader2 size={12} className="spin" /> : <GitBranch size={12} />} {validating ? 'Validating─¢─—¬─—…' : 'Validate with Digital Twin'}
               </button>
             </div>
 
@@ -143,7 +143,7 @@ export function ScenarioSandboxPage() {
 
             {twin && !twin.available && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11.5, color: 'var(--text-muted)' }}>
-                <WifiOff size={13} /> Digital Twin has no baseline for <b style={{ color: 'var(--text)' }}>&nbsp;{ctx.circuitName}</b>&nbsp;or is asleep â’—¢â¢—š—¬â¢Ã¢—š¬—” local model stands.
+                <WifiOff size={13} /> Digital Twin has no baseline for <b style={{ color: 'var(--text)' }}>&nbsp;{ctx.circuitName}</b>&nbsp;or is asleep ─¢─—¬ —  local model stands.
               </div>
             )}
 
@@ -154,17 +154,17 @@ export function ScenarioSandboxPage() {
                     <Wifi size={11} /> LIVE TWIN
                   </span>
                   <span style={{ fontSize: 10, fontFamily: MONO, color: riskLevelColor(twin.riskLevel) }}>risk: {twin.riskLevel?.toUpperCase()}</span>
-                  {twin.approvalRequired && <span style={{ fontSize: 10, fontFamily: MONO, color: 'var(--yellow)' }}>â’—šâ—š—· approval required</span>}
+                  {twin.approvalRequired && <span style={{ fontSize: 10, fontFamily: MONO, color: 'var(--yellow)' }}> ◆  approval required</span>}
                 </div>
                 <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 8 }}>
-                  <TwinMetric label="Lap â’Ã…Â½â¢Ã¢—š¬—”" value={`${(twin.lapDeltaS ?? 0) <= 0 ? '' : '+'}${(twin.lapDeltaS ?? 0).toFixed(3)} s`} color={(twin.lapDeltaS ?? 0) < 0 ? 'var(--green)' : (twin.lapDeltaS ?? 0) > 0 ? 'var(--accent)' : 'var(--text)'} />
-                  <TwinMetric label="Stability â’Ã…Â½â¢Ã¢—š¬—”" value={(twin.stabilityDelta ?? 0).toFixed(3)} color={(twin.stabilityDelta ?? 0) >= 0 ? 'var(--green)' : 'var(--accent)'} />
-                  <TwinMetric label="Rear temp â’Ã…Â½â¢Ã¢—š¬—”" value={`${(twin.rearTempDeltaC ?? 0).toFixed(2)} â’—šâ—š—Â°C`} color="var(--text)" />
+                  <TwinMetric label="Lap →" value={`${(twin.lapDeltaS ?? 0) <= 0 ? '' : '+'}${(twin.lapDeltaS ?? 0).toFixed(3)} s`} color={(twin.lapDeltaS ?? 0) < 0 ? 'var(--green)' : (twin.lapDeltaS ?? 0) > 0 ? 'var(--accent)' : 'var(--text)'} />
+                  <TwinMetric label="Stability →" value={(twin.stabilityDelta ?? 0).toFixed(3)} color={(twin.stabilityDelta ?? 0) >= 0 ? 'var(--green)' : 'var(--accent)'} />
+                  <TwinMetric label="Rtemp →–" value={`${(twin.rearTempDeltaC ?? 0).toFixed(2)} ─š\u00b0C`} color="var(--text)" />
                 </div>
                 {twin.explanation && <div style={{ fontSize: 11.5, color: 'var(--text)', lineHeight: 1.5 }}>{twin.explanation}</div>}
                 {twin.limitations && twin.limitations.length > 0 && (
                   <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 6 }}>
-                    {twin.limitations.map(l => <div key={l}>â’—šâ—š—· {l}</div>)}
+                    {twin.limitations.map(l => <div key={l}> ◆  {l}</div>)}
                   </div>
                 )}
               </div>
@@ -172,7 +172,7 @@ export function ScenarioSandboxPage() {
           </div>
 
           <div style={{ fontSize: 10.5, color: 'var(--text-muted)', lineHeight: 1.5 }}>
-            Instant local model â’—¢â¢—š—¬â¢Ã¢—š¬—” same levers, same outcome â’—¢â¢—š—¬â¢Ã¢—š¬—” for exploration; the Digital Twin button runs the real simulation lab for a verifiable second opinion. A scenario here is a hypothesis; validate it on track before committing to the bike (Setup Lab).
+            Instant local model ─¢─—¬ —  same levers, same outcome ─¢─—¬ —  for exploration; the Digital Twin button runs the real simulation lab for a verifiable second opinion. A scenario here is a hypothesis; validate it on track before committing to the bike (Setup Lab).
           </div>
         </div>
       </div>

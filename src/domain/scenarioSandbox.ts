@@ -34,7 +34,7 @@ const BASE_RISK = 52;
 const TYRE_CLIFF = 19;      // rear soft cliff lap
 
 export function evaluateScenario(L: Levers): ScenarioOutput {
-  // ── Lap time ────────────────────────────────────────────────────────────
+// ──── Lap time ────
   // Earlier throttle is the biggest free gain (up to ~0.45s at 0.5s earlier).
   let lap = BASE_LAP;
   lap -= L.earlierThrottle * 0.9;
@@ -49,7 +49,7 @@ export function evaluateScenario(L: Levers): ScenarioOutput {
   lap += Math.max(0, L.rearStintLaps - 10) * 0.05
        + Math.max(0, L.rearStintLaps - TYRE_CLIFF) * 0.35;
 
-  // ── Risk ────────────────────────────────────────────────────────────────
+// ──── Risk ────
   let risk = BASE_RISK;
   risk += L.earlierThrottle * 28;        // earlier throttle at lean = more risk
   risk -= L.tc * 5;                       // TC reduces risk
@@ -59,12 +59,12 @@ export function evaluateScenario(L: Levers): ScenarioOutput {
   risk += L.rainRisk * 0.15;
   risk = Math.max(0, Math.min(100, Math.round(risk)));
 
-  // ── Tyre life ───────────────────────────────────────────────────────────
+// ──── Tyre life ────
   // Cliff comes sooner on a hot track and with aggressive throttle.
   const cliff = TYRE_CLIFF - Math.max(0, L.trackTempDelta) * 0.3 - L.earlierThrottle * 2 + L.tc * 0.4;
   const tyreLifeLaps = Math.max(0, Math.round(cliff - L.rearStintLaps));
 
-  // ── Verdict ─────────────────────────────────────────────────────────────
+// ──── Verdict ────
   const delta = lap - BASE_LAP;
   let verdict: string; let tone: ScenarioOutput['verdictTone'];
   if (risk >= 78) {

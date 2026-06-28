@@ -15,7 +15,7 @@
 import type { TabId } from '../context/AuthContext';
 import { getCircuitLibrary } from './circuits';
 
-// ── Modes ─────────────────────────────────────────────────────────────────────
+// ──── Modes ────
 
 export type SessionMode =
   | 'race' | 'test' | 'practice' | 'trackday'
@@ -109,7 +109,7 @@ export function modeDef(id: SessionMode): ModeDef {
   return MODE_DEFS.find(m => m.id === id)!;
 }
 
-// ── Per-mode dashboard shaping (spec §5) ─────────────────────────────────────
+// ──── Per-mode dashboard shaping (spec 5) ────
 
 /** Tabs hidden from the nav while this session mode is active. */
 export function hiddenTabsForMode(mode: SessionMode): TabId[] {
@@ -187,7 +187,7 @@ export function withDashboardTab(ctx: SessionContext, dashboardTab: TabId): Sess
   };
 }
 
-// ── Context Object (spec §6) ──────────────────────────────────────────────────
+// ──── Context Object (spec 6) ────
 
 export interface SessionContext {
   selectedCircuit: string;       // circuit id
@@ -304,7 +304,7 @@ export async function loadLatestSessionContextForCurrentUser(): Promise<SessionC
   }
 }
 
-// ── Session Setup forms (spec §7) ─────────────────────────────────────────────
+// ──── Session Setup forms (spec 7) ────
 
 export interface SetupField {
   key: string;
@@ -365,7 +365,7 @@ export function setupFieldsForMode(mode: SessionMode, circuitName: string, raceL
   }
 }
 
-// ── Demo packages (spec §8) ───────────────────────────────────────────────────
+// ──── Demo packages (spec 8) ────
 
 export interface DemoPackage {
   id: string;

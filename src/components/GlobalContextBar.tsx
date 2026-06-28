@@ -1,5 +1,5 @@
 /**
- * GlobalContextBar —” the always-visible session truth in the dashboard topbar:
+ * GlobalContextBar — the always-visible session truth in the dashboard topbar:
  *
  *   Circuit · Mode · Rider · Bike · DATA badge · Confidence
  *
@@ -34,7 +34,7 @@ export function GlobalContextBar({ telem }: { telem: TelemetryFrame }) {
   const checks: Check[] = [
     { label: 'Session mode', ok: true, desc: `${ctx.sessionMode} · ${ctx.dashboardProfile.replace(/_/g, ' ')}` },
     { label: 'Data mode', ok: true, desc: ctx.dataMode.toUpperCase() },
-    { label: 'Circuit match', ok: !datasetMismatch, desc: datasetMismatch ? `${ctx.circuitName} has no dataset —” Mugello sample shown` : `${circuit.name} selected = loaded` },
+    { label: 'Circuit match', ok: !datasetMismatch, desc: datasetMismatch ? `${ctx.circuitName} has no dataset — Mugello sample shown` : `${circuit.name} selected = loaded` },
     { label: 'Lap state', ok: lapOk, desc: telem.lapAnomaly ? 'Lap anomaly flagged' : `${telem.lapCount}/${MUGELLO_CIRCUIT.raceLaps}` },
     { label: 'Fuel model', ok: telem.fuelValid, desc: telem.fuelValid ? `${telem.fuelLoad.toFixed(1)} kg synced` : 'Fuel sensor out of range' },
     { label: 'Tyre model', ok: true, desc: `${telem.frontCompound}/${telem.rearCompound} · ${circuit.id === 'mugello' ? 'thermal map loaded' : 'reference map'}` },
@@ -56,12 +56,12 @@ export function GlobalContextBar({ telem }: { telem: TelemetryFrame }) {
         }}>
         <span><span style={{ color: 'var(--text-muted)' }}>Circuit </span>{ctx.circuitName}</span>
         <span><span style={{ color: 'var(--text-muted)' }}>Mode </span>{ctx.sessionMode}</span>
-        <span><span style={{ color: 'var(--text-muted)' }}>Rider </span>{ctx.setup.rider ?? 'R. JuÃ¡rez'}</span>
+        <span><span style={{ color: 'var(--text-muted)' }}>Rider </span>{ctx.setup.rider ?? 'R. Juárez'}</span>
         <span><span style={{ color: 'var(--text-muted)' }}>Bike </span>{ctx.setup.bike ?? 'Yamaha R1'}</span>
         {(ctx.setup.stint ?? ctx.setup.session) && <span><span style={{ color: 'var(--text-muted)' }}>Session </span>{ctx.setup.stint ?? ctx.setup.session}</span>}
         <span style={{ color: badgeColor, fontWeight: 700 }}>{badge}</span>
         <span style={{ color: confidence > 90 ? 'var(--green)' : 'var(--yellow)' }}>{confidence}%</span>
-        {failures > 0 && <span style={{ color: 'var(--yellow)', fontWeight: 700 }}>âš  {failures}</span>}
+        {failures > 0 && <span style={{ color: 'var(--yellow)', fontWeight: 700 }}>⚠ {failures}</span>}
         <ChevronDown size={11} style={{ color: 'var(--text-muted)', transform: open ? 'rotate(180deg)' : 'none' }} />
       </button>
 
@@ -84,8 +84,8 @@ export function GlobalContextBar({ telem }: { telem: TelemetryFrame }) {
           ))}
           <div style={{ marginTop: 8, fontSize: 10.5, fontFamily: MONO, color: failures ? 'var(--yellow)' : 'var(--green)' }}>
             {failures
-              ? 'Dashboard degraded —” advanced predictions disabled until checks pass.'
-              : 'All checks pass —” full dashboard available.'}
+              ? 'Dashboard degraded — advanced predictions disabled until checks pass.'
+              : 'All checks pass — full dashboard available.'}
           </div>
         </div>
       )}

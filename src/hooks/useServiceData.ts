@@ -93,7 +93,7 @@ export function useServiceData(): LiveData & { refresh: () => void } {
     const servicesTotal = Object.keys(health).length;
     const liveStages = stages?.stages ?? [];
 
-    // ── Analytics ─────────────────────────────────────────────────────────
+// ──── Analytics ────
 
     // Fire dashboard_loaded exactly once, on the first successful fetch.
     if (isFirstLoad.current) {

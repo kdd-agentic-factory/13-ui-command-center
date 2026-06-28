@@ -54,11 +54,11 @@ export function buildPitRadio(rider: string, circuit: string): PitRadio {
       { id: 'm5', label: 'Mode change',  text: 'Switch engine map to 3 on the next straight.' },
     ],
     commands: [
-      { phrase: '“Mark this corner”',     action: 'Tags the current corner for post-stint review' },
-      { phrase: '“Open Crash-Risk”',      action: 'Brings up the Safety Guardian panel' },
-      { phrase: '“Start experiment”',     action: 'Opens the active experiment validation' },
-      { phrase: '“Send: box this lap”',   action: 'Pushes the canned radio message to the rider' },
-      { phrase: '“What’s the verdict?”',  action: 'Reads the latest Oracle recommendation' },
+      { phrase: '"Mark this corner"',     action: 'Tags the current corner for post-stint review' },
+      { phrase: '"Open Crash-Risk"',      action: 'Brings up the Safety Guardian panel' },
+      { phrase: '"Start experiment"',     action: 'Opens the active experiment validation' },
+      { phrase: '"Send: box this lap"',   action: 'Pushes the canned radio message to the rider' },
+      { phrase: '"What's the verdict?"',  action: 'Reads the latest Oracle recommendation' },
     ],
   };
 }

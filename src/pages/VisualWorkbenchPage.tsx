@@ -1,5 +1,5 @@
 /**
- * VisualWorkbenchPage â’—¢â¢—š—¬â¢Ã¢—š¬—” Telemetry Visualization OS.
+ // ──── * VisualWorkbenchPage " Telemetry Visualization OS. ────
  *
  * One synchronized session view: a Master Cursor drives the track position,
  * the telemetry traces, the event timeline and the corner card together; a
@@ -53,7 +53,7 @@ export function VisualWorkbenchPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><LayoutDashboard size={18} /> Telemetry Visualization OS</h1>
-          <p className="page-subtitle">Master cursor â’—šâ—š—· synchronized views â’—šâ—š—· visual replay â’—šâ—š—· before/after â’—¢â¢—š—¬â¢Ã¢—š¬—” {wb.combo}</p>
+          <p className="page-subtitle">Master cursor  ◆  synchronized views  ◆  visual replay  ◆  before/after ─¢─—¬ —  {wb.combo}</p>
         </div>
       </div>
 
@@ -67,7 +67,7 @@ export function VisualWorkbenchPage() {
         ))}
         <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
           <div style={{ fontSize: 8.5, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Current event</div>
-          <div style={{ fontSize: 12.5, fontWeight: 700, color: cur.event ? sevColor(cur.eventSeverity) : 'var(--text-muted)' }}>{cur.event ?? 'â’—¢â¢—š—¬â¢Ã¢—š¬—”'}</div>
+          <div style={{ fontSize: 12.5, fontWeight: 700, color: cur.event ? sevColor(cur.eventSeverity) : 'var(--text-muted)' }}>{cur.event ?? '─¢─—¬ — '}</div>
         </div>
       </div>
 
@@ -90,7 +90,7 @@ export function VisualWorkbenchPage() {
           <div style={{ display: 'flex', gap: 12, marginTop: 8, fontSize: 11, fontFamily: MONO, flexWrap: 'wrap' }}>
             <span>spd <span style={{ color: 'var(--cyan)' }}>{cur.speed}</span></span>
             <span>thr <span style={{ color: 'var(--green)' }}>{cur.throttle}%</span></span>
-            <span>lean <span style={{ color: 'var(--yellow)' }}>{cur.lean}â’—šâ—š—Â°</span></span>
+            <span>lean <span style={{ color: 'var(--yellow)' }}>{cur.lean}─š\u00b0</span></span>
             <span>slip <span style={{ color: cur.rearSlip >= 10 ? 'var(--accent)' : 'var(--text)' }}>{cur.rearSlip}%</span></span>
           </div>
         </div>
@@ -116,7 +116,7 @@ export function VisualWorkbenchPage() {
             {/* master playhead */}
             <line x1={cur.distPct * W} y1={0} x2={cur.distPct * W} y2={TRACE_H * CHANNELS.length} stroke="#fff" strokeWidth={1.5} />
           </svg>
-          <div style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--text-muted)' }}>Click or drag to move the master cursor â’—¢â¢—š—¬â¢Ã¢—š¬—” every view syncs.</div>
+          <div style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--text-muted)' }}>Click or drag to move the master cursor ─¢─—¬ —  every view syncs.</div>
         </div>
       </div>
 
@@ -124,14 +124,14 @@ export function VisualWorkbenchPage() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.3fr', gap: 14, marginTop: 14 }}>
         <div className="card" style={{ padding: 16,
  }}>
-          <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 4 }}>Cause â’—¢â¢Ã¢—š¬—Â â¢Ã¢—š¬Ã¢—ž¢ effect â’—šâ—š—· {cur.corner} {cur.phase}</div>
+          <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 4 }}>Cause ─¢ —  →  effect  ◆  {cur.corner} {cur.phase}</div>
           {cur.event ? (
             <>
               <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--text)' }}>{cur.event}</div>
-              <div style={{ fontSize: 11.5, color: 'var(--text-muted)', marginTop: 4 }}>Lean {cur.lean}â’—šâ—š—Â° â’—šâ—š—· throttle {cur.throttle}% â’—šâ—š—· rear slip {cur.rearSlip}% â’—šâ—š—· {cur.speed} km/h</div>
+              <div style={{ fontSize: 11.5, color: 'var(--text-muted)', marginTop: 4 }}>Lean {cur.lean}─š\u00b0  ◆  throttle {cur.throttle}%  ◆  rear slip {cur.rearSlip}%  ◆  {cur.speed} km/h</div>
             </>
           ) : (
-            <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>No event here â’—¢â¢—š—¬â¢Ã¢—š¬—” clean through {cur.corner.toLowerCase()}.</div>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>No event here ─¢─—¬ —  clean through {cur.corner.toLowerCase()}.</div>
           )}
         </div>
         <div className="card" style={{ padding: 16, background: 'rgba(0,183,255,0.05)', border: '1px solid rgba(0,183,255,0.25)' }}>
@@ -148,7 +148,7 @@ export function VisualWorkbenchPage() {
         <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 4 }}>Before / after lens</div>
         <div style={{ fontSize: 10.5, color: 'var(--text-muted)', marginBottom: 10 }}>{wb.beforeAfterHeadline}</div>
         <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr 0.7fr', gap: '5px 12px', fontSize: 11.5 }}>
-          {['Metric', 'Before', 'After', 'â’Ã…Â½â¢Ã¢—š¬—”'].map(h => <span key={h} style={{ fontSize: 8.5, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>{h}</span>)}
+          {['Metric', 'Before', 'After', '→'].map(h => <span key={h} style={{ fontSize: 8.5, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>{h}</span>)}
           {wb.beforeAfter.map(r => {
             const good = r.betterIsLower ? r.deltaPct < 0 : r.deltaPct > 0;
             return (
@@ -194,7 +194,7 @@ export function VisualWorkbenchPage() {
                 <span style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--text)', flex: 1 }}>{w.name}</span>
                 <ArrowRight size={12} style={{ color: 'var(--cyan)' }} />
               </div>
-              <div style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--text-muted)' }}>{w.includes.join(' â’—šâ—š—· ')}</div>
+              <div style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--text-muted)' }}>{w.includes.join('  ◆  ')}</div>
             </button>
           ))}
         </div>

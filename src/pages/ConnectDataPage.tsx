@@ -5,7 +5,7 @@ import { useToast } from '../components/ToastProvider';
 import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 
 /**
- * Connect your bike data (engineer feedback #16) —” makes it unambiguous where the
+ * Connect your bike data (engineer feedback #16) – makes it unambiguous where the
  * telemetry comes from and how to bring your own: upload files, sync GPS/IMU
  * traces or connect supported dataloggers. Answers "is this real / where's the
  * data from?" and leads into the tangible output (Session Report).
@@ -49,7 +49,7 @@ export function ConnectDataPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">Connect your bike data</h1>
-          <p className="page-subtitle">Upload telemetry files, sync GPS/IMU traces or connect supported dataloggers —” KDD turns them into faster, safer laps.</p>
+          <p className="page-subtitle">Upload telemetry files, sync GPS/IMU traces or connect supported dataloggers – KDD turns them into faster, safer laps.</p>
         </div>
         <span className="badge badge-green">3 sources connected</span>
       </div>
@@ -73,13 +73,13 @@ export function ConnectDataPage() {
           </>}
           {stage === 'parsing' && <>
             <div className="spinner" style={{ width: 30, height: 30, border: '3px solid rgba(255,255,255,0.15)', borderTopColor: 'var(--accent)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-            <div style={{ fontSize: 14, fontWeight: 700 }}>Parsing {file}—¦</div>
+            <div style={{ fontSize: 14, fontWeight: 700 }}>Parsing {file}→</div>
             <div style={{ fontSize: 12, color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }}>decoding channels · detecting laps · aligning GPS</div>
           </>}
           {stage === 'ready' && <>
             <Check size={34} style={{ color: 'var(--green)' }} />
             <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--green)' }}>{file} ready · {MUGELLO_CIRCUIT.raceLaps} laps · 142 channels</div>
-            <div style={{ fontSize: 12, color: 'var(--text-dim)' }}>Best lap 1:57.842 detected —” open the Session Report to analyse it.</div>
+            <div style={{ fontSize: 12, color: 'var(--text-dim)' }}>Best lap 1:57.842 detected – open the Session Report to analyse it.</div>
           </>}
           <input id="telemetry-upload" type="file" accept=".csv,.xrk,.drk,.gpx" style={{ display: 'none' }} onChange={onPick} />
         </label>

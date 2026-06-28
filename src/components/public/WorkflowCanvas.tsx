@@ -250,7 +250,7 @@ export function WorkflowCanvas({ title, subtitle, steps, active, mode, selectedI
         <g>
           <rect x="52" y="332" width="1096" height="56" rx="20" fill="rgba(3,7,18,0.72)" stroke="rgba(148,163,184,0.12)" />
           <text x="78" y="362" fill="#f8fafc" fontSize="16" fontWeight="600">KDD converts telemetry into decisions, then validates the next chapter.</text>
-          <text x="78" y="382" fill="#c7ccd4" fontSize="12">Sense â¢—Â —â„¢ Decide â¢—Â —â„¢ Federate â¢—Â —â„¢ Validate</text>
+          <text x="78" y="382" fill="#c7ccd4" fontSize="12">Sense → Decide → Federate → Validate</text>
           <g>
             {['Sense', 'Decide', 'Federate'].map((item, index) => (
               <g key={item} transform={`translate(${778 + index * 112}, 347)`}>

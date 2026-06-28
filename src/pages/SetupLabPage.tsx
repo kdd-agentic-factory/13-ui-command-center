@@ -1,7 +1,7 @@
 /**
- * SetupLabPage —” version control for the bike setup.
+ * SetupLabPage – version control for the bike setup.
  *
- * Left: the version timeline (baseline â†’ stints â†’ oracle rec â†’ engineer
+ * Left: the version timeline (baseline → stints → oracle rec → engineer
  * commits) with status. Right: the diff of the selected version vs its parent,
  * its reason and measured result, plus Validate / Revert actions and the
  * DO NOT CHANGE list. A git-style history of "what we changed and whether it
@@ -81,7 +81,7 @@ export function SetupLabPage() {
                   <span style={{ fontSize: 8, fontFamily: MONO, color: m.color, border: `1px solid ${m.color}`, borderRadius: 4, padding: '1px 5px' }}>{m.label}</span>
                 </div>
                 <div style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--text-muted)', marginTop: 3, marginLeft: 19 }}>
-                  {v.id} {v.parentId ? `â† ${v.parentId}` : '(root)'}
+                  {v.id} {v.parentId ? `→ ${v.parentId}` : '(root)'}
                 </div>
               </button>
             );
@@ -114,7 +114,7 @@ export function SetupLabPage() {
 
             <div style={{ marginTop: 10, fontSize: 11, fontFamily: MONO }}>
               <span style={{ color: 'var(--text-muted)' }}>Result: </span>
-              <span style={{ color: sel.result === '—”' ? 'var(--yellow)' : 'var(--green)' }}>{sel.result}</span>
+              <span style={{ color: sel.result === '–' ? 'var(--yellow)' : 'var(--green)' }}>{sel.result}</span>
             </div>
 
             <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>

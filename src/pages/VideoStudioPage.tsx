@@ -1,11 +1,11 @@
 /**
- * VideoStudioPage â’Ã†—™â—š—¢â’—¢â¢Ã¢—š¬Ã…Â¡â—š—¬â’—¢â¢—š—¬â—š—” Telemetry + Video Studio.
+// ──── VideoStudioPage Telemetry Video Studio. ────
  *
  * One playhead drives a reconstructed onboard view (bike position on the real
  * circuit outline + a synced HUD) and the telemetry traces together. Scrub,
  * play/pause, pick a lap, toggle channels, jump to corner markers or curated
- * clips. Honest: there is no real footage â’Ã†—™â—š—¢â’—¢â¢Ã¢—š¬Ã…Â¡â—š—¬â’—¢â¢—š—¬â—š—” the onboard view is telemetry-
- * driven â’Ã†—™â—š—¢â’—¢â¢Ã¢—š¬Ã…Â¡â—š—¬â’—¢â¢—š—¬â—š—” and GPS-only ECU/IMU channels are flagged estimated.
+// ──── clips. Honest there is no real footage the onboard view is telemetry- ────
+// ──── driven and GPS-only ECU IMU channels are flagged estimated. ────
  */
 import { useState, useEffect, useMemo } from 'react';
 import { Video, Play, Pause, SkipBack } from 'lucide-react';
@@ -20,7 +20,7 @@ const W = 560, TRACE_H = 46;
 export function VideoStudioPage() {
   const garage = useGarage();
   const { ctx, datasetMismatch } = useSessionContext();
-  const [lap, setLap] = useState('Stint 03 â’Ã†—™â¢Ã¢—š¬Ã…Â¡â’—šâ—š—· Lap 5 (best)');
+  const [lap, setLap] = useState('Stint 03  —  ◆  Lap 5 (best)');
   const [t, setT] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [speedMult, setSpeedMult] = useState(1);
@@ -39,7 +39,7 @@ export function VideoStudioPage() {
 
   const frame = frameAt(track, t);
 
-  // onboard reconstruction â’Ã†—™â—š—¢â’—¢â¢Ã¢—š¬Ã…Â¡â—š—¬â’—¢â¢—š—¬â—š—” bike position on the real outline (fallback mugello)
+  // ──── // onboard reconstruction " bike position on the real outline (fallback mugello) ────
   const outlineId = sampleOutline(ctx.selectedCircuit, 2, 10, 10).length ? ctx.selectedCircuit : 'mugello';
   const PTS = useMemo(() => sampleOutline(outlineId, 90, 300, 175, 16), [outlineId]);
   const pos = PTS[Math.round(frame.distPct * (PTS.length - 1))] ?? PTS[0] ?? [150, 88];
@@ -59,7 +59,7 @@ export function VideoStudioPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><Video size={18} /> Telemetry + Video Studio</h1>
-          <p className="page-subtitle">Synced onboard view & telemetry â’Ã†—™â—š—¢â’—¢â¢Ã¢—š¬Ã…Â¡â—š—¬â’—¢â¢—š—¬â—š—” {track.combo} â’Ã†—™â¢Ã¢—š¬Ã…Â¡â’—šâ—š—· {lap}</p>
+          <p className="page-subtitle">Synced onboard view & telemetry · {track.combo}  —  ◆  {lap}</p>
         </div>
         <select value={lap} onChange={e => { setLap(e.target.value); setT(0); }}
           style={{ fontSize: 11, fontFamily: MONO, background: 'var(--bg-surface)', color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '5px 8px' }}>
@@ -68,7 +68,7 @@ export function VideoStudioPage() {
       </div>
 
       <div style={{ marginBottom: 12, padding: '7px 11px', borderRadius: 'var(--radius)', background: 'var(--yellow-dim)', border: '1px solid var(--yellow-border)', fontSize: 10.5, color: 'var(--text)' }}>
-        Reconstructed onboard view â’Ã†—™â—š—¢â’—¢â¢Ã¢—š¬Ã…Â¡â—š—¬â’—¢â¢—š—¬â—š—” telemetry-driven (no raw footage in this dataset).{garage.telemetryLimited && ' GPS-only bike: ECU/IMU channels are estimated.'}{datasetMismatch && ' Circuit has no dataset â’Ã†—™â—š—¢â’—¢â¢Ã¢—š¬Ã…Â¡â—š—¬â’—¢â¢—š—¬â—š—” showing the Mugello reference layout.'}
+        Reconstructed onboard view · telemetry-driven (no raw footage in this dataset).{garage.telemetryLimited && ' GPS-only bike: ECU/IMU channels are estimated.'}{datasetMismatch && ' Circuit has no dataset · showing the Mugello reference layout.'}
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: 16, alignItems: 'start' }}>
@@ -88,7 +88,7 @@ export function VideoStudioPage() {
             <span style={{ fontSize: 22, fontWeight: 800, fontFamily: MONO, color: 'var(--purple)' }}>{frame.gear}</span>
           </div>
           <div style={{ display: 'flex', gap: 14, fontSize: 11, fontFamily: MONO, color: 'var(--text-muted)', marginTop: 2 }}>
-            <span>lean <span style={{ color: 'var(--yellow)' }}>{frame.lean}â’Ã†—™â¢Ã¢—š¬Ã…Â¡â’—šâ—š—Â°</span></span>
+            <span>lean <span style={{ color: 'var(--yellow)' }}>{frame.lean} — ─š\u00b0</span></span>
             <span>rpm <span style={{ color: 'var(--thermal)' }}>{frame.rpm.toLocaleString()}</span></span>
             <span>slip <span style={{ color: frame.rearSlip >= 10 ? 'var(--accent)' : 'var(--text)' }}>{frame.rearSlip}%</span></span>
           </div>
@@ -115,7 +115,7 @@ export function VideoStudioPage() {
             <span style={{ fontSize: 12, fontFamily: MONO, color: 'var(--text)' }}>{formatClock(t)} / {formatClock(track.duration)}</span>
             <div style={{ marginLeft: 'auto', display: 'flex', gap: 4 }}>
               {[0.5, 1, 2].map(s => (
-                <button key={s} onClick={() => setSpeedMult(s)} style={{ ...btn, padding: '3px 7px', fontSize: 10, fontFamily: MONO, background: speedMult === s ? 'rgba(0,183,255,0.12)' : 'transparent', color: speedMult === s ? 'var(--cyan)' : 'var(--text-muted)', borderColor: speedMult === s ? 'var(--cyan)' : 'var(--border)' }}>{s}â’Ã†—™â— —â„¢â’—¢â¢—š—¬â¢Ã¢—š¬—”</button>
+                <button key={s} onClick={() => setSpeedMult(s)} style={{ ...btn, padding: '3px 7px', fontSize: 10, fontFamily: MONO, background: speedMult === s ? 'rgba(0,183,255,0.12)' : 'transparent', color: speedMult === s ? 'var(--cyan)' : 'var(--text-muted)', borderColor: speedMult === s ? 'var(--cyan)' : 'var(--border)' }}>{s}×</button>
               ))}
             </div>
           </div>
@@ -130,7 +130,7 @@ export function VideoStudioPage() {
                   style={{ fontSize: 9.5, fontFamily: MONO, padding: '2px 8px', borderRadius: 5, cursor: 'pointer',
                     background: on ? `${ch.color}22` : 'transparent', border: `1px solid ${on ? ch.color : 'var(--border)'}`,
                     color: on ? ch.color : 'var(--text-muted)' }}>
-                  {ch.label} <span style={{ color: on ? ch.color : 'var(--text-muted)' }}>{Math.round(Number(frame[ch.id]))}{ch.unit}</span>{est ? ' â’Ã†—™â¢Ã¢—š¬Ã…Â¡â’—šâ—š—·est' : ''}
+                  {ch.label} <span style={{ color: on ? ch.color : 'var(--text-muted)' }}>{Math.round(Number(frame[ch.id]))}{ch.unit}</span>{est ? '  —  ◆ est' : ''}
                 </button>
               );
             })}

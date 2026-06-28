@@ -1,5 +1,5 @@
 /**
- * SimLabPage —” Sim-to-Real Racing Lab.
+ * SimLabPage – Sim-to-Real Racing Lab.
  *
  * Rehearse a stint before going out: a scenario with predicted outcome, the
  * expected telemetry signature, a simulated session planner + virtual test day,
@@ -24,7 +24,7 @@ export function SimLabPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><FlaskRound size={18} /> Sim-to-Real Racing Lab</h1>
-          <p className="page-subtitle">Test virtually · validate on track · learn automatically —” {s.combo}</p>
+          <p className="page-subtitle">Test virtually · validate on track · learn automatically – {s.combo}</p>
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Predicted lap · conf {s.confidence}%</div>
@@ -43,7 +43,7 @@ export function SimLabPage() {
           <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 10 }}>Simulation scenario · conf {s.scenario.confidence}%</div>
           <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.7 }}>
             Setup: <span style={{ color: 'var(--text)' }}>{s.scenario.setup}</span><br />
-            Tyres: <span style={{ color: 'var(--text)' }}>{s.scenario.tyres}</span> · Track {s.scenario.trackTempC}Â°C · {s.scenario.stintLaps} laps<br />
+            Tyres: <span style={{ color: 'var(--text)' }}>{s.scenario.tyres}</span> · Track {s.scenario.trackTempC}°C · {s.scenario.stintLaps} laps<br />
             Rider focus: <span style={{ color: 'var(--cyan)' }}>{s.scenario.riderFocus}</span>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginTop: 10, fontSize: 11.5 }}>
@@ -57,7 +57,7 @@ export function SimLabPage() {
             <div key={r.channel} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, marginBottom: 3 }}>
               <span style={{ flex: 1, color: 'var(--text)' }}>{r.channel}</span>
               <span style={{ fontFamily: MONO, color: 'var(--text-muted)' }}>{r.before}</span>
-              <span style={{ color: 'var(--text-muted)' }}>â†’</span>
+              <span style={{ color: 'var(--text-muted)' }}>→</span>
               <span style={{ fontFamily: MONO, color: 'var(--cyan)' }}>{r.after}</span>
             </div>
           ))}

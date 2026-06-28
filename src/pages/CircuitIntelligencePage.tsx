@@ -1,18 +1,18 @@
 /**
- * CircuitIntelligencePage â’—¢â¢—š—¬â¢Ã¢—š¬—” Mugello circuit intelligence with explicit asset integrity.
+ * CircuitIntelligencePage — Mugello circuit intelligence with explicit asset integrity.
  *
  * Fixes applied per diagnostic:
  *   1. Mugello procedural geometry, 5.245 km, 15 turns, 1.141 km main straight
  *   2. GPS position shown as "3.545 / 5.245 km" (not mistaken for circuit length)
  *   3. Lap consistency: lapCount/23 everywhere, no mismatch
- *   4. Fuel < 1.0 kg with speed > 50 â’—¢â¢Ã¢—š¬—Â â¢Ã¢—š¬Ã¢—ž¢ CRITICAL FUEL DATA ERROR
+ *   4. Fuel < 1.0 kg with speed > 50 → CRITICAL FUEL DATA ERROR
  *   5. Speed traps: Mugello-realistic (352 / 284 / 291 km/h)
- *   6. Braking zones: entry speed â’—¢â¢Ã¢—š¬—Â â¢Ã¢—š¬Ã¢—ž¢ apex speed (not reversed)
+ *   6. Braking zones: entry speed → apex speed (not reversed)
  *   7. Real Mugello corner names: San Donato, Luco, Poggio Secco, etc.
  *   8. Elevation & Gradient Profile section (41.19 m variance)
  *   9. Circuit Data Integrity section
  *  10. View Mode: 2D Map / 3D Elevation / Speed / Brake / Throttle overlay
- *  11. Sector analysis with real zone names (S/Fâ’—¢â¢Ã¢—š¬—Â â¢Ã¢—š¬Ã¢—ž¢Poggio Secco, etc.)
+ *  11. Sector analysis with real zone names (S/F → Poggio Secco, etc.)
  *  12. Sector trace with normalised values (avg speed, throttle, brake peak)
  *  13. Track surface with kerb risk + track temp evolution
  *  14. Track evolution with AI Condition Note
@@ -30,7 +30,7 @@ import { TrackMap3D } from '../components/babylon/lazy';
 import { MUGELLO_CIRCUIT, sessionDisplayState } from '../domain/sessionTruth';
 import { getActiveCircuit } from '../domain/circuits';
 
-// â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ Mugello circuit constants â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬
+// ──── Mugello circuit constants ────
 
 const MUGELLO = {
   name: MUGELLO_CIRCUIT.fullName,
@@ -52,7 +52,7 @@ const MUGELLO = {
   tag: 'Mugello GP layout',
 };
 
-// â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ Mugello-like SVG path (closed, ~resembles real layout) â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬
+// —— Mugello-like SVG path (closed, ~resembles real layout) ————————————————————
 
 const CIRCUIT_PATH = `
   M 170 420
@@ -86,7 +86,7 @@ const CIRCUIT_PATH = `
   L 170 420
 `;
 
-// â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ Sector boundaries (real Mugello zones) â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬
+// ──── Sector boundaries (real Mugello zones) ────
 
 interface SectorDef {
   id: string;
@@ -95,28 +95,28 @@ interface SectorDef {
   best: string;
   delta: string;
   color: string;
-  pos: number;            // marker position on map (0â’—¢â¢—š—¬â¢Ã¢—š¬Ã…—œ1)
+  pos: number;            // marker position on map (0-1)
 }
 
 const SECTORS: SectorDef[] = [
   {
-    id: 'S1', zone: 'Start/Finish â’—¢â¢Ã¢—š¬—Â â¢Ã¢—š¬Ã¢—ž¢ Poggio Secco',
+    id: 'S1', zone: 'Start/Finish → Poggio Secco',
     time: '29.842', best: '29.612', delta: '+0.230',
     color: 'var(--green)', pos: 0.08,
   },
   {
-    id: 'S2', zone: 'Materassi â’—¢â¢Ã¢—š¬—Â â¢Ã¢—š¬Ã¢—ž¢ Arrabbiata 2',
+    id: 'S2', zone: 'Materassi → Arrabbiata 2',
     time: '31.156', best: '30.984', delta: '+0.172',
     color: 'var(--yellow)', pos: 0.42,
   },
   {
-    id: 'S3', zone: 'Scarperia â’—¢â¢Ã¢—š¬—Â â¢Ã¢—š¬Ã¢—ž¢ Bucine',
+    id: 'S3', zone: 'Scarperia → Bucine',
     time: '32.414', best: '32.251', delta: '+0.163',
     color: 'var(--blue)', pos: 0.71,
   },
 ];
 
-// â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ Speed traps (Mugello-realistic) â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬
+// ──── Speed traps (Mugello-realistic) ────
 
 interface SpeedTrapDef {
   name: string;
@@ -144,7 +144,7 @@ const SPEED_TRAPS: SpeedTrapDef[] = [
   },
 ];
 
-// â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ Corner data (real Mugello corners with correct braking format) â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬
+// —— Corner data (real Mugello corners with correct braking format) ————————————
 
 interface CornerData {
   num: number;
@@ -176,16 +176,16 @@ const CORNERS: CornerData[] = [
   { num: 15, name: 'Final Kink',     dir: 'R', brakePoint: 20,  entrySpeed: 230, apexSpeed: 185, exitSpeed: 220, characteristic: 'Flat-out kink onto main straight',          critical: false },
 ];
 
-// â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ Elevation profile samples (normalised 0â’—¢â¢—š—¬â¢Ã¢—š¬Ã…—œ1 for 80 segments) â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬
+// —— Elevation profile samples (normalised 0-1 for 80 segments) ————————————————
 
 function trackElevation(u: number): number {
-  // Same harmonics as TrackMap3D â’—¢â¢—š—¬â¢Ã¢—š¬—” 41.19 m variance closed-loop
+  // Same harmonics as TrackMap3D — 41.19 m variance closed-loop
   return 0.45 * Math.sin(2 * Math.PI * u)
        + 0.22 * Math.sin(4 * Math.PI * u + 1.1)
        + 0.12 * Math.sin(6 * Math.PI * u + 0.5);
 }
 
-// â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ Heatmap â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬
+// ──── Heatmap ────
 
 type HeatChannel = 'speed' | 'throttle' | 'brake';
 const HEAT_N = 80;
@@ -245,13 +245,13 @@ function ColorLegend({ channel }: { channel: HeatChannel }) {
         <rect x="0" y="0" width="120" height="12" rx="3" fill={`url(#${gradId})`} />
       </svg>
       <span style={{ color: 'var(--text-muted)' }}>{lLo}</span>
-      <span style={{ color: 'var(--text-muted)' }}>â’—¢â¢Ã¢—š¬—Â â¢Ã¢—š¬Ã¢—ž¢</span>
+      <span style={{ color: 'var(--text-muted)' }}>→</span>
       <span style={{ color: 'var(--text-muted)' }}>{lHi}</span>
     </div>
   );
 }
 
-// â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ Rival riders â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬
+// ──── Rival riders ────
 
 interface RivalDef {
   name: string; num: number; color: string; trackOffset: number;
@@ -263,7 +263,7 @@ const RIVALS: RivalDef[] = [
   { name: 'Bastianini', num: 23, color: 'var(--blue)', trackOffset: -0.005 },
 ];
 
-// â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ View Mode â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬
+// ──── View Mode ────
 
 type ViewMode = 'map' | 'elevation' | 'speed' | 'brake' | 'throttle';
 
@@ -275,7 +275,7 @@ const VIEW_OPTIONS: { id: ViewMode; label: string }[] = [
   { id: 'throttle',   label: 'Throttle' },
 ];
 
-// â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ Sector sparkline â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬
+// ──── Sector sparkline ────
 
 function SectorSparkline({ deltas }: { deltas: number[] }) {
   const W = 80; const H = 24;
@@ -302,7 +302,7 @@ function SectorSparkline({ deltas }: { deltas: number[] }) {
   );
 }
 
-// â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ Elevation & Gradient Profile â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬
+// ──── Elevation Gradient Profile ────
 
 function ElevationProfile({ trackPos }: { trackPos: number }) {
   const N = 60;
@@ -319,7 +319,7 @@ function ElevationProfile({ trackPos }: { trackPos: number }) {
   const maxElev = Math.max(...elevValues);
   const range = maxElev - minElev || 1;
 
-  // Map function: u â’—¢â¢Ã¢—š¬—Â â¢Ã¢—š¬Ã¢—ž¢ x, elev â’—¢â¢Ã¢—š¬—Â â¢Ã¢—š¬Ã¢—ž¢ y
+  // Map function: u → x, elev → y
   const pts = samples.map(s => {
     const x = (s.u * W);
     const y = H - ((s.elev - minElev) / range) * (H - 12) - 6;
@@ -420,7 +420,7 @@ function ElevationProfile({ trackPos }: { trackPos: number }) {
                 background: z.dir === 'uphill' ? 'var(--green)' : z.dir === 'downhill' ? 'var(--accent)' : 'var(--yellow)',
                 display: 'inline-block',
               }} />
-              {z.label} â’—šâ—š—· {z.dir}
+              {z.label} · {z.dir}
             </div>
           ))}
         </div>
@@ -435,7 +435,7 @@ function ElevationProfile({ trackPos }: { trackPos: number }) {
           <Layers size={14} style={{ color: 'var(--text-muted)' }} />
           <span style={{ color: 'var(--text-muted)' }}>Current position:</span>
           <span style={{ fontWeight: 700 }}>{(trackPos * MUGELLO.lengthKm).toFixed(3)} / {MUGELLO.lengthKm} km</span>
-          <span style={{ color: 'var(--text-muted)' }}>â’—šâ—š—·</span>
+          <span style={{ color: 'var(--text-muted)' }}>·</span>
           <span style={{ color: 'var(--green)' }}>Elevation trend: {gradientClass(trackPos) === 'uphill' ? 'climbing' : gradientClass(trackPos) === 'downhill' ? 'descending' : 'flat'}</span>
         </div>
       </div>
@@ -443,7 +443,7 @@ function ElevationProfile({ trackPos }: { trackPos: number }) {
   );
 }
 
-// â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ Circuit Data Integrity â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬
+// ──── Circuit Data Integrity ────
 
 function CircuitIntegrity({ fuelValid, fuelLoad, speed }: { fuelValid: boolean; fuelLoad: number; speed: number }) {
   const geometryAvailable = true;
@@ -465,7 +465,7 @@ function CircuitIntegrity({ fuelValid, fuelLoad, speed }: { fuelValid: boolean; 
     warnings.push({
       label: 'Circuit geometry',
       critical: true,
-      message: 'Expected Mugello GP layout â’—šâ—š—· received generic placeholder.',
+      message: 'Expected Mugello GP layout · received generic placeholder.',
     });
   }
 
@@ -483,7 +483,7 @@ function CircuitIntegrity({ fuelValid, fuelLoad, speed }: { fuelValid: boolean; 
           {[
             { label: 'Circuit selected', value: MUGELLO.tag, ok: true },
             { label: 'Geometry status',  value: MUGELLO_CIRCUIT.assetStatusLabel, ok: geometryAvailable },
-            { label: 'Elevation model',  value: `Procedural â’—šâ—š—· ${MUGELLO.altitudeVariance} m variance`, ok: true },
+            { label: 'Elevation model',  value: `Procedural · ${MUGELLO.altitudeVariance} m variance`, ok: true },
             { label: 'GPS alignment',    value: `${gpsAlignment}%`, ok: gpsAlignment > 90 },
           ].map(s => (
             <div key={s.label} style={{
@@ -516,7 +516,7 @@ function CircuitIntegrity({ fuelValid, fuelLoad, speed }: { fuelValid: boolean; 
                 <AlertTriangle size={14} style={{ color: w.critical ? 'var(--accent)' : 'var(--yellow)', flexShrink: 0, marginTop: 1 }} />
                 <div>
                   <div style={{ fontSize: 11, fontWeight: 700, color: w.critical ? 'var(--accent)' : 'var(--yellow)', marginBottom: 2 }}>
-                    {w.critical ? 'CRITICAL' : 'WARNING'} â’—šâ—š—· {w.label}
+                    {w.critical ? 'CRITICAL' : 'WARNING'} · {w.label}
                   </div>
                   <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{w.message}</div>
                 </div>
@@ -532,7 +532,7 @@ function CircuitIntegrity({ fuelValid, fuelLoad, speed }: { fuelValid: boolean; 
             fontSize: 11, color: 'var(--green)',
             fontFamily: 'JetBrains Mono,monospace',
           }}>
-            Integrity visible â’—šâ—š—· {getActiveCircuit().name} GP data synchronized â’—šâ—š—· geometry is procedural
+            Integrity visible · {getActiveCircuit().name} GP data synchronized · geometry is procedural
           </div>
         )}
       </div>
@@ -540,7 +540,7 @@ function CircuitIntegrity({ fuelValid, fuelLoad, speed }: { fuelValid: boolean; 
   );
 }
 
-// â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ Per-sector speed / throttle / brake trace â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬
+// ──── Per-sector speed throttle brake trace ────
 
 function SectorTracePanel({ sectorId, start, end }: { sectorId: string; start: number; end: number }) {
   const N = 44; const W = 200; const H = 60;
@@ -584,8 +584,8 @@ function SectorTracePanel({ sectorId, start, end }: { sectorId: string; start: n
         color:'var(--text-muted)',
       }}>
         <span>Speed avg {(avgSpd * 330 + 10).toFixed(0)} km/h</span>
-        <span>â’—šâ—š—· Throttle avg {(avgThr * 100).toFixed(0)}%</span>
-        <span>â’—šâ—š—· Brake peak {(peakBrk * 100).toFixed(0)}%</span>
+        <span>· Throttle avg {(avgThr * 100).toFixed(0)}%</span>
+        <span>· Brake peak {(peakBrk * 100).toFixed(0)}%</span>
       </div>
 
       <svg width="100%" height={H + 10} viewBox={`0 0 ${W} ${H + 10}`} preserveAspectRatio="none">
@@ -607,14 +607,14 @@ function SectorTracePanel({ sectorId, start, end }: { sectorId: string; start: n
   );
 }
 
-// â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ Braking zone intensity chart â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬
+// ──── Braking zone intensity chart ────
 
 function BrakingIntensityChart() {
   const maxBrake = Math.max(...CORNERS.map(c => c.brakePoint));
   return (
     <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
       <div style={{ fontSize:10, color:'var(--text-muted)', marginBottom:4, fontFamily:'JetBrains Mono,monospace' }}>
-        Distance â’—šâ—š—· Entry speed â’—¢â¢Ã¢—š¬—Â â¢Ã¢—š¬Ã¢—ž¢ Apex speed
+        Distance · Entry speed → Apex speed
       </div>
       {CORNERS.filter(c => c.brakePoint >= 30).map(c => (
         <div key={c.num} style={{ display:'flex', alignItems:'center', gap:8 }}>
@@ -633,18 +633,18 @@ function BrakingIntensityChart() {
             {c.brakePoint}m
           </span>
           <span style={{ width:80, fontSize:9, fontFamily:'JetBrains Mono,monospace', color:'var(--text-muted)', flexShrink:0, textAlign:'right' }}>
-            {c.entrySpeed}â’—¢â¢Ã¢—š¬—Â â¢Ã¢—š¬Ã¢—ž¢{c.apexSpeed}
+            {c.entrySpeed}→{c.apexSpeed}
           </span>
         </div>
       ))}
       <div style={{ fontSize:10, color:'var(--text-muted)', marginTop:4 }}>
-        Red = critical overtaking corners â’—šâ—š—· Bar = brake distance â’—šâ—š—· Format: entry â’—¢â¢Ã¢—š¬—Â â¢Ã¢—š¬Ã¢—ž¢ apex speed
+        Red = critical overtaking corners · Bar = brake distance · Format: entry → apex speed
       </div>
     </div>
   );
 }
 
-// â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ AI Sector Insight â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬
+// ──── AI Sector Insight ────
 
 function AISectorInsight({ vsRival }: { vsRival: string }) {
   return (
@@ -665,7 +665,7 @@ function AISectorInsight({ vsRival }: { vsRival: string }) {
   );
 }
 
-// â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ Page â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬
+// ──── Page ────
 
 export function CircuitIntelligencePage() {
   const t = useLiveTelemetry();
@@ -689,7 +689,7 @@ export function CircuitIntelligencePage() {
     setSegments(segs);
   }, []);
 
-  // Helper: segment index â’—¢â¢Ã¢—š¬—Â â¢Ã¢—š¬Ã¢—ž¢ x,y from segments array
+  // Helper: segment index → x,y from segments array
   function posToXY(pos: number): { x: number; y: number } {
     if (segments.length === 0) {
       return {
@@ -742,13 +742,13 @@ export function CircuitIntelligencePage() {
   return (
     <div className="page">
 
-      {/* 3D Track Map â’—¢â¢—š—¬â¢Ã¢—š¬—” always shown */}
+      {/* 3D Track Map — always shown */}
       <div className="card mb-4">
         <div className="card-header">
-          <span className="card-title">3D TRACK MAP â’—¢â¢—š—¬â¢Ã¢—š¬—” MUGELLO</span>
+          <span className="card-title">3D TRACK MAP — MUGELLO</span>
           <div className="flex items-center gap-2">
             <span className="badge badge-blue">
-              â’—¢â¢Ã¢—š¬—”â—š—Â Procedural circuit geometry â’—šâ—š—· {MUGELLO.lengthKm} km â’—šâ—š—· {MUGELLO.turns} turns
+              —● Procedural circuit geometry · {MUGELLO.lengthKm} km · {MUGELLO.turns} turns
             </span>
             <span className={`badge ${fuelCritical ? 'badge-red' : 'badge-green'}`}>
               {fuelCritical ? 'FUEL DATA ERROR' : 'PROCEDURAL GEOMETRY ACTIVE'}
@@ -807,18 +807,18 @@ export function CircuitIntelligencePage() {
         <div>
           <h1 className="page-title">Circuit Intelligence</h1>
           <p className="page-subtitle">
-            {MUGELLO.name} â’—šâ—š—· {MUGELLO.lengthKm} km â’—šâ—š—· {MUGELLO.turns} turns ({MUGELLO.leftTurns}L â’—šâ—š—· {MUGELLO.rightTurns}R) â’—šâ—š—·
-            {sessionState.activeRace ? `Lap ${t.lapCount}/${MUGELLO.raceLaps}` : 'Pre-race/test telemetry'} â’—šâ—š—· {MUGELLO.mainStraightKm} km main straight
+            {MUGELLO.name} · {MUGELLO.lengthKm} km · {MUGELLO.turns} turns ({MUGELLO.leftTurns}L · {MUGELLO.rightTurns}R) ·
+            {sessionState.activeRace ? `Lap ${t.lapCount}/${MUGELLO.raceLaps}` : 'Pre-race/test telemetry'} · {MUGELLO.mainStraightKm} km main straight
           </p>
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <Thermometer size={14} style={{ color: 'var(--orange)' }} />
-            <span style={{ fontSize: 13 }}>Track <strong>48â’—šâ—š—Â°C</strong></span>
+            <span style={{ fontSize: 13 }}>Track <strong>48°C</strong></span>
           </div>
           <div className="flex items-center gap-2">
             <CloudSun size={14} style={{ color: 'var(--yellow)' }} />
-            <span style={{ fontSize: 13 }}>Air <strong>28â’—šâ—š—Â°C</strong></span>
+            <span style={{ fontSize: 13 }}>Air <strong>28°C</strong></span>
           </div>
           <div className="flex items-center gap-2">
             <Wind size={14} style={{ color: 'var(--blue)' }} />
@@ -841,10 +841,10 @@ export function CircuitIntelligencePage() {
       {/* Main 2-column layout */}
       <div className="grid-2-1 mb-4">
 
-        {/* â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ Circuit map + heatmap â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ */}
+        {/* —— Circuit map + heatmap ——————————————————————————————————————————— */}
         <div className="card">
           <div className="card-header">
-            <span className="card-title">Track Map â’—šâ—š—· Multi-Rider Overlay</span>
+            <span className="card-title">Track Map · Multi-Rider Overlay</span>
             <div className="flex items-center gap-3">
               {/* Channel selector (only when heatmap overlay active) */}
               <div style={{
@@ -868,7 +868,7 @@ export function CircuitIntelligencePage() {
                   </button>
                 ))}
               </div>
-              <span className="badge badge-red">P{t.position} â’—šâ—š—· L{t.lapCount}</span>
+              <span className="badge badge-red">P{t.position} · L{t.lapCount}</span>
             </div>
           </div>
 
@@ -934,7 +934,7 @@ export function CircuitIntelligencePage() {
                 </g>
               ))}
 
-              {/* Player dot â’—¢â¢—š—¬â¢Ã¢—š¬—” larger + glow */}
+              {/* Player dot — larger + glow */}
               <circle cx={riderX} cy={riderY} r="11" fill="var(--accent)"
                 style={{ filter: 'drop-shadow(0 0 10px var(--accent))' }} />
               <text x={riderX - 4} y={riderY + 4} fill="white" fontSize="8"
@@ -943,14 +943,14 @@ export function CircuitIntelligencePage() {
           </div>
         </div>
 
-        {/* â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ Right column â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ */}
+        {/* —— Right column ———————————————————————————————————————————————————— */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 
           {/* Sector analysis with zone names and sparklines */}
           <div className="card">
             <div className="card-header">
               <span className="card-title">Sector Analysis</span>
-              <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>Last 5 laps â’—¢â¢Ã¢—š¬—Â â¢Ã¢—š¬Ã¢—ž¢</span>
+              <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>Last 5 laps →</span>
             </div>
             {SECTORS.map(s => (
               <div key={s.id} style={{ padding: '10px 16px', borderBottom: '1px solid var(--border)' }}>
@@ -984,12 +984,12 @@ export function CircuitIntelligencePage() {
                 vs Martin (P2)
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
-                {['+0.08s', 'â’—¢â¢—š—¬â¢Ã¢—š¬Ã…—œ0.04s', '+0.16s'].map((delta, i) => (
+                {['+0.08s', '-0.04s', '+0.16s'].map((delta, i) => (
                   <div key={i} style={{ flex: 1, textAlign: 'center' }}>
                     <div style={{ fontSize: 9, color: 'var(--text-muted)', marginBottom: 2 }}>S{i + 1}</div>
                     <div style={{
                       fontFamily: 'JetBrains Mono,monospace', fontSize: 11, fontWeight: 700,
-                      color: delta.startsWith('â’—¢â¢—š—¬â¢Ã¢—š¬Ã…—œ') ? 'var(--green)' : 'var(--accent)',
+                      color: delta.startsWith('-') ? 'var(--green)' : 'var(--accent)',
                     }}>
                       {delta}
                     </div>
@@ -1007,7 +1007,7 @@ export function CircuitIntelligencePage() {
           {/* Speed traps with Mugello-realistic values */}
           <div className="card">
             <div className="card-header">
-              <span className="card-title">Speed Traps â’—¢â¢—š—¬â¢Ã¢—š¬—” {getActiveCircuit().name}</span>
+              <span className="card-title">Speed Traps — {getActiveCircuit().name}</span>
             </div>
             <div className="card-body" style={{ flexDirection: 'column', gap: 12 }}>
               {SPEED_TRAPS.map(st => (
@@ -1043,12 +1043,12 @@ export function CircuitIntelligencePage() {
             <div className="card-header"><span className="card-title">Track Surface</span></div>
             <div className="card-body" style={{ flexDirection: 'column', gap: 10 }}>
               {[
-                { label: 'Grip',      value: 'High â’—šâ—š—· rubbered-in',     color: 'var(--green)' },
-                { label: 'Bumps',     value: 'T6 Casanova entry â’—šâ—š—· T12 Correntaio apex', color: 'var(--yellow)' },
+                { label: 'Grip',      value: 'High · rubbered-in',     color: 'var(--green)' },
+                { label: 'Bumps',     value: 'T6 Casanova entry · T12 Correntaio apex', color: 'var(--yellow)' },
                 { label: 'Wet patches', value: 'None',                  color: 'var(--green)' },
                 { label: 'Debris / oil', value: 'Clean',                color: 'var(--green)' },
-                { label: 'Kerb risk',  value: 'Biondetti 1/2 â’—šâ—š—· medium', color: 'var(--yellow)' },
-                { label: 'Track temp',  value: '48â’—šâ—š—Â°C â’—šâ—š—· +3â’—šâ—š—Â°C vs FP3',    color: 'var(--orange)' },
+                { label: 'Kerb risk',  value: 'Biondetti 1/2 · medium', color: 'var(--yellow)' },
+                { label: 'Track temp',  value: '48°C · +3°C vs FP3',    color: 'var(--orange)' },
               ].map(s => (
                 <div key={s.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div style={{ fontSize: 13, color: 'var(--text-dim)' }}>{s.label}</div>
@@ -1060,13 +1060,13 @@ export function CircuitIntelligencePage() {
         </div>
       </div>
 
-      {/* â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ Corner Analysis (collapsible) â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ */}
+      {/* —— Corner Analysis (collapsible) ———————————————————————————————————— */}
       {showCorners && (
         <div className="card mb-4">
           <div className="card-header">
-            <span className="card-title">Corner Analysis â’—¢â¢—š—¬â¢Ã¢—š¬—” {getActiveCircuit().name} {getActiveCircuit().turns} Turns</span>
+            <span className="card-title">Corner Analysis — {getActiveCircuit().name} {getActiveCircuit().turns} Turns</span>
             <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-              Braking â’—šâ—š—· Entry speed â’—¢â¢Ã¢—š¬—Â â¢Ã¢—š¬Ã¢—ž¢ Apex speed â’—šâ—š—· Exit speed â’—šâ—š—· Key notes
+              Braking · Entry speed → Apex speed · Exit speed · Key notes
             </span>
           </div>
           <table className="data-table">
@@ -1112,12 +1112,12 @@ export function CircuitIntelligencePage() {
         </div>
       )}
 
-      {/* â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ Sector speed profiles + Braking zones â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ */}
+      {/* —— Sector speed profiles + Braking zones ———————————————————————————— */}
       <div className="grid-2 mb-4">
         <div className="card">
           <div className="card-header">
             <span className="card-title">Sector Speed / Throttle / Brake Trace</span>
-            <span style={{ fontSize:11, color:'var(--text-muted)' }}>Normalised 0â’—¢â¢—š—¬â¢Ã¢—š¬Ã…—œ100 â’—šâ—š—· last valid lap</span>
+            <span style={{ fontSize:11, color:'var(--text-muted)' }}>Normalised 0-100 · last valid lap</span>
           </div>
           <div className="card-body" style={{ flexDirection:'column', gap:20 }}>
             <SectorTracePanel sectorId="S1" start={0}    end={0.33} />
@@ -1128,7 +1128,7 @@ export function CircuitIntelligencePage() {
         <div className="card">
           <div className="card-header">
             <span className="card-title">Braking Zone Intensity</span>
-            <span style={{ fontSize:11, color:'var(--text-muted)' }}>Distance â’—šâ—š—· Entry speed â’—¢â¢Ã¢—š¬—Â â¢Ã¢—š¬Ã¢—ž¢ Apex speed</span>
+            <span style={{ fontSize:11, color:'var(--text-muted)' }}>Distance · Entry speed → Apex speed</span>
           </div>
           <div className="card-body" style={{ flexDirection:'column' }}>
             <BrakingIntensityChart />
@@ -1136,10 +1136,10 @@ export function CircuitIntelligencePage() {
         </div>
       </div>
 
-      {/* â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ Elevation & Gradient Profile â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ */}
+      {/* —— Elevation & Gradient Profile ———————————————————————————————————— */}
       <ElevationProfile trackPos={t.trackPos} />
 
-      {/* â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ Circuit Data Integrity â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ */}
+      {/* —— Circuit Data Integrity ——————————————————————————————————————————— */}
       <div className="mb-4">
         <CircuitIntegrity
           fuelValid={t.fuelValid}
@@ -1148,14 +1148,14 @@ export function CircuitIntelligencePage() {
         />
       </div>
 
-      {/* â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ Track evolution â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ */}
+      {/* —— Track evolution —————————————————————————————————————————————————— */}
       <div className="card">
         <div className="card-header"><span className="card-title">Track Evolution & Conditions</span></div>
         <div className="card-body">
           <div className="grid-4">
             {[
-              { label: 'Track Rubber',  value: '74%',  color: 'var(--green)',  note: 'High grip â’—šâ—š—· rubbered-in',   bar: 74 },
-              { label: 'Track Temp',    value: '48â’—šâ—š—Â°C', color: 'var(--orange)', note: '+3â’—šâ—š—Â°C vs FP3',                bar: 48 },
+              { label: 'Track Rubber',  value: '74%',  color: 'var(--green)',  note: 'High grip · rubbered-in',   bar: 74 },
+              { label: 'Track Temp',    value: '48°C', color: 'var(--orange)', note: '+3°C vs FP3',                bar: 48 },
               { label: 'S2 Wind',       value: '0.4s', color: 'var(--blue)',   note: 'Headwind through Casanova/Savelli', bar: 40 },
               { label: 'Grip Level',    value: 'HIGH', color: 'var(--green)',  note: 'Tyre limit: rear',           bar: 85 },
             ].map(c => (
@@ -1185,7 +1185,7 @@ export function CircuitIntelligencePage() {
             <div style={{ fontSize: 12, color: 'var(--text)', lineHeight: 1.5 }}>
               Track grip is improving, but tyre thermal load is rising.
               <strong> Rear soft risk increases after Lap 18.</strong>
-              &nbsp;Current: {sessionState.activeRace ? `Lap ${t.lapCount}/${MUGELLO.raceLaps}` : 'pre-race/test telemetry'} â’—šâ—š—· Tyre age {t.rearTyreAge} laps.
+              &nbsp;Current: {sessionState.activeRace ? `Lap ${t.lapCount}/${MUGELLO.raceLaps}` : 'pre-race/test telemetry'} · Tyre age {t.rearTyreAge} laps.
             </div>
           </div>
         </div>

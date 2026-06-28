@@ -43,7 +43,7 @@ export function DigitalTwinViewer3D({ leanAngle, pitchAngle = 0, height = 320 }:
     fillLight.intensity = 0.3;
     fillLight.diffuse   = new Color3(0.4, 0.5, 0.8);
 
-    // ── Materials ──────────────────────────────────────────────────────────
+// ──── Materials ────
     const bodyMat = new StandardMaterial('body', scene);
     bodyMat.diffuseColor  = new Color3(0.87, 0.22, 0.22);
     bodyMat.specularColor = new Color3(0.6, 0.6, 0.6);
@@ -72,7 +72,7 @@ export function DigitalTwinViewer3D({ leanAngle, pitchAngle = 0, height = 320 }:
     faiMat.emissiveColor = new Color3(0.05, 0.0, 0.0);
     faiMat.specularColor = new Color3(0.8, 0.8, 0.8);
 
-    // ── Chassis group (pivot at world origin) ──────────────────────────────
+// ──── Chassis group (pivot at world origin) ────
     // We use a thin chassis box as the parent transform node substitute
     // Lean/pitch must pivot about the tyre contact patch (ground line), not the
     // chassis centre — otherwise the wheels swing out through the ground when the
@@ -87,19 +87,19 @@ export function DigitalTwinViewer3D({ leanAngle, pitchAngle = 0, height = 320 }:
     chassis.material = darkMat;
     chassisRef.current = leanPivot;
 
-    // ── Engine block ──────────────────────────────────────────────────────
+// ──── Engine block ────
     const engineBlock = MeshBuilder.CreateBox('engine', { width: 0.32, height: 0.34, depth: 0.42 }, scene);
     engineBlock.position = new Vector3(0, 0.22, 0.05);
     engineBlock.material = darkMat;
     engineBlock.parent = chassis;
 
-    // ── Front fairing ──────────────────────────────────────────────────────
+// ──── Front fairing ────
     const frontFairing = MeshBuilder.CreateBox('frontFairing', { width: 0.38, height: 0.28, depth: 0.30 }, scene);
     frontFairing.position = new Vector3(0, 0.14, -0.72);
     frontFairing.material = faiMat;
     frontFairing.parent = chassis;
 
-    // ── Windscreen ─────────────────────────────────────────────────────────
+// ──── Windscreen ────
     const windscreen = MeshBuilder.CreateBox('windscreen', { width: 0.24, height: 0.18, depth: 0.04 }, scene);
     windscreen.position = new Vector3(0, 0.36, -0.60);
     windscreen.rotation.x = -0.4;
@@ -110,38 +110,38 @@ export function DigitalTwinViewer3D({ leanAngle, pitchAngle = 0, height = 320 }:
     windscreen.material = windMat;
     windscreen.parent = chassis;
 
-    // ── Seat / tail unit ───────────────────────────────────────────────────
+// ──── Seat tail unit ────
     const tail = MeshBuilder.CreateBox('tail', { width: 0.22, height: 0.16, depth: 0.52 }, scene);
     tail.position = new Vector3(0, 0.20, 0.62);
     tail.material = bodyMat;
     tail.parent = chassis;
 
-    // ── Fuel tank hump ─────────────────────────────────────────────────────
+// ──── Fuel tank hump ────
     const tank = MeshBuilder.CreateBox('tank', { width: 0.28, height: 0.22, depth: 0.40 }, scene);
     tank.position = new Vector3(0, 0.28, 0.18);
     tank.material = bodyMat;
     tank.parent = chassis;
 
-    // ── Swingarm ───────────────────────────────────────────────────────────
+// ──── Swingarm ────
     const swingarm = MeshBuilder.CreateBox('swingarm', { width: 0.10, height: 0.08, depth: 0.70 }, scene);
     swingarm.position = new Vector3(0, -0.14, 0.48);
     swingarm.material = metalMat;
     swingarm.parent = chassis;
 
-    // ── Front fork ─────────────────────────────────────────────────────────
+// ──── Front fork ────
     const fork = MeshBuilder.CreateBox('fork', { width: 0.08, height: 0.50, depth: 0.10 }, scene);
     fork.position = new Vector3(0, -0.12, -0.70);
     fork.rotation.x = 0.35;
     fork.material = metalMat;
     fork.parent = chassis;
 
-    // ── Handlebars ─────────────────────────────────────────────────────────
+// ──── Handlebars ────
     const bars = MeshBuilder.CreateBox('bars', { width: 0.40, height: 0.04, depth: 0.06 }, scene);
     bars.position = new Vector3(0, 0.30, -0.54);
     bars.material = metalMat;
     bars.parent = chassis;
 
-    // ── Exhaust ────────────────────────────────────────────────────────────
+// ──── Exhaust ────
     const exhaust = MeshBuilder.CreateCylinder('exhaust', { height: 0.60, diameter: 0.06, tessellation: 12 }, scene);
     exhaust.position = new Vector3(0.16, -0.10, 0.42);
     exhaust.rotation.z = Math.PI / 2.2;
@@ -151,7 +151,7 @@ export function DigitalTwinViewer3D({ leanAngle, pitchAngle = 0, height = 320 }:
     exhaust.material = exMat;
     exhaust.parent = chassis;
 
-    // ── Front wheel ────────────────────────────────────────────────────────
+// ──── Front wheel ────
     const fTire = MeshBuilder.CreateTorus('ftire', { diameter: 0.84, thickness: 0.22, tessellation: 28 }, scene);
     fTire.rotation.z = Math.PI / 2;
     fTire.position = new Vector3(0, -0.22, -0.84);
@@ -164,7 +164,7 @@ export function DigitalTwinViewer3D({ leanAngle, pitchAngle = 0, height = 320 }:
     fRim.material = rimMat;
     fRim.parent = chassis;
 
-    // ── Rear wheel ─────────────────────────────────────────────────────────
+// ──── Rear wheel ────
     const rTire = MeshBuilder.CreateTorus('rtire', { diameter: 0.86, thickness: 0.26, tessellation: 28 }, scene);
     rTire.rotation.z = Math.PI / 2;
     rTire.position = new Vector3(0, -0.24, 0.84);
@@ -177,7 +177,7 @@ export function DigitalTwinViewer3D({ leanAngle, pitchAngle = 0, height = 320 }:
     rRim.material = rimMat;
     rRim.parent = chassis;
 
-    // ── Ground plane ───────────────────────────────────────────────────────
+// ──── Ground plane ────
     const ground = MeshBuilder.CreateGround('ground', { width: 12, height: 12 }, scene);
     const gMat = new StandardMaterial('gmat', scene);
     gMat.diffuseColor  = new Color3(0.06, 0.07, 0.09);
@@ -185,13 +185,13 @@ export function DigitalTwinViewer3D({ leanAngle, pitchAngle = 0, height = 320 }:
     ground.material = gMat;
     ground.position.y = -0.66;
 
-    // ── Subtle shadow from accent light below chassis ───────────────────────
+// ──── Subtle shadow from accent light below chassis ────
     const accentLight = new PointLight('accent', new Vector3(0, -0.3, 0), scene);
     accentLight.diffuse   = new Color3(0.87, 0.22, 0.22);
     accentLight.intensity = 0.25;
     accentLight.range     = 2;
 
-    // ── Wheel spin animation ────────────────────────────────────────────────
+// ──── Wheel spin animation ────
     // Roll about each wheel's own central axis (local Y of the torus), so the
     // spin stays correct regardless of how the chassis leans or pitches.
     scene.registerBeforeRender(() => {

@@ -15,7 +15,7 @@ interface IntroExperienceProps {
   onEnter: (id: ProfileId) => void;
 }
 
-// ── The five headline advantages of the platform ───────────────────────────────
+// ──── The five headline advantages of the platform ────
 interface Advantage {
   n: string;
   color: string;
@@ -98,7 +98,7 @@ const MODULES: { icon: React.ElementType; key: string; c: string }[] = [
   { icon: Fingerprint, key: 'nav.style', c: 'var(--purple)' },
 ];
 
-// ── Live telemetry ticker (sticky top) ──────────────────────────────────────────
+// ──── Live telemetry ticker (sticky top) ────
 function LiveTicker() {
   const t = useLiveTelemetry();
   const items = [
@@ -121,14 +121,14 @@ function LiveTicker() {
   );
 }
 
-// ── Animated metric number ──────────────────────────────────────────────────────
+// ──── Animated metric number ────
 function MetricNumber({ value, active, color }: { value: string; active: boolean; color: string }) {
   const decimals = value.includes('.') ? value.split('.')[1].length : 0;
   const display = useAnimeCount(active ? parseFloat(value) : 0, decimals, 1100, [active]);
   return <span className="intro-adv-metric-num" style={{ color }}>{active ? display : '0'}</span>;
 }
 
-// ── Main component ──────────────────────────────────────────────────────────────
+// ──── Main component ────
 export function IntroExperience({ onEnter }: IntroExperienceProps) {
   const { t } = useTranslation();
   const telem = useLiveTelemetry();

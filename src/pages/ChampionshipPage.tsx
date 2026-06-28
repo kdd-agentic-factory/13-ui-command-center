@@ -1,9 +1,9 @@
 /**
- * ChampionshipPage —” KDD Championship Command (Season & Title Intelligence).
+ * ChampionshipPage – KDD Championship Command (Season & Title Intelligence).
  *
  * The season altitude: standings with form, the title maths and magic number,
  * the live what-if title scenarios, the MotoGP engine-allocation constraint,
- * the rider penalty-point tally and the concession tiers —” ending in one call
+ * the rider penalty-point tally and the concession tiers – ending in one call
  * on what the race in front of you does to the championship.
  */
 import { Trophy, Cpu, AlertTriangle, Award, TrendingUp } from 'lucide-react';
@@ -11,7 +11,7 @@ import { useGarage } from '../hooks/useGarage';
 import { buildChampionship, trendColor, engineColor } from '../domain/championship';
 
 const MONO = 'JetBrains Mono, monospace';
-const arrow = (t: 'up' | 'flat' | 'down') => t === 'up' ? 'â–²' : t === 'down' ? 'â–¼' : '—“';
+const arrow = (t: 'up' | 'flat' | 'down') => t === 'up' ? '→' : t === 'down' ? '–¼' : '–';
 const posColor = (p: string) => p === '1' ? 'var(--green)' : p === 'DNF' ? 'var(--accent)' : 'var(--text-muted)';
 
 export function ChampionshipPage() {
@@ -23,7 +23,7 @@ export function ChampionshipPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><Trophy size={18} /> Championship Command</h1>
-          <p className="page-subtitle">Round {c.round} of {c.totalRounds} · {c.racesRemaining} to go · {c.pointsAvailable} pts available —” {c.combo}</p>
+          <p className="page-subtitle">Round {c.round} of {c.totalRounds} · {c.racesRemaining} to go · {c.pointsAvailable} pts available – {c.combo}</p>
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Your position</div>
@@ -56,10 +56,10 @@ export function ChampionshipPage() {
           {c.standings.map(s => (
             <div key={s.pos} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, marginBottom: 6, padding: s.isYou ? '3px 6px' : '0 6px', background: s.isYou ? 'var(--bg-surface)' : 'transparent', borderRadius: 5, border: s.isYou ? '1px solid var(--border)' : '1px solid transparent' }}>
               <span style={{ fontFamily: MONO, fontSize: 11, color: s.pos === 1 ? 'var(--green)' : 'var(--text-muted)', width: 22 }}>P{s.pos}</span>
-              <span style={{ fontWeight: 700, color: s.isYou ? 'var(--accent)' : 'var(--text)', width: 88 }}>{s.rider}{s.isYou && ' â—„'}</span>
+              <span style={{ fontWeight: 700, color: s.isYou ? 'var(--accent)' : 'var(--text)', width: 88 }}>{s.rider}{s.isYou && ' →„'}</span>
               <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', width: 58 }}>{s.team}</span>
               <span style={{ fontFamily: MONO, fontSize: 11, color: 'var(--text)', width: 38, textAlign: 'right' }}>{s.points}</span>
-              <span style={{ fontFamily: MONO, fontSize: 9, color: 'var(--text-muted)', width: 40, textAlign: 'right' }}>{s.gap === 0 ? '—”' : `+${s.gap}`}</span>
+              <span style={{ fontFamily: MONO, fontSize: 9, color: 'var(--text-muted)', width: 40, textAlign: 'right' }}>{s.gap === 0 ? '–' : `+${s.gap}`}</span>
               <span style={{ color: trendColor(s.trend), width: 14, textAlign: 'center' }}>{arrow(s.trend)}</span>
               <span style={{ display: 'flex', gap: 3, marginLeft: 'auto' }}>
                 {s.form.map((f, i) => <span key={i} style={{ fontSize: 8, fontFamily: MONO, color: posColor(f), width: 18, textAlign: 'center' }}>{f}</span>)}

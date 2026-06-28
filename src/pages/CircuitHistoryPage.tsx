@@ -3,12 +3,12 @@ import { History, Trophy, TrendingDown, CloudSun, Droplets } from 'lucide-react'
 import { getSessionContext } from '../domain/sessionContext';
 
 /**
- * Circuit History (engineer Phase 3 #2) —” your evolution at a track over time:
+ * Circuit History (engineer Phase 3 #2) – your evolution at a track over time:
  * best-lap progression across sessions, the personal record, the full session
  * log with conditions, and how weather correlates with pace.
  */
 
-const CIRCUITS = ['Mugello', 'Albacete', 'Motorland AragÃ³n'];
+const CIRCUITS = ['Mugello', 'Albacete', 'Motorland Aragón'];
 
 interface Session {
   date: string; type: string; weather: 'Dry' | 'Damp' | 'Wet'; tempC: number; bestLap: string; laps: number;
@@ -59,11 +59,11 @@ export function CircuitHistoryPage() {
         <div className="card" style={{ background: 'linear-gradient(135deg, rgba(245,158,11,0.10), rgba(255,255,255,0.02))' }}>
           <div className="card-header"><span className="card-title flex items-center gap-2"><Trophy size={14} style={{ color: 'var(--yellow)' }} /> Personal record</span></div>
           <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 900, fontSize: 30, color: 'var(--yellow)', marginTop: 4 }}>{pb.bestLap}</div>
-          <div style={{ fontSize: 11, color: 'var(--text-dim)' }}>{pb.date} · {pb.type} · {pb.weather} {pb.tempC}Â°C</div>
+          <div style={{ fontSize: 11, color: 'var(--text-dim)' }}>{pb.date} · {pb.type} · {pb.weather} {pb.tempC}°C</div>
         </div>
         <div className="card">
           <div className="card-header"><span className="card-title flex items-center gap-2"><TrendingDown size={14} style={{ color: 'var(--green)' }} /> Total improvement</span></div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 900, fontSize: 30, color: 'var(--green)', marginTop: 4 }}>âˆ’{improvement.toFixed(3)}<span style={{ fontSize: 16 }}>s</span></div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 900, fontSize: 30, color: 'var(--green)', marginTop: 4 }}>−{improvement.toFixed(3)}<span style={{ fontSize: 16 }}>s</span></div>
           <div style={{ fontSize: 11, color: 'var(--text-dim)' }}>since first logged session</div>
         </div>
         <div className="card">
@@ -73,7 +73,7 @@ export function CircuitHistoryPage() {
         </div>
       </div>
 
-      {/* Progression chart (best lap per session —” shorter bar = faster) */}
+      {/* Progression chart (best lap per session – shorter bar = faster) */}
       <div className="card mb-4">
         <div className="card-header"><span className="card-title flex items-center gap-2"><History size={14} style={{ color: 'var(--accent)' }} /> Best-lap progression</span></div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 8 }}>
@@ -108,7 +108,7 @@ export function CircuitHistoryPage() {
                 <div key={s.date} style={{ display: 'grid', gridTemplateColumns: '80px 1fr auto auto', gap: 10, alignItems: 'center', padding: '7px 0', borderBottom: '1px solid var(--border)' }}>
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-dim)' }}>{s.date.slice(5)}</span>
                   <span style={{ fontSize: 12 }}>{s.type}</span>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontFamily: 'var(--font-mono)', fontSize: 10, color: WEATHER_COLOR[s.weather] }}><WIcon size={12} /> {s.tempC}Â°</span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontFamily: 'var(--font-mono)', fontSize: 10, color: WEATHER_COLOR[s.weather] }}><WIcon size={12} /> {s.tempC}°</span>
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 700, minWidth: 110, textAlign: 'right' }}>
                     {s.bestLap} <span style={{ color: delta < 0.001 ? 'var(--yellow)' : 'var(--text-muted)', fontSize: 10 }}>{delta < 0.001 ? 'PB' : `+${delta.toFixed(3)}`}</span>
                   </span>
@@ -122,12 +122,12 @@ export function CircuitHistoryPage() {
         <div className="card">
           <div className="card-header"><span className="card-title flex items-center gap-2"><CloudSun size={14} style={{ color: 'var(--yellow)' }} /> Weather correlation</span></div>
           <p style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--text-dim)', margin: '6px 0 12px' }}>
-            Your pace tracks <strong style={{ color: 'var(--text)' }}>track temperature</strong> strongly: every session above 18Â°C beat the one before. The damp February day cost ~4 s —” wet-weather craft is the biggest untapped gain.
+            Your pace tracks <strong style={{ color: 'var(--text)' }}>track temperature</strong> strongly: every session above 18°C beat the one before. The damp February day cost ~4 s – wet-weather craft is the biggest untapped gain.
           </p>
           <div className="grid-3">
             <div className="stat-tile"><div className="stat-tile__label">Best (dry)</div><span className="stat-tile__value" style={{ fontSize: 16 }}>1:57.842</span></div>
             <div className="stat-tile"><div className="stat-tile__label">Best (damp)</div><span className="stat-tile__value" style={{ fontSize: 16, color: 'var(--blue)' }}>1:47.902</span></div>
-            <div className="stat-tile"><div className="stat-tile__label">Optimal TÂ°</div><span className="stat-tile__value" style={{ fontSize: 16 }}>24—“26Â°C</span></div>
+            <div className="stat-tile"><div className="stat-tile__label">Optimal T°</div><span className="stat-tile__value" style={{ fontSize: 16 }}>24–26°C</span></div>
           </div>
         </div>
       </div>

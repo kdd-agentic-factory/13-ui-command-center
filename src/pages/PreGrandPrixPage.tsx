@@ -92,10 +92,10 @@ const CIRCUIT_LIBRARY: CircuitLibraryItem[] = [
   { name: 'Mugello', id: MUGELLO_CIRCUIT.id, loaded: true },
   { name: 'Jarama', id: 'jarama', loaded: false },
   { name: 'Jerez', id: 'jerez', loaded: false },
-  { name: 'MontmelâÂ³', id: 'montmelo', loaded: false },
-  { name: 'PortimâÂ£o', id: 'portimao', loaded: false },
+  { name: 'Montmeló', id: 'montmelo', loaded: false },
+  { name: 'Portimão', id: 'portimao', loaded: false },
   { name: 'Misano', id: 'misano', loaded: false },
-  { name: 'MotorLand AragâÂ³n', id: 'aragon', loaded: false },
+  { name: 'MotorLand Aragón', id: 'aragon', loaded: false },
   { name: 'Valencia', id: 'valencia', loaded: false },
   { name: 'Assen', id: 'assen', loaded: false },
   { name: 'Custom circuit', id: 'custom', loaded: false },
@@ -133,10 +133,10 @@ const WEEKEND_SCHEDULE: ScheduleSession[] = [
 ];
 
 const PACE_EVOLUTION: PaceEvolution[] = [
-  { session: 'FP1', lap: '1:44.102', setup: 'baseline setup', tyres: 'Medium/Soft', trackTemp: '34—Â°C', gain: 'REF' },
-  { session: 'FP2', lap: '1:43.847', setup: 'rear compression -1', tyres: 'Medium/Soft', trackTemp: '39—Â°C', gain: '-0.255s' },
-  { session: 'FP3', lap: '1:43.612', setup: 'engine brake EB4', tyres: 'Medium/Soft', trackTemp: '31—Â°C', gain: '-0.490s' },
-  { session: 'Q2', lap: '1:43.201', setup: 'qualifying map', tyres: 'Soft/Soft', trackTemp: '42—Â°C', gain: '-0.901s' },
+  { session: 'FP1', lap: '1:44.102', setup: 'baseline setup', tyres: 'Medium/Soft', trackTemp: '34—°C', gain: 'REF' },
+  { session: 'FP2', lap: '1:43.847', setup: 'rear compression -1', tyres: 'Medium/Soft', trackTemp: '39—°C', gain: '-0.255s' },
+  { session: 'FP3', lap: '1:43.612', setup: 'engine brake EB4', tyres: 'Medium/Soft', trackTemp: '31—°C', gain: '-0.490s' },
+  { session: 'Q2', lap: '1:43.201', setup: 'qualifying map', tyres: 'Soft/Soft', trackTemp: '42—°C', gain: '-0.901s' },
 ];
 
 const RIVAL_PROFILES: RivalProfile[] = [
@@ -435,7 +435,7 @@ export function PreGrandPrixPage() {
               <StatTile label="Highest section" value="Poggio Secco" color="var(--yellow)" />
             </div>
             {[
-              'Main straight crest Ã¢— —™ San Donato braking',
+              'Main straight crest ─—™ San Donato braking',
               'Casanova/Savelli downhill transition',
               'Arrabbiata 1/2 high-speed load',
               'Bucine exit onto main straight',
@@ -505,9 +505,9 @@ export function PreGrandPrixPage() {
           <div className="card-body">
             <div className="grid-3" style={{ marginBottom: 14 }}>
               {[
-                { label: 'Race start', value: '14:00 —· 28—Â°C —· rain 5%', icon: <CloudSun size={18} style={{ color: 'var(--yellow)' }} /> },
-                { label: 'Mid race', value: '15:00 —· 28—Â°C —· rain 10%', icon: <Wind size={18} style={{ color: 'var(--text-muted)' }} /> },
-                { label: 'Late race', value: '16:00 —· 26—Â°C —· rain 35%', icon: <CloudRain size={18} style={{ color: 'var(--blue)' }} /> },
+                { label: 'Race start', value: '14:00 —· 28—°C —· rain 5%', icon: <CloudSun size={18} style={{ color: 'var(--yellow)' }} /> },
+                { label: 'Mid race', value: '15:00 —· 28—°C —· rain 10%', icon: <Wind size={18} style={{ color: 'var(--text-muted)' }} /> },
+                { label: 'Late race', value: '16:00 —· 26—°C —· rain 35%', icon: <CloudRain size={18} style={{ color: 'var(--blue)' }} /> },
               ].map(item => (
                 <div key={item.label} style={{ padding: 12, border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', background: 'rgba(255,255,255,0.03)' }}>
                   {item.icon}
@@ -545,7 +545,7 @@ export function PreGrandPrixPage() {
               <StatTile label="Rain plan" value="Wet ready" color="var(--blue)" />
             </div>
             <div style={{ marginTop: 14, padding: '10px 12px', border: '1px solid rgba(224,55,55,0.18)', background: 'rgba(224,55,55,0.07)', borderRadius: 8, fontSize: 12, color: 'var(--text-muted)' }}>
-              <strong style={{ color: 'var(--accent)' }}>Tyre risk:</strong> rear soft thermal cliff from L13 if track temperature exceeds 46—Â°C.
+              <strong style={{ color: 'var(--accent)' }}>Tyre risk:</strong> rear soft thermal cliff from L13 if track temperature exceeds 46—°C.
             </div>
           </div>
         </div>
@@ -641,11 +641,11 @@ export function PreGrandPrixPage() {
       <div className="grid-3 mb-4">
         <div className="insight-panel" style={{ ['--dot-color' as string]: 'var(--yellow)' }}>
           <div className="insight-panel__title" style={{ color: 'var(--yellow)' }}>Tyre Strategy —· Dry Race Mode</div>
-          <p className="insight-panel__body">Recommended Front Medium / Rear Soft. Objective: manage rear soft to race distance. Risk begins around L13. Backup: Front Medium / Rear Hard if track temp exceeds 48—Â°C.</p>
+          <p className="insight-panel__body">Recommended Front Medium / Rear Soft. Objective: manage rear soft to race distance. Risk begins around L13. Backup: Front Medium / Rear Hard if track temp exceeds 48—°C.</p>
         </div>
         <div className="insight-panel" style={{ ['--dot-color' as string]: 'var(--blue)' }}>
           <div className="insight-panel__title" style={{ color: 'var(--blue)' }}>Sector Opportunity —· S2</div>
-          <p className="insight-panel__body">Target Casanova Ã¢— —™ Savelli Ã¢— —™ Arrabbiata 1/2. Gap to P2: +0.08s. Improve throttle pickup out of Savelli and reduce steering correction through Arrabbiata 2.</p>
+          <p className="insight-panel__body">Target Casanova ─—™ Savelli ─—™ Arrabbiata 1/2. Gap to P2: +0.08s. Improve throttle pickup out of Savelli and reduce steering correction through Arrabbiata 2.</p>
         </div>
         <div className="insight-panel" style={{ ['--dot-color' as string]: 'var(--green)' }}>
           <div className="insight-panel__title" style={{ color: 'var(--green)' }}>Grid Start Strategy</div>

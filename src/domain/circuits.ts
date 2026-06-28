@@ -14,7 +14,7 @@
  */
 import { MUGELLO_CIRCUIT } from './sessionTruth';
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// ──── Types ────
 
 export type CircuitStatus = 'READY' | 'PARTIAL' | 'SIMULATED' | 'NEEDS_REVIEW' | 'INVALID';
 
@@ -58,7 +58,7 @@ export interface ValidationCheck {
   desc: string;
 }
 
-// ── Status presentation ───────────────────────────────────────────────────────
+// ──── Status presentation ────
 
 export const STATUS_META: Record<CircuitStatus, { color: string; badge: string; desc: string }> = {
   READY:        { color: 'var(--green)',  badge: 'badge-green',  desc: 'Everything validated.' },
@@ -68,7 +68,7 @@ export const STATUS_META: Record<CircuitStatus, { color: string; badge: string; 
   INVALID:      { color: 'var(--accent)', badge: 'badge-red',    desc: 'Cannot be used yet.' },
 };
 
-// ── Seed library ──────────────────────────────────────────────────────────────
+// ──── Seed library ────
 
 const MUGELLO: CircuitRecord = {
   id: MUGELLO_CIRCUIT.id,
@@ -243,7 +243,7 @@ export async function persistCircuit(c: CircuitRecord): Promise<void> {
   } catch { /* non-blocking */ }
 }
 
-// ── Validation checklist (spec §4) ───────────────────────────────────────────
+// ──── Validation checklist (spec 4) ────
 
 export function buildValidationChecklist(c: CircuitRecord): ValidationCheck[] {
   return [
@@ -259,7 +259,7 @@ export function buildValidationChecklist(c: CircuitRecord): ValidationCheck[] {
   ];
 }
 
-// ── Dashboard mode (spec §14) ─────────────────────────────────────────────────
+// ──── Dashboard mode (spec 14) ────
 
 export function dashboardMode(status: CircuitStatus): DashboardMode {
   switch (status) {
@@ -295,7 +295,7 @@ export function getActiveDashboardMode(): DashboardMode {
   return dashboardMode(getActiveCircuit().status);
 }
 
-// ── AI reconstruction agents (spec §6/§13) ───────────────────────────────────
+// ──── AI reconstruction agents (spec 6 13) ────
 
 export interface ReconstructionAgent {
   name: string;

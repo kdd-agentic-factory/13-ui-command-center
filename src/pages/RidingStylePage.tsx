@@ -205,10 +205,10 @@ const WORK_ON: WorkOnItem[] = [
 ];
 
 const COACHING_CUES = [
-  { label: 'Before T15 Bucine', cue: '“Finish the turn before asking for drive.”' },
-  { label: 'At throttle pickup', cue: '“Pick it up first, then feed the gas.”' },
-  { label: 'Into T1 San Donato', cue: '“Brake strong, release earlier.”' },
-  { label: 'Through Arrabbiata', cue: '“Trust the line, do not add lean to fix direction.”' },
+  { label: 'Before T15 Bucine', cue: '"Finish the turn before asking for drive."' },
+  { label: 'At throttle pickup', cue: '"Pick it up first, then feed the gas."' },
+  { label: 'Into T1 San Donato', cue: '"Brake strong, release earlier."' },
+  { label: 'Through Arrabbiata', cue: '"Trust the line, do not add lean to fix direction."' },
 ];
 
 const DRILLS: Drill[] = [

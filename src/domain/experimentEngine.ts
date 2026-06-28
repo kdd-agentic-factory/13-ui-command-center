@@ -81,7 +81,7 @@ export const EXPERIMENT_LOOP = [
 export function buildExperiments(rider: string, bike: string, circuit: string): Experiment[] {
   const combo = `${rider} · ${bike} · ${circuit}`;
   return [
-    // ── Active / running ──────────────────────────────────────────────────────
+// ──── Active running ────
     {
       id: 'EXP-04', type: 'Rider technique', title: 'Exit Drive Validation',
       problem: `Throttle opens 0.3–0.4s late at T15 Bucine (${circuit}).`,
@@ -101,7 +101,7 @@ export function buildExperiments(rider: string, bike: string, circuit: string): 
       targetLaps: '5', baseline: 'Stint 03',
       // no result yet — live validation in progress
     },
-    // ── Validated (setup) — matches Black Box decision d1 ─────────────────────
+// ──── Validated (setup) matches Black Box decision d1 ────
     {
       id: 'EXP-03', type: 'Setup', title: 'Rear Rebound Validation',
       problem: 'Rear instability on corner exit (T15 Bucine, T12 Correntaio).',
@@ -129,7 +129,7 @@ export function buildExperiments(rider: string, bike: string, circuit: string): 
         nextRecommendation: 'Keep the setup change. Repeat validation on T12 Correntaio.',
       },
     },
-    // ── Partially validated (tyre) ────────────────────────────────────────────
+// ──── Partially validated (tyre) ────
     {
       id: 'EXP-02', type: 'Tyre', title: 'Rear Soft Thermal Window',
       problem: 'Rear grip drops 12% after lap 6.',
@@ -157,7 +157,7 @@ export function buildExperiments(rider: string, bike: string, circuit: string): 
         nextRecommendation: 'Adopt medium for race stints >12 laps. Do not generalise to cooler sessions.',
       },
     },
-    // ── Rejected — matches Black Box decision d2 ──────────────────────────────
+// ──── Rejected matches Black Box decision d2 ────
     {
       id: 'EXP-01', type: 'Setup', title: 'Traction Control 4 → 5',
       problem: 'Residual rear spin on the two Arrabbiata exits.',

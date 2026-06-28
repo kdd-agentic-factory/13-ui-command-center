@@ -1,9 +1,9 @@
 /**
- * EventEnginePage â¢Ã¢—š¬—” Telemetry Event Engine.
+ * EventEnginePage  —  Telemetry Event Engine.
  *
  * From raw telemetry to race intelligence: a filterable event timeline, a
- * per-corner event map, the selected event card (evidence â¢—Â —â„¢ cause â¢—Â —â„¢ impact â¢—Â —â„¢
- * recommendation â¢—Â —â„¢ action), root-cause clusters and the Oracle's event context.
+ * per-corner event map, the selected event card (evidence → cause → impact →
+ * recommendation → action), root-cause clusters and the Oracle's event context.
  */
 import { useState } from 'react';
 import { Zap, MapPin, ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
@@ -46,7 +46,7 @@ export function EventEnginePage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><Zap size={18} /> Telemetry Event Engine</h1>
-          <p className="page-subtitle">From raw telemetry to race intelligence â¢Ã¢—š¬—” {eng.combo}</p>
+          <p className="page-subtitle">From raw telemetry to race intelligence  —  {eng.combo}</p>
         </div>
       </div>
 
@@ -61,7 +61,7 @@ export function EventEnginePage() {
         <Stat label="data" value={eng.summary.data} color="var(--violet)" />
         <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
           <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Main event</div>
-          <div style={{ fontSize: 12.5, fontWeight: 700, color: severityColor(eng.mainEvent.severity) }}>{eng.mainEvent.corner} â—š—· {eng.mainEvent.name}</div>
+          <div style={{ fontSize: 12.5, fontWeight: 700, color: severityColor(eng.mainEvent.severity) }}>{eng.mainEvent.corner} ─—· {eng.mainEvent.name}</div>
           <div style={{ fontSize: 10, fontFamily: MONO, color: 'var(--text-muted)' }}>{eng.mainEvent.impact}</div>
         </div>
       </div>
@@ -80,7 +80,7 @@ export function EventEnginePage() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, alignItems: 'start' }}>
         {/* Timeline */}
         <div className="card" style={{ padding: 16 }}>
-          <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 12 }}>Event timeline â—š—· {filtered.length}</div>
+          <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 12 }}>Event timeline ─—· {filtered.length}</div>
           <div style={{ position: 'relative', paddingLeft: 4 }}>
             {filtered.map((e, i) => (
               <div key={e.id} onClick={() => setSelId(e.id)} style={{ display: 'flex', gap: 10, paddingBottom: 12, cursor: 'pointer', position: 'relative' }}>
@@ -88,7 +88,7 @@ export function EventEnginePage() {
                 <span style={{ width: 11, height: 11, borderRadius: 999, background: severityColor(e.severity), marginTop: 2, flexShrink: 0, boxShadow: `0 0 6px ${severityColor(e.severity)}`, opacity: e.resolved ? 0.5 : 1 }} />
                 <div style={{ flex: 1, opacity: e.id === selId ? 1 : 0.85 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--text-muted)' }}>L{e.lap} â—š—· {e.corner}</span>
+                    <span style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--text-muted)' }}>L{e.lap} ─—· {e.corner}</span>
                     <span style={{ fontSize: 8.5, fontFamily: MONO, color: categoryColor(e.category), border: `1px solid ${categoryColor(e.category)}`, borderRadius: 3, padding: '0 4px' }}>{e.category}</span>
                     {e.resolved && <CheckCircle2 size={11} style={{ color: 'var(--green)' }} />}
                   </div>
@@ -124,7 +124,7 @@ export function EventEnginePage() {
               <span style={{ fontSize: 15, fontWeight: 800, color: 'var(--text)', flex: 1 }}>{sel.name}</span>
               <span style={{ fontSize: 9, fontFamily: MONO, color: severityColor(sel.severity), border: `1px solid ${severityColor(sel.severity)}`, borderRadius: 4, padding: '1px 7px', textTransform: 'uppercase' }}>{sel.severity}</span>
             </div>
-            <div style={{ fontSize: 10.5, fontFamily: MONO, color: 'var(--text-muted)', marginBottom: 8 }}>L{sel.lap} â—š—· {sel.corner} â—š—· {sel.phase} phase â—š—· <span style={{ color: categoryColor(sel.category) }}>{sel.category}</span></div>
+            <div style={{ fontSize: 10.5, fontFamily: MONO, color: 'var(--text-muted)', marginBottom: 8 }}>L{sel.lap} ─—· {sel.corner} ─—· {sel.phase} phase ─—· <span style={{ color: categoryColor(sel.category) }}>{sel.category}</span></div>
             <div style={{ fontSize: 12, color: 'var(--text)', marginBottom: 8 }}>{sel.pattern}</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginBottom: 8 }}>
               {sel.evidence.map(ev => <span key={ev} style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 5, padding: '2px 7px' }}>{ev}</span>)}
@@ -144,12 +144,12 @@ export function EventEnginePage() {
 
           {/* Clusters */}
           <div className="card" style={{ padding: 16 }}>
-            <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 10 }}>Event clusters â—š—· root cause</div>
+            <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 10 }}>Event clusters ─—· root cause</div>
             {eng.clusters.map(cl => (
               <div key={cl.name} style={{ marginBottom: 10, paddingBottom: 10, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text)', flex: 1 }}>{cl.name}</span>
-                  <span style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--accent)' }}>{cl.avgLoss} â—š—· {cl.frequency}</span>
+                  <span style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--accent)' }}>{cl.avgLoss} ─—· {cl.frequency}</span>
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, margin: '4px 0' }}>
                   {cl.events.map(e => <span key={e} style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', border: '1px solid var(--border)', borderRadius: 4, padding: '1px 6px' }}>{e}</span>)}

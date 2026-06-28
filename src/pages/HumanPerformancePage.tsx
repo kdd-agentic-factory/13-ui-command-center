@@ -1,10 +1,10 @@
 /**
- * HumanPerformancePage —” Human Performance Intelligence.
+ * HumanPerformancePage – Human Performance Intelligence.
  *
- * Rider state score, fatigueâ†’error correlation, cognitive-load map, confidence
+ * Rider state score, fatigue→error correlation, cognitive-load map, confidence
  * index, stint readiness, human performance events, human-aware crash risk,
  * before/after and a wellness layer. Honest: biometrics are wearable/manual and
- * estimated —” the value is the correlation to the telemetry model.
+ * estimated – the value is the correlation to the telemetry model.
  */
 import { HeartPulse, Brain, Gauge, AlertTriangle, Sparkles, Activity } from 'lucide-react';
 import { useGarage } from '../hooks/useGarage';
@@ -25,7 +25,7 @@ export function HumanPerformancePage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><HeartPulse size={18} /> Human Performance Intelligence</h1>
-          <p className="page-subtitle">Rider state · fatigue · focus · confidence · cognitive load · human-aware risk —” {h.combo}</p>
+          <p className="page-subtitle">Rider state · fatigue · focus · confidence · cognitive load · human-aware risk – {h.combo}</p>
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Rider state · conf {h.confidencePct}%</div>
@@ -52,11 +52,11 @@ export function HumanPerformancePage() {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, alignItems: 'start' }}>
-        {/* fatigue â†’ error */}
+        {/* fatigue → error */}
         <div className="card" style={{ padding: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}>
             <Gauge size={14} style={{ color: 'var(--accent)' }} />
-            <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Fatigue â†’ error correlation</span>
+            <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Fatigue → error correlation</span>
           </div>
           {h.fatigue.map(f => (
             <div key={f.laps} style={{ display: 'flex', gap: 10, marginBottom: 8 }}>
@@ -80,7 +80,7 @@ export function HumanPerformancePage() {
                 <span style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--text)', flex: 1 }}>{c.corner}</span>
                 <span style={{ fontSize: 9, fontFamily: MONO, color: loadColor(c.load), border: `1px solid ${loadColor(c.load)}`, borderRadius: 4, padding: '0 6px' }}>{c.load}</span>
               </div>
-              <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{c.reason} <span style={{ color: 'var(--text)' }}>â†’ {c.response}</span></div>
+              <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{c.reason} <span style={{ color: 'var(--text)' }}>→ {c.response}</span></div>
             </div>
           ))}
         </div>
@@ -143,7 +143,7 @@ export function HumanPerformancePage() {
               <div key={r.metric} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, marginBottom: 4 }}>
                 <span style={{ flex: 1, color: 'var(--text)' }}>{r.metric}</span>
                 <span style={{ fontFamily: MONO, color: 'var(--text-muted)' }}>{r.before}</span>
-                <span style={{ color: 'var(--text-muted)' }}>â†’</span>
+                <span style={{ color: 'var(--text-muted)' }}>→</span>
                 <span style={{ fontFamily: MONO, color: 'var(--green)' }}>{r.after}</span>
               </div>
             ))}
@@ -151,7 +151,7 @@ export function HumanPerformancePage() {
           <div className="card" style={{ padding: 16,
  }}>
             <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>Rider wellness</div>
-            <div style={{ fontSize: 11, fontFamily: MONO, color: 'var(--text-muted)', marginBottom: 6 }}>air {h.wellness.airTempC}Â°C · track {h.wellness.trackTempC}Â°C · load {h.wellness.riderLoad}</div>
+            <div style={{ fontSize: 11, fontFamily: MONO, color: 'var(--text-muted)', marginBottom: 6 }}>air {h.wellness.airTempC}°C · track {h.wellness.trackTempC}°C · load {h.wellness.riderLoad}</div>
             {h.wellness.warnings.map(w => <div key={w} style={{ fontSize: 11, color: 'var(--text)' }}>· {w}</div>)}
           </div>
         </div>

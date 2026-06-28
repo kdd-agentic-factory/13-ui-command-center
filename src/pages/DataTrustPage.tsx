@@ -1,5 +1,5 @@
 /**
- * DataTrustPage —” Telemetry Calibration & Data Trust Center.
+ * DataTrustPage – Telemetry Calibration & Data Trust Center.
  *
  * Validates, maps, syncs and scores the telemetry before advanced analysis is
  * allowed: a global Data Trust Score, channel mapping, automatic validation,
@@ -34,7 +34,7 @@ export function DataTrustPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><ShieldCheck size={18} /> Telemetry Calibration & Data Trust</h1>
-          <p className="page-subtitle">Sensor mapping · channel validation · data quality · trust score —” {d.combo}</p>
+          <p className="page-subtitle">Sensor mapping · channel validation · data quality · trust score – {d.combo}</p>
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Data trust score</div>
@@ -208,7 +208,7 @@ function Row({ a, b, status, conf }: { a: string; b: string; status: string; con
       <span style={{ fontFamily: MONO, fontSize: 10.5, color: 'var(--text-muted)' }}>{a}</span>
       <span style={{ fontSize: 11, color: 'var(--text)' }}>{b}</span>
       <span style={{ fontSize: 9.5, fontFamily: MONO, color: channelColor(status as never), border: `1px solid ${channelColor(status as never)}`, borderRadius: 3, padding: '0 5px' }}>{status}</span>
-      <span style={{ fontSize: 10, fontFamily: MONO, color: scoreColor(conf), textAlign: 'right' }}>{conf ? `${conf}%` : '—”'}</span>
+      <span style={{ fontSize: 10, fontFamily: MONO, color: scoreColor(conf), textAlign: 'right' }}>{conf ? `${conf}%` : '–'}</span>
     </>
   );
 }

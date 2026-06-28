@@ -12,7 +12,7 @@
  */
 import type { ProfileId } from '../context/AuthContext';
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// ──── Types ────
 
 export interface DecisionOption {
   label: string;
@@ -38,7 +38,7 @@ export interface Decision {
   decidedLap?: number;
 }
 
-// ── Seeded pending decisions (per-role routing) ───────────────────────────────
+// ──── Seeded pending decisions (per-role routing) ────
 
 const SEED: Decision[] = [
   {
@@ -81,7 +81,7 @@ const SEED: Decision[] = [
   },
 ];
 
-// ── Store ─────────────────────────────────────────────────────────────────────
+// ──── Store ────
 
 let decisions: Decision[] = SEED.map(d => ({ ...d }));
 const listeners = new Set<() => void>();
@@ -132,7 +132,7 @@ async function persistDecisionLog(d: Decision, optionIdx: number, lap: number): 
   } catch { /* non-blocking */ }
 }
 
-// ── Real backend feed: orchestrator approval queue ───────────────────────────
+// ──── Real backend feed orchestrator approval queue ────
 
 const ORCH_BASE = (import.meta.env?.VITE_ORCHESTRATOR_URL as string | undefined) ?? '/api/orchestrator';
 
@@ -209,7 +209,7 @@ export function _resetDecisions(): void {
   emit();
 }
 
-// ── Policy gate (24-security-governance-compliance) ───────────────────────────
+// ──── Policy gate (24-security-governance-compliance) ────
 // Each decision is run through the real security policy engine before it can be
 // approved: is the action allowed, what's the risk level, does it need
 // escalation? Live-with-fallback — if the gate is unreachable / not configured

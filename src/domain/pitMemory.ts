@@ -13,7 +13,7 @@
  * is the persisted decision_log + garage_profiles + setup versions.
  */
 
-// ── Black Box: timeline + decision records ───────────────────────────────────
+// ──── Black Box timeline decision records ────
 
 export type EventSource =
   | 'Telemetry Sage' | 'Safety Guardian' | 'Oracle Chief' | 'Garage Engineer' | 'Digital Twin' | 'System';
@@ -90,7 +90,7 @@ export function buildBlackBox(rider: string, bike: string, circuit: string, sess
   };
 }
 
-// ── Knowledge Graph: learned patterns ────────────────────────────────────────
+// ──── Knowledge Graph learned patterns ────
 
 export interface KnowledgePattern {
   combo: string;          // rider + bike + circuit

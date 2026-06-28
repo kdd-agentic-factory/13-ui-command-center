@@ -77,7 +77,7 @@ export function AeroPage() {
  }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}><Users size={14} style={{ color: difficultyColor(a.dirtyAir.overtakeDifficulty) }} /><span style={hdr}>Dirty air —· following</span></div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
-            <span style={{ fontSize: 22, fontWeight: 800, fontFamily: MONO, color: 'var(--accent)' }}>Ã¢Ë†—™{a.dirtyAir.downforceLossPct}%</span>
+            <span style={{ fontSize: 22, fontWeight: 800, fontFamily: MONO, color: 'var(--accent)' }}>—†—™{a.dirtyAir.downforceLossPct}%</span>
             <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)' }}>front downforce when following</span>
             <span style={{ marginLeft: 'auto', fontSize: 8.5, fontFamily: MONO, color: difficultyColor(a.dirtyAir.overtakeDifficulty), border: `1px solid ${difficultyColor(a.dirtyAir.overtakeDifficulty)}`, borderRadius: 3, padding: '0 6px' }}>overtake {a.dirtyAir.overtakeDifficulty}</span>
           </div>
@@ -96,7 +96,7 @@ export function AeroPage() {
               <div style={{ flex: 1, height: 8, background: 'var(--border)', borderRadius: 3 }}>
                 <span style={{ display: 'block', height: '100%', width: `${(c.aeroGain / maxGain) * 100}%`, background: aeroTypeColor(c.type), borderRadius: 3 }} />
               </div>
-              <span style={{ fontFamily: MONO, fontSize: 9.5, color: 'var(--green)', width: 52, textAlign: 'right' }}>Ã¢Ë†—™{c.aeroGain.toFixed(2)}s</span>
+              <span style={{ fontFamily: MONO, fontSize: 9.5, color: 'var(--green)', width: 52, textAlign: 'right' }}>—†—™{c.aeroGain.toFixed(2)}s</span>
             </div>
           ))}
           <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 4 }}>Lap time the downforce buys in each zone — fast corners pay the most.</div>

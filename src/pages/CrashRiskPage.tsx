@@ -1,12 +1,12 @@
 /**
- * Crash-Risk Index (engineer Phase 3 #4) —” real-time safety guardian for Mugello.
+ * Crash-Risk Index (engineer Phase 3 #4) – real-time safety guardian for Mugello.
  *
  * Dynamic risk by corner, tyre, lean, grip, brake and surface. Not a decorative
- * "semaphore" —” a decision tool with cause, evidence, action, time cost and
+ * "semaphore" – a decision tool with cause, evidence, action, time cost and
  * estimated risk reduction.
  *
  * CRITICAL: No Jarama references. All 15 Mugello corners only.
- * Naming: "Front stability" not "Front grip" —” avoids confusion (LOW risk â‰  low grip).
+ * Naming: "Front stability" not "Front grip" – avoids confusion (LOW risk → low grip).
  */
 
 import { useMemo } from 'react';
@@ -21,32 +21,32 @@ import { getActiveCircuit } from '../domain/circuits';
 import { activeRaceLaps } from '../domain/circuitDatasets';
 import { useGarage } from '../hooks/useGarage';
 
-// —€—€ Risk factors —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+// ──── Risk factors ────
 
 interface Factor {
   id: string;
   label: string;
-  value: number;    // 0—“100
+  value: number;    // 0–100
   level: 'low' | 'med' | 'high';
   note: string;
   zone: string;
 }
 
 const FACTORS: Factor[] = [
-  { id: 'lean',       label: 'Lean margin',           value: 78, level: 'high',    note: 'Peaks 57Â° at T8/T9 Arrabbiata —” close to tyre edge under high load.', zone: 'T8/T9' },
-  { id: 'rear-grip',  label: 'Rear grip',             value: 62, level: 'med',     note: 'Grip down 12% on exit phases —” rear slip detected at T15 Bucine.', zone: 'T15' },
+  { id: 'lean',       label: 'Lean margin',           value: 78, level: 'high',    note: 'Peaks 57° at T8/T9 Arrabbiata – close to tyre edge under high load.', zone: 'T8/T9' },
+  { id: 'rear-grip',  label: 'Rear grip',             value: 62, level: 'med',     note: 'Grip down 12% on exit phases – rear slip detected at T15 Bucine.', zone: 'T15' },
   { id: 'front',      label: 'Front stability',       value: 30, level: 'low',     note: 'Front stable under heavy braking; no lock or major push at T1 San Donato.', zone: 'T1' },
-  { id: 'tyre-therm', label: 'Tyre thermal load',     value: 64, level: 'med',     note: 'Rear soft at 118Â°C; thermal load rising after Lap 15.', zone: 'Rear' },
+  { id: 'tyre-therm', label: 'Tyre thermal load',     value: 64, level: 'med',     note: 'Rear soft at 118°C; thermal load rising after Lap 15.', zone: 'Rear' },
   { id: 'surface',    label: 'Track surface',         value: 38, level: 'low',     note: 'Dry and clean. No wet patches. Kerb risk medium at Biondetti 1/2.', zone: 'T13/T14' },
   { id: 'braking',    label: 'Braking stability',     value: 50, level: 'med',     note: 'Slight chatter into T1 San Donato and T12 Correntaio.', zone: 'T1/T12' },
   { id: 'throttle',   label: 'Throttle aggression',   value: 68, level: 'med',     note: 'Sharp throttle pickup out of T15 Bucine and T7 Savelli.', zone: 'T15/T7' },
-  { id: 'lean-thr',   label: 'Lean + throttle overlap', value: 76, level: 'high',  note: 'Throttle exceeds 40% while lean remains above 55Â° at T15 Bucine.', zone: 'T15' },
+  { id: 'lean-thr',   label: 'Lean + throttle overlap', value: 76, level: 'high',  note: 'Throttle exceeds 40% while lean remains above 55° at T15 Bucine.', zone: 'T15' },
   { id: 'brake-lean', label: 'Brake + lean overlap',  value: 46, level: 'med',     note: 'Brake pressure remains above 12% past turn-in at T1 San Donato.', zone: 'T1' },
   { id: 'elevation',  label: 'Elevation load',        value: 44, level: 'med',     note: 'High-speed load through Arrabbiata 1/2 increases tyre edge stress.', zone: 'T8/T9' },
   { id: 'kerb',       label: 'Kerb strike risk',      value: 48, level: 'med',     note: 'Biondetti 1/2 kerb approach inconsistent over last 3 laps.', zone: 'T13/T14' },
 ];
 
-// —€—€ Risk level helpers —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+// ──── Risk level helpers ────
 
 type RiskLevel = Factor['level'];
 
@@ -67,25 +67,25 @@ const LEVEL_TEXT: Record<RiskLevel, string> = {
   low: 'LOW', med: 'MEDIUM', high: 'HIGH',
 };
 
-// —€—€ Corner risk —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+// ──── Corner risk ────
 
 interface CornerRisk {
   n: number;
   name: string;
-  score: number;    // 0—“100
+  score: number;    // 0–100
   cause: string;
   action: string;
 }
 
 const CORNER_RISKS: CornerRisk[] = [
-  { n: 15, name: 'Bucine',       score: 76, cause: 'Rear slip appears above 42% throttle while lean remains >55Â°',            action: 'Reduce lean 2—“3Â° before throttle pickup' },
-  { n: 8,  name: 'Arrabbiata 1', score: 72, cause: 'Sustained edge grip demand at 57Â° lean',                                  action: 'Hold smoother line, avoid tightening mid-corner' },
-  { n: 9,  name: 'Arrabbiata 2', score: 69, cause: 'High lateral load with rear tyre above 116Â°C',                             action: 'Reduce steering correction, maintain neutral throttle' },
+  { n: 15, name: 'Bucine',       score: 76, cause: 'Rear slip appears above 42% throttle while lean remains >55°',            action: 'Reduce lean 2–3° before throttle pickup' },
+  { n: 8,  name: 'Arrabbiata 1', score: 72, cause: 'Sustained edge grip demand at 57° lean',                                  action: 'Hold smoother line, avoid tightening mid-corner' },
+  { n: 9,  name: 'Arrabbiata 2', score: 69, cause: 'High lateral load with rear tyre above 116°C',                             action: 'Reduce steering correction, maintain neutral throttle' },
   { n: 1,  name: 'San Donato',   score: 63, cause: 'Brake pressure spike during turn-in',                                      action: 'Release brake pressure 5 m earlier' },
-  { n: 12, name: 'Correntaio',   score: 61, cause: 'Front chatter at corner entry —” brake release instability',                action: 'Smooth brake release, avoid late line correction' },
+  { n: 12, name: 'Correntaio',   score: 61, cause: 'Front chatter at corner entry – brake release instability',                action: 'Smooth brake release, avoid late line correction' },
 ];
 
-// —€—€ Near-misses —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+// ──── Near-misses ────
 
 interface NearMiss {
   lap: number;
@@ -98,10 +98,10 @@ interface NearMiss {
 
 const NEAR_MISSES: NearMiss[] = [
   { lap: 14, corner: 'T15 Bucine',       text: 'Rear step-out on exit',          slip: 14, recovery: 'Throttle reduced from 44% to 28%', severity: 'Medium' },
-  { lap: 16, corner: 'T8 Arrabbiata 1', text: 'Front pushed wide at max lean',  slip: 0,  recovery: 'Lean angle 57Â° · line deviation +0.8 m', severity: 'Medium-High' },
+  { lap: 16, corner: 'T8 Arrabbiata 1', text: 'Front pushed wide at max lean',  slip: 0,  recovery: 'Lean angle 57° · line deviation +0.8 m', severity: 'Medium-High' },
 ];
 
-// —€—€ Risk timeline —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+// ──── Risk timeline ────
 
 const TIMELINE: { lap: number; score: number; flag?: 'near-miss' }[] = [
   { lap: 10, score: 42 },
@@ -114,7 +114,7 @@ const TIMELINE: { lap: number; score: number; flag?: 'near-miss' }[] = [
   { lap: 17, score: 58 },
 ];
 
-// —€—€ Phase risk —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+// ──── Phase risk ────
 
 interface PhaseRisk {
   phase: string;
@@ -128,7 +128,7 @@ const PHASE_RISKS: PhaseRisk[] = [
   { phase: 'Exit',  score: 76, issue: 'Rear slip at T15' },
 ];
 
-// —€—€ Main component —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+// ──── Main component ────
 
 export function CrashRiskPage() {
   const garage = useGarage();
@@ -147,9 +147,9 @@ export function CrashRiskPage() {
   return (
     <div className="page">
 
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      {/* ─ */}
       {/* PAGE HEADER                                                           */}
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      {/* ─ */}
       <div className="flex items-center justify-between mb-4">
         <div>
           <h1 className="page-title">Crash-Risk Index</h1>
@@ -169,9 +169,9 @@ export function CrashRiskPage() {
         </span>
       </div>
 
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      {/* ─ */}
       {/* OVERALL RISK INDEX                                                    */}
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      {/* ─ */}
       <div className="card mb-4">
         <div className="card-header">
           <span className="card-title flex items-center gap-2"><Activity size={14} style={{ color: levelColor }} /> Overall Risk Index</span>
@@ -180,7 +180,7 @@ export function CrashRiskPage() {
               <TrendingUp size={10} style={{ verticalAlign: -1, color: 'var(--accent)' }} /> Trend +{trend} pts over last 3 laps
             </span>
             <span style={{ fontSize: 9, fontFamily: 'JetBrains Mono,monospace', color: 'var(--text-muted)' }}>
-              Low 0—“39 · Medium 40—“69 · High 70—“100
+              Low 0–39 · Medium 40–69 · High 70–100
             </span>
           </div>
         </div>
@@ -221,12 +221,12 @@ export function CrashRiskPage() {
         </div>
       </div>
 
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      {/* ─ */}
       {/* GRID: FACTORS + CORNERS + PHASES                                      */}
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      {/* ─ */}
       <div className="grid-2" style={{ gap: 16, alignItems: 'start' }}>
 
-        {/* —€—€ Contributing Factors —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€ */}
+        {/* ── Contributing Factors ─ */}
         <div className="card">
           <div className="card-header">
             <span className="card-title flex items-center gap-2"><Gauge size={14} style={{ color: 'var(--blue)' }} /> Contributing Factors</span>
@@ -265,7 +265,7 @@ export function CrashRiskPage() {
           </div>
         </div>
 
-        {/* —€—€ Right column —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€ */}
+        {/* ── Right column ─ */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
           {/* Riskiest corners */}
@@ -342,9 +342,9 @@ export function CrashRiskPage() {
         </div>
       </div>
 
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      {/* ─ */}
       {/* RISK TIMELINE + NEAR-MISSES + CRASH MAP                               */}
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      {/* ─ */}
       <div className="grid-3 mt-4" style={{ gap: 16 }}>
 
         {/* Risk Timeline */}
@@ -476,9 +476,9 @@ export function CrashRiskPage() {
         </div>
       </div>
 
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      {/* ─ */}
       {/* PERFORMANCE VS SAFETY TRADE-OFF                                        */}
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      {/* ─ */}
       <div className="grid-2 mt-4" style={{ gap: 16 }}>
         <div className="card" style={{ borderColor: 'color-mix(in srgb, var(--blue) 25%, transparent)' }}>
           <div className="card-header">
@@ -515,7 +515,7 @@ export function CrashRiskPage() {
               ['Duration', '2 laps', 'var(--text)'],
               ['TC change', '+1 in S3', 'var(--accent)'],
               ['Throttle', 'Smoothing at T15', 'var(--yellow)'],
-              ['Lean target', 'Reduced by 2Â°', 'var(--purple)'],
+              ['Lean target', 'Reduced by 2°', 'var(--purple)'],
               ['Engine map', 'Unchanged', 'var(--text-muted)'],
             ].map(([label, value, color]) => (
               <div key={label} className="setup-row" style={{ padding: '4px 0' }}>
@@ -534,9 +534,9 @@ export function CrashRiskPage() {
         </div>
       </div>
 
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      {/* ─ */}
       {/* DATA CONFIDENCE + SAFETY GUARDIAN AI                                   */}
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      {/* ─ */}
       <div className="grid-2 mt-4" style={{ gap: 16 }}>
         {/* Data Confidence */}
         <div className="card">
@@ -585,8 +585,8 @@ export function CrashRiskPage() {
           <div style={{ fontSize: 11, color: 'var(--text-dim)', lineHeight: 1.6, marginBottom: 10 }}>
             <strong>Recommended actions:</strong>
             <ol style={{ margin: '4px 0 0 16px', padding: 0 }}>
-              <li>Reduce lean by 2—“3Â° before throttle pickup at T15 Bucine.</li>
-              <li>Avoid TC reduction while rear tyre remains above 116Â°C.</li>
+              <li>Reduce lean by 2–3° before throttle pickup at T15 Bucine.</li>
+              <li>Avoid TC reduction while rear tyre remains above 116°C.</li>
               <li>Keep brake release smoother into T1 San Donato and T12 Correntaio.</li>
               <li>Avoid aggressive kerb use through Biondetti 1/2.</li>
               <li>Hold current pace elsewhere; no need to sacrifice S1 speed.</li>

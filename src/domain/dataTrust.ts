@@ -60,7 +60,7 @@ const STATUS_COLOR: Record<ChannelStatus, string> = {
 export function channelColor(s: ChannelStatus): string { return STATUS_COLOR[s]; }
 export function scoreColor(n: number): string { return n >= 85 ? 'var(--green)' : n >= 70 ? 'var(--yellow)' : 'var(--accent)'; }
 
-// ── KDD pipelines lineage (06-kdd-data-pipelines) ─────────────────────────────
+// ──── KDD pipelines lineage (06-kdd-data-pipelines) ────
 // The static lineage below is the baseline; this overlays the REAL registered
 // KDD pipelines that process the data, live-with-fallback.
 

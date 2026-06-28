@@ -53,7 +53,7 @@ async function safeFetch<T>(url: string): Promise<T | null> {
   }
 }
 
-// ── Service health ──────────────────────────────────────────────────────────
+// ──── Service health ────
 
 export type HealthMap = Record<ServiceKey, boolean>;
 
@@ -67,7 +67,7 @@ export async function fetchAllServiceHealth(): Promise<HealthMap> {
   ) as HealthMap;
 }
 
-// ── Governance ──────────────────────────────────────────────────────────────
+// ──── Governance ────
 
 export interface KddStage {
   /** Canonical stage ID (e.g. "selection", "preprocessing") */
@@ -83,7 +83,7 @@ export async function fetchKddStages(): Promise<KddStagesResponse | null> {
   return safeFetch(`${BASE.governance}${V1}/kdd/stages`);
 }
 
-// ── Workflows ───────────────────────────────────────────────────────────────
+// ──── Workflows ────
 
 export interface WorkflowEntry {
   id: string;
@@ -98,7 +98,7 @@ export async function fetchWorkflows(): Promise<WorkflowEntry[] | null> {
   return Array.isArray(data) ? data : data.workflows;
 }
 
-// ── Skills ──────────────────────────────────────────────────────────────────
+// ──── Skills ────
 
 export interface SkillEntry {
   name: string;
@@ -113,7 +113,7 @@ export async function fetchSkills(): Promise<SkillEntry[] | null> {
   return Array.isArray(data) ? data : data.skills;
 }
 
-// ── Experiments ─────────────────────────────────────────────────────────────
+// ──── Experiments ────
 
 export interface ExperimentEntry {
   experiment_id?: string;
@@ -129,7 +129,7 @@ export async function fetchExperiments(): Promise<ExperimentEntry[] | null> {
   return Array.isArray(data) ? data : data.experiments;
 }
 
-// ── Agents ──────────────────────────────────────────────────────────────────
+// ──── Agents ────
 
 export interface AgentEntry {
   name: string;
@@ -157,7 +157,7 @@ export async function orchestrate(userInput: string): Promise<OrchestrationResul
   }
 }
 
-// ── MCP tools ───────────────────────────────────────────────────────────────
+// ──── MCP tools ────
 
 export interface McpTool {
   name: string;
@@ -172,7 +172,7 @@ export async function fetchMcpTools(): Promise<McpTool[] | null> {
   return Array.isArray(data) ? data : data.tools;
 }
 
-// ── Telemetry dataset (18-telemetry-dataset) ──────────────────────────────────
+// ──── Telemetry dataset (18-telemetry-dataset) ────
 // Real session catalogue from the FastAPI telemetry service. Used to drive the
 // Data Cube from live data, with a deterministic fallback when the service is
 // asleep / unreachable. Endpoint: GET /api/v1/sessions (open in dev mode; the
@@ -312,7 +312,7 @@ export async function evaluatePolicy(action: string, context: Record<string, unk
   }
 }
 
-// ── KDD data pipelines (06-kdd-data-pipelines) ────────────────────────────────
+// ──── KDD data pipelines (06-kdd-data-pipelines) ────
 
 export interface PipelinesList { pipelines: string[]; total: number }
 export type PipelinesOutcome =

@@ -1,6 +1,6 @@
 /**
- * CommandPalette —” âŒ˜K / Ctrl+K quick navigation over the modules the active
- * profile AND session mode allow. Type to filter, â†‘/â†“ to move, Enter to go,
+ * CommandPalette — ⌘K / Ctrl+K quick navigation over the modules the active
+ * profile AND session mode allow. Type to filter, ↑/↓ to move, Enter to go,
  * ESC to close. The pro-usability answer to a 20-item engineering nav.
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -53,7 +53,7 @@ export function CommandPalette({ items, onNavigate }: {
         style={{ width: 'min(520px, 92vw)', height: 'fit-content', background: 'rgba(11,13,18,0.98)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', boxShadow: '0 18px 60px rgba(0,0,0,0.6)', overflow: 'hidden', animation: 'riseIn 0.18s var(--ease-out) both' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '11px 14px', borderBottom: '1px solid var(--border)' }}>
           <Search size={14} style={{ color: 'var(--text-muted)' }} />
-          <input ref={inputRef} value={query} placeholder="Go to module—¦"
+          <input ref={inputRef} value={query} placeholder="Go to module…"
             onChange={e => { setQuery(e.target.value); setCursor(0); }}
             onKeyDown={e => {
               if (e.key === 'ArrowDown') { e.preventDefault(); setCursor(c => Math.min(c + 1, filtered.length - 1)); }

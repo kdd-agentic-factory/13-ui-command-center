@@ -38,7 +38,7 @@ export function CausalEnginePage() {
  }}>
         <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Observed problem · {c.problem}</div>
         <div style={{ fontSize: 12.5, color: 'var(--text)', marginTop: 4, lineHeight: 1.5 }}>{c.verdict}</div>
-        <div style={{ fontSize: 12, color: 'var(--cyan)', fontStyle: 'italic', marginTop: 6 }}>“{c.punchline}”</div>
+        <div style={{ fontSize: 12, color: 'var(--cyan)', fontStyle: 'italic', marginTop: 6 }}>"{c.punchline}"</div>
         <div style={{ display: 'flex', gap: 18, marginTop: 6, fontSize: 10.5, flexWrap: 'wrap' }}>
           <span><span style={{ color: 'var(--text-muted)' }}>Secondary: </span>{c.secondary.join(', ')}</span>
           <span><span style={{ color: 'var(--text-muted)' }}>Rejected: </span><span style={{ color: 'var(--text-muted)' }}>{c.rejected.join(', ')}</span></span>

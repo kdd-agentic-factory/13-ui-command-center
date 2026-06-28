@@ -4,16 +4,16 @@ import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 import { getSessionContext } from '../domain/sessionContext';
 
 /**
- * Predictive Improvement Model â¢Ã¢—š¬—” turns analysis into a forward projection:
+ * Predictive Improvement Model  —  turns analysis into a forward projection:
  * "if you do X at this Mugello corner, you gain Y". Select levers to build
  * a next-lap plan with transparent gain calculation, risk-aware scenarios
  * and Safety Guardian cross-check.
  *
- * Circuit: Mugello GP â—š—· 5.245 km â—š—· 15 turns â—š—· 1,141 m main straight
+ * Circuit: Mugello GP ─—· 5.245 km ─—· 15 turns ─—· 1,141 m main straight
  * Class: KDD Prototype / AI Racing Simulation
  */
 
-const CURRENT_S = 117.842; // 1:57.842 â¢Ã¢—š¬—” club-level R1, not a MotoGP prototype
+const CURRENT_S = 117.842; // 1:57.842  —  club-level R1, not a MotoGP prototype
 const OPTIMAL_S = 116.05;  // 1:56.050 theoretical best for this rider/bike
 
 const MODE_PRESETS = {
@@ -42,7 +42,7 @@ const MODE_ICONS: Record<ModeId, typeof Zap> = {
   'tyre-saving': BarChart3,
 };
 
-/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Lever model â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */
+// ──── Lever model ────
 
 interface Lever {
   id: string;
@@ -51,7 +51,7 @@ interface Lever {
   gain: number;          // seconds saved (negative)
   difficulty: 'easy' | 'medium' | 'hard';
   risk: 'low' | 'low-medium' | 'medium' | 'medium-high' | 'high';
-  confidence: number;    // 0â¢Ã¢—š¬—1
+  confidence: number;    // 0 — 1
   reason: string;
   whyNotSelected?: string;
 }
@@ -65,7 +65,7 @@ const ALL_LEVERS: Lever[] = [
     difficulty: 'medium',
     risk: 'medium-high',
     confidence: 0.88,
-    reason: 'Late throttle pickup while still above 55â—š—Â° lean reduces drive onto the main straight.',
+    reason: 'Late throttle pickup while still above 55\u00b0 lean reduces drive onto the main straight.',
   },
   {
     id: 't1-brake',
@@ -101,7 +101,7 @@ const ALL_LEVERS: Lever[] = [
   {
     id: 'setup-tc',
     action: 'Raise traction control +1 to stop slow-corner slip',
-    corner: 'Setup â—š—· Sector 3',
+    corner: 'Setup ─—· Sector 3',
     gain: 0.090,
     difficulty: 'easy',
     risk: 'low',
@@ -111,7 +111,7 @@ const ALL_LEVERS: Lever[] = [
   },
   {
     id: 't8-lean',
-    action: 'Use less lean, 57â—š—Â° â¢—Â —â„¢ 54â—š—Â°, with smoother steering',
+    action: 'Use less lean, 57\u00b0  —  54\u00b0, with smoother steering',
     corner: 'T8/T9 Arrabbiata',
     gain: 0.074,
     difficulty: 'hard',
@@ -122,7 +122,7 @@ const ALL_LEVERS: Lever[] = [
   },
 ];
 
-/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Helpers â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */
+// ──── Helpers ────
 
 const fmt = (s: number) => {
   const m = Math.floor(s / 60);
@@ -148,7 +148,7 @@ function interactionPenalty(rawGain: number, count: number): number {
   return rawGain * 0.55; // 4+
 }
 
-/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Component â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */
+// ──── Component ────
 
 export function PredictiveModelPage() {
   const [mode, setMode] = useState<ModeId>('attack-p2');
@@ -173,7 +173,7 @@ export function PredictiveModelPage() {
     return { rawGain: raw, penalty: pen, realisticGain: real, projected: proj, pctToOptimal: pct, modelConfidence: adj };
   }, [selected]);
 
-  /* Switch mode â¢—Â —â„¢ reset selection */
+  /* Switch mode  —  reset selection */
   const applyMode = (m: ModeId) => {
     setMode(m);
     setPicked(new Set(MODE_PRESETS[m].selected));
@@ -187,22 +187,22 @@ export function PredictiveModelPage() {
 
   return (
     <div className="page">
-      {/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Header â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */}
+      {/* ──¬──¬ Header ──¬──¬ */}
       <div className="flex items-center justify-between mb-3">
         <div>
           <h1 className="page-title">Predictive Improvement Model</h1>
-          <p className="page-subtitle">{getSessionContext().circuitName} â—š—· Lap Time Optimizer AI â—š—· select your next-lap improvement plan</p>
+          <p className="page-subtitle">{getSessionContext().circuitName} ─—· Lap Time Optimizer AI ─—· select your next-lap improvement plan</p>
         </div>
         <span className="badge badge-blue"><Sparkles size={11} style={{ verticalAlign: -1, marginRight: 4 }} />KDD Prototype</span>
       </div>
 
-      {/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Circuit validation â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */}
+      {/* ──¬──¬ Circuit validation ──¬──¬ */}
       <div style={{ display: 'flex', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
-        <span className="badge badge-green" style={{ fontSize: 10 }}>{MUGELLO_CIRCUIT.shortName} GP â—š—· {MUGELLO_CIRCUIT.lengthKm} km â—š—· {MUGELLO_CIRCUIT.turns} turns â—š—· {MUGELLO_CIRCUIT.assetStatusLabel}</span>
+        <span className="badge badge-green" style={{ fontSize: 10 }}>{MUGELLO_CIRCUIT.shortName} GP ─—· {MUGELLO_CIRCUIT.lengthKm} km ─—· {MUGELLO_CIRCUIT.turns} turns ─—· {MUGELLO_CIRCUIT.assetStatusLabel}</span>
         <span className="badge" style={{ fontSize: 10, background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)' }}>AI Racing Simulation</span>
       </div>
 
-      {/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Optimization mode selector â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */}
+      {/* ──¬──¬ Optimization mode selector ──¬──¬ */}
       <div className="card mb-4">
         <div className="card-header">
           <span className="card-title">Optimization mode</span>
@@ -231,7 +231,7 @@ export function PredictiveModelPage() {
         </div>
       </div>
 
-      {/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Model Projection â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */}
+      {/* ──¬──¬ Model Projection ──¬──¬ */}
       <div className="card mb-4" style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.10), rgba(34,197,94,0.06))' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 22, flexWrap: 'wrap' }}>
           {/* Current */}
@@ -248,7 +248,7 @@ export function PredictiveModelPage() {
           {/* Gain */}
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: 40, fontWeight: 900, fontFamily: 'var(--font-mono)', color: 'var(--green)', lineHeight: 1 }}>
-              â¢Ã‹— —â„¢{realisticGain.toFixed(3)}<span style={{ fontSize: 16 }}>s</span>
+               → {realisticGain.toFixed(3)}<span style={{ fontSize: 16 }}>s</span>
             </div>
             <div style={{ fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
               FROM {picked.size} CHANGES
@@ -263,7 +263,7 @@ export function PredictiveModelPage() {
               display: 'flex', alignItems: 'center', gap: 6,
             }}>
               <Info size={12} />
-              Model adjustment: raw â¢Ã‹— —â„¢{rawGain.toFixed(3)}s â¢—Â —â„¢ {realisticGain.toFixed(3)}s net
+              Model adjustment: raw  → {rawGain.toFixed(3)}s  —  {realisticGain.toFixed(3)}s net
             </div>
           )}
           {/* Theoretical progress bar */}
@@ -280,7 +280,7 @@ export function PredictiveModelPage() {
           </div>
         </div>
 
-        {/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Gain calculation breakdown â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */}
+        {/* ──¬──¬ Gain calculation breakdown ──¬──¬ */}
         <div style={{ marginTop: 14, borderTop: '1px solid var(--border)', paddingTop: 12 }}>
           <button onClick={() => setShowCalc(v => !v)}
             style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: 11, display: 'flex', alignItems: 'center', gap: 6 }}
@@ -291,7 +291,7 @@ export function PredictiveModelPage() {
             <div style={{ marginTop: 8, fontFamily: 'var(--font-mono)', fontSize: 12, display: 'flex', flexDirection: 'column', gap: 4 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', maxWidth: 360 }}>
                 <span style={{ color: 'var(--text-muted)' }}>Raw selected gain</span>
-                <span style={{ color: 'var(--green)', fontWeight: 700 }}>â¢Ã‹— —â„¢{rawGain.toFixed(3)}s</span>
+                <span style={{ color: 'var(--green)', fontWeight: 700 }}> → {rawGain.toFixed(3)}s</span>
               </div>
               {penalty > 0 && (
                 <div style={{ display: 'flex', justifyContent: 'space-between', maxWidth: 360 }}>
@@ -301,7 +301,7 @@ export function PredictiveModelPage() {
               )}
               <div style={{ display: 'flex', justifyContent: 'space-between', maxWidth: 360, borderTop: '1px solid var(--border)', paddingTop: 4 }}>
                 <span style={{ color: 'var(--green)', fontWeight: 700 }}>Realistic combined gain</span>
-                <span style={{ color: 'var(--green)', fontWeight: 900 }}>â¢Ã‹— —â„¢{realisticGain.toFixed(3)}s</span>
+                <span style={{ color: 'var(--green)', fontWeight: 900 }}> → {realisticGain.toFixed(3)}s</span>
               </div>
               <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>
                 Gains are modelled independently. Overlapping changes (same corner, same phase) share benefit.
@@ -311,7 +311,7 @@ export function PredictiveModelPage() {
         </div>
       </div>
 
-      {/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Model confidence row â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */}
+      {/* ──¬──¬ Model confidence row ──¬──¬ */}
       <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
         <div className="card" style={{ flex: 1, minWidth: 160 }}>
           <div style={{ fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: 4 }}>MODEL CONFIDENCE</div>
@@ -341,7 +341,7 @@ export function PredictiveModelPage() {
         </div>
       </div>
 
-      {/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Improvement levers â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */}
+      {/* ──¬──¬ Improvement levers ──¬──¬ */}
       <div className="card mb-4">
         <div className="card-header">
           <span className="card-title">Improvement levers</span>
@@ -366,10 +366,10 @@ export function PredictiveModelPage() {
         </div>
       </div>
 
-      {/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Opportunity Map â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */}
+      {/* ──¬──¬ Opportunity Map ──¬──¬ */}
       <div className="card mb-4">
         <div className="card-header">
-          <span className="card-title">Opportunity Map â—š—· {getSessionContext().circuitName}</span>
+          <span className="card-title">Opportunity Map ─—· {getSessionContext().circuitName}</span>
           <span className="badge badge-blue">real circuit geometry</span>
         </div>
         <div style={{ marginTop: 6 }}>
@@ -388,29 +388,29 @@ export function PredictiveModelPage() {
                     <div style={{ flex: 1, height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.07)' }}>
                       <div style={{ width: `${pct}%`, height: '100%', borderRadius: 2, background: picked.has(l.id) ? 'var(--green)' : 'var(--blue)' }} />
                     </div>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, color: 'var(--green)' }}>â¢Ã‹— —â„¢{l.gain.toFixed(3)}s</span>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, color: 'var(--green)' }}> → {l.gain.toFixed(3)}s</span>
                   </div>
                 </div>
               );
             })}
           </div>
           <div style={{ display: 'flex', gap: 10, fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
-            <span>Gain â—š—·</span><span style={{ color: 'var(--green)' }}>â¢——Â selected</span>
-            <span style={{ color: 'var(--blue)' }}>â¢——Â available</span>
+            <span>Gain ─—·</span><span style={{ color: 'var(--green)' }}> →  selected</span>
+            <span style={{ color: 'var(--blue)' }}> →  available</span>
           </div>
         </div>
       </div>
 
       {/* Two-column layout for plan + safety */}
       <div style={{ display: 'flex', gap: 14, marginBottom: 16, flexWrap: 'wrap' }}>
-        {/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Plan Summary â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */}
+        {/* ──¬──¬ Plan Summary ──¬──¬ */}
         <div className="card" style={{ flex: 1.4, minWidth: 280 }}>
           <div className="card-header"><span className="card-title">Plan Summary</span></div>
           <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 6 }}>
             {[
               ['Selected plan', `${picked.size} changes`],
-              ['Focus', selected.length > 0 ? cornerExitFocus(selected) : 'â¢Ã¢—š¬—”'],
-              ['Expected gain', `â¢Ã‹— —â„¢${realisticGain.toFixed(3)}s`],
+              ['Focus', selected.length > 0 ? cornerExitFocus(selected) : ' — '],
+              ['Expected gain', ` → ${realisticGain.toFixed(3)}s`],
               ['Risk impact', `+${(picked.size * 3).toFixed(0)} points`],
               ['Safety mode', picked.size <= 2 ? 'Not required' : 'Recommended (rear tyre protection)'],
               ['Recommended execution', selected.length <= 2 ? 'Next lap' : 'Next 2 laps'],
@@ -423,7 +423,7 @@ export function PredictiveModelPage() {
           </div>
         </div>
 
-        {/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Safety Guardian Note â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */}
+        {/* ──¬──¬ Safety Guardian Note ──¬──¬ */}
         <div className="card" style={{ flex: 1, minWidth: 240,
  }}>
           <div className="card-header">
@@ -431,7 +431,7 @@ export function PredictiveModelPage() {
           </div>
           <div style={{ marginTop: 6, fontSize: 12, lineHeight: 1.6 }}>
             <p style={{ color: 'var(--text-dim)' }}>
-              Do not combine earlier throttle at <strong>T15 Bucine</strong> with TC reduction while rear tyre remains above <strong>118â—š—Â°C</strong>.
+              Do not combine earlier throttle at <strong>T15 Bucine</strong> with TC reduction while rear tyre remains above <strong>118\u00b0C</strong>.
             </p>
             <div style={{ marginTop: 8, padding: '6px 8px', borderRadius: 4, background: 'color-mix(in srgb, var(--yellow) 8%, transparent)', border: '1px solid color-mix(in srgb, var(--yellow) 15%, transparent)' }}>
               <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}>
@@ -448,7 +448,7 @@ export function PredictiveModelPage() {
         </div>
       </div>
 
-      {/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Rider Coach Plan â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */}
+      {/* ──¬──¬ Rider Coach Plan ──¬──¬ */}
       <div className="card mb-4">
         <div className="card-header"><span className="card-title">Rider Coach Plan</span></div>
         <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -472,7 +472,7 @@ export function PredictiveModelPage() {
         </div>
       </div>
 
-      {/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Alternative Plans â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */}
+      {/* ──¬──¬ Alternative Plans ──¬──¬ */}
       <div className="card mb-4">
         <div className="card-header">
           <span className="card-title">Alternative Plans</span>
@@ -490,7 +490,7 @@ export function PredictiveModelPage() {
                 }}
               >
                 <div style={{ fontSize: 11, fontWeight: 700, fontFamily: 'var(--font-mono)' }}>{MODE_LABELS[m]}</div>
-                <div style={{ fontSize: 13, fontWeight: 800, fontFamily: 'var(--font-mono)', color: 'var(--green)', marginTop: 2 }}>â¢Ã‹— —â„¢{p.gain.toFixed(3)}s</div>
+                <div style={{ fontSize: 13, fontWeight: 800, fontFamily: 'var(--font-mono)', color: 'var(--green)', marginTop: 2 }}> → {p.gain.toFixed(3)}s</div>
                 <div style={{ fontSize: 10, color: riskColorFromStr(p.risk), fontFamily: 'var(--font-mono)', marginTop: 2 }}>
                   Risk {p.risk}
                 </div>
@@ -500,7 +500,7 @@ export function PredictiveModelPage() {
         </div>
       </div>
 
-      {/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Model Integrity â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */}
+      {/* ──¬──¬ Model Integrity ──¬──¬ */}
       <div className="card">
         <div className="card-header"><span className="card-title">Model Integrity</span></div>
         <div style={{ marginTop: 6, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4, fontSize: 11, fontFamily: 'var(--font-mono)', maxWidth: 400 }}>
@@ -521,7 +521,7 @@ export function PredictiveModelPage() {
   );
 }
 
-/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Sub-components â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */
+// ──── Sub-components ────
 
 function LeverCard({ lever, picked, onToggle }: { lever: Lever; picked: boolean; onToggle: (id: string) => void }) {
   return (
@@ -574,7 +574,7 @@ function LeverCard({ lever, picked, onToggle }: { lever: Lever; picked: boolean;
         {/* Gain badge */}
         <div style={{ textAlign: 'right', flexShrink: 0 }}>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: 15, fontWeight: 800, color: 'var(--green)' }}>
-            â¢Ã‹— —â„¢{lever.gain.toFixed(3)}<span style={{ fontSize: 10 }}>s</span>
+             → {lever.gain.toFixed(3)}<span style={{ fontSize: 10 }}>s</span>
           </div>
         </div>
       </button>
@@ -595,7 +595,7 @@ const tagStyle = (color: string) => ({
   letterSpacing: '0.04em',
 });
 
-/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Helpers â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */
+// ──── Helpers ────
 
 function cornerExitFocus(levers: Lever[]): string {
   const exits = levers.filter(l => l.action.toLowerCase().includes('throttle') || l.action.toLowerCase().includes('exit'));

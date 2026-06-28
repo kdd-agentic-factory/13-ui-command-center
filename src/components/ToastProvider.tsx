@@ -1,15 +1,15 @@
 /**
- * ToastProvider —” global notification system for race-critical alerts.
+ * ToastProvider – global notification system for race-critical alerts.
  *
  * Usage:
  *   const { toast } = useToast();
- *   toast({ type: 'critical', title: 'Rear Grip Cliff', message: 'Lap 11 approaching —” pit now.' });
+ *   toast({ type: 'critical', title: 'Rear Grip Cliff', message: 'Lap 11 approaching – pit now.' });
  *
  * Types: 'critical' | 'warning' | 'success' | 'info'
  */
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
 
-// —€—€ Types —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+// ──── Types ────
 
 export type ToastType = 'critical' | 'warning' | 'success' | 'info';
 
@@ -24,12 +24,12 @@ interface ToastCtx {
   toast: (t: Omit<Toast, 'id'>) => void;
 }
 
-// —€—€ Context —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+// ──── Context ────
 
 const Ctx = createContext<ToastCtx>({ toast: () => {} });
 export const useToast = () => useContext(Ctx);
 
-// —€—€ Styling maps —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+// ──── Styling maps ────
 
 const COLORS: Record<ToastType, { bg: string; border: string; titleColor: string; icon: string }> = {
   critical: {
@@ -42,26 +42,26 @@ const COLORS: Record<ToastType, { bg: string; border: string; titleColor: string
     bg: 'rgba(245,158,11,0.12)',
     border: 'rgba(245,158,11,0.40)',
     titleColor: 'var(--yellow)',
-    icon: 'âš ',
+    icon: '⚙ ',
   },
   success: {
     bg: 'rgba(34,197,94,0.12)',
     border: 'rgba(34,197,94,0.40)',
     titleColor: 'var(--green)',
-    icon: 'âœ“',
+    icon: '✓',
   },
   info: {
     bg: 'rgba(59,130,246,0.12)',
     border: 'rgba(59,130,246,0.40)',
     titleColor: 'var(--blue)',
-    icon: 'â„¹',
+    icon: '„¹',
   },
 };
 
 const TOAST_DURATION_MS = 4500;
 const MAX_VISIBLE = 5;
 
-// —€—€ Provider —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+// ──── Provider ────
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -78,7 +78,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <Ctx.Provider value={{ toast }}>
       {children}
 
-      {/* —€—€ Toast portal —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€ */}
+      {/* ── Toast portal ─────────────────────────────────────────────────── */}
       <div
         aria-live="assertive"
         aria-atomic="false"

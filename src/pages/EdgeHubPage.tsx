@@ -1,9 +1,9 @@
 /**
- * EdgeHubPage —” KDD Trackside Edge Hub.
+ * EdgeHubPage – KDD Trackside Edge Hub.
  *
  * Local pit-box operational status: connected devices + packet health, local
  * processing, offline-first capability, garage ready check, live event feed,
- * video sync, edgeâ†”cloud sync, edge/cloud AI split, sim-to-real live check,
+ * video sync, edge→"cloud sync, edge/cloud AI split, sim-to-real live check,
  * security and the session buffer. Offline-first, low-latency, multi-device.
  */
 import { Radio, Wifi, CheckCircle2, AlertTriangle, Cloud, Cpu, Lock } from 'lucide-react';
@@ -24,7 +24,7 @@ export function EdgeHubPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><Radio size={18} /> KDD Trackside Edge Hub</h1>
-          <p className="page-subtitle">Local telemetry gateway · edge processing · offline-first · secure sync —” {e.combo}</p>
+          <p className="page-subtitle">Local telemetry gateway · edge processing · offline-first · secure sync – {e.combo}</p>
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--green)', display: 'inline-flex', alignItems: 'center', gap: 5 }}><Wifi size={12} /> {e.hubStatus}</div>
@@ -33,7 +33,7 @@ export function EdgeHubPage() {
       </div>
 
       <div className="card mb-4" style={{ padding: '8px 12px', background: 'var(--yellow-dim)', border: '1px solid var(--yellow-border)', fontSize: 10.5, color: 'var(--text)' }}>
-        Representative edge state —” no physical hardware is attached in this view; it shows how the trackside hub reports device health, packet loss, offline capability and cloud sync.
+        Representative edge state – no physical hardware is attached in this view; it shows how the trackside hub reports device health, packet loss, offline capability and cloud sync.
       </div>
 
       {/* status row */}
@@ -113,7 +113,7 @@ export function EdgeHubPage() {
           <div style={{ fontSize: 11.5, color: 'var(--text)' }}><span style={{ color: 'var(--accent)' }}>NOW</span> · {e.liveFeed.now}</div>
           <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>Last lap · {e.liveFeed.lastLap}</div>
           <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Trend · {e.liveFeed.trend}</div>
-          <div style={{ fontSize: 11.5, color: 'var(--cyan)', marginTop: 4 }}>â†’ {e.liveFeed.recommendation}</div>
+          <div style={{ fontSize: 11.5, color: 'var(--cyan)', marginTop: 4 }}>→ {e.liveFeed.recommendation}</div>
         </div>
         <div className="card" style={{ padding: 16 }}>
           <div style={card}>Video sync engine</div>
@@ -122,12 +122,12 @@ export function EdgeHubPage() {
         </div>
       </div>
 
-      {/* edgeâ†”cloud sync + AI split */}
+      {/* edge→"cloud sync + AI split */}
       <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 14, marginTop: 14 }}>
         <div className="card" style={{ padding: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
             <Cloud size={14} style={{ color: 'var(--cyan)' }} />
-            <span style={{ ...card, marginBottom: 0, flex: 1 }}>Edge â†’ cloud sync · {e.sync.progress}%</span>
+            <span style={{ ...card, marginBottom: 0, flex: 1 }}>Edge → cloud sync · {e.sync.progress}%</span>
             <span style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--green)' }}>{e.sync.conflicts}</span>
           </div>
           <div style={{ height: 6, borderRadius: 3, background: 'rgba(255,255,255,0.06)', overflow: 'hidden', marginBottom: 8 }}>

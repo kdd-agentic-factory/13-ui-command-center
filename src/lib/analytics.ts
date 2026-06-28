@@ -9,7 +9,7 @@ import posthog from 'posthog-js';
 const POSTHOG_KEY = 'phc_zhVHLCQA7LyyiYYUxwpgPXdp99WczEbxXY3KriUQ6qji';
 const POSTHOG_HOST = 'https://us.i.posthog.com';
 
-// ── Init ──────────────────────────────────────────────────────────────────────
+// ──── Init ────
 
 export function initAnalytics(): void {
   posthog.init(POSTHOG_KEY, {
@@ -33,7 +33,7 @@ export function initAnalytics(): void {
   });
 }
 
-// ── Typed event helpers ───────────────────────────────────────────────────────
+// ──── Typed event helpers ────
 
 /** Fired once when the dashboard finishes its first data load. */
 export function trackDashboardLoaded(props: {

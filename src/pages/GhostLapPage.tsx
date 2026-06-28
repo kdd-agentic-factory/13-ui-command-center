@@ -40,7 +40,7 @@ export function GhostLapPage() {
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Potential gain</div>
-          <div style={{ fontSize: 18, fontWeight: 800, fontFamily: MONO, color: 'var(--green)' }}>Ã¢Ë†—™{gl.potentialGain.toFixed(3)}s</div>
+          <div style={{ fontSize: 18, fontWeight: 800, fontFamily: MONO, color: 'var(--green)' }}>—†—™{gl.potentialGain.toFixed(3)}s</div>
         </div>
       </div>
 

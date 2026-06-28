@@ -95,7 +95,7 @@ const CRITICAL_CORNERS: CriticalCorner[] = [
     loss: '+0.284s',
     issue: 'Late throttle + rear slip',
     phase: 'Exit',
-    evidence: 'Throttle 0.40s late · rear grip 78% · max lean 57Â°',
+    evidence: 'Throttle 0.40s late · rear grip 78% · max lean 57°',
   },
   {
     corner: 'T1 · San Donato',
@@ -114,8 +114,8 @@ const CRITICAL_CORNERS: CriticalCorner[] = [
 ];
 
 const NEXT_STINT_PLAN = [
-  { title: 'T15 Bucine', body: 'Open throttle 0.3s earlier, but only after reducing lean below 54—“55Â°.' },
-  { title: 'Rear grip protection', body: 'Keep max lean below 55Â° on slow-corner exits and avoid sharp throttle pickup.' },
+  { title: 'T15 Bucine', body: 'Open throttle 0.3s earlier, but only after reducing lean below 54–55°.' },
+  { title: 'Rear grip protection', body: 'Keep max lean below 55° on slow-corner exits and avoid sharp throttle pickup.' },
   { title: 'T1 San Donato', body: 'Brake 9 m earlier and release pressure more progressively to reduce front chatter.' },
   { title: 'Rear tyre validation', body: 'Check hot rear pressure immediately after the stint and compare against target range.' },
 ];
@@ -123,12 +123,12 @@ const NEXT_STINT_PLAN = [
 const RIDER_DIAGNOSIS: DiagnosisItem[] = [
   {
     title: 'Throttle timing',
-    body: 'Throttle opening is consistently 0.2—“0.4s late on exit phases.',
+    body: 'Throttle opening is consistently 0.2–0.4s late on exit phases.',
     zones: 'Affected zones: T15 Bucine, T12 Correntaio, T7 Savelli.',
   },
   {
     title: 'Lean management',
-    body: 'Over-leaning above 56Â° is increasing rear edge temperature.',
+    body: 'Over-leaning above 56° is increasing rear edge temperature.',
     zones: 'Affected zones: T8/T9 Arrabbiata 1/2 and T15 Bucine.',
   },
   {
@@ -163,7 +163,7 @@ const SETUP_SUGGESTIONS = [
 ];
 
 const VALIDATION_TARGETS: ValidationTarget[] = [
-  { area: 'T15 Bucine', targets: ['Throttle pickup: 0.3s earlier', 'Lean at pickup: <54Â°', 'Rear slip: <10%', 'Exit speed: +6 km/h'] },
+  { area: 'T15 Bucine', targets: ['Throttle pickup: 0.3s earlier', 'Lean at pickup: <54°', 'Rear slip: <10%', 'Exit speed: +6 km/h'] },
   { area: 'T1 San Donato', targets: ['Brake point: 9 m earlier', 'Chatter: <12 Hz', 'Line deviation: <0.3 m'] },
   { area: 'T12 Correntaio', targets: ['Entry width: -0.4 m', 'Exit speed: +4 km/h'] },
   { area: 'Tyres', targets: ['Rear grip drop: <8%', 'Rear pressure: within target hot range'] },
@@ -234,7 +234,7 @@ export function SessionReportPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">Session Report</h1>
-          <p className="page-subtitle">{session.ctx.circuitName} GP · {session.ctx.setup.stint ?? 'Stint 03'} · {session.ctx.setup.rider ?? 'RubÃ©n JuÃ¡rez'} · {session.ctx.setup.bike ?? 'Yamaha R1'}</p>
+          <p className="page-subtitle">{session.ctx.circuitName} GP · {session.ctx.setup.stint ?? 'Stint 03'} · {session.ctx.setup.rider ?? 'Rubén Juárez'} · {session.ctx.setup.bike ?? 'Yamaha R1'}</p>
         </div>
         <div className="flex items-center gap-2" style={{ flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           <span className="badge badge-blue">Post-stint</span>
@@ -248,7 +248,7 @@ export function SessionReportPage() {
  }}>
         <div className="card-body">
           <div className="grid-4">
-            <div><div className="card-label">Conditions</div><div style={{ fontSize: 13, fontWeight: 800 }}>Dry · Air 24Â°C · Track 38Â°C · Wind 8 km/h</div></div>
+            <div><div className="card-label">Conditions</div><div style={{ fontSize: 13, fontWeight: 800 }}>Dry · Air 24°C · Track 38°C · Wind 8 km/h</div></div>
             <div><div className="card-label">Circuit</div><div style={{ fontSize: 13, fontWeight: 800 }}>{MUGELLO_CIRCUIT.shortName} · {MUGELLO_CIRCUIT.lengthKm} km · {MUGELLO_CIRCUIT.turns} turns</div></div>
             <div><div className="card-label">Report mode</div><div style={{ fontSize: 13, fontWeight: 800 }}>Post-stint · rider + engineering summary</div></div>
             <div><div className="card-label">Generated</div><div style={{ fontSize: 13, fontWeight: 800 }}>Pit wall · 14:32:18</div></div>
@@ -273,7 +273,7 @@ export function SessionReportPage() {
 
       <div className="card mb-4">
         <div className="card-header">
-          <span className="card-title flex items-center gap-2"><FileText size={14} style={{ color: 'var(--green)' }} /> Stint Outcome · Before â†’ After</span>
+          <span className="card-title flex items-center gap-2"><FileText size={14} style={{ color: 'var(--green)' }} /> Stint Outcome · Before → After</span>
           <span className="badge badge-green">{AFTER.gain}s improvement</span>
         </div>
         <div className="card-body">
@@ -334,7 +334,7 @@ export function SessionReportPage() {
           <div className="card-body">
             {NEXT_STINT_PLAN.map((item, index) => <NumberedAction key={item.title} index={index + 1} title={item.title} body={item.body} />)}
             <div style={{ marginTop: 12, padding: '9px 11px', borderRadius: 8, border: '1px solid rgba(59,130,246,0.18)', background: 'rgba(59,130,246,0.07)', fontSize: 12, color: 'var(--text-muted)' }}>
-              <strong style={{ color: 'var(--blue)' }}>Validation lap:</strong> use laps 2—“4 of the next stint for a clean comparison.
+              <strong style={{ color: 'var(--blue)' }}>Validation lap:</strong> use laps 2–4 of the next stint for a clean comparison.
             </div>
           </div>
         </div>
@@ -371,7 +371,7 @@ export function SessionReportPage() {
                 <StatTile label="Rear grip drop" value="12%" detail="exit-phase dominant" color="var(--accent)" />
                 <StatTile label="Compound" value="Rear Soft / SC1" detail="race simulation tyre" color="var(--yellow)" />
                 <StatTile label="Cliff lap" value="L16" detail="estimated thermal cliff" color="var(--orange)" />
-                <StatTile label="Rear peak temp" value="118Â°C" detail="thermal load peak" color="var(--accent)" />
+                <StatTile label="Rear peak temp" value="118°C" detail="thermal load peak" color="var(--accent)" />
                 <StatTile label="Thermal zones" value="T8/T9 · T15" detail="Arrabbiata + Bucine" color="var(--blue)" />
                 <StatTile label="Grip behaviour" value=">40% throttle" detail="loss during pickup" color="var(--text)" />
               </div>

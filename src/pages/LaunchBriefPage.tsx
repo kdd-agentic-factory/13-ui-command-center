@@ -1,5 +1,5 @@
 /**
- * LaunchBriefPage — final gate screen (Circuit Ã¢— —™ Mode Ã¢— —™ Data Ã¢— —™ LAUNCH).
+ * LaunchBriefPage — final gate screen (Circuit → —™ Mode → —™ Data → —™ LAUNCH).
  * The pre-flight summary: circuit, mode, rider, data, active modules and
  * Oracle status, then a single Launch action. Total-control feeling before
  * the digital pit-wall opens.
@@ -30,7 +30,7 @@ export function LaunchBriefPage({ circuit, ctx, onBack, onLaunch }: Props) {
   const facts: Array<[string, string]> = [
     ['Circuit', `${circuit.name} ${circuit.layout} Layout —· ${circuit.status}`],
     ['Mode', `${ctx.sessionMode} —· ${ctx.dashboardProfile.replace(/_/g, ' ')}`],
-    ['Rider', ctx.setup.rider ?? 'RubâÂ©n JuâÂ¡rez'],
+    ['Rider', ctx.setup.rider ?? 'Rubén Juárez'],
     ['Bike', ctx.setup.bike ?? 'Yamaha R1'],
     ['Data', ctx.setup.dataSource === 'upload' ? 'Uploaded session files'
       : ctx.setup.dataSource === 'demo' ? 'Demo sample (reproducible)'

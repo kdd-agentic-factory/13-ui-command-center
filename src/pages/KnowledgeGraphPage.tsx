@@ -1,9 +1,9 @@
 /**
- * KnowledgeGraphPage —” Garage Knowledge Graph.
+ * KnowledgeGraphPage – Garage Knowledge Graph.
  *
  * What the platform has LEARNED across sessions: for the active rider+bike+
  * circuit, the recurring limiter, the best proven fix, the measured result,
- * the confidence and the session count behind it —” plus the recommended
+ * the confidence and the session count behind it – plus the recommended
  * starting setup for the next visit. The learning loop made visible.
  */
 import { Network, ArrowRight } from 'lucide-react';
@@ -43,7 +43,7 @@ export function KnowledgeGraphPage() {
               </span>
             </div>
 
-            {/* problem â†’ fix â†’ result chain */}
+            {/* problem → fix → result chain */}
             <div style={{ display: 'flex', alignItems: 'stretch', gap: 10, flexWrap: 'wrap' }}>
               <div style={{ flex: 1, minWidth: 200 }}>
                 <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Limiter</div>
@@ -65,7 +65,7 @@ export function KnowledgeGraphPage() {
               <span style={{ fontSize: 10.5, color: 'var(--text-muted)' }}>Next visit, start from</span>
               <span style={{ fontSize: 11, fontFamily: MONO, fontWeight: 700, color: 'var(--text)' }}>{p.recommendedSetup}</span>
               <button onClick={() => navigate('setup-lab')} style={{ marginLeft: 'auto', fontSize: 10, fontFamily: MONO, color: 'var(--cyan)', background: 'none', border: 'none', cursor: 'pointer' }}>
-                open in Setup Lab â†’
+                open in Setup Lab →
               </button>
             </div>
           </div>

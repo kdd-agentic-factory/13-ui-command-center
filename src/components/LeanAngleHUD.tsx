@@ -1,17 +1,17 @@
 /**
- * LeanAngleHUD (engineer report v2 Â§6) —” lean is the identity metric of a
+ * LeanAngleHUD (engineer report v2 §6) – lean is the identity metric of a
  * motorcycle, so it gets its own HUD: a semicircular gauge with the live lean,
  * the session max, the best-lap max, the apex target window, and a left/right
  * corner-average comparison (asymmetry tells you which side you trust less).
  * Risk is shown with colour + an explicit label (WCAG).
  *
- * KEY DESIGN DECISION: "Apex target" must specify APEX (52-55Â°) because the
+ * KEY DESIGN DECISION: "Apex target" must specify APEX (52-55°) because the
  * lean value OUTSIDE a corner (approach, straight) is naturally much lower.
  * A target without context creates false alarms.
  */
 
 interface LeanAngleHUDProps {
-  lean: number;         // signed degrees: + = right, âˆ’ = left
+  lean: number;         // signed degrees: + = right, − = left
   maxLean?: number;     // session max (magnitude)
   bestMax?: number;     // best-lap max (magnitude)
   targetLo?: number;
@@ -78,17 +78,17 @@ export function LeanAngleHUD({
           <line x1={CX} y1={CY} x2={nx} y2={ny} stroke={risk.c} strokeWidth="3.5" strokeLinecap="round" />
           <circle cx={CX} cy={CY} r="5" fill="#0B0D12" stroke={risk.c} strokeWidth="2" />
           {/* value */}
-          <text x={CX} y={CY - 26} textAnchor="middle" fill="var(--text)" fontSize="26" fontWeight="800" fontFamily="var(--font-mono)">{mag.toFixed(1)}Â°</text>
+          <text x={CX} y={CY - 26} textAnchor="middle" fill="var(--text)" fontSize="26" fontWeight="800" fontFamily="var(--font-mono)">{mag.toFixed(1)}°</text>
           <text x={CX} y={CY - 12} textAnchor="middle" fill="var(--text-muted)" fontSize="9" fontFamily="var(--font-mono)" letterSpacing="1.5">{lean >= 0 ? 'RIGHT' : 'LEFT'}</text>
         </svg>
 
         <div style={{ flex: 1, minWidth: 160, display: 'flex', flexDirection: 'column', gap: 8 }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
             {[
-              { l: 'Session max', v: `${maxLean.toFixed(1)}Â°`, c: 'var(--accent)' },
-              { l: 'Best-lap max', v: `${bestMax.toFixed(1)}Â°`, c: 'var(--yellow)' },
-              { l: 'Apex target', v: `${targetLo}—“${targetHi}Â°`, c: 'var(--green)' },
-              { l: 'Current', v: `${mag.toFixed(1)}Â°`, c: risk.c },
+              { l: 'Session max', v: `${maxLean.toFixed(1)}°`, c: 'var(--accent)' },
+              { l: 'Best-lap max', v: `${bestMax.toFixed(1)}°`, c: 'var(--yellow)' },
+              { l: 'Apex target', v: `${targetLo}–${targetHi}°`, c: 'var(--green)' },
+              { l: 'Current', v: `${mag.toFixed(1)}°`, c: risk.c },
             ].map(s => (
               <div key={s.l} className="stat-tile">
                 <div className="stat-tile__label">{s.l}</div>
@@ -100,9 +100,9 @@ export function LeanAngleHUD({
           {/* Left / right asymmetry */}
           <div style={{ marginTop: 2 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-muted)', marginBottom: 4 }}>
-              <span>LEFT {leftAvg.toFixed(1)}Â°</span>
-              <span style={{ color: asym > 2 ? 'var(--yellow)' : 'var(--text-dim)' }}>ASYMMETRY {asym.toFixed(1)}Â°</span>
-              <span>RIGHT {rightAvg.toFixed(1)}Â°</span>
+              <span>LEFT {leftAvg.toFixed(1)}°</span>
+              <span style={{ color: asym > 2 ? 'var(--yellow)' : 'var(--text-dim)' }}>ASYMMETRY {asym.toFixed(1)}°</span>
+              <span>RIGHT {rightAvg.toFixed(1)}°</span>
             </div>
             <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
               <div style={{ flex: 1, height: 8, borderRadius: 4, background: 'rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'flex-end' }}>
@@ -129,8 +129,8 @@ export function LeanAngleHUD({
               </div>
               <div style={{ color: 'var(--text-dim)' }}>
                 {isApproach && `Current lean is normal for ${phase}. Apex target applies mid-corner only.`}
-                {isApex && `Target apex lean: ${targetLo}—“${targetHi}Â°. Stay within window.`}
-                {isExit && `Reduce lean as throttle opens. Risk increases above 55Â° with rear tyre >116Â°C.`}
+                {isApex && `Target apex lean: ${targetLo}–${targetHi}°. Stay within window.`}
+                {isExit && `Reduce lean as throttle opens. Risk increases above 55° with rear tyre >116°C.`}
                 {!phase && `Apex target applies in mid-corner; lower values are normal on straights.`}
                 {rearTemp && rearTemp > 116 && <span style={{ color: 'var(--accent)' }}> · Rear tyre thermal risk active</span>}
               </div>

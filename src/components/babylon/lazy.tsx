@@ -1,5 +1,5 @@
 /**
- * lazy.tsx —” code-split entry point for the Babylon.js 3D viewers.
+ * lazy.tsx – code-split entry point for the Babylon.js 3D viewers.
  *
  * Babylon is ~1.13 MB gzip. Importing the viewers directly pulled that whole
  * chunk into the initial bundle (every page statically imports its page module,
@@ -7,8 +7,8 @@
  * paid for it. Here each viewer is React.lazy()'d behind its own dynamic
  * import, so the Babylon chunk only downloads when a 3D viewer actually mounts.
  *
- * These wrappers keep the SAME names and prop types as the originals —” consumers
- * only change the import path (—¦ '/babylon/X' â†’ —¦ '/babylon/lazy'). The Suspense
+ * These wrappers keep the SAME names and prop types as the originals – consumers
+ * only change the import path (→ '/babylon/X' → '/babylon/lazy'). The Suspense
  * boundary lives here so callers don't each need one; the fallback reserves the
  * viewer's height to avoid layout shift.
  *
@@ -36,7 +36,7 @@ function Fallback({ height = 300 }: { height?: number }) {
         fontSize: 11, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text-muted)',
       }}
     >
-      loading 3D—¦
+      loading 3D→
     </div>
   );
 }

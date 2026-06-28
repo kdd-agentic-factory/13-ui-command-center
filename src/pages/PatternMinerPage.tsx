@@ -1,5 +1,5 @@
 /**
- * PatternMinerPage â¢Ã¢—š¬—” Multi-Session Pattern Miner.
+ * PatternMinerPage  —  Multi-Session Pattern Miner.
  *
  * Recurring losses/risks/setup-issues across many sessions, each with a source
  * split (rider / bike / circuit), the affected corners, validated corrections,
@@ -41,7 +41,7 @@ function PatternCardView({ p, onNav }: { p: PatternCard; onNav: (t: 'learning-pa
         <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--accent)', border: '1px solid var(--accent)', borderRadius: 999, padding: '1px 8px' }}>{p.detectedIn}</span>
       </div>
       <div style={{ fontSize: 10.5, fontFamily: MONO, color: 'var(--text-muted)', marginBottom: 10 }}>
-        {p.circuits.join(' â—š—· ')} â—š—· avg +{p.avgLoss.toFixed(2)}s/corner â—š—· risk <span style={{ color: riskColor(p.riskImpact) }}>{p.riskImpact}</span> â—š—· conf {p.confidence}%
+        {p.circuits.join(' ─—· ')} ─—· avg +{p.avgLoss.toFixed(2)}s/corner ─—· risk <span style={{ color: riskColor(p.riskImpact) }}>{p.riskImpact}</span> ─—· conf {p.confidence}%
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: 14 }}>
@@ -97,7 +97,7 @@ export function PatternMinerPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><Layers size={18} /> Multi-Session Pattern Miner</h1>
-          <p className="page-subtitle">Recurring patterns across sessions, circuits & conditions â¢Ã¢—š¬—” {m.combo} â—š—· {m.scope}</p>
+          <p className="page-subtitle">Recurring patterns across sessions, circuits & conditions  —  {m.combo} ─—· {m.scope}</p>
         </div>
       </div>
 
@@ -124,7 +124,7 @@ export function PatternMinerPage() {
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, fontSize: 11 }}>
                 <span style={{ flex: 1, color: 'var(--text)' }}>{c.metric}</span>
                 <span style={{ fontFamily: MONO, color: 'var(--text)' }}>{c.current}</span>
-                <span style={{ fontFamily: MONO, color: 'var(--text-muted)', fontSize: 9.5 }}>avg5 {c.avgLast5} â—š—· tgt {c.target}</span>
+                <span style={{ fontFamily: MONO, color: 'var(--text-muted)', fontSize: 9.5 }}>avg5 {c.avgLast5} ─—· tgt {c.target}</span>
                 <span style={{ fontSize: 9.5, fontFamily: MONO, color: trendColor(c.trend) }}>{c.trend}</span>
               </div>
               <div style={{ height: 5, borderRadius: 3, background: 'rgba(255,255,255,0.06)', overflow: 'hidden', marginTop: 3, position: 'relative' }}>

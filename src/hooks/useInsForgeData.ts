@@ -19,7 +19,7 @@ import { useState, useEffect, useRef } from 'react';
 import type { SocketMessage } from '@insforge/sdk';
 import { insforge } from '../lib/insforge';
 
-// ── Domain types (match migration schema) ────────────────────────────────────
+// ──── Domain types (match migration schema) ────
 
 export interface InsForgeExperiment {
   experiment_id: string;
@@ -73,13 +73,13 @@ const EMPTY: InsForgeData = {
   error: null,
 };
 
-// ── Hook ─────────────────────────────────────────────────────────────────────
+// ──── Hook ────
 
 export function useInsForgeData(): InsForgeData {
   const [state, setState] = useState<InsForgeData>(EMPTY);
   const realtimeRef = useRef(false);
 
-  // ── Initial DB fetch ────────────────────────────────────────────────────
+// ──── Initial DB fetch ────
 
   useEffect(() => {
     let cancelled = false;
@@ -138,7 +138,7 @@ export function useInsForgeData(): InsForgeData {
     return () => { cancelled = true; };
   }, []);
 
-  // ── Realtime subscriptions ──────────────────────────────────────────────
+// ──── Realtime subscriptions ────
 
   useEffect(() => {
     if (realtimeRef.current) return;
@@ -157,7 +157,7 @@ export function useInsForgeData(): InsForgeData {
           rt.subscribe('agent_approvals'),
         ]);
 
-        // ── Experiment events ────────────────────────────────────────────
+// ──── Experiment events ────
 
         rt.on<SocketMessage>('experiment_created', (msg) => {
           const exp = msg.payload as Partial<InsForgeExperiment>;
@@ -201,7 +201,7 @@ export function useInsForgeData(): InsForgeData {
             });
         });
 
-        // ── Workflow execution events ────────────────────────────────────
+// ──── Workflow execution events ────
 
         rt.on<SocketMessage>('workflow_started', (msg) => {
           const wf = msg.payload as Partial<InsForgeWorkflowExecution>;
@@ -234,7 +234,7 @@ export function useInsForgeData(): InsForgeData {
           }));
         });
 
-        // ── Approval events ──────────────────────────────────────────────
+// ──── Approval events ────
 
         rt.on<SocketMessage>('approval_requested', (msg) => {
           const approval = msg.payload as InsForgeApproval;
@@ -254,7 +254,7 @@ export function useInsForgeData(): InsForgeData {
           }));
         });
 
-        // ── Connection lifecycle ─────────────────────────────────────────
+// ──── Connection lifecycle ────
 
         rt.on('disconnect', () => {
           setState(prev => ({ ...prev, realtimeConnected: false }));

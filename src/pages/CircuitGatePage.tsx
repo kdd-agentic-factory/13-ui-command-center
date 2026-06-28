@@ -1,7 +1,7 @@
 /**
  * CircuitGatePage — CIRCUIT INTELLIGENCE GATE.
  *
- * Mandatory technical entry to the platform (Landing Ã¢— —™ Gate Ã¢— —™ Dashboard).
+ * Mandatory technical entry to the platform (Landing → Gate → Dashboard).
  * The dashboard does not open until the session knows which circuit it is on
  * and what real data exists for it:
  *   - searchable circuit library with lifecycle states
@@ -9,8 +9,8 @@
  *   - validation checklist (geometry, length, corners, sectors, elevation,
  *     GPS, telemetry, digital twin, agent context)
  *   - dashboard mode derived from circuit state (full/limited/simulation/blocked)
- *   - creation flow for missing circuits: basic data Ã¢— —™ upload formats Ã¢— —™ AI
- *     reconstruction agents Ã¢— —™ initial simulation Ã¢— —™ SIMULATED status
+ *   - creation flow for missing circuits: basic data → upload formats → AI
+ *     reconstruction agents → initial simulation → SIMULATED status
  */
 import { useMemo, useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -38,7 +38,7 @@ interface Props {
 
 const MONO = 'JetBrains Mono, monospace';
 
-// Ã¢——Ã¢—— Small bits Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
+// ──── Small bits ────
 
 function StatusBadge({ status }: { status: CircuitStatus }) {
   const meta = STATUS_META[status];
@@ -61,7 +61,7 @@ function CheckRow({ label, ok, desc }: { label: string; ok: boolean; desc: strin
   );
 }
 
-// Ã¢——Ã¢—— Creation wizard Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
+// ──── Creation wizard ────
 
 const UPLOAD_FORMATS = ['GPX', 'KML', 'GeoJSON', 'CSV GPS trace', 'Telemetry CSV', 'AiM export', '2D datalogger export', 'Manual SVG', 'Onboard video'];
 const EXTRA_UPLOADS = ['Elevation profile', 'Sector definitions', 'Corner list', 'Racing line', 'Reference lap', 'Surface notes'];
@@ -284,7 +284,7 @@ function CreateCircuitWizard({ initialName, onCancel, onCreated }: {
   );
 }
 
-// Ã¢——Ã¢—— Main gate Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——Ã¢——
+// ──── Main gate ────
 
 export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Props) {
   const { t } = useTranslation();
@@ -345,7 +345,7 @@ export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Prop
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: '340px 1fr', gap: 18, alignItems: 'start' }}>
 
-            {/* Ã¢——Ã¢—— Library column Ã¢——Ã¢—— */}
+            {/* ———— Library column ———— */}
             <div className="card" style={{ padding: 14 }}>
               <div style={{ position: 'relative', marginBottom: 12 }}>
                 <Search size={13} style={{ position: 'absolute', left: 10, top: 9, color: 'var(--text-muted)' }} />
@@ -384,7 +384,7 @@ export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Prop
                 <div style={{ padding: '14px 8px', textAlign: 'center' }}>
                   <div style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text)' }}>Circuit not found</div>
                   <div style={{ fontSize: 11, color: 'var(--text-muted)', margin: '6px 0 10px' }}>
-                    No circuit named “{query.trim()}” exists in your database.
+                    No circuit named "{query.trim()}" exists in your database.
                   </div>
                   <div style={{ fontSize: 10, color: 'var(--text-muted)', textAlign: 'left', marginBottom: 10 }}>
                     Creation options: GPS/GPX trace —· telemetry CSV —· KML/GeoJSON —· draw manually —· AI reconstruction
@@ -402,7 +402,7 @@ export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Prop
               </button>
             </div>
 
-            {/* Ã¢——Ã¢—— Selected circuit column Ã¢——Ã¢—— */}
+            {/* ———— Selected circuit column ———— */}
             {selected && (
               <div>
                 <div className="card" style={{ padding: 18, marginBottom: 14 }}>
@@ -508,9 +508,9 @@ export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Prop
                       <span>{selected.lengthKm.toFixed(3)} km</span>
                     </div>
                     <div style={{ display: 'flex', gap: 12, marginTop: 8, fontSize: 10 }}>
-                      <span style={{ color: 'var(--green)' }}>Ã¢—“Â  uphill</span>
-                      <span style={{ color: 'var(--accent)' }}>Ã¢—“Â  downhill</span>
-                      <span style={{ color: 'var(--text-muted)' }}>Ã¢—“Â  flat</span>
+                      <span style={{ color: 'var(--green)' }}>■ uphill</span>
+                      <span style={{ color: 'var(--accent)' }}>■ downhill</span>
+                      <span style={{ color: 'var(--text-muted)' }}>■ flat</span>
                     </div>
                   </div>
                 )}

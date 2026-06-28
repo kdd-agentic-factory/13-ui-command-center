@@ -8,7 +8,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { insforge } from '../lib/insforge';
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// ──── Types ────
 
 export type MessageRole = 'user' | 'assistant';
 
@@ -20,12 +20,12 @@ export interface ChatMessage {
   streaming?: boolean;
 }
 
-// ── Constants ─────────────────────────────────────────────────────────────────
+// ──── Constants ────
 
 /** Default model exposed via InsForge → OpenRouter gateway */
 const MODEL = 'openai/gpt-4o-mini';
 
-// ── Hook ─────────────────────────────────────────────────────────────────────
+// ──── Hook ────
 
 export function useAIChat(systemPrompt: string) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);

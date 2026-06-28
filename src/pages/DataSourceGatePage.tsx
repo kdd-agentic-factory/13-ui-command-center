@@ -1,5 +1,5 @@
 /**
- * DataSourceGatePage —” step 3 of the entry workflow (Circuit â†’ Mode â†’ DATA â†’
+ * DataSourceGatePage – step 3 of the entry workflow (Circuit → Mode → DATA →
  * Launch). Before opening the pit-wall the session declares where its data
  * comes from: live sources, uploaded files, demo samples or simulation only.
  * The choice lands in the context object as setup.dataSource.
@@ -45,7 +45,7 @@ export function DataSourceGatePage({ ctx, onBack, onContinue }: Props) {
           <h1 style={{ fontSize: 22, fontWeight: 800, letterSpacing: '0.04em', color: 'var(--text)', margin: 0 }}>DATA SOURCE SETUP</h1>
         </div>
         <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 20 }}>
-          {ctx.circuitName} · {ctx.sessionMode} —” declare where this session's data comes from before the pit-wall opens.
+          {ctx.circuitName} · {ctx.sessionMode} – declare where this session's data comes from before the pit-wall opens.
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 18, alignItems: 'start' }}>

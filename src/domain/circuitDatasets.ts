@@ -48,7 +48,7 @@ export function activeRaceLaps(circuit: Pick<CircuitRecord, 'id' | 'lengthKm'>):
 }
 
 
-// ── Real traced layouts (approximate, 64×64 plan view) ───────────────────────
+// ──── Real traced layouts (approximate, 64 64 plan view) ────
 // Hand-traced from the published circuit maps — recognisably the REAL layout
 // (Mugello: bottom main straight → San Donato right → Luco/Poggio loop →
 // Materassi/Borgo → Casanova-Savelli esses → Arrabbiata 1-2 → Scarperia/
@@ -123,7 +123,7 @@ export function sampleOutline(
   return out;
 }
 
-// ── Deterministic corner metrics ─────────────────────────────────────────────
+// ──── Deterministic corner metrics ────
 
 export interface GeneratedCorner {
   n: number;

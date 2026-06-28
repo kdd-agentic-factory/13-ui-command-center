@@ -1,10 +1,10 @@
 /**
  * SessionModeGatePage — SESSION MODE GATE.
  *
- * Second mandatory gate (Landing â¢—Â —â„¢ Circuit Gate â¢—Â —â„¢ Session Mode Gate â¢—Â —â„¢
+ // ──── * Second mandatory gate (Landing Circuit Gate Session Mode Gate ────
  * Dashboard). Knowing the circuit is not enough: this screen captures WHAT we
- * are doing with it â¢Ã¢—š¬—” Race / Test / Practice / Track Day / Replay / Demo /
- * Pre-GP / Simulation â¢Ã¢—š¬—” collects the mode-specific Session Setup, and emits
+ * are doing with it  —  Race / Test / Practice / Track Day / Replay / Demo /
+ * Pre-GP / Simulation  —  collects the mode-specific Session Setup, and emits
  * the global Context Object every dashboard module shares.
  */
 import { useMemo, useState } from 'react';
@@ -89,20 +89,20 @@ export function SessionModeGatePage({ circuit, onBack, onOpen }: Props) {
               SESSION MODE GATE
             </h1>
             <div style={{ fontSize: 12.5, color: 'var(--text-muted)', marginTop: 4 }}>
-              {t('gates.modeSubtitle', 'Define how you will work with the selected circuit â¢Ã¢—š¬—” the dashboard adapts to the chosen mode.')}
+              {t('gates.modeSubtitle', 'Define how you will work with the selected circuit  —  the dashboard adapts to the chosen mode.')}
             </div>
           </div>
           {/* Selected circuit recap */}
           <div style={{ textAlign: 'right', fontSize: 11, fontFamily: MONO }}>
             <div style={{ color: 'var(--text)', fontWeight: 700 }}>{circuit.name} {circuit.layout} Layout</div>
-            <div style={{ color: STATUS_META[circuit.status].color }}>{circuit.status} â—š—· confidence {Math.round(circuit.agentConfidence * 100)}%</div>
-            <div style={{ color: 'var(--text-muted)' }}>{circuit.lengthKm.toFixed(3)} km â—š—· {circuit.turns} turns</div>
+            <div style={{ color: STATUS_META[circuit.status].color }}>{circuit.status} ─—· confidence {Math.round(circuit.agentConfidence * 100)}%</div>
+            <div style={{ color: 'var(--text-muted)' }}>{circuit.lengthKm.toFixed(3)} km ─—· {circuit.turns} turns</div>
           </div>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gap: 18, alignItems: 'start' }}>
 
-          {/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Mode cards â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */}
+          {/* ──¬──¬ Mode cards ──¬──¬ */}
           <div style={{ display: 'grid', gap: 8 }}>
             <div style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
               What are you doing?
@@ -132,7 +132,7 @@ export function SessionModeGatePage({ circuit, onBack, onOpen }: Props) {
             })}
           </div>
 
-          {/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Session Setup panel â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */}
+          {/* ──¬──¬ Session Setup panel ──¬──¬ */}
           <div>
             <div className="card" style={{ padding: 18, marginBottom: 14 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
@@ -140,21 +140,21 @@ export function SessionModeGatePage({ circuit, onBack, onOpen }: Props) {
                 <span className="badge" style={{ fontSize: 9.5, fontFamily: MONO, color: def.badgeColor, border: `1px solid ${def.badgeColor}`, background: 'transparent' }}>{def.badge}</span>
               </div>
               <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 10 }}>
-                Mode requirements: {def.requirements.join(' â—š—· ')}
+                Mode requirements: {def.requirements.join(' ─—· ')}
               </div>
 
-              {/* What this mode activates vs hides â¢Ã¢—š¬—” visible BEFORE opening */}
+              {/* What this mode activates vs hides  —  visible BEFORE opening */}
               {(() => {
                 const vis = moduleVisibilityForMode(mode);
                 return (
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14, padding: '10px 12px', borderRadius: 8, background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border)' }}>
                     <div>
                       <div style={{ fontSize: 9.5, fontFamily: MONO, letterSpacing: '0.1em', color: 'var(--green)', textTransform: 'uppercase', marginBottom: 5 }}>Activates</div>
-                      <div style={{ fontSize: 10.5, color: 'var(--text)', lineHeight: 1.6 }}>{vis.active.join(' â—š—· ')}</div>
+                      <div style={{ fontSize: 10.5, color: 'var(--text)', lineHeight: 1.6 }}>{vis.active.join(' ─—· ')}</div>
                     </div>
                     <div>
                       <div style={{ fontSize: 9.5, fontFamily: MONO, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 5 }}>Hides</div>
-                      <div style={{ fontSize: 10.5, color: 'var(--text-muted)', lineHeight: 1.6 }}>{vis.hidden.length ? vis.hidden.join(' â—š—· ') : 'Nothing â¢Ã¢—š¬—” full dashboard'}</div>
+                      <div style={{ fontSize: 10.5, color: 'var(--text-muted)', lineHeight: 1.6 }}>{vis.hidden.length ? vis.hidden.join(' ─—· ') : 'Nothing  —  full dashboard'}</div>
                     </div>
                   </div>
                 );
@@ -164,7 +164,7 @@ export function SessionModeGatePage({ circuit, onBack, onOpen }: Props) {
               {mode === 'demo' ? (
                 <div>
                   <div style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>
-                    Latest circuit sessions â—š—· {circuit.name}
+                    Latest circuit sessions ─—· {circuit.name}
                   </div>
                   {DEMO_PACKAGES.map((p, i) => {
                     const on = p.id === demoId;
@@ -177,10 +177,10 @@ export function SessionModeGatePage({ circuit, onBack, onOpen }: Props) {
                           border: `1px solid ${on ? 'var(--violet)' : 'var(--border)'}`,
                         }}>
                         <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>
-                          Session {String(i + 1).padStart(2, '0')} â—š—· {p.title}
+                          Session {String(i + 1).padStart(2, '0')} ─—· {p.title}
                         </div>
                         <div style={{ fontSize: 10, fontFamily: MONO, color: 'var(--text-muted)', margin: '3px 0' }}>
-                          <Database size={9} style={{ verticalAlign: -1, marginRight: 4 }} />{p.dataType} â—š—· Modules: {p.modules.join(' â—š—· ')}
+                          <Database size={9} style={{ verticalAlign: -1, marginRight: 4 }} />{p.dataType} ─—· Modules: {p.modules.join(' ─—· ')}
                         </div>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                           {p.highlights.map(h => (
@@ -192,7 +192,7 @@ export function SessionModeGatePage({ circuit, onBack, onOpen }: Props) {
                   })}
                   <div style={{ marginTop: 8, padding: '8px 12px', borderRadius: 8, background: 'color-mix(in srgb, var(--violet) 6%, transparent)', border: '1px solid color-mix(in srgb, var(--violet) 30%, transparent)', fontSize: 11, color: 'var(--text)' }}>
                     <AlertTriangle size={11} style={{ verticalAlign: -2, marginRight: 6, color: 'var(--violet)' }} />
-                    <strong>DEMO DATA</strong> â¢Ã¢—š¬—” not live; synthetic / historical sample. All values are illustrative. Every widget will carry the DEMO label and no real engineer-approval actions are available.
+                    <strong>DEMO DATA</strong>  —  not live; synthetic / historical sample. All values are illustrative. Every widget will carry the DEMO label and no real engineer-approval actions are available.
                   </div>
                 </div>
               ) : (
@@ -218,7 +218,7 @@ export function SessionModeGatePage({ circuit, onBack, onOpen }: Props) {
               {mode === 'simulation' && (
                 <div style={{ marginTop: 12, padding: '8px 12px', borderRadius: 8, background: 'color-mix(in srgb, var(--violet) 6%, transparent)', border: '1px solid color-mix(in srgb, var(--violet) 30%, transparent)', fontSize: 11, color: 'var(--text)' }}>
                   <AlertTriangle size={11} style={{ verticalAlign: -2, marginRight: 6, color: 'var(--violet)' }} />
-                  Simulation confidence <strong style={{ fontFamily: MONO }}>{Math.round(circuit.agentConfidence * 100)}%</strong> â¢Ã¢—š¬—” predictions will be labelled AI-estimated. Run a validation stint before using advanced predictions.
+                  Simulation confidence <strong style={{ fontFamily: MONO }}>{Math.round(circuit.agentConfidence * 100)}%</strong>  —  predictions will be labelled AI-estimated. Run a validation stint before using advanced predictions.
                 </div>
               )}
 
@@ -228,7 +228,7 @@ export function SessionModeGatePage({ circuit, onBack, onOpen }: Props) {
               </button>
             </div>
 
-            {/* Context Object preview â¢Ã¢—š¬—” the single source of truth all pages share */}
+            {/* Context Object preview  —  the single source of truth all pages share */}
             <div style={{ padding: '8px 12px', borderRadius: 8, background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border)', fontSize: 10, fontFamily: MONO, color: 'var(--text-muted)', display: 'flex', flexWrap: 'wrap', gap: 14 }}>
               <span><CheckCircle2 size={10} style={{ verticalAlign: -1, marginRight: 4 }} />context object</span>
               <span>selectedCircuit = {circuit.id}</span>

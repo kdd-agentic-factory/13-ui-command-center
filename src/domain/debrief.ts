@@ -46,7 +46,7 @@ export interface Debrief {
   questions: DebriefQuestion[];
 }
 
-// ── RAG grounding (03-rag-cag-knowledge-layer) ────────────────────────────────
+// ──── RAG grounding (03-rag-cag-knowledge-layer) ────
 // The scripted debrief above is the instant, always-available baseline. On top,
 // the Debrief Room asks the real knowledge layer for grounding evidence so the
 // "why" is backed by retrieved sources, not just rules — live-with-fallback.

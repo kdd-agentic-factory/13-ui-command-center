@@ -1,10 +1,10 @@
 /**
- * RaceStrategyPage —” KDD Race Strategy Command.
+ * RaceStrategyPage – KDD Race Strategy Command.
  *
  * The pit-wall decision surface: race sizing, tyre-degradation curve, the
  * pit / flag-to-flag window, ranked strategy options, undercut/overcut maths
  * vs a named rival, the armed weather trigger, a push/manage pace plan and the
- * live decision rules —” ending in one defensible call.
+ * live decision rules – ending in one defensible call.
  */
 import { Flag, Circle, CloudRain, Swords, Timer, ListChecks, Gauge } from 'lucide-react';
 import { useGarage } from '../hooks/useGarage';
@@ -29,7 +29,7 @@ export function RaceStrategyPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title flex items-center gap-2"><Flag size={18} /> Race Strategy Command</h1>
-          <p className="page-subtitle">Recommended: {s.recommendedStrategy} —” {s.combo}</p>
+          <p className="page-subtitle">Recommended: {s.recommendedStrategy} – {s.combo}</p>
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Confidence</div>
@@ -47,7 +47,7 @@ export function RaceStrategyPage() {
 
       {/* race sizing */}
       <div className="card mb-4" style={{ padding: 12, display: 'flex', gap: 26, flexWrap: 'wrap' }}>
-        {[['Race laps', s.raceLaps], ['Distance', `${s.raceKm} km`], ['Lap length', `${s.lengthKm} km`], ['Window', `L${s.pitWindow.openLap}—“${s.pitWindow.closeLap}`], ['Optimal', `L${s.pitWindow.optimalLap}`]].map(([k, v]) => (
+        {[['Race laps', s.raceLaps], ['Distance', `${s.raceKm} km`], ['Lap length', `${s.lengthKm} km`], ['Window', `L${s.pitWindow.openLap}–${s.pitWindow.closeLap}`], ['Optimal', `L${s.pitWindow.optimalLap}`]].map(([k, v]) => (
         <div key={k as string}><div style={{ fontSize: 16, fontWeight: 800, fontFamily: MONO, color: 'var(--text)' }}>{v}</div><div style={{ fontSize: 8.5, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>{k}</div></div>
         ))}
       </div>
@@ -67,7 +67,7 @@ export function RaceStrategyPage() {
           })}
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 8.5, fontFamily: MONO, color: 'var(--text-muted)', marginTop: 4 }}>
-          <span>Lap 1</span><span style={{ color: 'var(--accent)' }}>â—¤ rear cliff â‰ˆ L{s.pitWindow.closeLap}</span><span>Lap {s.raceLaps}</span>
+          <span>Lap 1</span><span style={{ color: 'var(--accent)' }}>→¤ rear ccliff → L{s.pitWindow.closeLap}</span><span>Lap {s.raceLaps}</span>
         </div>
       </div>
 
@@ -94,7 +94,7 @@ export function RaceStrategyPage() {
               <span style={{ fontSize: 8.5, fontFamily: MONO, color: riskColor(o.risk), border: `1px solid ${riskColor(o.risk)}`, borderRadius: 3, padding: '0 5px' }}>{o.risk}</span>
             </div>
           ))}
-          <div style={{ fontSize: 9.5, color: 'var(--text-muted)', marginTop: 4 }}>Î” = projected race time vs the recommended baseline.</div>
+          <div style={{ fontSize: 9.5, color: 'var(--text-muted)', marginTop: 4 }}>Î" = projected race time vs the recommended baseline.</div>
         </div>
       </div>
 
@@ -119,7 +119,7 @@ export function RaceStrategyPage() {
           <div style={{ display: 'flex', gap: 14, margin: '6px 0', fontSize: 11, fontFamily: MONO }}>
             <span>prob <b style={{ color: s.weather.probability >= 0.5 ? 'var(--accent)' : 'var(--text)' }}>{Math.round(s.weather.probability * 100)}%</b></span>
             <span>by <b style={{ color: 'var(--text)' }}>L{s.weather.byLap}</b></span>
-            <span style={{ color: s.weather.armed ? 'var(--yellow)' : 'var(--text-muted)' }}>{s.weather.armed ? 'â— armed' : 'â—‹ idle'}</span>
+            <span style={{ color: s.weather.armed ? 'var(--yellow)' : 'var(--text-muted)' }}>{s.weather.armed ? '─ armed' : '─ idle'}</span>
           </div>
           <div style={{ fontSize: 10.5, color: 'var(--yellow)' }}>{s.weather.action}</div>
         </div>
@@ -147,7 +147,7 @@ export function RaceStrategyPage() {
           {s.triggers.map((t, i) => (
             <div key={i} style={{ display: 'flex', gap: 8, fontSize: 10.5, marginBottom: 5, alignItems: 'baseline' }}>
               <span style={{ width: 6, height: 6, borderRadius: 999, background: riskColor(t.priority), flexShrink: 0, marginTop: 4 }} />
-              <span style={{ color: 'var(--text-muted)' }}>IF <span style={{ color: 'var(--text)' }}>{t.when}</span> â†’ <span style={{ color: 'var(--cyan)' }}>{t.then}</span></span>
+              <span style={{ color: 'var(--text-muted)' }}>IF <span style={{ color: 'var(--text)' }}>{t.when}</span> → <span style={{ color: 'var(--cyan)' }}>{t.then}</span></span>
             </div>
           ))}
         </div>

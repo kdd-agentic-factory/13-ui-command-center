@@ -86,7 +86,7 @@ export function IntroSequence({ onDone }: { onDone?: () => void }) {
         {/* Live numbers under the lap */}
         <div style={{ display: 'flex', justifyContent: 'center', gap: 26, margin: '6px 0 18px', fontFamily: MONO, fontSize: 11.5 }} aria-hidden>
           <span style={{ color: 'var(--cyan)' }} className="metric-num">{speed} km/h</span>
-          <span style={{ color: 'var(--yellow)' }} className="metric-num">{lean}—Â° lean</span>
+          <span style={{ color: 'var(--yellow)' }} className="metric-num">{lean}° lean</span>
           <span style={{ color: 'var(--grip)' }} className="metric-num">{grip}% grip</span>
         </div>
 

@@ -11,16 +11,16 @@ import { PartViewer3D } from '../components/babylon/lazy';
 import { usePartStorage } from '../hooks/usePartStorage';
 
 /**
- * GARAGE PART FACTORY â¢Ã¢—š¬—” Trackside additive manufacturing workflow.
+ * GARAGE PART FACTORY — Trackside additive manufacturing workflow.
  *
  * Covers the full cycle:
- *   need â¢—Â —â„¢ AI design â¢—Â —â„¢ FEA â¢—Â —â„¢ digital twin â¢—Â —â„¢ print queue â¢—Â —â„¢ QC â¢—Â —â„¢ install
+ *   need → AI design → FEA → digital twin → print queue → QC → install
  *
- * Parts classified by installation risk (Class Aâ¢Ã¢—š¬—D).
+ * Parts classified by installation risk (Class A–D).
  * All Mugello corners referenced are real.
  */
 
-/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Types â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */
+/* ══ Types ════════════════════════════════════════════════════════════════ */
 
 type InstallClass = 'A' | 'B' | 'C' | 'D';
 type WorkflowStep = 'requirement' | 'cad' | 'geometry' | 'fea' | 'twin' | 'print' | 'approval' | 'qc' | 'install';
@@ -67,12 +67,12 @@ interface MaterialDef {
   use: string;
 }
 
-/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Constants â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */
+/* ══ Constants ════════════════════════════════════════════════════════════ */
 
 const INSTALL_CLASSES: { class: InstallClass; label: string; description: string; color: string }[] = [
   { class: 'A', label: 'Trackside printable',     description: 'Non-structural covers, ducts, cable guides, sensor brackets, fairing tabs, cooling deflectors.', color: 'var(--green)' },
   { class: 'B', label: 'Conditional use',          description: 'Low-load brackets, camera mounts, aero sensor mounts, temporary fairing supports. Requires engineer approval and QC check.', color: 'var(--yellow)' },
-  { class: 'C', label: 'Prototype only',           description: 'Footrest hanger, aero bracket, bearing housing, structural mounts. Fit check only â¢Ã¢—š¬—” not for race use.', color: 'var(--orange)' },
+  { class: 'C', label: 'Prototype only',           description: 'Footrest hanger, aero bracket, bearing housing, structural mounts. Fit check only — not for race use.', color: 'var(--orange)' },
   { class: 'D', label: 'Restricted / critical',    description: 'Rims, swingarm, brake components, fork components, engine internals. Not eligible for trackside print-and-install.', color: 'var(--accent)' },
 ];
 
@@ -89,8 +89,8 @@ const WORKFLOW: WorkflowStatus[] = [
 ];
 
 const PRINTERS: PrintJob[] = [
-  { printer: 'Garage Printer 01',     technology: 'Bambu X1E â—š—· Nylon-CF',      status: 'idle', compatible: true },
-  { printer: 'Garage Printer 02',     technology: 'Formlabs Fuse â—š—· SLS Nylon', status: 'idle', compatible: true },
+  { printer: 'Garage Printer 01',     technology: 'Bambu X1E · Nylon-CF',      status: 'idle', compatible: true },
+  { printer: 'Garage Printer 02',     technology: 'Formlabs Fuse · SLS Nylon', status: 'idle', compatible: true },
   { printer: 'External Supplier',     technology: 'Metal PBF',                  status: 'unavailable', compatible: false },
 ];
 
@@ -118,15 +118,15 @@ const CAD_MODELS: { name: string; url: string; stress: number; color: string }[]
 ];
 
 const INITIAL_PARTS: ComponentPart[] = [
-  { name: 'Front Fork Assembly',  component: 'â’——œhlins TTX25',     system: 'Suspension', km: 1240, maxKm: 2000,  status: 'ok',   mass: 4.2,  fea: null, note: '62% life remaining' },
-  { name: 'Rear Shock',           component: 'â’——œhlins TTX36',     system: 'Suspension', km: 1240, maxKm: 1800,  status: 'warn', mass: 2.8,  fea: null, note: 'Schedule service next round' },
-  { name: 'Carbon Front Rim',     component: 'Marchesini Ultra', system: 'Chassis',    km: 580,  maxKm: 3000,  status: 'ok',   mass: 1.4,  fea: 107,  note: 'SIMP-optimized â—š—· -18% mass' },
-  { name: 'Carbon Rear Rim',      component: 'Marchesini Ultra', system: 'Chassis',    km: 580,  maxKm: 3000,  status: 'ok',   mass: 2.1,  fea: 142,  note: 'SIMP-optimized â—š—· -15% mass' },
-  { name: 'Brake Discs (Front)',  component: 'Brembo GP-Style',  system: 'Brakes',     km: 980,  maxKm: 1200,  status: 'warn', mass: 0.9,  fea: null, note: 'High wear â¢Ã¢—š¬—” monitor' },
+  { name: 'Front Fork Assembly',  component: 'Öhlins TTX25',     system: 'Suspension', km: 1240, maxKm: 2000,  status: 'ok',   mass: 4.2,  fea: null, note: '62% life remaining' },
+  { name: 'Rear Shock',           component: 'Öhlins TTX36',     system: 'Suspension', km: 1240, maxKm: 1800,  status: 'warn', mass: 2.8,  fea: null, note: 'Schedule service next round' },
+  { name: 'Carbon Front Rim',     component: 'Marchesini Ultra', system: 'Chassis',    km: 580,  maxKm: 3000,  status: 'ok',   mass: 1.4,  fea: 107,  note: 'SIMP-optimized · -18% mass' },
+  { name: 'Carbon Rear Rim',      component: 'Marchesini Ultra', system: 'Chassis',    km: 580,  maxKm: 3000,  status: 'ok',   mass: 2.1,  fea: 142,  note: 'SIMP-optimized · -15% mass' },
+  { name: 'Brake Discs (Front)',  component: 'Brembo GP-Style',  system: 'Brakes',     km: 980,  maxKm: 1200,  status: 'warn', mass: 0.9,  fea: null, note: 'High wear — monitor' },
   { name: 'Brake Pads (Front)',   component: 'Brembo RC19',      system: 'Brakes',     km: 980,  maxKm: 1000,  status: 'crit', mass: 0.15, fea: null, note: 'Replace before next session' },
-  { name: 'Swingarm',             component: 'Alu-Ti Hybrid',    system: 'Chassis',    km: 8400, maxKm: 20000, status: 'ok',   mass: 3.8,  fea: 89,   note: 'Topology optimized â—š—· -22% mass' },
+  { name: 'Swingarm',             component: 'Alu-Ti Hybrid',    system: 'Chassis',    km: 8400, maxKm: 20000, status: 'ok',   mass: 3.8,  fea: 89,   note: 'Topology optimized · -22% mass' },
   { name: 'Front Upper Fairing',  component: 'Carbon Prototype', system: 'Aero',       km: 2100, maxKm: 10000, status: 'ok',   mass: 1.2,  fea: 62,   note: 'Aero variant B3 active' },
-  { name: 'Engine #4',            component: 'Prototype V4',     system: 'Engine',     km: 2580, maxKm: 3500,  status: 'ok',   mass: 62.0, fea: null, note: 'Within rev limit â—š—· Map 6' },
+  { name: 'Engine #4',            component: 'Prototype V4',     system: 'Engine',     km: 2580, maxKm: 3500,  status: 'ok',   mass: 62.0, fea: null, note: 'Within rev limit · Map 6' },
 ];
 
 const DESIGN_VARIANTS: DesignVariant[] = [
@@ -149,7 +149,7 @@ const MAT_COLOR: Record<string, string> = {
   titanium:  'var(--violet)',
 };
 
-/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Helpers â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */
+/* ══ Helpers ══════════════════════════════════════════════════════════════ */
 
 function partMaterialColor(component: string): string {
   const c = component.toLowerCase();
@@ -173,7 +173,7 @@ function StatusIcon({ status }: { status: string }) {
   return <XCircle size={16} style={{ color: 'var(--accent)' }} />;
 }
 
-/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Sub-components â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */
+/* ══ Sub-components ═══════════════════════════════════════════════════════ */
 
 function WorkflowPipeline({ steps }: { steps: WorkflowStatus[] }) {
   return (
@@ -233,7 +233,7 @@ function EligibilityGate() {
         </div>
       </div>
       <div style={{ marginTop: 6, fontSize: 10, color: 'var(--text-dim)', fontFamily: 'var(--font-mono)', padding: '4px 8px', background: 'rgba(255,255,255,0.02)', borderRadius: 4 }}>
-        <span style={{ color: 'var(--yellow)' }}>â¢——œ—Â¸</span> Aero support under load requires FEA validation and signed engineering approval. Race use requires technical compliance.
+        <span style={{ color: 'var(--yellow)' }}>⚠</span> Aero support under load requires FEA validation and signed engineering approval. Race use requires technical compliance.
       </div>
     </div>
   );
@@ -256,10 +256,10 @@ function LifecycleHeatmap({ parts, scheduled }: { parts: ComponentPart[]; schedu
             border: `1px solid ${color}35`, borderRadius: 'var(--radius)', cursor: 'default',
           }}>
             <div style={{ fontSize: 11, fontWeight: 700, color, fontFamily: 'var(--font-mono)' }}>
-              {isScheduled ? 'â¢Ã…—œ—' : `${lifePct}%`}
+              {isScheduled ? '✓' : `${lifePct}%`}
             </div>
             <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 2, lineHeight: 1.3 }}>
-              {p.name.length > 18 ? p.name.slice(0, 16) + 'â¢Ã¢—š¬—…' : p.name}
+              {p.name.length > 18 ? p.name.slice(0, 16) + '…' : p.name}
             </div>
             <div style={{ marginTop: 4, height: 3, borderRadius: 2, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
               <div style={{ width: `${lifePct}%`, height: '100%', background: color, borderRadius: 2 }} />
@@ -321,7 +321,7 @@ function FEAStressPanel({ variants }: { variants: DesignVariant[] }) {
           <div key={`${v.part}-${v.variant}`} style={{ marginBottom: 14, opacity: v.status === 'Archive' ? 0.55 : 1 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
               <span style={{ fontSize: 11, fontWeight: isActive ? 700 : 400, color: isActive ? 'var(--text)' : isTesting ? 'var(--blue)' : 'var(--text-muted)' }}>
-                {v.variant} â¢Ã¢—š¬—” {v.part}
+                {v.variant} — {v.part}
               </span>
               <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', fontWeight: 700, color: sfColor }}>SF {sf}</span>
             </div>
@@ -331,13 +331,13 @@ function FEAStressPanel({ variants }: { variants: DesignVariant[] }) {
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 3 }}>
               <span style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{v.stress} MPa peak</span>
-              <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', fontFamily: 'var(--font-mono)' }}>â¢Ã…—™—Â¶ {v.yieldMPa} MPa yield</span>
+              <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', fontFamily: 'var(--font-mono)' }}>≤ {v.yieldMPa} MPa yield</span>
             </div>
           </div>
         );
       })}
       <div style={{ marginTop: 8, padding: '8px 10px', background: 'rgba(34,197,94,0.06)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 'var(--radius)', fontSize: 10, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-        White marker = material yield strength â—š—· SF â¢—Â°—Â¥ 2.5 = design safe
+        White marker = material yield strength · SF ≥ 2.5 = design safe
       </div>
     </div>
   );
@@ -365,10 +365,10 @@ function MassEvolutionChart({ variants }: { variants: DesignVariant[] }) {
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
                     <span style={{ fontSize: 11, color: isActive ? 'var(--green)' : isTesting ? 'var(--blue)' : 'var(--text-muted)', fontWeight: isActive ? 700 : 400 }}>
                       {v.variant}
-                      {isActive && <span style={{ marginLeft: 6, fontSize: 9, color: 'var(--green)', fontFamily: 'var(--font-mono)' }}>â¢Ã…—œ— ACTIVE</span>}
+                      {isActive && <span style={{ marginLeft: 6, fontSize: 9, color: 'var(--green)', fontFamily: 'var(--font-mono)' }}>✓ ACTIVE</span>}
                     </span>
                     <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: isActive ? 'var(--green)' : isTesting ? 'var(--blue)' : 'var(--text-muted)' }}>
-                      {v.mass} kg{parseFloat(saving) > 0 ? ` (â¢Ã¢—š¬—${saving}%)` : ''}
+                      {v.mass} kg{parseFloat(saving) > 0 ? ` (-${saving}%)` : ''}
                     </span>
                   </div>
                   <div style={{ height: 7, borderRadius: 3, background: 'rgba(255,255,255,0.04)', overflow: 'hidden' }}>
@@ -384,7 +384,7 @@ function MassEvolutionChart({ variants }: { variants: DesignVariant[] }) {
   );
 }
 
-/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Main Page â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */
+/* ══ Main Page ════════════════════════════════════════════════════════════ */
 
 export function PartDesignPage() {
   const { toast } = useToast();
@@ -407,9 +407,9 @@ export function PartDesignPage() {
   function addGeneratedPart(name: string, material: string, mass: number, stress: number) {
     const maxKm = material === 'carbon' ? 8000 : material === 'titanium' ? 15000 : 5000;
     setParts(prev => [...prev, {
-      name, component: `AI-Gen â—š—· ${material.charAt(0).toUpperCase() + material.slice(1)}`,
+      name, component: `AI-Gen · ${material.charAt(0).toUpperCase() + material.slice(1)}`,
       system: 'Chassis' as const, km: 0, maxKm, status: 'ok' as const, mass, fea: stress,
-      note: `Generated by AI Part Generator â—š—· âÂÃ†—™${stress} MPa`,
+      note: `Generated by AI Part Generator · σ ${stress} MPa`,
     }]);
   }
 
@@ -417,10 +417,10 @@ export function PartDesignPage() {
     setScheduledServices(prev => { const n = new Set(prev); n.add(part.name); return n; });
     setParts(prev => prev.map(p =>
       p.name === part.name && p.status === 'crit'
-        ? { ...p, status: 'warn' as const, note: `Service scheduled â—š—· ${new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}` }
+        ? { ...p, status: 'warn' as const, note: `Service scheduled · ${new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}` }
         : p
     ));
-    toast({ type: 'success', title: `Service scheduled: ${part.name}`, message: `${part.component} â¢Ã¢—š¬—” replacement before next session confirmed.` });
+    toast({ type: 'success', title: `Service scheduled: ${part.name}`, message: `${part.component} — replacement before next session confirmed.` });
   }
 
   function getDisplayStatus(part: ComponentPart): string {
@@ -430,16 +430,16 @@ export function PartDesignPage() {
   return (
     <div className="page">
 
-      {/* â¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Â */}
+      {/* ════════════════════════════════════════════════════════════════ */}
       {/* HEADER */}
-      {/* â¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Â */}
+      {/* ════════════════════════════════════════════════════════════════ */}
 
       <div className="card" style={{ marginBottom: 16, padding: '16px 20px' }}>
         <div className="flex items-center justify-between" style={{ marginBottom: 8 }}>
           <div>
             <h1 className="page-title" style={{ fontSize: 20, letterSpacing: '-0.02em' }}>GARAGE PART FACTORY</h1>
             <p className="page-subtitle" style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-              AI-generated parts â—š—· FEA validation â—š—· Print-ready workflow â—š—· Trackside manufacturing
+              AI-generated parts · FEA validation · Print-ready workflow · Trackside manufacturing
             </p>
           </div>
           <div style={{ display: 'flex', gap: 6 }}>
@@ -460,12 +460,12 @@ export function PartDesignPage() {
           <span style={{ width: 1, height: 14, background: 'var(--border)' }} />
           <span><span style={{ color: 'var(--text-muted)' }}>Session</span> <strong>Stint 03</strong></span>
           <span style={{ width: 1, height: 14, background: 'var(--border)' }} />
-          <span><span style={{ color: 'var(--text-muted)' }}>Bike</span> <strong>Yamaha R1 â—š—· #47</strong></span>
+          <span><span style={{ color: 'var(--text-muted)' }}>Bike</span> <strong>Yamaha R1 · #47</strong></span>
           <span style={{ width: 1, height: 14, background: 'var(--border)' }} />
-          <span><span style={{ color: 'var(--text-muted)' }}>Track</span> <strong style={{ color: 'var(--yellow)' }}>Dry</strong> â—š—· <strong>48â—š—Â°C</strong></span>
+          <span><span style={{ color: 'var(--text-muted)' }}>Track</span> <strong style={{ color: 'var(--yellow)' }}>Dry</strong> · <strong>48°C</strong></span>
           <span style={{ marginLeft: 'auto' }}>
             <span style={{ color: 'var(--text-muted)' }}>Workflow</span>{' '}
-            <strong style={{ color: 'var(--green)' }}>Design Agent â¢—Â —â„¢ CAD Generator â¢—Â —â„¢ FEA Validator â¢—Â —â„¢ Digital Twin â¢—Â —â„¢ Print Queue â¢—Â —â„¢ QC Check â¢—Â —â„¢ Install Log</strong>
+            <strong style={{ color: 'var(--green)' }}>Design Agent → CAD Generator → FEA Validator → Digital Twin → Print Queue → QC Check → Install Log</strong>
           </span>
         </div>
 
@@ -475,17 +475,17 @@ export function PartDesignPage() {
         </div>
       </div>
 
-      {/* â¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Â */}
+      {/* ════════════════════════════════════════════════════════════════ */}
       {/* PART REQUEST + ELIGIBILITY + GENERATOR */}
-      {/* â¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Â */}
+      {/* ════════════════════════════════════════════════════════════════ */}
 
       {/* Print Eligibility Gate */}
       <EligibilityGate />
 
-      {/* Part Generator â¢Ã¢—š¬—” existing component */}
+      {/* Part Generator — existing component */}
       <PartGeneratorPanel onAddPart={addGeneratedPart} />
 
-      {/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Installation Class reference â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */}
+      {/* ══ Installation Class reference ═══════════════════════════════ */}
       <div className="card" style={{ marginBottom: 16 }}>
         <div className="card-header" style={{ marginBottom: 8 }}>
           <span className="card-title flex items-center gap-2"><Shield size={14} style={{ color: 'var(--accent)' }} /> PART INSTALLATION CLASS</span>
@@ -507,9 +507,9 @@ export function PartDesignPage() {
         </div>
       </div>
 
-      {/* â¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Â */}
+      {/* ════════════════════════════════════════════════════════════════ */}
       {/* 3D PRE-FABRICATION PREVIEW + FEA + DIGITAL TWIN */}
-      {/* â¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Â */}
+      {/* ════════════════════════════════════════════════════════════════ */}
 
       {/* 3D Preview */}
       {(() => {
@@ -550,9 +550,9 @@ export function PartDesignPage() {
         );
       })()}
 
-      {/* â¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Â */}
-      {/* FEA + DIGITAL TWIN â¢Ã¢—š¬—” side by side */}
-      {/* â¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Â */}
+      {/* ════════════════════════════════════════════════════════════════ */}
+      {/* FEA + DIGITAL TWIN — side by side */}
+      {/* ════════════════════════════════════════════════════════════════ */}
 
       <div className="grid-2" style={{ gap: 16, marginBottom: 16 }}>
 
@@ -564,7 +564,7 @@ export function PartDesignPage() {
           </div>
           <div style={{ fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: 6 }}>LOAD CASES</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 3, marginBottom: 10, fontSize: 11, fontFamily: 'var(--font-mono)' }}>
-            {['LC1 â—š—· Downforce 50 kg equivalent', 'LC2 â—š—· Vibration 25â¢Ã¢—š¬—80 Hz', 'LC3 â—š—· Kerb impact 3g', 'LC4 â—š—· Thermal expansion 80â—š—Â°C', 'LC5 â—š—· Bolt preload M6'].map(lc => (
+            {['LC1 · Downforce 50 kg equivalent', 'LC2 · Vibration 25–80 Hz', 'LC3 · Kerb impact 3g', 'LC4 · Thermal expansion 80°C', 'LC5 · Bolt preload M6'].map(lc => (
               <div key={lc} style={{ padding: '2px 6px', background: 'rgba(255,255,255,0.02)', borderRadius: 4, color: 'var(--text-dim)' }}>
                 {lc}
               </div>
@@ -598,8 +598,8 @@ export function PartDesignPage() {
               { label: 'CdA effect', value: '+0.002', color: 'var(--text-dim)' },
               { label: 'Front load', value: '+0.8%', color: 'var(--text-dim)' },
               { label: 'Thermal effect', value: 'Neutral', color: 'var(--green)' },
-              { label: 'Vibration risk', value: 'Lowâ¢Ã¢—š¬—Medium', color: 'var(--yellow)' },
-              { label: 'Lap-time impact', value: 'â—š—Â±0.006s', color: 'var(--text-dim)' },
+              { label: 'Vibration risk', value: 'Low–Medium', color: 'var(--yellow)' },
+              { label: 'Lap-time impact', value: '±0.006s', color: 'var(--text-dim)' },
             ].map(s => (
               <div key={s.label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, fontFamily: 'var(--font-mono)', padding: '2px 4px' }}>
                 <span style={{ color: 'var(--text-muted)' }}>{s.label}</span>
@@ -608,21 +608,21 @@ export function PartDesignPage() {
             ))}
           </div>
           <div style={{ padding: '6px 8px', background: 'color-mix(in srgb, var(--blue) 6%, transparent)', borderRadius: 4, fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--text-dim)' }}>
-            <span style={{ color: 'var(--blue)' }}>â¢——œ—Â¸ Recommendation:</span> Safe for practice validation. Winglet balance check recommended.
+            <span style={{ color: 'var(--blue)' }}>⚠ Recommendation:</span> Safe for practice validation. Winglet balance check recommended.
           </div>
         </div>
       </div>
 
-      {/* â¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Â */}
+      {/* ════════════════════════════════════════════════════════════════ */}
       {/* PRINT QUEUE + SESSION URGENCY */}
-      {/* â¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Â */}
+      {/* ════════════════════════════════════════════════════════════════ */}
 
       <div className="grid-2" style={{ gap: 16, marginBottom: 16 }}>
 
         {/* Print Queue */}
         <div className="card">
           <div className="card-header" style={{ marginBottom: 8 }}>
-            <span className="card-title flex items-center gap-2"><Printer size={14} style={{ color: 'var(--accent)' }} /> PRINT QUEUE â—š—· GARAGE</span>
+            <span className="card-title flex items-center gap-2"><Printer size={14} style={{ color: 'var(--accent)' }} /> PRINT QUEUE · GARAGE</span>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             {PRINTERS.map(p => (
@@ -658,7 +658,7 @@ export function PartDesignPage() {
             border: '1px solid var(--border)', background: 'rgba(255,255,255,0.02)',
             fontSize: 11, fontFamily: 'var(--font-mono)',
           }}>
-            <div style={{ fontWeight: 600, color: 'var(--accent)', marginBottom: 4 }}>PRINT JOB â—š—· MUG-Q3-017</div>
+            <div style={{ fontWeight: 600, color: 'var(--accent)', marginBottom: 4 }}>PRINT JOB · MUG-Q3-017</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px 12px', fontSize: 10, color: 'var(--text-dim)' }}>
               <span>Part: <strong style={{ color: 'var(--text)' }}>Aero winglet bracket</strong></span>
               <span>Material: <strong style={{ color: 'var(--cyan)' }}>Nylon-CF</strong></span>
@@ -698,9 +698,9 @@ export function PartDesignPage() {
         </div>
       </div>
 
-      {/* â¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Â */}
+      {/* ════════════════════════════════════════════════════════════════ */}
       {/* ENGINEER APPROVAL + QC CHECKLIST */}
-      {/* â¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Â */}
+      {/* ════════════════════════════════════════════════════════════════ */}
 
       <div className="grid-2" style={{ gap: 16, marginBottom: 16 }}>
 
@@ -746,8 +746,8 @@ export function PartDesignPage() {
           </div>
           {[
             { check: 'Dimensional check', value: 'Pending', color: 'var(--text-muted)' },
-            { check: 'Mounting hole distance', value: '72.0 mm â—š—Â±0.05', color: 'var(--text-muted)' },
-            { check: 'Mass check', value: '84 g â—š—Â±2 g', color: 'var(--text-muted)' },
+            { check: 'Mounting hole distance', value: '72.0 mm ±0.05', color: 'var(--text-muted)' },
+            { check: 'Mass check', value: '84 g ±2 g', color: 'var(--text-muted)' },
             { check: 'Layer inspection', value: 'Pending', color: 'var(--text-muted)' },
             { check: 'Surface finish', value: 'Pending', color: 'var(--text-muted)' },
             { check: 'Insert fit', value: 'Pending', color: 'var(--text-muted)' },
@@ -768,20 +768,20 @@ export function PartDesignPage() {
         </div>
       </div>
 
-      {/* â¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Â */}
+      {/* ════════════════════════════════════════════════════════════════ */}
       {/* INSTALL LOG */}
-      {/* â¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Â */}
+      {/* ════════════════════════════════════════════════════════════════ */}
 
       <div className="card mb-4">
         <div className="card-header" style={{ marginBottom: 6 }}>
           <span className="card-title flex items-center gap-2"><FileText size={14} style={{ color: 'var(--accent)' }} /> INSTALL LOG</span>
         </div>
         <div style={{ display: 'flex', gap: 12, fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--text-dim)' }}>
-          <span>Bike: <strong style={{ color: 'var(--text)' }}>Yamaha R1 â—š—· #47</strong></span>
+          <span>Bike: <strong style={{ color: 'var(--text)' }}>Yamaha R1 · #47</strong></span>
           <span style={{ width: 1, height: 14, background: 'var(--border)' }} />
-          <span>Target: <strong style={{ color: 'var(--text)' }}>Front fairing â—š—· left side</strong></span>
+          <span>Target: <strong style={{ color: 'var(--text)' }}>Front fairing · left side</strong></span>
           <span style={{ width: 1, height: 14, background: 'var(--border)' }} />
-          <span>Torque: <strong style={{ color: 'var(--yellow)' }}>M6 â—š—· 8 Nm</strong></span>
+          <span>Torque: <strong style={{ color: 'var(--yellow)' }}>M6 · 8 Nm</strong></span>
           <span style={{ width: 1, height: 14, background: 'var(--border)' }} />
           <span>Status: <strong style={{ color: 'var(--accent)' }}>Not installed</strong></span>
         </div>
@@ -790,9 +790,9 @@ export function PartDesignPage() {
         </div>
       </div>
 
-      {/* â¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Â */}
+      {/* ════════════════════════════════════════════════════════════════ */}
       {/* COMPONENT HEALTH + MASS BUDGET */}
-      {/* â¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Â */}
+      {/* ════════════════════════════════════════════════════════════════ */}
 
       <div className="grid-2 mb-4">
         <div className="card">
@@ -805,8 +805,8 @@ export function PartDesignPage() {
             <div style={{ display: 'flex', gap: 16, marginTop: 12, flexWrap: 'wrap' }}>
               {[
                 { label: '> 90%',  color: 'var(--accent)', desc: 'Critical' },
-                { label: '70â¢Ã¢—š¬—90%', color: 'var(--yellow)', desc: 'Warning'  },
-                { label: '40â¢Ã¢—š¬—70%', color: 'var(--blue)', desc: 'Monitor'  },
+                { label: '70-90%', color: 'var(--yellow)', desc: 'Warning'  },
+                { label: '40-70%', color: 'var(--blue)', desc: 'Monitor'  },
                 { label: '< 40%',  color: 'var(--green)', desc: 'Nominal'  },
               ].map(l => (
                 <span key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 10, color: 'var(--text-muted)' }}>
@@ -819,7 +819,7 @@ export function PartDesignPage() {
         </div>
         <div className="card">
           <div className="card-header">
-            <span className="card-title flex items-center gap-2"><BarChart2 size={13} /> MASS BUDGET â—š—· MONITORED COMPONENTS</span>
+            <span className="card-title flex items-center gap-2"><BarChart2 size={13} /> MASS BUDGET · MONITORED COMPONENTS</span>
             <span style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
               {totalMass.toFixed(1)} kg total
             </span>
@@ -876,7 +876,7 @@ export function PartDesignPage() {
                     </div>
                   </td>
                   <td style={{ fontFamily: 'var(--font-mono)' }}>{p.mass}</td>
-                  <td style={{ fontFamily: 'var(--font-mono)' }}>{p.fea ?? 'â¢Ã¢—š¬—”'}</td>
+                  <td style={{ fontFamily: 'var(--font-mono)' }}>{p.fea ?? '—'}</td>
                   <td style={{ fontSize: 12, color: isScheduled ? 'var(--blue)' : p.status === 'crit' ? 'var(--accent)' : p.status === 'warn' ? 'var(--yellow)' : 'var(--text-muted)' }}>
                     {p.note}
                   </td>
@@ -888,9 +888,9 @@ export function PartDesignPage() {
                         <CalendarCheck size={12} />Schedule
                       </button>
                     ) : isScheduled ? (
-                      <span style={{ fontSize: 11, color: 'var(--blue)', fontWeight: 600 }}>â¢Ã…—œ— Scheduled</span>
+                      <span style={{ fontSize: 11, color: 'var(--blue)', fontWeight: 600 }}>✓ Scheduled</span>
                     ) : (
-                      <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>â¢Ã¢—š¬—”</span>
+                      <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>—</span>
                     )}
                   </td>
                 </tr>
@@ -900,15 +900,15 @@ export function PartDesignPage() {
         </table>
       </div>
 
-      {/* â¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Â */}
+      {/* ════════════════════════════════════════════════════════════════ */}
       {/* SIMP + FEA + MATERIAL SELECTION */}
-      {/* â¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Â */}
+      {/* ════════════════════════════════════════════════════════════════ */}
 
       <div className="grid-2 mb-4">
         <div className="card">
           <div className="card-header">
             <span className="card-title">SIMP MASS EVOLUTION</span>
-            <span className="badge badge-green">â¢Ã¢—š¬—{massSavingKg.toFixed(2)} kg total</span>
+            <span className="badge badge-green">-{massSavingKg.toFixed(2)} kg total</span>
           </div>
           <div className="card-body">
             <MassEvolutionChart variants={DESIGN_VARIANTS} />
@@ -917,7 +917,7 @@ export function PartDesignPage() {
         <div className="card">
           <div className="card-header">
             <span className="card-title">FEA STRESS ANALYSIS</span>
-            <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>Von Mises â—š—· Safety factor</span>
+            <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>Von Mises · Safety factor</span>
           </div>
           <div className="card-body">
             <FEAStressPanel variants={DESIGN_VARIANTS} />
@@ -925,9 +925,9 @@ export function PartDesignPage() {
         </div>
       </div>
 
-      {/* â¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Â */}
+      {/* ════════════════════════════════════════════════════════════════ */}
       {/* MATERIAL SELECTION MATRIX */}
-      {/* â¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Â */}
+      {/* ════════════════════════════════════════════════════════════════ */}
 
       <div className="card mb-4">
         <div className="card-header">
@@ -951,9 +951,9 @@ export function PartDesignPage() {
         </table>
       </div>
 
-      {/* â¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Â */}
+      {/* ════════════════════════════════════════════════════════════════ */}
       {/* ENGINEERING MATERIAL PROPERTIES */}
-      {/* â¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Â */}
+      {/* ════════════════════════════════════════════════════════════════ */}
 
       <div className="card mb-4">
         <div className="card-header">
@@ -963,8 +963,8 @@ export function PartDesignPage() {
         <table className="data-table">
           <thead>
             <tr>
-              <th>Material</th><th>âÂ—Â (g/cmâ—š—Â³)</th><th>âÂÃ†—™ yield (MPa)</th><th>UTS (MPa)</th>
-              <th>E (GPa)</th><th>Fatigue (MPa)</th><th>T max (â—š—Â°C)</th><th>Applications</th>
+              <th>Material</th><th>ρ (g/cm—th><th>σ  yield (MPa)</th><th>UTS (MPa)</th>
+              <th>E (GPa)</th><th>Fatigue (MPa)</th><th>T max (°C)</th><th>Applications</th>
             </tr>
           </thead>
           <tbody>
@@ -976,11 +976,11 @@ export function PartDesignPage() {
                 <td style={{ fontFamily: 'var(--font-mono)' }}>{m.utsMPa}</td>
                 <td style={{ fontFamily: 'var(--font-mono)' }}>{m.eMPa}</td>
                 <td style={{ fontFamily: 'var(--font-mono)', color: 'var(--yellow)' }}>{m.fatigueMPa}</td>
-                <td style={{ fontFamily: 'var(--font-mono)' }}>{m.tempMax}â—š—Â°</td>
+                <td style={{ fontFamily: 'var(--font-mono)' }}>{m.tempMax}°</td>
                 <td style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-                  {m.mat === 'CFRP (T800)' ? 'Rims â—š—· Fairings â—š—· Brakes'
-                    : m.mat === 'Al 7075-T6' ? 'Swingarm â—š—· Chassis brackets'
-                    : 'Fasteners â—š—· Hybrid joints'}
+                  {m.mat === 'CFRP (T800)' ? 'Rims · Fairings · Brakes'
+                    : m.mat === 'Al 7075-T6' ? 'Swingarm · Chassis brackets'
+                    : 'Fasteners · Hybrid joints'}
                 </td>
               </tr>
             ))}
@@ -988,9 +988,9 @@ export function PartDesignPage() {
         </table>
       </div>
 
-      {/* â¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Â */}
+      {/* ════════════════════════════════════════════════════════════════ */}
       {/* DESIGN VARIANTS */}
-      {/* â¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Â */}
+      {/* ════════════════════════════════════════════════════════════════ */}
 
       <div className="card mb-4">
         <div className="card-header">
@@ -1004,7 +1004,7 @@ export function PartDesignPage() {
           <span style={{ width: 1, height: 14, background: 'var(--border)' }} />
           <span><span style={{ color: 'var(--text-muted)' }}>Trackside print:</span> <strong style={{ color: 'var(--accent)' }}>Not printable trackside</strong></span>
           <span style={{ width: 1, height: 14, background: 'var(--border)' }} />
-          <span><span style={{ color: 'var(--text-muted)' }}>Mass saving:</span> <strong style={{ color: 'var(--green)' }}>â¢Ã¢—š¬—{massSavingKg.toFixed(2)} kg vs baseline</strong></span>
+          <span><span style={{ color: 'var(--text-muted)' }}>Mass saving:</span> <strong style={{ color: 'var(--green)' }}>-{massSavingKg.toFixed(2)} kg vs baseline</strong></span>
         </div>
         <table className="data-table">
           <thead>
@@ -1037,9 +1037,9 @@ export function PartDesignPage() {
         </table>
       </div>
 
-      {/* â¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Â */}
+      {/* ════════════════════════════════════════════════════════════════ */}
       {/* PART REGISTRY (ex Cloud Inventory) */}
-      {/* â¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Ââ¢—¢—Â */}
+      {/* ════════════════════════════════════════════════════════════════ */}
 
       <div className="card">
         <div className="card-header">
@@ -1047,7 +1047,7 @@ export function PartDesignPage() {
             <Cloud size={14} style={{ color: 'var(--cyan)' }} />
             <span className="card-title">PART REGISTRY</span>
             <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-              InsForge â—š—· PostgreSQL + Object Storage â—š—· CAD/FEA/QC traceability
+              InsForge · PostgreSQL + Object Storage · CAD/FEA/QC traceability
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -1080,7 +1080,7 @@ export function PartDesignPage() {
             <thead>
               <tr>
                 <th>Part ID</th><th>Material</th><th>Dimensions</th>
-                <th>Mass</th><th>Peak âÂÃ†—™</th><th>SF</th>
+                <th>Mass</th><th>Peak σ </th><th>SF</th>
                 <th>Drag Cd</th><th>Prompt</th><th>Saved</th><th>Sync</th>
                 <th style={{ width: 40 }}></th>
               </tr>
@@ -1096,7 +1096,7 @@ export function PartDesignPage() {
                       {p.material.charAt(0).toUpperCase() + p.material.slice(1)}
                     </span>
                   </td>
-                  <td style={{ fontSize: 11, fontFamily: 'var(--font-mono)' }}>{p.dim_x}â’—{p.dim_y}â’—{p.dim_z}mm</td>
+                  <td style={{ fontSize: 11, fontFamily: 'var(--font-mono)' }}>{p.dim_x}—{p.dim_y}—{p.dim_z}mm</td>
                   <td style={{ fontFamily: 'var(--font-mono)', color: MAT_COLOR[p.material] }}>{p.mass_kg} kg</td>
                   <td style={{ fontFamily: 'var(--font-mono)', color: p.peak_stress > 250 ? 'var(--yellow)' : 'var(--text)' }}>{p.peak_stress} MPa</td>
                   <td style={{ fontFamily: 'var(--font-mono)', color: p.safety_factor >= 2.0 ? 'var(--green)' : 'var(--yellow)', fontWeight: 700 }}>
@@ -1104,15 +1104,15 @@ export function PartDesignPage() {
                   </td>
                   <td style={{ fontSize: 11, fontFamily: 'var(--font-mono)' }}>{p.drag_coeff}</td>
                   <td style={{ fontSize: 11, color: 'var(--text-muted)', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {p.prompt || 'â¢Ã¢—š¬—”'}
+                    {p.prompt || '—'}
                   </td>
                   <td style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                    {p.created_at ? new Date(p.created_at).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'â¢Ã¢—š¬—”'}
+                    {p.created_at ? new Date(p.created_at).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—'}
                   </td>
                   <td>
                     {p.synced_to_cloud
-                      ? <span style={{ fontSize: 10, color: 'var(--green)', fontFamily: 'var(--font-mono)' }}>â¢Ã‹“—Â Cloud</span>
-                      : <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>âÂ°Ã…Â¸—â„¢—Â¾ Local</span>
+                      ? <span style={{ fontSize: 10, color: 'var(--green)', fontFamily: 'var(--font-mono)' }}>☁ Cloud</span>
+                      : <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>⌂ Local</span>
                     }
                   </td>
                   <td>
@@ -1128,7 +1128,7 @@ export function PartDesignPage() {
         )}
       </div>
 
-      {/* â¢—”Ã¢—š¬â¢—”Ã¢—š¬ Apply to garage button â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬â¢—”Ã¢—š¬ */}
+      {/* ══ Apply to garage button ═══════════════════════════════════════ */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
         <button className="btn btn-primary" style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
           onClick={() => {

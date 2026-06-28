@@ -1,13 +1,13 @@
 /**
- * CornerIntelligencePage —” REAL Mugello corner-by-corner analysis.
+ * CornerIntelligencePage – REAL Mugello corner-by-corner analysis.
  *
  * Critical fixes:
- *   1. NO Jarama corners —” all 15 Mugello corners: San Donato, Luco, etc.
+ *   1. NO Jarama corners – all 15 Mugello corners: San Donato, Luco, etc.
  *   2. Lap consistency: race lap / 23, no Lap 53/23
- *   3. Fuel < 1.0 kg + speed > 50 â†’ FUEL DATA ERROR
+ *   3. Fuel < 1.0 kg + speed > 50 → FUEL DATA ERROR
  *   4. Circuit Data Integrity section validates Mugello vs corner set
  *   5. 3D Corner Profile for key corners (elevation, gradient, risk, bike behaviour)
- *   6. Entry / Apex / Exit scores 0—“100 with explicit scale
+ *   6. Entry / Apex / Exit scores 0–100 with explicit scale
  *   7. View mode: Time Loss / Entry / Apex / Exit / Risk
  *   8. Filter: All / Critical / Left / Right
  *   9. Sort: Time loss / Turn number / Risk
@@ -29,7 +29,7 @@ import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 import { getActiveCircuit } from '../domain/circuits';
 import { CORNER_SETS, generateCorners } from '../domain/circuitDatasets';
 
-// —€—€ Mugello circuit constants —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+// ──── Mugello circuit constants ────
 
 const MUGELLO = {
   name: 'Autodromo Internazionale del Mugello',
@@ -44,13 +44,13 @@ const MUGELLO = {
   recordHolder: 'M. Marquez',
 };
 
-// —€—€ 15 real Mugello corners —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+// ──── 15 real Mugello corners ────
 
 interface Corner {
   n: number;
   name: string;
   dir: 'L' | 'R';
-  entry: number;       // score 0—“100
+  entry: number;       // score 0–100
   apex: number;
   exit: number;
   lossS: number;       // seconds lost vs ideal lap
@@ -59,7 +59,7 @@ interface Corner {
   exitSpeed: number;   // km/h
   maxLean: number;     // deg
   rearGrip: number;    // %
-  brakeDeltaM: number;  // metres late (+) / early (âˆ’)
+  brakeDeltaM: number;  // metres late (+) / early (−)
   throttleDeltaS: number; // seconds late (+)
   issue: string;
   rec: string;
@@ -68,12 +68,12 @@ interface Corner {
 const CORNERS: Corner[] = [
   { n: 1,  name: 'San Donato',     dir: 'R', entry: 74, apex: 71, exit: 70, lossS: 0.216, entrySpeed: 350, apexSpeed: 85,  exitSpeed: 148, maxLean: 52, rearGrip: 84, brakeDeltaM: 9,  throttleDeltaS: 0.18, issue: 'Late brake release into slowest corner',           rec: 'Brake 5 m earlier, trail less front brake to settle the bike.' },
   { n: 2,  name: 'Luco',           dir: 'R', entry: 90, apex: 88, exit: 86, lossS: 0.022, entrySpeed: 155, apexSpeed: 118, exitSpeed: 142, maxLean: 45, rearGrip: 92, brakeDeltaM: -1, throttleDeltaS: 0.0,  issue: 'On target',                                               rec: 'Keep it. Reference-lap quality.' },
-  { n: 3,  name: 'Poggio Secco',   dir: 'L', entry: 88, apex: 85, exit: 84, lossS: 0.037, entrySpeed: 148, apexSpeed: 95,  exitSpeed: 132, maxLean: 48, rearGrip: 88, brakeDeltaM: 0,  throttleDeltaS: 0.02, issue: 'Crest transition —” front light over crest',         rec: 'Avoid aggressive brake release before weight settles.' },
+  { n: 3,  name: 'Poggio Secco',   dir: 'L', entry: 88, apex: 85, exit: 84, lossS: 0.037, entrySpeed: 148, apexSpeed: 95,  exitSpeed: 132, maxLean: 48, rearGrip: 88, brakeDeltaM: 0,  throttleDeltaS: 0.02, issue: 'Crest transition – front light over crest',         rec: 'Avoid aggressive brake release before weight settles.' },
   { n: 4,  name: 'Materassi',      dir: 'R', entry: 88, apex: 85, exit: 84, lossS: 0.030, entrySpeed: 182, apexSpeed: 128, exitSpeed: 171, maxLean: 47, rearGrip: 89, brakeDeltaM: 0,  throttleDeltaS: 0.02, issue: 'Slight entry hesitation',                            rec: 'Turn in a touch earlier to free the exit.' },
   { n: 5,  name: 'Borgo S. Lorenzo', dir: 'R', entry: 89, apex: 86, exit: 85, lossS: 0.026, entrySpeed: 171, apexSpeed: 136, exitSpeed: 184, maxLean: 46, rearGrip: 90, brakeDeltaM: 0,  throttleDeltaS: 0.01, issue: 'Minimal loss',                                            rec: 'Reference-lap quality. Hold the line.' },
   { n: 6,  name: 'Casanova',       dir: 'R', entry: 86, apex: 83, exit: 81, lossS: 0.061, entrySpeed: 218, apexSpeed: 162, exitSpeed: 204, maxLean: 50, rearGrip: 86, brakeDeltaM: 1,  throttleDeltaS: 0.05, issue: 'Slight late pickup',                                rec: 'Pick the bike up sooner to get drive onto the straight.' },
   { n: 7,  name: 'Savelli',        dir: 'R', entry: 86, apex: 82, exit: 80, lossS: 0.058, entrySpeed: 204, apexSpeed: 152, exitSpeed: 198, maxLean: 53, rearGrip: 85, brakeDeltaM: 1,  throttleDeltaS: 0.04, issue: 'Transition instability',                             rec: 'Hold the line through transition.' },
-  { n: 8,  name: 'Arrabbiata 1',   dir: 'L', entry: 80, apex: 76, exit: 72, lossS: 0.131, entrySpeed: 242, apexSpeed: 178, exitSpeed: 224, maxLean: 58, rearGrip: 82, brakeDeltaM: 4,  throttleDeltaS: 0.12, issue: 'High-speed lean risk —” tyre load peak on entry',    rec: 'Release the brake earlier, roll more mid-corner speed.' },
+  { n: 8,  name: 'Arrabbiata 1',   dir: 'L', entry: 80, apex: 76, exit: 72, lossS: 0.131, entrySpeed: 242, apexSpeed: 178, exitSpeed: 224, maxLean: 58, rearGrip: 82, brakeDeltaM: 4,  throttleDeltaS: 0.12, issue: 'High-speed lean risk – tyre load peak on entry',    rec: 'Release the brake earlier, roll more mid-corner speed.' },
   { n: 9,  name: 'Arrabbiata 2',   dir: 'R', entry: 82, apex: 79, exit: 77, lossS: 0.088, entrySpeed: 238, apexSpeed: 184, exitSpeed: 229, maxLean: 57, rearGrip: 83, brakeDeltaM: 3,  throttleDeltaS: 0.08, issue: 'Variable height and angle load',                    rec: 'Use less lean and more steering to save the rear tyre.' },
   { n: 10, name: 'Scarperia',      dir: 'R', entry: 84, apex: 81, exit: 78, lossS: 0.074, entrySpeed: 195, apexSpeed: 134, exitSpeed: 171, maxLean: 51, rearGrip: 84, brakeDeltaM: 2,  throttleDeltaS: 0.06, issue: 'Slow turn-in',                                        rec: 'Turn in earlier to carry more speed.' },
   { n: 11, name: 'Palagio',        dir: 'L', entry: 91, apex: 89, exit: 87, lossS: 0.018, entrySpeed: 171, apexSpeed: 142, exitSpeed: 186, maxLean: 44, rearGrip: 92, brakeDeltaM: -1, throttleDeltaS: 0.0,  issue: 'On target',                                               rec: 'Keep it. Reference-lap quality.' },
@@ -83,7 +83,7 @@ const CORNERS: Corner[] = [
   { n: 15, name: 'Bucine',         dir: 'L', entry: 70, apex: 66, exit: 61, lossS: 0.284, entrySpeed: 159, apexSpeed: 91,  exitSpeed: 184, maxLean: 57, rearGrip: 78, brakeDeltaM: 7,  throttleDeltaS: 0.40, issue: 'Late throttle + rear slip on exit',                 rec: 'Open throttle 0.3 s earlier with lower lean. Raise TC +1 if rear slip persists across 2 consecutive laps.' },
 ];
 
-// —€—€ 3D Corner Profiles —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+// ──── 3D Corner Profiles ────
 
 interface Corner3DProfile {
   n: number;
@@ -99,16 +99,16 @@ const CORNER_3D_PROFILES: Corner3DProfile[] = [
   {
     n: 15,
     cornerType: 'Long final left-hander',
-    elevation: 'Downhill entry â†’ uphill exit',
+    elevation: 'Downhill entry → uphill exit',
     gradientEffect: 'Rear load increases progressively on exit',
-    risk: 'Throttle pickup while still above 55Â° lean',
+    risk: 'Throttle pickup while still above 55° lean',
     bikeBehaviour: 'Rear slip appears above 42% throttle',
-    aiFocus: 'Delay full throttle until lean <54Â°. Use smoother pickup from 18% to 42%.',
+    aiFocus: 'Delay full throttle until lean <54°. Use smoother pickup from 18% to 42%.',
   },
   {
     n: 1,
     cornerType: 'Tight right hairpin',
-    elevation: 'Flat entry â†’ slight uphill exit',
+    elevation: 'Flat entry → slight uphill exit',
     gradientEffect: 'Front loading under braking from 350 km/h',
     risk: 'Front lock on heavy brake application',
     bikeBehaviour: 'Agile turn-in with correct trail braking',
@@ -117,8 +117,8 @@ const CORNER_3D_PROFILES: Corner3DProfile[] = [
   {
     n: 3,
     cornerType: 'Left-hand crest',
-    elevation: 'Crest â†’ downhill transition',
-    gradientEffect: 'Front becomes light over crest —” weight transfers rear',
+    elevation: 'Crest → downhill transition',
+    gradientEffect: 'Front becomes light over crest – weight transfers rear',
     risk: 'Front grip loss if brake released late over crest',
     bikeBehaviour: 'Bike floats before settling on downhill',
     aiFocus: 'Complete braking BEFORE crest. Roll neutral throttle over the top.',
@@ -127,15 +127,15 @@ const CORNER_3D_PROFILES: Corner3DProfile[] = [
     n: 8,
     cornerType: 'High-speed left',
     elevation: 'Downhill entry',
-    gradientEffect: 'Rear tyre load peak on entry —” critical for grip',
-    risk: 'High-speed lean at 58Â° with changing camber',
+    gradientEffect: 'Rear tyre load peak on entry – critical for grip',
+    risk: 'High-speed lean at 58° with changing camber',
     bikeBehaviour: 'Rear slide risk on power application before apex',
     aiFocus: 'Release brake earlier to reduce entry speed. Roll more mid-corner before opening gas.',
   },
   {
     n: 12,
     cornerType: 'Downhill right hairpin',
-    elevation: 'Downhill entry â†’ flat apex',
+    elevation: 'Downhill entry → flat apex',
     gradientEffect: 'Entry instability on steep downhill section',
     risk: 'Rear wheel locking under braking on downhill',
     bikeBehaviour: 'Bike wants to run wide at apex if entry speed too high',
@@ -143,7 +143,7 @@ const CORNER_3D_PROFILES: Corner3DProfile[] = [
   },
 ];
 
-// —€—€ Score bar component —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+// ──── Score bar component ────
 
 function scoreColor(s: number): string {
   if (s >= 85) return 'var(--green)';
@@ -165,7 +165,7 @@ function ScoreBar({ label, value }: { label: string; value: number }) {
   );
 }
 
-// —€—€ 3D Corner Profile component —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+// ──── 3D Corner Profile component ────
 
 function Corner3DProfileSection({ corner }: { corner: Corner }) {
   const profile = CORNER_3D_PROFILES.find(p => p.n === corner.n);
@@ -203,7 +203,7 @@ function Corner3DProfileSection({ corner }: { corner: Corner }) {
   );
 }
 
-// —€—€ Corner Data Integrity —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+// ──── Corner Data Integrity ────
 
 function CornerDataIntegrity() {
   return (
@@ -232,7 +232,7 @@ function CornerDataIntegrity() {
   );
 }
 
-// —€—€ Page —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
+// ──── Page ────
 
 type ViewMode = 'loss' | 'entry' | 'apex' | 'exit' | 'risk';
 type FilterMode = 'all' | 'critical' | 'left' | 'right';
@@ -294,7 +294,7 @@ export function CornerIntelligencePage() {
   return (
     <div className="page">
 
-      {/* â•â•â• FUEL ERROR BANNER â•â•â• */}
+      {/* ─�─�─� FUEL ERROR BANNER ─�─�─� */}
       {fuelCritical && (
         <div className="card mb-4" style={{
  background: 'rgba(224,55,55,0.06)' }}>
@@ -310,7 +310,7 @@ export function CornerIntelligencePage() {
         </div>
       )}
 
-      {/* â•â•â• HEADER â•â•â• */}
+      {/* ─�─�─� HEADER ─�─�─� */}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="page-title">Corner Intelligence</h1>
@@ -321,7 +321,7 @@ export function CornerIntelligencePage() {
         </div>
       </div>
 
-      {/* â•â•â• SESSION SUMMARY â•â•â• */}
+      {/* ─�─�─� SESSION SUMMARY ─�─�─� */}
       <div className="card mb-4" style={{ background: 'linear-gradient(135deg, rgba(224,55,55,0.10), rgba(255,255,255,0.02))' }}>
         <div className="card-header">
           <span className="card-title flex items-center gap-2">
@@ -332,7 +332,7 @@ export function CornerIntelligencePage() {
         <div className="grid-4" style={{ marginTop: 8 }}>
           <div className="stat-tile" style={{ borderColor: 'color-mix(in srgb, var(--green) 40%, transparent)' }}>
             <div className="stat-tile__label">Potential gain</div>
-            <span className="stat-tile__value" style={{ fontSize: 26, color: 'var(--green)' }}>âˆ’{totalGain.toFixed(3)}<span className="stat-tile__unit">s</span></span>
+            <span className="stat-tile__value" style={{ fontSize: 26, color: 'var(--green)' }}>−{totalGain.toFixed(3)}<span className="stat-tile__unit">s</span></span>
           </div>
           <div className="stat-tile">
             <div className="stat-tile__label">Critical corner</div>
@@ -349,12 +349,12 @@ export function CornerIntelligencePage() {
         </div>
       </div>
 
-      {/* â•â•â• CIRCUIT MAP â•â•â• */}
+      {/* ─�─�─� CIRCUIT MAP ─�─�─� */}
       <div className="mb-4">
         <InteractiveCircuitMap selected={selected} onSelect={n => setSelected(n)} />
       </div>
 
-      {/* â•â•â• VIEW MODE + FILTER + SORT CONTROLS â•â•â• */}
+      {/* ─�─�─� VIEW MODE + FILTER + SORT CONTROLS ─�─�─� */}
       <div className="card mb-4">
         <div className="card-body" style={{ flexDirection: 'row', justifyContent: 'space-between', padding: '8px 16px', gap: 16 }}>
           {/* View mode */}
@@ -419,7 +419,7 @@ export function CornerIntelligencePage() {
         </div>
       </div>
 
-      {/* â•â•â• CORNER CARDS â•â•â• */}
+      {/* ─�─�─� CORNER CARDS ─�─�─� */}
       <div className="grid-2" style={{ gap: 12 }}>
         {viewSorted.map(c => {
           const isCrit = c.n === critical.n;
@@ -440,7 +440,7 @@ export function CornerIntelligencePage() {
               }}
               onClick={() => setSelected(open ? null : c.n)}
             >
-              {/* —€—€ Card header —€—€ */}
+              {/* ── Card header ── */}
               <div className="card-header" style={{ marginBottom: 8 }}>
                 <span className="card-title flex items-center gap-2">
                   <span style={{
@@ -458,23 +458,23 @@ export function CornerIntelligencePage() {
                 </span>
               </div>
 
-              {/* —€—€ Score bars —€—€ */}
+              {/* ── Score bars ── */}
               <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
                 <ScoreBar label="ENTRY" value={c.entry} />
                 <ScoreBar label="APEX" value={c.apex} />
                 <ScoreBar label="EXIT" value={c.exit} />
               </div>
 
-              {/* —€—€ Telemetry flags —€—€ */}
+              {/* ── Telemetry flags ── */}
               <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-dim)', marginBottom: open ? 10 : 0 }}>
-                <span><Activity size={11} style={{ verticalAlign: -1, color: 'var(--purple)' }} /> {c.maxLean}Â° lean</span>
+                <span><Activity size={11} style={{ verticalAlign: -1, color: 'var(--purple)' }} /> {c.maxLean}° lean</span>
                 <span style={{ color: c.rearGrip < 82 ? 'var(--accent)' : undefined }}>grip {c.rearGrip}%</span>
                 <span><Gauge size={11} style={{ verticalAlign: -1, color: 'var(--blue)' }} /> brake {c.brakeDeltaM >= 0 ? '+' : ''}{c.brakeDeltaM}m</span>
                 <span style={{ color: c.throttleDeltaS > 0.15 ? 'var(--accent)' : undefined }}>gas +{c.throttleDeltaS.toFixed(2)}s</span>
-                <span style={{ color: 'var(--text-muted)' }}>{c.entrySpeed}â†’{c.apexSpeed}â†’{c.exitSpeed} km/h</span>
+                <span style={{ color: 'var(--text-muted)' }}>{c.entrySpeed}→{c.apexSpeed}→{c.exitSpeed} km/h</span>
               </div>
 
-              {/* —€—€ Expanded detail —€—€ */}
+              {/* ── Expanded detail ── */}
               {open && (
                 <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 10 }}>
                   {/* Main loss phase */}
@@ -523,7 +523,7 @@ export function CornerIntelligencePage() {
         })}
       </div>
 
-      {/* â•â•â• Corner Data Integrity â•â•â• */}
+      {/* ─�─�─� Corner Data Integrity ─�─�─� */}
       <div className="mt-4">
         <CornerDataIntegrity />
       </div>

@@ -14,7 +14,7 @@
  * degrades gracefully to localStorage only.
  */
 
-// ── Config ─────────────────────────────────────────────────────────────────────
+// ──── Config ────
 
 const BASE = import.meta.env.VITE_INSFORGE_URL ?? '';
 const KEY  = import.meta.env.VITE_INSFORGE_ANON_KEY ?? '';
@@ -27,7 +27,7 @@ const HEADERS = {
   Prefer:        'return=representation',
 };
 
-// ── Types ───────────────────────────────────────────────────────────────────────
+// ──── Types ────
 
 export interface SavedPartMeta {
   part_id:            string;
@@ -49,7 +49,7 @@ export interface SavedPartMeta {
   synced_to_cloud:    boolean;
 }
 
-// ── localStorage helpers ───────────────────────────────────────────────────────
+// ──── localStorage helpers ────
 
 export function localLoad(): SavedPartMeta[] {
   try {
@@ -74,7 +74,7 @@ function localUpsert(part: SavedPartMeta): void {
   localSave(existing);
 }
 
-// ── PostgREST ─────────────────────────────────────────────────────────────────
+// ──── PostgREST ────
 
 async function dbInsert(table: string, row: Record<string, unknown>): Promise<boolean> {
   const endpoints = [
@@ -120,7 +120,7 @@ async function dbSelect(table: string, qs: string): Promise<Record<string, unkno
   }
 }
 
-// ── Storage (object storage) ──────────────────────────────────────────────────
+// ──── Storage (object storage) ────
 
 async function storageUpload(
   bucket: string,
@@ -146,7 +146,7 @@ async function storageUpload(
   return false;
 }
 
-// ── Public API ────────────────────────────────────────────────────────────────
+// ──── Public API ────
 
 export interface PartSavePayload {
   partId:    string;
