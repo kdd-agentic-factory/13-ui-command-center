@@ -384,7 +384,7 @@ export function CircuitGatePage({ onOpenDashboard, onBack, startCreating }: Prop
                 <div style={{ padding: '14px 8px', textAlign: 'center' }}>
                   <div style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text)' }}>Circuit not found</div>
                   <div style={{ fontSize: 11, color: 'var(--text-muted)', margin: '6px 0 10px' }}>
-                    No circuit named Ã¢â‚¬Å“{query.trim()}Ã¢â‚¬Â exists in your database.
+                    No circuit named “{query.trim()}” exists in your database.
                   </div>
                   <div style={{ fontSize: 10, color: 'var(--text-muted)', textAlign: 'left', marginBottom: 10 }}>
                     Creation options: GPS/GPX trace Ã‚Â· telemetry CSV Ã‚Â· KML/GeoJSON Ã‚Â· draw manually Ã‚Â· AI reconstruction
