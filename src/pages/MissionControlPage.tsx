@@ -1,5 +1,5 @@
 /**
- * MissionControlPage â’—¢â¢—š—¬â¢Ã¢—š¬—” Digital Pit-Wall Mission Control (v3).
+ * MissionControlPage — Digital Pit-Wall Mission Control (v3).
  *
  * One decision per zone, strong hierarchy, no crowding:
  *   1. Hero: what this is + 3 CTAs.            4. Primary action cards.
@@ -7,7 +7,7 @@
  *   3. START WORKFLOW as four step cards.      6. Oracle brief + data quality.
  *
  * Backdrop: faint Mugello silhouette (the same deterministic geometry the
- * circuit cards use) instead of abstract curves â’—¢â¢—š—¬â¢Ã¢—š¬—” circuit map, not decoration.
+ * circuit cards use) instead of abstract curves — circuit map, not decoration.
  */
 import { useTranslation } from 'react-i18next';
 import {
@@ -16,12 +16,15 @@ import {
 } from 'lucide-react';
 import { getCircuitLibrary, STATUS_META } from '../domain/circuits';
 import { miniTrackPath } from '../components/MiniTrackMap';
+import type { SessionResumeSnapshot } from '../app/sessionResume';
 
 interface Props {
   onSelectCircuit: () => void;
   onCreateCircuit: () => void;
   onLoadLatest: () => void;
   onDemo: () => void;
+  resumeContext?: SessionResumeSnapshot | null;
+  onNewSession?: () => void;
 }
 
 const MONO = 'JetBrains Mono, monospace';
@@ -102,7 +105,7 @@ function ActionCard({ icon: Icon, title, body, cta, onClick, accent }: {
 
 // â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬ Page â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬â’—¢â¢Ã¢—š¬—”â¢—š—¬
 
-export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLatest, onDemo }: Props) {
+export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLatest, onDemo, resumeContext, onNewSession }: Props) {
   const { t } = useTranslation();
   const library = getCircuitLibrary();
 
@@ -150,12 +153,12 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
             </div>
             {[
               ['Circuit DB', `${library.length} tracks`],
-              ['Latest session', 'Mugello â’—šâ—š—· Stint 03'],
-              ['Data sources', 'GPS â’—šâ—š—· IMU â’—šâ—š—· ECU â’—šâ—š—· CSV'],
+              ['Latest session', 'Mugello — Stint 03'],
+              ['Data sources', 'GPS — IMU — ECU — CSV'],
               ['Oracle Pit Wall', 'Ready'],
               ['Digital Twin', 'Ready'],
               ['Data quality', '94%'],
-              ['Last sync', 'Today â’—šâ—š—· 14:32'],
+              ['Last sync', 'Today — 14:32'],
             ].map(([k, v]) => (
               <div key={k} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, fontSize: 10.5, padding: '2.5px 0' }}>
                 <span style={{ color: 'var(--text-muted)' }}>{k}</span>
@@ -165,7 +168,50 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
           </div>
         </div>
 
-        {/* â’—¢â¢Ã¢—š¬—¢â—š—Ââ’—¢â¢Ã¢—š¬—¢â—š—Ââ’—¢â¢Ã¢—š¬—¢â—š—Â 2 â’—šâ—š—· START WORKFLOW: four step cards â’—¢â¢Ã¢—š¬—¢â—š—Ââ’—¢â¢Ã¢—š¬—¢â—š—Ââ’—¢â¢Ã¢—š¬—¢â—š—Ââ’—¢â¢Ã¢—š¬—¢â—š—Ââ’—¢â¢Ã¢—š¬—¢â—š—Ââ’—¢â¢Ã¢—š¬—¢â—š—Ââ’—¢â¢Ã¢—š¬—¢â—š—Ââ’—¢â¢Ã¢—š¬—¢â—š—Ââ’—¢â¢Ã¢—š¬—¢â—š—Ââ’—¢â¢Ã¢—š¬—¢â—š—Ââ’—¢â¢Ã¢—š¬—¢â—š—Ââ’—¢â¢Ã¢—š¬—¢â—š—Ââ’—¢â¢Ã¢—š¬—¢â—š—Ââ’—¢â¢Ã¢—š¬—¢â—š—Ââ’—¢â¢Ã¢—š¬—¢â—š—Ââ’—¢â¢Ã¢—š¬—¢â—š—Ââ’—¢â¢Ã¢—š¬—¢â—š—Ââ’—¢â¢Ã¢—š¬—¢â—š—Ââ’—¢â¢Ã¢—š¬—¢â—š—Ââ’—¢â¢Ã¢—š¬—¢â—š—Ââ’—¢â¢Ã¢—š¬—¢â—š—Ââ’—¢â¢Ã¢—š¬—¢â—š—Ââ’—¢â¢Ã¢—š¬—¢â—š—Ââ’—¢â¢Ã¢—š¬—¢â—š—Ââ’—¢â¢Ã¢—š¬—¢â—š—Â */}
+        {/* Resume session banner — shown when there's a persisted session */}
+        {resumeContext && resumeContext.gateCircuit && (
+          <div style={{
+            ...CARD, padding: '14px 18px', marginBottom: 20,
+            background: 'rgba(0,183,255,0.05)', borderColor: 'rgba(0,183,255,0.3)',
+            display: 'flex', alignItems: 'center', gap: 14,
+          }}>
+            <div style={{
+              width: 36, height: 36, borderRadius: 8,
+              background: 'rgba(0,183,255,0.1)', border: '1px solid rgba(0,183,255,0.3)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+            }}>
+              <History size={18} style={{ color: 'var(--cyan)' }} />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>
+                Resume latest session — {resumeContext.gateCircuit.name}
+              </div>
+              <div style={{ fontSize: 10.5, fontFamily: MONO, color: 'var(--text-muted)', display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                <span>Mode: <strong style={{ color: 'var(--cyan)' }}>{resumeContext.sessionCtx.sessionMode}</strong></span>
+                <span>Data: {resumeContext.sessionCtx.dataMode}</span>
+                {resumeContext.sessionCtx.setup.rider && <span>Rider: {resumeContext.sessionCtx.setup.rider}</span>}
+                {resumeContext.sessionCtx.setup.bike && <span>Bike: {resumeContext.sessionCtx.setup.bike}</span>}
+              </div>
+            </div>
+            <button onClick={onLoadLatest} style={{
+              padding: '8px 16px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer',
+              background: 'rgba(0,183,255,0.12)', border: '1px solid var(--cyan)', color: 'var(--cyan)',
+              display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0,
+            }}>
+              <PlayCircle size={13} /> Continue session
+            </button>
+            {onNewSession && (
+              <button onClick={onNewSession} style={{
+                padding: '8px 16px', borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', color: 'var(--text-muted)',
+                flexShrink: 0,
+              }}>
+                New session
+              </button>
+            )}
+          </div>
+        )}
+
         <div style={{ ...LABEL, marginBottom: 8 }}>
           <Gauge size={11} style={{ verticalAlign: -2, marginRight: 6, color: 'var(--accent)' }} />
           START YOUR SESSION
@@ -187,13 +233,15 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
             body={t('mc.cardCircuit', 'Load a validated circuit: layout, corners, sectors, elevation, 3D map and simulation context.')}
             cta={t('mc.ctaCircuit', 'Select circuit')} onClick={onSelectCircuit} />
           <ActionCard icon={History} accent="#00E676" title="LATEST SESSION"
-            body={t('mc.cardLatest', 'Resume Mugello â’—šâ—š—· Stint 03 (Yamaha R1 â’—šâ—š—· best 1:57.842 â’—šâ—š—· gain â’—¢â—¹—Â â¢Ã¢—š¬Ã¢—ž¢1.284s) in replay mode with telemetry and report.')}
+            body={resumeContext && resumeContext.gateCircuit
+              ? `Resume ${resumeContext.gateCircuit.name} — ${resumeContext.sessionCtx.sessionMode} mode (${resumeContext.sessionCtx.setup.rider ?? 'Rider'} · ${resumeContext.sessionCtx.setup.bike ?? 'Bike'}).`
+              : t('mc.cardLatest', 'Resume Mugello — Stint 03 (Yamaha R1 — best 1:57.842 — gain +1.284s) in replay mode with telemetry and report.')}
             cta={t('mc.ctaLatest', 'Load latest session')} onClick={onLoadLatest} />
           <ActionCard icon={Plus} accent="#FFD600" title="CREATE NEW CIRCUIT"
             body={t('mc.cardCreate', 'Upload GPX, KML, GeoJSON, CSV or onboard video. The agents rebuild the layout and generate the initial simulation.')}
             cta={t('mc.ctaCreate', 'Create circuit')} onClick={onCreateCircuit} />
           <ActionCard icon={PlayCircle} accent="#8B5CF6" title="GUIDED DEMO"
-            body={t('mc.cardDemo', 'Reproducible sample session: telemetry, 3D, critical corners, twin and oracle. DEMO DATA â’—šâ—š—· sample.')}
+            body={t('mc.cardDemo', 'Reproducible sample session: telemetry, 3D, critical corners, twin and oracle. DEMO DATA — sample.')}
             cta={t('mc.ctaDemo', 'Open guided demo')} onClick={onDemo} />
         </div>
 
@@ -206,10 +254,10 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
               <History size={11} style={{ verticalAlign: -2, marginRight: 6 }} />RECENT WORKSPACES
             </div>
             {[
-              ['Mugello â’—šâ—š—· GP Race Simulation', 'Last opened today â’—šâ—š—· ready', 'var(--grip)'],
-              ['Mugello â’—šâ—š—· Yamaha R1 â’—šâ—š—· Stint 03', 'Report generated â’—šâ—š—· best 1:57.842', 'var(--cyan)'],
-              ['Jarama â’—šâ—š—· Setup Test', 'Needs telemetry sync', 'var(--yellow)'],
-              ['Custom Track 01', 'SIMULATED â’—šâ—š—· needs validation', 'var(--violet)'],
+              ['Mugello — GP Race Simulation', 'Last opened today — ready', 'var(--grip)'],
+              ['Mugello — Yamaha R1 — Stint 03', 'Report generated — best 1:57.842', 'var(--cyan)'],
+              ['Jarama — Setup Test', 'Needs telemetry sync', 'var(--yellow)'],
+              ['Custom Track 01', 'SIMULATED — needs validation', 'var(--violet)'],
             ].map(([title, sub, c]) => (
               <div key={title as string} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -227,13 +275,13 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
             <div style={{ ...LABEL, color: 'var(--violet)', marginBottom: 10 }}>
               <Bot size={11} style={{ verticalAlign: -2, marginRight: 6 }} />ORACLE QUICK BRIEF
             </div>
-            <div style={{ fontSize: 10.5, fontFamily: MONO, color: 'var(--text-muted)' }}>Latest insight â’—šâ—š—· Mugello â’—šâ—š—· Stint 03</div>
+            <div style={{ fontSize: 10.5, fontFamily: MONO, color: 'var(--text-muted)' }}>Latest insight — Mugello — Stint 03</div>
             <div style={{ fontSize: 12.5, color: 'var(--text)', margin: '7px 0', lineHeight: 1.55 }}>
-              <strong>T15 Bucine exit</strong> â’—¢â¢—š—¬â¢Ã¢—š¬—” open throttle 0.3s earlier after lean &lt;54â’—šâ—š—Â°.
+              <strong>T15 Bucine exit</strong> — open throttle 0.3s earlier after lean &lt;54°.
               Validate rear hot pressure after next stint.
             </div>
             <div style={{ display: 'flex', gap: 12, fontSize: 10.5, fontFamily: MONO, flexWrap: 'wrap' }}>
-              <span style={{ color: 'var(--grip)' }}>gain â’—¢â—¹—Â â¢Ã¢—š¬Ã¢—ž¢0.42s/lap</span>
+              <span style={{ color: 'var(--grip)' }}>gain +0.42s/lap</span>
               <span style={{ color: 'var(--yellow)' }}>risk medium</span>
               <span style={{ color: 'var(--violet)' }}>confidence 88%</span>
             </div>
@@ -260,7 +308,7 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
               </div>
             ))}
             <div style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--text-muted)', marginTop: 8 }}>
-              <Activity size={9} style={{ verticalAlign: -1, marginRight: 4 }} />confidence = geometry â’—šâ—š—· elevation â’—šâ—š—· telemetry
+              <Activity size={9} style={{ verticalAlign: -1, marginRight: 4 }} />confidence = geometry — elevation — telemetry
             </div>
           </div>
         </div>

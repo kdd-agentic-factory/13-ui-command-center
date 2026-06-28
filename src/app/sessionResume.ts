@@ -13,7 +13,7 @@ export interface PersistedSessionContextRow {
 }
 
 export interface SessionResumeSnapshot {
-  stage: 'dashboard';
+  stage: 'mission';
   sessionCtx: SessionContext;
   gateCircuit: CircuitRecord | null;
   garageProfile: GarageProfile | null;
@@ -46,7 +46,7 @@ export function buildSessionResumeSnapshot(row: PersistedSessionContextRow): Ses
   const mode = modeDef(row.session_mode);
 
   return {
-    stage: 'dashboard',
+    stage: 'mission',
     sessionCtx: {
       ...sessionCtx,
       dataMode: row.data_mode,

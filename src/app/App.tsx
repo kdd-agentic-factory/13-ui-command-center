@@ -57,6 +57,7 @@ function AppEntryFlowContent() {
   const [createOnOpen, setCreateOnOpen] = useState(false);
   const [gateCircuit, setGateCircuit] = useState<CircuitRecord | null>(null);
   const [sessionCtx, setSessionCtx] = useState<SessionContext | null>(null);
+  const [resumeSnapshot, setResumeSnapshot] = useState<import('./sessionResume').SessionResumeSnapshot | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -89,6 +90,7 @@ function AppEntryFlowContent() {
       }
       setSessionContext(snapshot.sessionCtx);
       setSessionCtx(snapshot.sessionCtx);
+      setResumeSnapshot(snapshot);
       setStage(snapshot.stage);
     }
 
@@ -187,8 +189,27 @@ function AppEntryFlowContent() {
       <MissionControlPage
         onSelectCircuit={() => { setCreateOnOpen(false); setStage('circuit'); }}
         onCreateCircuit={() => { setCreateOnOpen(true); setStage('circuit'); }}
-        onLoadLatest={presetLatestSession}
+        onLoadLatest={resumeSnapshot ? () => {
+          // Resume the actual persisted session data
+          if (resumeSnapshot.gateCircuit) {
+            setActiveCircuit(resumeSnapshot.gateCircuit);
+            setGateCircuit(resumeSnapshot.gateCircuit);
+          }
+          if (resumeSnapshot.garageProfile) {
+            setGarageProfile(resumeSnapshot.garageProfile);
+          }
+          setSessionContext(resumeSnapshot.sessionCtx);
+          setSessionCtx(resumeSnapshot.sessionCtx);
+          setStage('launch');
+        } : presetLatestSession}
         onDemo={presetGuidedDemo}
+        resumeContext={resumeSnapshot}
+        onNewSession={() => {
+          clearSessionContext();
+          setSessionCtx(null);
+          setResumeSnapshot(null);
+          setStage('mission');
+        }}
       />
     );
   }
