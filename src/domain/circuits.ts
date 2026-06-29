@@ -160,14 +160,14 @@ const SEED: CircuitRecord[] = [
 
 // In-memory library: seeded locally, refreshed from the InsForge `circuits`
 // table when reachable (migration 009 seeds the same 10 tracks server-side).
-const library: CircuitRecord[] = [...SEED];
+let library: CircuitRecord[] = [...SEED];
 
 export function getCircuitLibrary(): CircuitRecord[] {
   return library;
 }
 
 export function addCircuit(record: CircuitRecord): void {
-  library.unshift(record);
+  library = [record, ...library];
   void persistCircuit(record);
 }
 

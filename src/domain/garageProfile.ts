@@ -68,7 +68,7 @@ export interface GarageProfile {
 
 // ──── Seed libraries ────
 
-export const RIDERS: RiderProfile[] = [
+export let RIDERS: RiderProfile[] = [
   {
     id: 'ruben_juarez', name: 'Rubén Juárez', level: 'Advanced amateur',
     archetype: 'Point-and-shoot · aggressive entry', consistency: 86,
@@ -89,7 +89,7 @@ export const RIDERS: RiderProfile[] = [
   },
 ];
 
-export const BIKES: BikeProfile[] = [
+export let BIKES: BikeProfile[] = [
   {
     id: 'yamaha_r1_2024', brand: 'Yamaha', model: 'R1', category: 'Superbike',
     engine: '998 cc inline-four', electronics: ['TC', 'Engine Brake', 'Power Maps', 'Launch', 'Quickshifter'],
@@ -137,7 +137,7 @@ export function addRider(name: string, level: string, risk: RiderProfile['riskTe
     consistency: 0, riskTendency: risk, hasStyleDNA: false,
     limiters: ['Run a calibration stint to build the rider profile'],
   };
-  RIDERS.unshift(r);
+  RIDERS = [r, ...RIDERS];
   return r;
 }
 
@@ -149,7 +149,7 @@ export function addBike(brand: string, model: string, telemetry: BikeProfile['te
     electronics: ['TC', 'Engine Brake'], telemetry,
     hasSetupBaseline: false, generic: true,
   };
-  BIKES.unshift(b);
+  BIKES = [b, ...BIKES];
   return b;
 }
 
