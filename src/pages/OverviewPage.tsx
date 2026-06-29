@@ -8,6 +8,7 @@
  * error indicator, NOT wrong numbers.
  */
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Flag, Zap, TrendingUp, Activity, AlertTriangle,
   Shield, CircleDot,
@@ -819,24 +820,25 @@ function TyreDisplay(props: TyreDisplayProps) {
 // ──── Main Page ────
 
 export function OverviewPage() {
+  const { t } = useTranslation();
   const session = useSessionContext();
-  const t = useLiveTelemetry();
+  const telemetry = useLiveTelemetry();
   const [activeTab, setActiveTab] = useState<'live' | 'telemetry'>('live');
-  const sessionState = sessionDisplayState(t.lapCount);
+  const sessionState = sessionDisplayState(telemetry.lapCount);
 
   // ———— Validation guard: if lap counter is bogus, show a clear error ─
-  const lapValid = validLap(t.lapCount);
-  const displayLap = lapValid !== null ? t.lapCount : '—';
+  const lapValid = validLap(telemetry.lapCount);
+  const displayLap = lapValid !== null ? telemetry.lapCount : '—';
 
   // Fuel projection
-  const projectedFuel = validFuel(t.fuelLoad) ? fuelProjection(t.lapCount, t.fuelLoad) : null;
+  const projectedFuel = validFuel(telemetry.fuelLoad) ? fuelProjection(telemetry.lapCount, telemetry.fuelLoad) : null;
   const fuelCritical = projectedFuel !== null && projectedFuel < 1;
 
-  const rivals = buildRivals(t.position, t.gap);
+  const rivals = buildRivals(telemetry.position, telemetry.gap);
 
   // Lap delta analysis — only when data is valid
-  const lapDelta = validLapTime(t.lastLap) && validLapTime(t.bestLap)
-    ? t.lastLap - t.bestLap
+  const lapDelta = validLapTime(telemetry.lastLap) && validLapTime(telemetry.bestLap)
+    ? telemetry.lastLap - telemetry.bestLap
     : 0;
   const lapDeltaStr   = lapDelta >= 0 ? `+${lapDelta.toFixed(3)}` : lapDelta.toFixed(3);
   const lapDeltaColor = lapDelta > 0.5 ? 'var(--accent)' : lapDelta > 0.1 ? 'var(--yellow)' : 'var(--green)';
@@ -848,8 +850,8 @@ export function OverviewPage() {
     { sector: 'S2', delta: lapDelta * frac[1] },
     { sector: 'S3', delta: lapDelta * frac[2] },
   ];
-  const sectorDeltasValidated = validLapTime(t.lastLap) && validLapTime(t.bestLap) && sectorDeltas.every(item => Number.isFinite(item.delta));
-  const gearTotal = gearDistributionTotalPct(buildGearDistribution(t.gear));
+  const sectorDeltasValidated = validLapTime(telemetry.lastLap) && validLapTime(telemetry.bestLap) && sectorDeltas.every(item => Number.isFinite(item.delta));
+  const gearTotal = gearDistributionTotalPct(buildGearDistribution(telemetry.gear));
 
   return (
     <div className="page">
@@ -869,9 +871,9 @@ export function OverviewPage() {
           <span className={`badge ${sessionState.badgeClass}`} style={{ animation: sessionState.activeRace ? 'pulse 2s infinite' : undefined }}>{sessionState.badgeLabel}</span>
           <span className="badge" style={{ fontSize: 10, color: session.badgeColor, border: `1px solid ${session.badgeColor}`, background: 'transparent' }}>{session.badge}</span>
           <span className="badge badge-yellow">Integrity visible</span>
-          {t.session === 'test' && <span className="badge badge-yellow">TEST SESSION</span>}
+          {telemetry.session === 'test' && <span className="badge badge-yellow">TEST SESSION</span>}
           {fuelCritical && <span className="badge badge-red" style={{ animation: 'pulse 1.5s infinite' }}>FUEL CRITICAL</span>}
-          {t.lapAnomaly && <span className="badge badge-orange" style={{ animation: 'pulse 1s infinite' }}>ANOMALY</span>}
+          {telemetry.lapAnomaly && <span className="badge badge-orange" style={{ animation: 'pulse 1s infinite' }}>ANOMALY</span>}
         </div>
       </div>
 
@@ -891,8 +893,8 @@ export function OverviewPage() {
       <div className="card mb-4" style={{
  }}>
         <div className="card-header">
-          <span className="card-title">Actionable Decision</span>
-          <span className="badge badge-green">Decision first</span>
+          <span className="card-title">{t('overview.actionableDecision', 'Actionable Decision')}</span>
+          <span className="badge badge-green">{t('overview.decisionFirst', 'Decision first')}</span>
         </div>
         <div className="card-body" style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>
           <strong style={{ color: 'var(--green)' }}>Primary call:</strong> Protect rear tyre through L1——œL5; attack P2 at San Donato only if gap is under 0.6s. Data below is supporting evidence, not the product headline.
@@ -902,22 +904,22 @@ export function OverviewPage() {
       {/* ─ KPI ROW ─ */}
       <div className="grid-4 mb-4">
         <div className="stat-tile accent-border">
-          <div className="stat-tile__label">Position</div>
+          <div className="stat-tile__label">{t('common.position', 'Position')}</div>
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8 }}>
-            <span className="stat-tile__value">P{t.position}</span>
+            <span className="stat-tile__value">P{telemetry.position}</span>
             <span className="badge badge-yellow" style={{ marginBottom: 4 }}>
-              {t.gap === 'leader' ? 'LEADER' : `GAP ${t.gap}`}{t.gap === 'leader' ? '' : 's'}
+              {telemetry.gap === 'leader' ? 'LEADER' : `GAP ${telemetry.gap}`}{telemetry.gap === 'leader' ? '' : 's'}
             </span>
           </div>
-          <div className="stat-tile__delta" style={{ color: t.position <= 3 ? 'var(--green)' : 'var(--yellow)' }}>
-            {t.position <= 3 ? `Top ${t.position} —· points zone` : 'Outside top 3'}
+          <div className="stat-tile__delta" style={{ color: telemetry.position <= 3 ? 'var(--green)' : 'var(--yellow)' }}>
+            {telemetry.position <= 3 ? `Top ${telemetry.position} —· points zone` : 'Outside top 3'}
           </div>
         </div>
         <div className="stat-tile green-border">
-          <div className="stat-tile__label">Last Lap</div>
-          {validLapTime(t.lastLap) ? (
+          <div className="stat-tile__label">{t('common.lastLap', 'Last Lap')}</div>
+          {validLapTime(telemetry.lastLap) ? (
             <>
-              <span className="stat-tile__value text-mono" style={{ fontSize: 20 }}>{formatLap(t.lastLap)}</span>
+              <span className="stat-tile__value text-mono" style={{ fontSize: 20 }}>{formatLap(telemetry.lastLap)}</span>
               <div className="stat-tile__delta" style={{ color: lapDeltaColor }}>
                 {lapDeltaStr}s vs personal best
               </div>
@@ -930,10 +932,10 @@ export function OverviewPage() {
           )}
         </div>
         <div className="stat-tile blue-border">
-          <div className="stat-tile__label">Best Lap</div>
-          {validLapTime(t.bestLap) ? (
+          <div className="stat-tile__label">{t('common.bestLap', 'Best Lap')}</div>
+          {validLapTime(telemetry.bestLap) ? (
             <>
-              <span className="stat-tile__value text-mono" style={{ fontSize: 20 }}>{formatLap(t.bestLap)}</span>
+              <span className="stat-tile__value text-mono" style={{ fontSize: 20 }}>{formatLap(telemetry.bestLap)}</span>
               <div className="stat-tile__delta delta-pos">─š─ Personal best</div>
             </>
           ) : (
@@ -944,11 +946,11 @@ export function OverviewPage() {
           )}
         </div>
         <div className="stat-tile yellow-border">
-          <div className="stat-tile__label">Fuel Remaining</div>
-          {validFuel(t.fuelLoad) ? (
+          <div className="stat-tile__label">{t('overview.fuelRemaining', 'Fuel Remaining')}</div>
+          {validFuel(telemetry.fuelLoad) ? (
             <>
               <span className="stat-tile__value" style={{ color: fuelCritical ? 'var(--accent)' : undefined }}>
-                {t.fuelLoad.toFixed(1)}<span className="stat-tile__unit">kg</span>
+                {telemetry.fuelLoad.toFixed(1)}<span className="stat-tile__unit">kg</span>
               </span>
               <div className="stat-tile__delta" style={{ color: fuelCritical ? 'var(--accent)' : 'var(--text-dim)' }}>
                 {projectedFuel !== null && (
@@ -969,12 +971,12 @@ export function OverviewPage() {
 
       {/* ─ AI STRATEGY CALL ─ */}
       <AIStrategyCall
-        position={t.position}
-        lapCount={t.lapCount}
-        fuelLoad={t.fuelLoad}
-        lastLap={t.lastLap}
-        bestLap={t.bestLap}
-        lapAnomaly={t.lapAnomaly}
+        position={telemetry.position}
+        lapCount={telemetry.lapCount}
+        fuelLoad={telemetry.fuelLoad}
+        lastLap={telemetry.lastLap}
+        bestLap={telemetry.bestLap}
+        lapAnomaly={telemetry.lapAnomaly}
       />
 
       {/* ─ MIDDLE GRID: Feed + Live Snapshot + Tyres ─ */}
@@ -990,25 +992,25 @@ export function OverviewPage() {
             <span className="badge badge-orange">pressure —· wear —· flank split</span>
           </div>
           <TyreDisplay
-            frontLeft={t.tireFrontLeft}
-            frontRight={t.tireFrontRight}
-            rearLeft={t.tireRearLeft}
-            rearRight={t.tireRearRight}
-            frontCompound={t.frontCompound}
-            rearCompound={t.rearCompound}
-            frontAge={t.frontTyreAge}
-            rearAge={t.rearTyreAge}
-            frontPressure={t.tirePressureFront}
-            rearPressure={t.tirePressureRear}
-            frontWear={t.tireWearFront}
-            rearWear={t.tireWearRear}
+            frontLeft={telemetry.tireFrontLeft}
+            frontRight={telemetry.tireFrontRight}
+            rearLeft={telemetry.tireRearLeft}
+            rearRight={telemetry.tireRearRight}
+            frontCompound={telemetry.frontCompound}
+            rearCompound={telemetry.rearCompound}
+            frontAge={telemetry.frontTyreAge}
+            rearAge={telemetry.rearTyreAge}
+            frontPressure={telemetry.tirePressureFront}
+            rearPressure={telemetry.tirePressureRear}
+            frontWear={telemetry.tireWearFront}
+            rearWear={telemetry.tireWearRear}
           />
           <div style={{ padding: '0 16px 14px', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
             {[
-              { label: 'Front pressure', value: `${t.tirePressureFront.toFixed(2)} bar`, color: 'var(--cyan)' },
-              { label: 'Rear pressure', value: `${t.tirePressureRear.toFixed(2)} bar`, color: 'var(--cyan)' },
-              { label: 'Front wear', value: `${t.tireWearFront.toFixed(1)}%`, color: t.tireWearFront > 35 ? 'var(--yellow)' : 'var(--green)' },
-              { label: 'Rear wear', value: `${t.tireWearRear.toFixed(1)}%`, color: t.tireWearRear > 55 ? 'var(--accent)' : t.tireWearRear > 35 ? 'var(--yellow)' : 'var(--green)' },
+              { label: 'Front pressure', value: `${telemetry.tirePressureFront.toFixed(2)} bar`, color: 'var(--cyan)' },
+              { label: 'Rear pressure', value: `${telemetry.tirePressureRear.toFixed(2)} bar`, color: 'var(--cyan)' },
+              { label: 'Front wear', value: `${telemetry.tireWearFront.toFixed(1)}%`, color: telemetry.tireWearFront > 35 ? 'var(--yellow)' : 'var(--green)' },
+              { label: 'Rear wear', value: `${telemetry.tireWearRear.toFixed(1)}%`, color: telemetry.tireWearRear > 55 ? 'var(--accent)' : telemetry.tireWearRear > 35 ? 'var(--yellow)' : 'var(--green)' },
             ].map(item => (
               <div key={item.label} style={{ padding: '8px', borderRadius: 'var(--radius)', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)' }}>
                 <div style={{ fontSize: 9, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{item.label}</div>
@@ -1035,16 +1037,16 @@ export function OverviewPage() {
                 <div>
                   <div className="card-label">Speed</div>
                   <span className="telem-lg text-mono">
-                    {t.speed}<span className="telem-unit" style={{ fontSize: 14 }}> km/h</span>
+                    {telemetry.speed}<span className="telem-unit" style={{ fontSize: 14 }}> km/h</span>
                   </span>
                 </div>
                 <div>
                   <div className="card-label">RPM</div>
-                  <span className="telem-md text-mono">{t.rpm.toLocaleString('en-US')}</span>
+                  <span className="telem-md text-mono">{telemetry.rpm.toLocaleString('en-US')}</span>
                 </div>
                 <div style={{ textAlign: 'center' }}>
                   <div className="card-label">Gear</div>
-                  <span className="telem-lg text-mono" style={{ color: 'var(--accent)', fontSize: 40 }}>{t.gear}</span>
+                  <span className="telem-lg text-mono" style={{ color: 'var(--accent)', fontSize: 40 }}>{telemetry.gear}</span>
                 </div>
               </div>
 
@@ -1052,25 +1054,25 @@ export function OverviewPage() {
               <div style={{ marginBottom: 10 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                   <span className="card-label">Throttle</span>
-                  <span className="text-mono" style={{ fontSize: 12 }}>{t.throttle}%</span>
+                  <span className="text-mono" style={{ fontSize: 12 }}>{telemetry.throttle}%</span>
                 </div>
-                <div className="bar-track"><div className="bar-fill green" style={{ width: `${t.throttle}%` }} /></div>
+                <div className="bar-track"><div className="bar-fill green" style={{ width: `${telemetry.throttle}%` }} /></div>
               </div>
 
               {/* Brake */}
               <div style={{ marginBottom: 10 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                   <span className="card-label">Brake</span>
-                  <span className="text-mono" style={{ fontSize: 12 }}>{t.brake}%</span>
+                  <span className="text-mono" style={{ fontSize: 12 }}>{telemetry.brake}%</span>
                 </div>
-                <div className="bar-track"><div className="bar-fill" style={{ width: `${t.brake}%`, background: 'var(--accent)' }} /></div>
+                <div className="bar-track"><div className="bar-fill" style={{ width: `${telemetry.brake}%`, background: 'var(--accent)' }} /></div>
               </div>
 
               {/* Lean angle */}
               <div style={{ paddingTop: 10, borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between' }}>
                 <span className="card-label">Lean Angle</span>
-                <span className="text-mono" style={{ fontSize: 13, color: t.leanAngle > 45 ? 'var(--accent)' : 'var(--text)' }}>
-                  {t.leanAngle.toFixed(1)}—°
+                <span className="text-mono" style={{ fontSize: 13, color: telemetry.leanAngle > 45 ? 'var(--accent)' : 'var(--text)' }}>
+                  {telemetry.leanAngle.toFixed(1)}—°
                 </span>
               </div>
             </div>
@@ -1080,21 +1082,21 @@ export function OverviewPage() {
           <div className="card">
             <div className="card-header">
               <span className="card-title">Tyres</span>
-              <span className="badge badge-orange">Lap {t.rearTyreAge}</span>
+              <span className="badge badge-orange">Lap {telemetry.rearTyreAge}</span>
             </div>
             <TyreDisplay
-              frontLeft={t.tireFrontLeft}
-              frontRight={t.tireFrontRight}
-              rearLeft={t.tireRearLeft}
-              rearRight={t.tireRearRight}
-              frontCompound={t.frontCompound}
-              rearCompound={t.rearCompound}
-              frontAge={t.frontTyreAge}
-              rearAge={t.rearTyreAge}
-              frontPressure={t.tirePressureFront}
-              rearPressure={t.tirePressureRear}
-              frontWear={t.tireWearFront}
-              rearWear={t.tireWearRear}
+              frontLeft={telemetry.tireFrontLeft}
+              frontRight={telemetry.tireFrontRight}
+              rearLeft={telemetry.tireRearLeft}
+              rearRight={telemetry.tireRearRight}
+              frontCompound={telemetry.frontCompound}
+              rearCompound={telemetry.rearCompound}
+              frontAge={telemetry.frontTyreAge}
+              rearAge={telemetry.rearTyreAge}
+              frontPressure={telemetry.tirePressureFront}
+              rearPressure={telemetry.tirePressureRear}
+              frontWear={telemetry.tireWearFront}
+              rearWear={telemetry.tireWearRear}
             />
           </div>
         </div>
@@ -1108,12 +1110,12 @@ export function OverviewPage() {
           <div className="card-header">
             <span className="card-title flex items-center gap-2">
               <TrendingUp size={14} style={{ color: 'var(--blue)' }} />
-              Sector Delta — vs Best
+              {t('overview.sectorDelta', 'Sector Delta — vs Best')}
             </span>
             <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Last lap</span>
           </div>
           <div className="card-body" style={{ flexDirection: 'column', gap: 14 }}>
-            {validLapTime(t.lastLap) && validLapTime(t.bestLap) ? (
+            {validLapTime(telemetry.lastLap) && validLapTime(telemetry.bestLap) ? (
               <>
                 {sectorDeltas.map(s => (
                   <SectorBar key={s.sector} sector={s.sector} delta={s.delta} base={0.5} />
@@ -1140,23 +1142,23 @@ export function OverviewPage() {
         {/* Gear distribution */}
         <div className="card">
           <div className="card-header">
-            <span className="card-title">Gear Distribution</span>
-            <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>% lap time per gear</span>
+            <span className="card-title">{t('overview.gearDistribution', 'Gear Distribution')}</span>
+            <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{t('overview.gearDistSub', '% lap time per gear')}</span>
           </div>
-          <GearDistribution currentGear={t.gear} />
+          <GearDistribution currentGear={telemetry.gear} />
         </div>
 
         {/* Pace model */}
         <div className="card">
           <div className="card-header">
-            <span className="card-title">Pace vs Model</span>
+            <span className="card-title">{t('overview.paceVsModel', 'Pace vs Model')}</span>
             <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Digital Twin ─—</span>
           </div>
           <PaceModelChart
-            lapCount={t.lapCount}
-            lastLap={t.lastLap}
-            bestLap={t.bestLap}
-            lapAnomaly={t.lapAnomaly}
+            lapCount={telemetry.lapCount}
+            lastLap={telemetry.lastLap}
+            bestLap={telemetry.bestLap}
+            lapAnomaly={telemetry.lapAnomaly}
           />
         </div>
       </div>
@@ -1167,31 +1169,31 @@ export function OverviewPage() {
           <div className="card-header">
             <span className="card-title">Live Track Position — {session.ctx.circuitName}</span>
             <span className="badge badge-muted" style={{ fontFamily:'JetBrains Mono,monospace' }}>
-              {Math.round(t.trackPos * 100)}% lap —· procedural map
+              {Math.round(telemetry.trackPos * 100)}% lap —· procedural map
             </span>
           </div>
           <div className="card-body" style={{ flexDirection:'column' }}>
-            <MugelloCircuit trackPos={t.trackPos} lapAnomaly={t.lapAnomaly} />
+            <MugelloCircuit trackPos={telemetry.trackPos} lapAnomaly={telemetry.lapAnomaly} />
           </div>
         </div>
 
         <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
           <div className="card" style={{ flex:1 }}>
             <div className="card-header">
-              <span className="card-title">Championship Standings</span>
+              <span className="card-title">{t('overview.championshipStandings', 'Championship Standings')}</span>
               <span className="badge badge-yellow">After R6</span>
             </div>
             <div className="card-body" style={{ flexDirection:'column' }}>
-              <ChampionshipBars currentPos={t.position} />
+              <ChampionshipBars currentPos={telemetry.position} />
             </div>
           </div>
           <div className="card">
             <div className="card-header">
-              <span className="card-title">Stint Progress</span>
+              <span className="card-title">{t('overview.stintProgress', 'Stint Progress')}</span>
               <span className="badge badge-blue">Pit Window</span>
             </div>
             <div className="card-body" style={{ flexDirection:'column' }}>
-              <StintProgress tyreAge={t.rearTyreAge} lapCount={t.lapCount} />
+              <StintProgress tyreAge={telemetry.rearTyreAge} lapCount={telemetry.lapCount} />
             </div>
           </div>
         </div>
@@ -1200,26 +1202,26 @@ export function OverviewPage() {
       {/* ─ RACE STANDINGS ─ */}
       <div className="card">
         <div className="card-header">
-          <span className="card-title flex items-center gap-2">
+            <span className="card-title flex items-center gap-2">
             <Flag size={14} />
-            Race Standings — Lap {displayLap}
+            {t('overview.raceStandings', 'Race Standings')} — {t('overview.lap', 'Lap')} {displayLap}
           </span>
           <span className="badge badge-muted">Top 5</span>
         </div>
-        <RaceStandingsTable rivals={rivals} position={t.position} />
+        <RaceStandingsTable rivals={rivals} position={telemetry.position} />
         <div style={{ padding: '8px 14px', fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-muted)', borderTop: '1px solid var(--border)' }}>
-          Pace vs you: ——œ = faster than your last lap —· Threat: pace + position relative to P{t.position}
+          Pace vs you: ——œ = faster than your last lap —· Threat: pace + position relative to P{telemetry.position}
         </div>
       </div>
 
       {/* ─ RACE DATA INTEGRITY ─ */}
       <div style={{ marginTop: 16 }}>
         <DataIntegrity
-          fuelValid={t.fuelValid}
-          lapAnomaly={t.lapAnomaly}
-          lapCount={t.lapCount}
-          lastLap={t.lastLap}
-          bestLap={t.bestLap}
+          fuelValid={telemetry.fuelValid}
+          lapAnomaly={telemetry.lapAnomaly}
+          lapCount={telemetry.lapCount}
+          lastLap={telemetry.lastLap}
+          bestLap={telemetry.bestLap}
           sectorDeltasValidated={sectorDeltasValidated}
           gearDistributionTotal={gearTotal}
         />

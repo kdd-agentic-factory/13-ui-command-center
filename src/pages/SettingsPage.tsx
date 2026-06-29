@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   CheckCircle, XCircle, Eye, EyeOff, ExternalLink,
   Loader, RefreshCw, Server, ShieldCheck, Database,
@@ -270,6 +271,7 @@ function GroupHealthCards({
 // ──── Main component ────
 
 export function SettingsPage() {
+  const { t } = useTranslation();
   const [showKeys, setShowKeys]   = useState<Record<string, boolean>>({});
   const [liveStatus, setLive]     = useState<Record<string, SvcStatus>>({});
   const [checking, setChecking]   = useState(false);
@@ -326,7 +328,7 @@ export function SettingsPage() {
       {/* ———— Header ———————————————————————————————————————————————————————————————————————————————————————————————————————————————————————— */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="page-title">Settings</h1>
+          <h1 className="page-title">{t('settings.title', 'Settings')}</h1>
           <p className="page-subtitle">Service connections —· API keys —· Data configuration —· Infrastructure health</p>
         </div>
         <div className="flex items-center gap-2">
@@ -491,7 +493,7 @@ export function SettingsPage() {
 
           {/* Platform info */}
           <div className="card">
-            <div className="card-header"><span className="card-title">Platform Information</span></div>
+            <div className="card-header"><span className="card-title">{t('settings.platformInformation', 'Platform Information')}</span></div>
             <div className="card-body" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {[
                 { k: 'Platform',        v: 'KDD Moto Intelligence' },

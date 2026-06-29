@@ -11,6 +11,7 @@
  *                     (window, axis, scale), channel panel, unified stats
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Activity, BarChart2, Radio, Wifi, Zap } from 'lucide-react';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { useAnimeCount } from '../hooks/useAnimeCount';
@@ -567,9 +568,10 @@ function ChannelStatsStrip({ channels }: { channels: Channel[] }) {
 // ──── Main component ────
 
 export function LiveTelemetryPage() {
+  const { t } = useTranslation();
   const session = useSessionContext();
   const garage = useGarage();
-  const t = useLiveTelemetry();
+  const telemetry = useLiveTelemetry();
   const [mode, setMode]         = useState<Mode>('live');
   const [showWifi, setShowWifi] = useState(false);
 
@@ -596,30 +598,30 @@ export function LiveTelemetryPage() {
     const push = (buf: React.MutableRefObject<number[]>, val: number, cap: number) => {
       buf.current = [...buf.current, val].slice(-cap);
     };
-    push(speedBuf,    t.speed,     ANALYSIS_LEN);
-    push(rpmBuf,      t.rpm,       ANALYSIS_LEN);
-    push(throttleBuf, t.throttle,  ANALYSIS_LEN);
-    push(brakeBuf,    t.brake,     ANALYSIS_LEN);
-    push(leanBuf,     t.leanAngle, ANALYSIS_LEN);
-    push(gearBuf,     t.gear,      ANALYSIS_LEN);
-    const rtyreVal = (t.tireRearLeft + t.tireRearRight) / 2;
-    push(latgBuf,  Math.abs(Math.tan((t.leanAngle * Math.PI) / 180)), ANALYSIS_LEN);
-    push(ftyreBuf, (t.tireFrontLeft + t.tireFrontRight) / 2, ANALYSIS_LEN);
+    push(speedBuf,    telemetry.speed,     ANALYSIS_LEN);
+    push(rpmBuf,      telemetry.rpm,       ANALYSIS_LEN);
+    push(throttleBuf, telemetry.throttle,  ANALYSIS_LEN);
+    push(brakeBuf,    telemetry.brake,     ANALYSIS_LEN);
+    push(leanBuf,     telemetry.leanAngle, ANALYSIS_LEN);
+    push(gearBuf,     telemetry.gear,      ANALYSIS_LEN);
+    const rtyreVal = (telemetry.tireRearLeft + telemetry.tireRearRight) / 2;
+    push(latgBuf,  Math.abs(Math.tan((telemetry.leanAngle * Math.PI) / 180)), ANALYSIS_LEN);
+    push(ftyreBuf, (telemetry.tireFrontLeft + telemetry.tireFrontRight) / 2, ANALYSIS_LEN);
     push(rtyreBuf, rtyreVal, ANALYSIS_LEN);
-    push(rgripBuf, Math.max(60, 96 - (t.rearTyreAge || 0) * 0.6 - Math.max(0, rtyreVal - 110) * 0.4), ANALYSIS_LEN);
+    push(rgripBuf, Math.max(60, 96 - (telemetry.rearTyreAge || 0) * 0.6 - Math.max(0, rtyreVal - 110) * 0.4), ANALYSIS_LEN);
 
-    setSpeedHistory(prev => [...prev, t.speed].slice(-LIVE_LEN));
+    setSpeedHistory(prev => [...prev, telemetry.speed].slice(-LIVE_LEN));
 
     // Track new laps for delta history
-    if (t.lapCount > prevLapCount.current && t.lastLap > 0) {
-      if (t.lastLap < bestLapRef.current) bestLapRef.current = t.lastLap;
+    if (telemetry.lapCount > prevLapCount.current && telemetry.lastLap > 0) {
+      if (telemetry.lastLap < bestLapRef.current) bestLapRef.current = telemetry.lastLap;
       const best = bestLapRef.current;
       setLapRecords(prev => [
         ...prev,
-        { lap: t.lapCount, time: t.lastLap, best },
+        { lap: telemetry.lapCount, time: telemetry.lastLap, best },
       ].slice(-8));
     }
-    prevLapCount.current = t.lapCount;
+    prevLapCount.current = telemetry.lapCount;
 
     if (mode === 'analysis') {
       setAnalysisSnapshot([
@@ -635,9 +637,9 @@ export function LiveTelemetryPage() {
         [...rgripBuf.current],
       ]);
     }
-  }, [t.speed, t.rpm, t.throttle, t.brake, t.leanAngle, t.gear,
-      t.lapCount, t.lastLap, t.tireFrontLeft, t.tireFrontRight,
-      t.tireRearLeft, t.tireRearRight, t.rearTyreAge, mode]);
+  }, [telemetry.speed, telemetry.rpm, telemetry.throttle, telemetry.brake, telemetry.leanAngle, telemetry.gear,
+      telemetry.lapCount, telemetry.lastLap, telemetry.tireFrontLeft, telemetry.tireFrontRight,
+      telemetry.tireRearLeft, telemetry.tireRearRight, telemetry.rearTyreAge, mode]);
 
   const handleModeChange = useCallback((m: Mode) => {
     if (m === 'analysis') {
@@ -665,9 +667,9 @@ export function LiveTelemetryPage() {
 
   // G-force estimate from lean angle (lateral G ≈ tan(lean°))
   const gForce = useMemo(() => {
-    const radLean = (t.leanAngle * Math.PI) / 180;
+    const radLean = (telemetry.leanAngle * Math.PI) / 180;
     return Math.abs(Math.tan(radLean));
-  }, [t.leanAngle]);
+  }, [telemetry.leanAngle]);
 
 // ──── Analysis channels ────
   const CHANNEL_DEFS: (Omit<Channel, 'data'> & { group: string; quality: string })[] = [
@@ -745,13 +747,13 @@ export function LiveTelemetryPage() {
 
 // ──── Speed trace min max current ────
   const speedStats = useMemo(() => {
-    if (speedHistory.length < 2) return { min: t.speed, max: t.speed, current: t.speed };
+    if (speedHistory.length < 2) return { min: telemetry.speed, max: telemetry.speed, current: telemetry.speed };
     return {
       min: Math.min(...speedHistory),
       max: Math.max(...speedHistory),
-      current: t.speed,
+      current: telemetry.speed,
     };
-  }, [speedHistory, t.speed]);
+  }, [speedHistory, telemetry.speed]);
 
   return (
     <div className="page">
@@ -760,14 +762,14 @@ export function LiveTelemetryPage() {
       {/* RACE HEADER                                                        */}
       {/* Section divider */}
       <RaceHeader
-        lap={t.lapCount}
+        lap={telemetry.lapCount}
         totalLaps={RACE_LAPS}
-        pos={t.position}
-        gap={t.gap}
-        speed={t.speed}
-        fuel={t.fuelLoad}
+        pos={telemetry.position}
+        gap={telemetry.gap}
+        speed={telemetry.speed}
+        fuel={telemetry.fuelLoad}
         clock={clock}
-        anomaly={t.lapAnomaly}
+        anomaly={telemetry.lapAnomaly}
       />
 
       {/* DATA LINK STATUS */}
@@ -790,9 +792,9 @@ export function LiveTelemetryPage() {
       {/* —— Mode toggle —————————————————————————————————————————————————— */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="page-title">Live Telemetry</h1>
+          <h1 className="page-title">{t('liveTelemetry.title', 'Live Telemetry')}</h1>
           <p className="page-subtitle">
-            {session.ctx.dataMode === 'live' ? 'Real-time data stream' : session.ctx.dataMode === 'recorded' ? 'Recorded session stream (replay)' : 'Sample data stream (not live)'}{session.ctx.setup.source ? ` · ${session.ctx.setup.source}` : ''} · 10 Hz · Lap {t.lapCount}
+            {session.ctx.dataMode === 'live' ? 'Real-time data stream' : session.ctx.dataMode === 'recorded' ? 'Recorded session stream (replay)' : 'Sample data stream (not live)'}{session.ctx.setup.source ? ` · ${session.ctx.setup.source}` : ''} · 10 Hz · Lap {telemetry.lapCount}
             {mode === 'analysis' && ` · Analysis window: ${analysisWin / 10}s`}
           </p>
         </div>
@@ -837,20 +839,20 @@ export function LiveTelemetryPage() {
           {/* Live Snapshot — current zone, phase, key values */}
           <div className="card mb-4">
             <div className="card-header">
-              <span className="card-title">LIVE SNAPSHOT</span>
+              <span className="card-title">{t('liveTelemetry.liveSnapshot', 'LIVE SNAPSHOT')}</span>
               <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>
-                Lap {t.lapCount} · track pos {(t.trackPos * 100).toFixed(0)}%
+                Lap {telemetry.lapCount} · track pos {(telemetry.trackPos * 100).toFixed(0)}%
               </span>
             </div>
             <div className="card-body">
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 8 }}>
                 {[
-                  { label: 'Speed',     val: `${t.speed} km/h`,            color: 'var(--accent)' },
-                  { label: 'RPM',       val: t.rpm.toLocaleString(),       color: 'var(--blue)' },
-                  { label: 'Gear',      val: String(t.gear),               color: 'var(--yellow)' },
-                  { label: 'Throttle',  val: `${t.throttle}%`,             color: 'var(--green)' },
-                  { label: 'Brake',     val: `${t.brake}%`,                color: 'var(--orange)' },
-                  { label: 'Lean',      val: `${t.leanAngle}°`,            color: 'var(--purple)' },
+                  { label: 'Speed',     val: `${telemetry.speed} km/h`,            color: 'var(--accent)' },
+                  { label: 'RPM',       val: telemetry.rpm.toLocaleString(),       color: 'var(--blue)' },
+                  { label: 'Gear',      val: String(telemetry.gear),               color: 'var(--yellow)' },
+                  { label: 'Throttle',  val: `${telemetry.throttle}%`,             color: 'var(--green)' },
+                  { label: 'Brake',     val: `${telemetry.brake}%`,                color: 'var(--orange)' },
+                  { label: 'Lean',      val: `${telemetry.leanAngle}°`,            color: 'var(--purple)' },
                   { label: 'Lat G',     val: `${gForce.toFixed(2)}g`,      color: 'var(--cyan)' },
                 ].map(k => (
                   <div key={k.label} style={{ textAlign: 'center', padding: '8px 4px', background: 'rgba(255,255,255,0.03)', borderRadius: 'var(--radius)' }}>
@@ -865,13 +867,13 @@ export function LiveTelemetryPage() {
           {/* Sector timing strip */}
           <div className="card mb-4">
             <div className="card-header">
-              <span className="card-title">SECTOR SPLITS — Lap {t.lapCount}</span>
+              <span className="card-title">{t('liveTelemetry.sectorSplits', 'SECTOR SPLITS')} — {t('liveTelemetry.lap', 'Lap')} {telemetry.lapCount}</span>
               <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>
-                track pos {(t.trackPos * 100).toFixed(0)}%
+                track pos {(telemetry.trackPos * 100).toFixed(0)}%
               </span>
             </div>
             <div className="card-body" style={{ padding: '10px 16px' }}>
-              <SectorTimingStrip trackPos={t.trackPos} />
+              <SectorTimingStrip trackPos={telemetry.trackPos} />
             </div>
           </div>
 
@@ -881,7 +883,7 @@ export function LiveTelemetryPage() {
             <div className="card">
               <div className="card-header"><span className="card-title">Speed</span></div>
               <div className="card-body" style={{ display: 'flex', justifyContent: 'center', padding: '8px 0 0' }}>
-                <SpeedGaugeSVG value={t.speed} />
+                <SpeedGaugeSVG value={telemetry.speed} />
               </div>
             </div>
 
@@ -889,9 +891,9 @@ export function LiveTelemetryPage() {
             <div className="card flex-col">
               <div className="card-header"><span className="card-title">Gear / RPM</span></div>
               <div className="card-body" style={{ flex: 1 }}>
-                <div className="gear-display" style={{ fontSize: 80, marginBottom: 16 }}>{t.gear}</div>
-                <div className="card-label mb-3" style={{ marginBottom: 4 }}>RPM — {t.rpm.toLocaleString()}</div>
-                <RPMBar value={t.rpm} />
+                <div className="gear-display" style={{ fontSize: 80, marginBottom: 16 }}>{telemetry.gear}</div>
+                <div className="card-label mb-3" style={{ marginBottom: 4 }}>RPM — {telemetry.rpm.toLocaleString()}</div>
+                <RPMBar value={telemetry.rpm} />
                 <div className="flex items-center justify-between mt-2">
                   <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>0</span>
                   <span style={{ fontSize: 11, color: 'var(--accent)' }}>14k REDLINE</span>
@@ -907,34 +909,34 @@ export function LiveTelemetryPage() {
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
                     <span className="card-label">Throttle</span>
-                    <span className="telem-md text-mono" style={{ color: 'var(--green)' }}>{t.throttle}%</span>
+                    <span className="telem-md text-mono" style={{ color: 'var(--green)' }}>{telemetry.throttle}%</span>
                   </div>
                   <div className="bar-track" style={{ height: 20 }}>
-                    <div className="bar-fill green" style={{ width: '100%', transform: `scaleX(${t.throttle / 100})`, transformOrigin: 'left center', transition: 'transform 0.1s var(--ease-ui)' }} />
+                    <div className="bar-fill green" style={{ width: '100%', transform: `scaleX(${telemetry.throttle / 100})`, transformOrigin: 'left center', transition: 'transform 0.1s var(--ease-ui)' }} />
                   </div>
                 </div>
                 <div style={{ padding: 10, borderRadius: 8, border: '1px solid rgba(224,55,55,0.18)', background: 'rgba(224,55,55,0.05)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                     <span className="card-label">Brake pressure split</span>
-                    <span className="text-mono" style={{ fontSize: 11, color: 'var(--text-muted)' }}>total {t.brake}%</span>
+                    <span className="text-mono" style={{ fontSize: 11, color: 'var(--text-muted)' }}>total {telemetry.brake}%</span>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     <div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                         <span className="card-label">Front brake</span>
-                        <span className="telem-md text-mono" style={{ color: 'var(--accent)' }}>{(t.brakePressureFront * 0.11).toFixed(1)} bar</span>
+                        <span className="telem-md text-mono" style={{ color: 'var(--accent)' }}>{(telemetry.brakePressureFront * 0.11).toFixed(1)} bar</span>
                       </div>
                       <div className="bar-track" style={{ height: 14 }}>
-                        <div className="bar-fill" style={{ width: '100%', background: 'var(--accent)', transform: `scaleX(${Math.min(1, (t.brakePressureFront * 0.11) / 20)})`, transformOrigin: 'left center', transition: 'transform 0.1s var(--ease-ui)' }} />
+                        <div className="bar-fill" style={{ width: '100%', background: 'var(--accent)', transform: `scaleX(${Math.min(1, (telemetry.brakePressureFront * 0.11) / 20)})`, transformOrigin: 'left center', transition: 'transform 0.1s var(--ease-ui)' }} />
                       </div>
                     </div>
                     <div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                         <span className="card-label">Rear brake</span>
-                        <span className="telem-md text-mono" style={{ color: 'var(--orange)' }}>{(t.brakePressureRear * 0.05).toFixed(1)} bar</span>
+                        <span className="telem-md text-mono" style={{ color: 'var(--orange)' }}>{(telemetry.brakePressureRear * 0.05).toFixed(1)} bar</span>
                       </div>
                       <div className="bar-track" style={{ height: 14 }}>
-                        <div className="bar-fill" style={{ width: '100%', background: 'var(--orange)', transform: `scaleX(${Math.min(1, (t.brakePressureRear * 0.05) / 20)})`, transformOrigin: 'left center', transition: 'transform 0.1s var(--ease-ui)' }} />
+                        <div className="bar-fill" style={{ width: '100%', background: 'var(--orange)', transform: `scaleX(${Math.min(1, (telemetry.brakePressureRear * 0.05) / 20)})`, transformOrigin: 'left center', transition: 'transform 0.1s var(--ease-ui)' }} />
                       </div>
                     </div>
                   </div>
@@ -943,14 +945,14 @@ export function LiveTelemetryPage() {
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
                     <span className="card-label">Lean / Lateral G</span>
                     <span style={{ display: 'flex', gap: 8 }}>
-                      <span className="telem-md text-mono" style={{ color: 'var(--purple)' }}>{t.leanAngle}°</span>
+                      <span className="telem-md text-mono" style={{ color: 'var(--purple)' }}>{telemetry.leanAngle}°</span>
                       <span className="text-mono" style={{ fontSize: 13, color: 'var(--cyan)', fontWeight: 600 }}>
                         <Zap size={10} style={{ display: 'inline', verticalAlign: 'middle' }} />{gForce.toFixed(2)}G
                       </span>
                     </span>
                   </div>
                   <div className="bar-track" style={{ height: 20 }}>
-                    <div className="bar-fill" style={{ width: '100%', background: 'var(--purple)', transform: `scaleX(${t.leanAngle / 63})`, transformOrigin: 'left center', transition: 'transform 0.1s var(--ease-ui)' }} />
+                    <div className="bar-fill" style={{ width: '100%', background: 'var(--purple)', transform: `scaleX(${telemetry.leanAngle / 63})`, transformOrigin: 'left center', transition: 'transform 0.1s var(--ease-ui)' }} />
                   </div>
                 </div>
               </div>
@@ -962,25 +964,25 @@ export function LiveTelemetryPage() {
               <div className="card-body flex-col gap-4" style={{ gap: 16 }}>
                 <div>
                   <div className="card-label">Current Lap</div>
-                  <div className="telem-md text-mono">{formatTime(t.lapTime)}</div>
+                  <div className="telem-md text-mono">{formatTime(telemetry.lapTime)}</div>
                 </div>
                 <div className="divider" />
                 <div>
                   <div className="card-label">Last Lap</div>
-                  <div className="telem-md text-mono">{formatTime(t.lastLap)}</div>
+                  <div className="telem-md text-mono">{formatTime(telemetry.lastLap)}</div>
                   <div style={{
                     fontSize: 12, marginTop: 2,
-                    color: t.lastLap > t.bestLap ? 'var(--accent)' : 'var(--green)',
+                    color: telemetry.lastLap > telemetry.bestLap ? 'var(--accent)' : 'var(--green)',
                   }}>
-                    {t.lastLap > t.bestLap
-                      ? `+${(t.lastLap - t.bestLap).toFixed(3)} vs best`
+                    {telemetry.lastLap > telemetry.bestLap
+                      ? `+${(telemetry.lastLap - telemetry.bestLap).toFixed(3)} vs best`
                       : '🏁 New best!'}
                   </div>
                 </div>
                 <div className="divider" />
                 <div>
                   <div className="card-label">Personal Best</div>
-                  <div className="telem-md text-mono" style={{ color: 'var(--yellow)' }}>{formatTime(t.bestLap)}</div>
+                  <div className="telem-md text-mono" style={{ color: 'var(--yellow)' }}>{formatTime(telemetry.bestLap)}</div>
                   <div style={{ fontSize: 12, color: 'var(--yellow)', marginTop: 2 }}>🏁 Best of race</div>
                 </div>
               </div>
@@ -996,7 +998,7 @@ export function LiveTelemetryPage() {
                   min {speedStats.min} · max {speedStats.max}
                 </span>
                 <span className="text-mono" style={{ fontSize: 12, color: 'var(--accent)', fontWeight: 700 }}>
-                  {t.speed} km/h
+                  {telemetry.speed} km/h
                 </span>
               </div>
             </div>
@@ -1026,31 +1028,31 @@ export function LiveTelemetryPage() {
               <div className="card-header">
                 <span className="card-title">Tyre Temperatures</span>
                 <span className="badge badge-orange">
-                  Front {t.frontCompound} · Rear {t.rearCompound} · age {t.rearTyreAge} laps
+                  Front {telemetry.frontCompound} · Rear {telemetry.rearCompound} · age {telemetry.rearTyreAge} laps
                 </span>
               </div>
               <div className="card-body">
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                   <MotoTyreCard
                     label="FRONT TYRE"
-                    leftTemp={t.tireFrontLeft}
-                    centerTemp={Math.round((t.tireFrontLeft + t.tireFrontRight) / 2)}
-                    rightTemp={t.tireFrontRight}
-                    compound={t.frontCompound}
-                    age={t.frontTyreAge}
-                    pressure={t.tirePressureFront}
-                    wear={t.tireWearFront}
+                    leftTemp={telemetry.tireFrontLeft}
+                    centerTemp={Math.round((telemetry.tireFrontLeft + telemetry.tireFrontRight) / 2)}
+                    rightTemp={telemetry.tireFrontRight}
+                    compound={telemetry.frontCompound}
+                    age={telemetry.frontTyreAge}
+                    pressure={telemetry.tirePressureFront}
+                    wear={telemetry.tireWearFront}
                   />
                   <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', margin: '4px 0' }} />
                   <MotoTyreCard
                     label="REAR TYRE"
-                    leftTemp={t.tireRearLeft}
-                    centerTemp={Math.round((t.tireRearLeft + t.tireRearRight) / 2)}
-                    rightTemp={t.tireRearRight}
-                    compound={t.rearCompound}
-                    age={t.rearTyreAge}
-                    pressure={t.tirePressureRear}
-                    wear={t.tireWearRear}
+                    leftTemp={telemetry.tireRearLeft}
+                    centerTemp={Math.round((telemetry.tireRearLeft + telemetry.tireRearRight) / 2)}
+                    rightTemp={telemetry.tireRearRight}
+                    compound={telemetry.rearCompound}
+                    age={telemetry.rearTyreAge}
+                    pressure={telemetry.tirePressureRear}
+                    wear={telemetry.tireWearRear}
                   />
                 </div>
               </div>
@@ -1064,14 +1066,14 @@ export function LiveTelemetryPage() {
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                     <span className="card-label">Fuel Load</span>
                     <span className="telem-md text-mono">
-                      {t.fuelLoad}
+                      {telemetry.fuelLoad}
                       <span style={{ color: 'var(--text-muted)', fontSize: 14 }}> kg</span>
                     </span>
                   </div>
                   <div className="bar-track" style={{ height: 14 }}>
                     <div className="bar-fill" style={{
-                      width: `${(t.fuelLoad / FUEL_CAP) * 100}%`,
-                      background: t.fuelLoad <= FUEL_CRITICAL_THRESHOLD ? 'var(--accent)' : 'var(--orange)',
+                      width: `${(telemetry.fuelLoad / FUEL_CAP) * 100}%`,
+                      background: telemetry.fuelLoad <= FUEL_CRITICAL_THRESHOLD ? 'var(--accent)' : 'var(--orange)',
                       transition: 'background  ease, color  ease, box-shadow  ease',
                     }} />
                   </div>
@@ -1079,11 +1081,11 @@ export function LiveTelemetryPage() {
                     <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>0 kg</span>
                     <span style={{
                       fontSize: 11, fontFamily: 'JetBrains Mono,monospace',
-                      color: t.fuelLoad <= FUEL_CRITICAL_THRESHOLD ? 'var(--accent)' : 'var(--orange)',
-                      fontWeight: t.fuelLoad <= FUEL_CRITICAL_THRESHOLD ? 700 : 400,
+                      color: telemetry.fuelLoad <= FUEL_CRITICAL_THRESHOLD ? 'var(--accent)' : 'var(--orange)',
+                      fontWeight: telemetry.fuelLoad <= FUEL_CRITICAL_THRESHOLD ? 700 : 400,
                     }}>
-                      ~{(t.fuelLoad / FUEL_BURN).toFixed(1)} laps range
-                      {t.fuelLoad <= FUEL_CRITICAL_THRESHOLD && ' · CRITICAL'}
+                      ~{(telemetry.fuelLoad / FUEL_BURN).toFixed(1)} laps range
+                      {telemetry.fuelLoad <= FUEL_CRITICAL_THRESHOLD && ' · CRITICAL'}
                     </span>
                     <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{FUEL_CAP} kg</span>
                   </div>
@@ -1120,10 +1122,10 @@ export function LiveTelemetryPage() {
         <>
           {/* Current values strip — readout mode */}
           <div className="grid-4 mb-4">
-            <AnimKpi label="Current Speed" target={t.speed}    unit="km/h" color="var(--accent)"  />
-            <AnimKpi label="RPM"           target={t.rpm}      unit="rpm"  color="var(--blue)"    />
-            <AnimKpi label="Throttle"      target={t.throttle} unit="%"    color="var(--green)"   />
-            <AnimKpi label="Brake"         target={t.brake}    unit="%"    color="var(--orange)"  />
+            <AnimKpi label="Current Speed" target={telemetry.speed}    unit="km/h" color="var(--accent)"  />
+            <AnimKpi label="RPM"           target={telemetry.rpm}      unit="rpm"  color="var(--blue)"    />
+            <AnimKpi label="Throttle"      target={telemetry.throttle} unit="%"    color="var(--green)"   />
+            <AnimKpi label="Brake"         target={telemetry.brake}    unit="%"    color="var(--orange)"  />
           </div>
 
           {/* Chart controls */}
@@ -1223,7 +1225,7 @@ export function LiveTelemetryPage() {
           {/* Channels panel + synchronized stacked chart */}
           <div className="card mb-4">
             <div className="card-header">
-              <span className="card-title">Synchronized Channel Analysis · Last {analysisWin / 10}s · Lap {t.lapCount}</span>
+              <span className="card-title">Synchronized Channel Analysis · Last {analysisWin / 10}s · Lap {telemetry.lapCount}</span>
               <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>
                 {analysisSnapshot[0]?.length ?? 0} / {analysisWin} samples
               </span>

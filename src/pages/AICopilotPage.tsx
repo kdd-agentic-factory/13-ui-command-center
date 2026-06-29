@@ -9,6 +9,7 @@
  *   - Category chips for toggling prompt categories
  */
 import { useRef, useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Bot, Send, Trash2, Zap, ChevronDown, ChevronUp } from 'lucide-react';
 import { useAIChat } from '../hooks/useAIChat';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
@@ -194,28 +195,29 @@ function CtxTile({ label, value, color, unit }: {
 // ──── Page component ────
 
 export function AICopilotPage() {
-  const t = useLiveTelemetry();
+  const { t } = useTranslation();
+  const telemetry = useLiveTelemetry();
   const scrollRef  = useRef<HTMLDivElement>(null);
   const inputRef   = useRef<HTMLTextAreaElement>(null);
   const [input, setInput]            = useState('');
   const [activeCategory, setCategory] = useState<PromptCategory>('strategy');
   const [showContext, setCtx]         = useState(true);
 
-  const rearWear = Math.min(99, t.rearTyreAge * 4.8);
+  const rearWear = Math.min(99, telemetry.rearTyreAge * 4.8);
   const rearGrip = Math.max(0, 96 - rearWear * 0.52);
-  const lapDelta  = t.lastLap - t.bestLap;
+  const lapDelta  = telemetry.lastLap - telemetry.bestLap;
 
   const systemPrompt = `You are the KDD Rider Coach AI, an expert motorcycle race strategist and telemetry analyst inside KDD Moto Intelligence — the AI telemetry and rider-performance platform.
 
 ## Live Race Context — GP ${getSessionContext().circuitName}, ${getActiveCircuit().country}
-- Lap: ${t.lapCount} / 23  |  Position: P${t.position}  |  Gap to P2: ${t.gap}
-- Last lap: ${formatLap(t.lastLap)}  |  Personal best: ${formatLap(t.bestLap)}  |  Delta: ${lapDelta >= 0 ? '+' : ''}${lapDelta.toFixed(3)}s
-- Rear tyre: ${t.rearCompound} —· ${t.rearTyreAge} laps old —· ~${rearWear.toFixed(1)}% wear —· ~${rearGrip.toFixed(1)}% grip remaining
-- Front tyre: ${t.frontCompound} —· ${t.rearTyreAge} laps old
-- Tyre temps: FL ${t.tireFrontLeft}° / FR ${t.tireFrontRight}° / RL ${t.tireRearLeft}° / RR ${t.tireRearRight}°
-- Speed: ${t.speed} km/h  |  Gear: ${t.gear}  |  RPM: ${t.rpm.toLocaleString()}
-- Throttle: ${t.throttle}%  |  Brake: ${t.brake}%  |  Lean: ${t.leanAngle.toFixed(1)}°
-- Fuel: ${t.fuelLoad.toFixed(1)} kg remaining (~${(t.fuelLoad / 2.18).toFixed(1)} laps)
+- Lap: ${telemetry.lapCount} / 23  |  Position: P${telemetry.position}  |  Gap to P2: ${telemetry.gap}
+- Last lap: ${formatLap(telemetry.lastLap)}  |  Personal best: ${formatLap(telemetry.bestLap)}  |  Delta: ${lapDelta >= 0 ? '+' : ''}${lapDelta.toFixed(3)}s
+- Rear tyre: ${telemetry.rearCompound} —· ${telemetry.rearTyreAge} laps old —· ~${rearWear.toFixed(1)}% wear —· ~${rearGrip.toFixed(1)}% grip remaining
+- Front tyre: ${telemetry.frontCompound} —· ${telemetry.rearTyreAge} laps old
+- Tyre temps: FL ${telemetry.tireFrontLeft}° / FR ${telemetry.tireFrontRight}° / RL ${telemetry.tireRearLeft}° / RR ${telemetry.tireRearRight}°
+- Speed: ${telemetry.speed} km/h  |  Gear: ${telemetry.gear}  |  RPM: ${telemetry.rpm.toLocaleString()}
+- Throttle: ${telemetry.throttle}%  |  Brake: ${telemetry.brake}%  |  Lean: ${telemetry.leanAngle.toFixed(1)}°
+- Fuel: ${telemetry.fuelLoad.toFixed(1)} kg remaining (~${(telemetry.fuelLoad / 2.18).toFixed(1)} laps)
 - Track: ${getSessionContext().circuitName} — 48°C asphalt — Grip level HIGH
 
 ## Your Capabilities
@@ -280,7 +282,7 @@ export function AICopilotPage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <Bot size={20} style={{ color: 'var(--accent)' }} />
           <div>
-            <div style={{ fontWeight: 700, fontSize: 15 }}>Race Engineering AI Copilot</div>
+            <div style={{ fontWeight: 700, fontSize: 15 }}>{t('aiCopilot.title', 'Race Engineering AI Copilot')}</div>
             <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
               Powered by InsForge Gateway —· gpt-4o-mini
               {msgCount > 0 && (
@@ -305,9 +307,9 @@ export function AICopilotPage() {
             background: 'var(--bg-card)', borderRadius: 8, border: '1px solid var(--border)',
           }}>
             {[
-              { k: 'Lap', v: t.lapCount, c: 'var(--text)' },
-              { k: 'Pos', v: `P${t.position}`, c: 'var(--accent)' },
-              { k: 'Gap', v: t.gap, c: 'var(--yellow)' },
+              { k: 'Lap', v: telemetry.lapCount, c: 'var(--text)' },
+              { k: 'Pos', v: `P${telemetry.position}`, c: 'var(--accent)' },
+              { k: 'Gap', v: telemetry.gap, c: 'var(--yellow)' },
               { k: 'Grip', v: `${rearGrip.toFixed(0)}%`, c: rearGrip < 62 ? 'var(--accent)' : 'var(--green)' },
             ].map(item => (
               <div key={item.k} style={{ textAlign: 'center' }}>
@@ -326,12 +328,12 @@ export function AICopilotPage() {
             title={showContext ? 'Hide context' : 'Show context'}
           >
             {showContext ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-            Context
+            {t('aiCopilot.context', 'Context')}
           </button>
           {!isEmpty && (
             <button className="btn btn-ghost btn-sm flex items-center gap-2" onClick={clearMessages}>
               <Trash2 size={13} />
-              Clear
+              {t('aiCopilot.clear', 'Clear')}
             </button>
           )}
         </div>
@@ -362,7 +364,7 @@ export function AICopilotPage() {
                   {BRIEFINGS.map(b => (
                     <button
                       key={b.label}
-                      onClick={() => sendMessage(b.build(t.lapCount, t.position, rearGrip, t.fuelLoad, formatLap(t.lastLap)))}
+                      onClick={() => sendMessage(b.build(telemetry.lapCount, telemetry.position, rearGrip, telemetry.fuelLoad, formatLap(telemetry.lastLap)))}
                       style={{
                         padding:'8px 14px', borderRadius:8, fontSize:12, fontWeight:600, cursor:'pointer',
                         border:`1px solid ${b.color}44`, background:`${b.color}12`, color:b.color,
@@ -426,7 +428,7 @@ export function AICopilotPage() {
           </div>
 
           {/* Persistent live telemetry strip above the composer */}
-          <LiveMetricBar lap={t.lapCount} pos={t.position} gap={t.gap} speed={t.speed} gear={t.gear} grip={rearGrip} fuel={t.fuelLoad} lastLap={formatLap(t.lastLap)} />
+          <LiveMetricBar lap={telemetry.lapCount} pos={telemetry.position} gap={telemetry.gap} speed={telemetry.speed} gear={telemetry.gear} grip={rearGrip} fuel={telemetry.fuelLoad} lastLap={formatLap(telemetry.lastLap)} />
 
           {/* ———— Input bar —————————————————————————————————————————————————————————————————————————————————————————————————————————— */}
           <form className="copilot-input-bar" onSubmit={handleSubmit} style={{ flexShrink: 0 }}>
@@ -507,12 +509,12 @@ export function AICopilotPage() {
               Live Context
             </div>
 
-            <CtxTile label="Lap" value={t.lapCount} />
-            <CtxTile label="Position" value={`P${t.position}`} color="var(--accent)" />
-            <CtxTile label="Gap" value={t.gap} color="var(--yellow)" />
-            <CtxTile label="Speed" value={t.speed} unit="km/h" color="var(--text)" />
-            <CtxTile label="Gear" value={t.gear} color="var(--accent)" />
-            <CtxTile label="RPM" value={t.rpm.toLocaleString()} />
+            <CtxTile label="Lap" value={telemetry.lapCount} />
+            <CtxTile label="Position" value={`P${telemetry.position}`} color="var(--accent)" />
+            <CtxTile label="Gap" value={telemetry.gap} color="var(--yellow)" />
+            <CtxTile label="Speed" value={telemetry.speed} unit="km/h" color="var(--text)" />
+            <CtxTile label="Gear" value={telemetry.gear} color="var(--accent)" />
+            <CtxTile label="RPM" value={telemetry.rpm.toLocaleString()} />
 
             <div style={{
               padding: '6px 10px 4px', fontSize: 9, fontWeight: 700,
@@ -523,16 +525,16 @@ export function AICopilotPage() {
               Tyres
             </div>
 
-            <TyreThermalMini fl={t.tireFrontLeft} fr={t.tireFrontRight} rl={t.tireRearLeft} rr={t.tireRearRight} />
+            <TyreThermalMini fl={telemetry.tireFrontLeft} fr={telemetry.tireFrontRight} rl={telemetry.tireRearLeft} rr={telemetry.tireRearRight} />
 
-            <CtxTile label="Rear" value={t.rearCompound} color="#E03737" />
-            <CtxTile label="Age" value={`${t.rearTyreAge} laps`} />
+            <CtxTile label="Rear" value={telemetry.rearCompound} color="#E03737" />
+            <CtxTile label="Age" value={`${telemetry.rearTyreAge} laps`} />
             <CtxTile label="Grip Est." value={`${rearGrip.toFixed(1)}%`}
               color={rearGrip < 62 ? 'var(--accent)' : 'var(--green)'} />
-            <CtxTile label="RL Temp" value={`${t.tireRearLeft}°`}
-              color={t.tireRearLeft > 105 ? 'var(--accent)' : t.tireRearLeft > 90 ? 'var(--yellow)' : 'var(--text)'} />
-            <CtxTile label="RR Temp" value={`${t.tireRearRight}°`}
-              color={t.tireRearRight > 105 ? 'var(--accent)' : t.tireRearRight > 90 ? 'var(--yellow)' : 'var(--text)'} />
+            <CtxTile label="RL Temp" value={`${telemetry.tireRearLeft}°`}
+              color={telemetry.tireRearLeft > 105 ? 'var(--accent)' : telemetry.tireRearLeft > 90 ? 'var(--yellow)' : 'var(--text)'} />
+            <CtxTile label="RR Temp" value={`${telemetry.tireRearRight}°`}
+              color={telemetry.tireRearRight > 105 ? 'var(--accent)' : telemetry.tireRearRight > 90 ? 'var(--yellow)' : 'var(--text)'} />
 
             <div style={{
               padding: '6px 10px 4px', fontSize: 9, fontWeight: 700,
@@ -543,17 +545,17 @@ export function AICopilotPage() {
               Performance
             </div>
 
-            <CtxTile label="Last Lap" value={formatLap(t.lastLap)} />
-            <CtxTile label="Best Lap" value={formatLap(t.bestLap)} color="var(--green)" />
+            <CtxTile label="Last Lap" value={formatLap(telemetry.lastLap)} />
+            <CtxTile label="Best Lap" value={formatLap(telemetry.bestLap)} color="var(--green)" />
             <CtxTile
               label="Delta"
               value={`${lapDelta >= 0 ? '+' : ''}${lapDelta.toFixed(3)}s`}
               color={lapDelta > 0.3 ? 'var(--accent)' : lapDelta > 0 ? 'var(--yellow)' : 'var(--green)'}
             />
-            <CtxTile label="Fuel" value={`${t.fuelLoad.toFixed(1)} kg`}
-              color={t.fuelLoad < 4 ? 'var(--accent)' : 'var(--text)'} />
-            <CtxTile label="Lean" value={`${t.leanAngle.toFixed(1)}°`}
-              color={t.leanAngle > 48 ? 'var(--accent)' : 'var(--text)'} />
+            <CtxTile label="Fuel" value={`${telemetry.fuelLoad.toFixed(1)} kg`}
+              color={telemetry.fuelLoad < 4 ? 'var(--accent)' : 'var(--text)'} />
+            <CtxTile label="Lean" value={`${telemetry.leanAngle.toFixed(1)}°`}
+              color={telemetry.leanAngle > 48 ? 'var(--accent)' : 'var(--text)'} />
           </div>
         )}
       </div>
