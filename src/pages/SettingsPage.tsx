@@ -5,9 +5,17 @@ import {
   Loader, RefreshCw, Server, ShieldCheck, Database,
 } from 'lucide-react';
 
-// ──── Project constants ────
-const PROJECT_ID = '03aba6c5-1146-4dde-848e-528daa1bab11';
-const fly = (name: string) => `https://${name}-${PROJECT_ID}.fly.dev`;
+// ──── Project constants (from env vars) ────
+const INSFORGE_PROJECT_ID = import.meta.env.VITE_INSFORGE_PROJECT_ID ?? '03aba6c5-1146-4dde-848e-528daa1bab11';
+const INSFORGE_DOMAIN = import.meta.env.VITE_INSFORGE_DOMAIN ?? 'eu-central.insforge.app';
+const FLY_APP_DOMAIN = import.meta.env.VITE_FLY_APP_DOMAIN ?? 'fly.dev';
+const RACE_APP_PREFIX = import.meta.env.VITE_RACE_APP_PREFIX ?? 'kdd-rjz';
+
+const fly = (name: string) => `https://${name}-${INSFORGE_PROJECT_ID}.${FLY_APP_DOMAIN}`;
+const RACE = (name: string) => `https://${RACE_APP_PREFIX}-${name}.${FLY_APP_DOMAIN}`;
+const insforge = (id: string, suffix: string = '') => `https://${id}${suffix ? '.' + suffix : ''}.${INSFORGE_DOMAIN.replace('eu-central.', '').replace('.', '.')}`;
+const INSFORGE_API_URL = import.meta.env.VITE_INSFORGE_API_URL ?? 'https://vdf553wq.eu-central.insforge.app';
+const INSFORGE_DASHBOARD_URL = import.meta.env.VITE_INSFORGE_DASHBOARD_URL ?? 'https://vdf553wq.insforge.site';
 
 type SvcStatus = 'up' | 'down' | 'deploying' | 'unknown';
 
@@ -22,12 +30,10 @@ interface ServiceStatus {
   description: string;
 }
 
-const RACE = (name: string) => `https://kdd-rjz-${name}.fly.dev`;
-
 const SERVICES: ServiceStatus[] = [
   // Core
-  { group: 'Core',       name: 'InsForge API',            url: 'https://vdf553wq.eu-central.insforge.app',  status: 'up', probe: 'registry', latency: '42ms',  latencyMs: 42,  description: 'Database —· Auth —· AI Gateway' },
-  { group: 'Core',       name: 'InsForge Dashboard',      url: 'https://vdf553wq.insforge.site',            status: 'up', probe: 'registry', latency: '—',    latencyMs: 0,   description: 'Frontend deployment (Vercel)' },
+  { group: 'Core',       name: 'InsForge API',            url: INSFORGE_API_URL,  status: 'up', probe: 'registry', latency: '42ms',  latencyMs: 42,  description: 'Database —· Auth —· AI Gateway' },
+  { group: 'Core',       name: 'InsForge Dashboard',      url: INSFORGE_DASHBOARD_URL,  status: 'up', probe: 'registry', latency: '—',    latencyMs: 0,   description: 'Frontend deployment (Vercel)' },
   // InsForge Compute (managed)
   { group: 'Compute',    name: 'Agent Orchestrator',      url: fly('agent-orchestrator'), status: 'up', probe: 'registry', latency: '140ms', latencyMs: 140, description: 'Multi-agent coordination —· Task routing' },
   { group: 'Compute',    name: 'MCP Gateway',             url: fly('mcp-gateway'),        status: 'up', probe: 'registry', latency: '120ms', latencyMs: 120, description: 'Tool access —· External APIs' },
