@@ -9,6 +9,7 @@ import { useToast } from '../components/ToastProvider';
 import { PartGeneratorPanel } from '../components/PartGeneratorPanel';
 import { PartViewer3D } from '../components/babylon/lazy';
 import { usePartStorage } from '../hooks/usePartStorage';
+import { getSessionContext } from '../domain/sessionContext';
 
 /**
  * GARAGE PART FACTORY — Trackside additive manufacturing workflow.
@@ -456,7 +457,7 @@ export function PartDesignPage() {
           border: '1px solid var(--border)', background: 'rgba(255,255,255,0.02)',
           fontSize: 11, fontFamily: 'var(--font-mono)',
         }}>
-          <span><span style={{ color: 'var(--text-muted)' }}>Circuit</span> <strong>Mugello</strong></span>
+          <span><span style={{ color: 'var(--text-muted)' }}>Circuit</span> <strong>{getSessionContext().circuitName}</strong></span>
           <span style={{ width: 1, height: 14, background: 'var(--border)' }} />
           <span><span style={{ color: 'var(--text-muted)' }}>Session</span> <strong>Stint 03</strong></span>
           <span style={{ width: 1, height: 14, background: 'var(--border)' }} />

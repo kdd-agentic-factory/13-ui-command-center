@@ -214,9 +214,9 @@ function CornerDataIntegrity() {
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, padding: 16 }}>
         {[
-          { label: 'Circuit selected', value: 'Mugello', ok: true },
-          { label: 'Corner set loaded', value: `15 / 15 Mugello corners`, ok: true },
-          { label: 'Geometry', value: 'Real Mugello layout loaded', ok: true },
+          { label: 'Circuit selected', value: getActiveCircuit().name, ok: true },
+          { label: 'Corner set loaded', value: `${getActiveCircuit().turns} / ${getActiveCircuit().turns} ${getActiveCircuit().name} corners`, ok: true },
+          { label: 'Geometry', value: `Real ${getActiveCircuit().name} layout loaded`, ok: true },
           { label: 'Elevation model', value: 'Active · 41.19 m variance', ok: true },
         ].map(s => (
           <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', background: 'rgba(255,255,255,0.02)', borderRadius: 'var(--radius)' }}>
@@ -325,7 +325,7 @@ export function CornerIntelligencePage() {
       <div className="card mb-4" style={{ background: 'linear-gradient(135deg, rgba(224,55,55,0.10), rgba(255,255,255,0.02))' }}>
         <div className="card-header">
           <span className="card-title flex items-center gap-2">
-            <Flag size={14} style={{ color: 'var(--accent)' }} /> Corner Intelligence · {MUGELLO.name}
+            <Flag size={14} style={{ color: 'var(--accent)' }} /> Corner Intelligence · {getActiveCircuit().name}
           </span>
           <span className="badge badge-red" style={{ animation: 'pulse 2s infinite' }}>LIVE · RACE LAP {t.lapCount}</span>
         </div>

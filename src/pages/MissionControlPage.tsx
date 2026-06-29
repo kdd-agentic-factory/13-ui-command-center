@@ -15,6 +15,7 @@ import {
   Activity, Database, Gauge, Wifi, Rocket, Lock,
 } from 'lucide-react';
 import { getCircuitLibrary, STATUS_META } from '../domain/circuits';
+import { getSessionContext } from '../domain/sessionContext';
 import { miniTrackPath } from '../components/MiniTrackMap';
 import type { SessionResumeSnapshot } from '../app/sessionResume';
 
@@ -153,7 +154,7 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
             </div>
             {[
               ['Circuit DB', `${library.length} tracks`],
-              ['Latest session', 'Mugello — Stint 03'],
+              ['Latest session', `${getSessionContext().circuitName} — Stint 03`],
               ['Data sources', 'GPS — IMU — ECU — CSV'],
               ['Oracle Pit Wall', 'Ready'],
               ['Digital Twin', 'Ready'],
@@ -172,12 +173,12 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
         {resumeContext && resumeContext.gateCircuit && (
           <div style={{
             ...CARD, padding: '14px 18px', marginBottom: 20,
-            background: 'rgba(0,183,255,0.05)', borderColor: 'rgba(0,183,255,0.3)',
+            background: 'color-mix(in srgb, var(--cyan) 5%, transparent)', borderColor: 'color-mix(in srgb, var(--cyan) 30%, transparent)',
             display: 'flex', alignItems: 'center', gap: 14,
           }}>
             <div style={{
               width: 36, height: 36, borderRadius: 8,
-              background: 'rgba(0,183,255,0.1)', border: '1px solid rgba(0,183,255,0.3)',
+              background: 'color-mix(in srgb, var(--cyan) 10%, transparent)', border: '1px solid color-mix(in srgb, var(--cyan) 30%, transparent)',
               display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
             }}>
               <History size={18} style={{ color: 'var(--cyan)' }} />
@@ -195,7 +196,7 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
             </div>
             <button onClick={onLoadLatest} style={{
               padding: '8px 16px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer',
-              background: 'rgba(0,183,255,0.12)', border: '1px solid var(--cyan)', color: 'var(--cyan)',
+              background: 'color-mix(in srgb, var(--cyan) 12%, transparent)', border: '1px solid var(--cyan)', color: 'var(--cyan)',
               display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0,
             }}>
               <PlayCircle size={13} /> Continue session
@@ -229,18 +230,18 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
 
         {/* ─ 3  ◆  Primary action cards ─ */}
         <div className="stagger" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 24 }}>
-          <ActionCard icon={MapPin} accent="#00B7FF" title="CIRCUIT INTELLIGENCE"
+          <ActionCard icon={MapPin} accent="var(--cyan)" title="CIRCUIT INTELLIGENCE"
             body={t('mc.cardCircuit', 'Load a validated circuit: layout, corners, sectors, elevation, 3D map and simulation context.')}
             cta={t('mc.ctaCircuit', 'Select circuit')} onClick={onSelectCircuit} />
-          <ActionCard icon={History} accent="#00E676" title="LATEST SESSION"
+          <ActionCard icon={History} accent="var(--grip)" title="LATEST SESSION"
             body={resumeContext && resumeContext.gateCircuit
               ? `Resume ${resumeContext.gateCircuit.name} — ${resumeContext.sessionCtx.sessionMode} mode (${resumeContext.sessionCtx.setup.rider ?? 'Rider'} · ${resumeContext.sessionCtx.setup.bike ?? 'Bike'}).`
-              : t('mc.cardLatest', 'Resume Mugello — Stint 03 (Yamaha R1 — best 1:57.842 — gain +1.284s) in replay mode with telemetry and report.')}
+              : t('mc.cardLatest', `Resume ${getSessionContext().circuitName} — Stint 03 (Yamaha R1 — best 1:57.842 — gain +1.284s) in replay mode with telemetry and report.`)}
             cta={t('mc.ctaLatest', 'Load latest session')} onClick={onLoadLatest} />
-          <ActionCard icon={Plus} accent="#FFD600" title="CREATE NEW CIRCUIT"
+          <ActionCard icon={Plus} accent="var(--yellow)" title="CREATE NEW CIRCUIT"
             body={t('mc.cardCreate', 'Upload GPX, KML, GeoJSON, CSV or onboard video. The agents rebuild the layout and generate the initial simulation.')}
             cta={t('mc.ctaCreate', 'Create circuit')} onClick={onCreateCircuit} />
-          <ActionCard icon={PlayCircle} accent="#8B5CF6" title="GUIDED DEMO"
+          <ActionCard icon={PlayCircle} accent="var(--violet)" title="GUIDED DEMO"
             body={t('mc.cardDemo', 'Reproducible sample session: telemetry, 3D, critical corners, twin and oracle. DEMO DATA — sample.')}
             cta={t('mc.ctaDemo', 'Open guided demo')} onClick={onDemo} />
         </div>
@@ -254,8 +255,8 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
               <History size={11} style={{ verticalAlign: -2, marginRight: 6 }} />RECENT WORKSPACES
             </div>
             {[
-              ['Mugello — GP Race Simulation', 'Last opened today — ready', 'var(--grip)'],
-              ['Mugello — Yamaha R1 — Stint 03', 'Report generated — best 1:57.842', 'var(--cyan)'],
+              [`${getSessionContext().circuitName} — GP Race Simulation`, 'Last opened today — ready', 'var(--grip)'],
+              [`${getSessionContext().circuitName} — Yamaha R1 — Stint 03`, 'Report generated — best 1:57.842', 'var(--cyan)'],
               ['Jarama — Setup Test', 'Needs telemetry sync', 'var(--yellow)'],
               ['Custom Track 01', 'SIMULATED — needs validation', 'var(--violet)'],
             ].map(([title, sub, c]) => (
@@ -265,7 +266,7 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
                   <div style={{ fontSize: 10, fontFamily: MONO, color: c as string }}>{sub}</div>
                 </div>
                 <button onClick={onSelectCircuit} style={{ fontSize: 9.5, fontFamily: MONO, padding: '3px 9px', borderRadius: 5, cursor: 'pointer', background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', color: 'var(--text)' }}>Open</button>
-                <button onClick={onLoadLatest} style={{ fontSize: 9.5, fontFamily: MONO, padding: '3px 9px', borderRadius: 5, cursor: 'pointer', background: 'rgba(0,183,255,0.08)', border: '1px solid #00B7FF', color: 'var(--cyan)' }}>Continue</button>
+                <button onClick={onLoadLatest} style={{ fontSize: 9.5, fontFamily: MONO, padding: '3px 9px', borderRadius: 5, cursor: 'pointer', background: 'color-mix(in srgb, var(--cyan) 8%, transparent)', border: '1px solid var(--cyan)', color: 'var(--cyan)' }}>Continue</button>
               </div>
             ))}
           </div>
@@ -275,7 +276,7 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
             <div style={{ ...LABEL, color: 'var(--violet)', marginBottom: 10 }}>
               <Bot size={11} style={{ verticalAlign: -2, marginRight: 6 }} />ORACLE QUICK BRIEF
             </div>
-            <div style={{ fontSize: 10.5, fontFamily: MONO, color: 'var(--text-muted)' }}>Latest insight — Mugello — Stint 03</div>
+            <div style={{ fontSize: 10.5, fontFamily: MONO, color: 'var(--text-muted)' }}>Latest insight — {getSessionContext().circuitName} — Stint 03</div>
             <div style={{ fontSize: 12.5, color: 'var(--text)', margin: '7px 0', lineHeight: 1.55 }}>
               <strong>T15 Bucine exit</strong> — open throttle 0.3s earlier after lean &lt;54°.
               Validate rear hot pressure after next stint.
@@ -286,7 +287,7 @@ export function MissionControlPage({ onSelectCircuit, onCreateCircuit, onLoadLat
               <span style={{ color: 'var(--violet)' }}>confidence 88%</span>
             </div>
             <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-              <button onClick={onLoadLatest} style={{ fontSize: 10, fontFamily: MONO, padding: '5px 11px', borderRadius: 'var(--radius)', cursor: 'pointer', background: 'rgba(139,92,246,0.12)', border: '1px solid #8B5CF6', color: 'var(--violet)' }}>Ask Oracle</button>
+              <button onClick={onLoadLatest} style={{ fontSize: 10, fontFamily: MONO, padding: '5px 11px', borderRadius: 'var(--radius)', cursor: 'pointer', background: 'color-mix(in srgb, var(--violet) 12%, transparent)', border: '1px solid var(--violet)', color: 'var(--violet)' }}>Ask Oracle</button>
               <button onClick={onLoadLatest} style={{ fontSize: 10, fontFamily: MONO, padding: '5px 11px', borderRadius: 'var(--radius)', cursor: 'pointer', background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', color: 'var(--text)' }}>Open Session Report</button>
             </div>
           </div>

@@ -34,7 +34,7 @@ export function GlobalContextBar({ telem }: { telem: TelemetryFrame }) {
   const checks: Check[] = [
     { label: 'Session mode', ok: true, desc: `${ctx.sessionMode} · ${ctx.dashboardProfile.replace(/_/g, ' ')}` },
     { label: 'Data mode', ok: true, desc: ctx.dataMode.toUpperCase() },
-    { label: 'Circuit match', ok: !datasetMismatch, desc: datasetMismatch ? `${ctx.circuitName} has no dataset — Mugello sample shown` : `${circuit.name} selected = loaded` },
+    { label: 'Circuit match', ok: !datasetMismatch, desc: datasetMismatch ? `${ctx.circuitName} has no dataset — ${ctx.circuitName} sample shown` : `${circuit.name} selected = loaded` },
     { label: 'Lap state', ok: lapOk, desc: telem.lapAnomaly ? 'Lap anomaly flagged' : `${telem.lapCount}/${MUGELLO_CIRCUIT.raceLaps}` },
     { label: 'Fuel model', ok: telem.fuelValid, desc: telem.fuelValid ? `${telem.fuelLoad.toFixed(1)} kg synced` : 'Fuel sensor out of range' },
     { label: 'Tyre model', ok: true, desc: `${telem.frontCompound}/${telem.rearCompound} · ${circuit.id === 'mugello' ? 'thermal map loaded' : 'reference map'}` },

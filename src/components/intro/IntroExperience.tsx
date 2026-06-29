@@ -4,6 +4,7 @@ import { Bike, ChevronRight, ChevronDown, Cpu, GitBranch, Satellite, Bot, Gauge,
   MonitorPlay, Map as MapIcon, Route, Film, GitCompare, ShieldAlert, Sparkles, Circle, Lightbulb, FileText, Users, Fingerprint } from 'lucide-react';
 import { PROFILES, ProfileId } from '../../context/AuthContext';
 import { MUGELLO_CIRCUIT } from '../../domain/sessionTruth';
+import { getActiveCircuit } from '../../domain/circuits';
 import { LanguageSwitcher } from '../LanguageSwitcher';
 import { IntroSequence } from './IntroSequence';
 import { DigitalTwinViewer3D } from '../babylon/lazy';
@@ -308,7 +309,7 @@ export function IntroExperience({ onEnter }: IntroExperienceProps) {
               {/* Live session context — circuit / rider / bike / stint / weather */}
               <div className="intro-session">
                 {[
-                  { icon: MapPin, l: t('intro.session.circuit', 'Circuito'), v: 'Mugello' },
+                  { icon: MapPin, l: t('intro.session.circuit', 'Circuito'), v: getActiveCircuit().name },
                   { icon: User, l: t('intro.session.rider', 'Piloto'), v: 'Rubén Juárez' },
                   { icon: Bike, l: t('intro.session.bike', 'Moto'), v: 'Yamaha R1' },
                   { icon: CircleDot, l: t('intro.session.stint', 'Sesión'), v: 'Track Day · Stint 03' },
@@ -415,7 +416,7 @@ export function IntroExperience({ onEnter }: IntroExperienceProps) {
             <button className="intro-enter" onClick={() => onEnter(selected)}>
               {t('intro.roles.enter', 'Entrar a la plataforma')} <ChevronRight size={20} />
             </button>
-            <div className="intro-footer">Mugello · GP · 5.245 km · 15 turns · Dry 24°C · #47 — KDD Moto Intelligence</div>
+            <div className="intro-footer">{getActiveCircuit().name} · GP · {getActiveCircuit().lengthKm} km · {getActiveCircuit().turns} turns · Dry 24°C · #47 — KDD Moto Intelligence</div>
           </div>
         </section>
       </main>

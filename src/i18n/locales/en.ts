@@ -8,7 +8,7 @@ const en = {
     stepData: 'GPS, IMU, ECU, logger, CSV, video or simulated data.',
     stepLaunch: 'Opens a dashboard adapted to the session context.',
     cardCircuit: 'Load a validated circuit: layout, corners, sectors, elevation, 3D map and simulation context.',
-    cardLatest: 'Resume Mugello · Stint 03 (Yamaha R1 · best 1:57.842 · gain −1.284s) in replay mode with telemetry and report.',
+    cardLatest: 'Resume latest session — Stint 03 (Yamaha R1 · best 1:57.842 · gain −1.284s) in replay mode with telemetry and report.',
     cardCreate: 'Upload GPX, KML, GeoJSON, CSV or onboard video. The agents rebuild the layout and generate the initial simulation.',
     cardDemo: 'Reproducible sample session: telemetry, 3D, critical corners, twin and oracle. DEMO DATA · sample.',
     ctaCircuit: 'Select circuit', ctaLatest: 'Load latest session', ctaCreate: 'Create circuit', ctaDemo: 'Open guided demo',

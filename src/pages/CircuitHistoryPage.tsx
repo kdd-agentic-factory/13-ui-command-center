@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { History, Trophy, TrendingDown, CloudSun, Droplets } from 'lucide-react';
 import { getSessionContext } from '../domain/sessionContext';
+import { getCircuitLibrary } from '../domain/circuits';
 
 /**
  * Circuit History (engineer Phase 3 #2) – your evolution at a track over time:
@@ -8,7 +9,7 @@ import { getSessionContext } from '../domain/sessionContext';
  * log with conditions, and how weather correlates with pace.
  */
 
-const CIRCUITS = ['Mugello', 'Albacete', 'Motorland Aragón'];
+const CIRCUITS = getCircuitLibrary().map(c => c.name);
 
 interface Session {
   date: string; type: string; weather: 'Dry' | 'Damp' | 'Wet'; tempC: number; bestLap: string; laps: number;

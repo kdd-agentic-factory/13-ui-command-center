@@ -48,7 +48,7 @@ export function SessionContextStrip() {
           fontSize: 10, fontFamily: MONO, color: 'var(--text-muted)', flexWrap: 'wrap',
         }}>
           <span style={{ color: badgeColor, fontWeight: 700 }}>GUIDED DEMO</span>
-          {['1 Select Mugello', '2 Load Stint 03', '3 Inspect 3D map', '4 Review T15 Bucine', '5 Ask the Oracle', '6 Generate Session Report'].map(s => (
+          {['1 Select circuit', '2 Load Stint 03', '3 Inspect 3D map', '4 Review T15 Bucine', '5 Ask the Oracle', '6 Generate Session Report'].map(s => (
             <span key={s}>{s} ·</span>
           ))}
         </div>
@@ -63,7 +63,7 @@ export function SessionContextStrip() {
           <strong style={{ color: 'var(--yellow)', fontFamily: MONO }}>DATA INTEGRITY</strong>
           <span>
             Selected circuit <strong>{ctx.circuitName}</strong> has no telemetry dataset yet — modules render the
-            Mugello reference sample until a validation stint or upload populates it.
+            {` ${ctx.circuitName} `} reference sample until a validation stint or upload populates it.
           </span>
         </div>
       )}

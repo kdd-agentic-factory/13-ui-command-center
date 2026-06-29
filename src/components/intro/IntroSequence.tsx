@@ -76,9 +76,9 @@ export function IntroSequence({ onDone }: { onDone?: () => void }) {
       <div style={{ width: 'min(560px, 86vw)', textAlign: 'center', position: 'relative' }}>
         {/* The lap */}
         <svg className="iseq-track" viewBox="0 0 64 64" style={{ width: 'min(300px, 52vw)', margin: '0 auto', display: 'block', overflow: 'visible' }} aria-hidden>
-          <path className="iseq-line" d={d} fill="none" stroke="#00B7FF" strokeWidth="1.4"
+          <path className="iseq-line" d={d} fill="none" stroke="var(--cyan)" strokeWidth="1.4"
             strokeLinecap="round" strokeLinejoin="round"
-            style={{ filter: 'drop-shadow(0 0 6px rgba(0,183,255,0.45))' }} />
+            style={{ filter: 'drop-shadow(0 0 6px color-mix(in srgb, var(--cyan) 45%, transparent))' }} />
           <circle className="iseq-rider" r="1.7" fill="#E10600"
             style={{ offsetPath: `path("${d}")`, filter: 'drop-shadow(0 0 5px rgba(225,6,0,0.8))' }} />
         </svg>

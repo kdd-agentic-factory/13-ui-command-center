@@ -341,7 +341,7 @@ export function AICrewPage() {
                   <button
                     className="btn btn-ghost btn-sm"
                     style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}
-                    onClick={() => askOracle(`As ${advisor.name}, explain your vote "${advisor.vote}" and convert it into one exact next-stint instruction for Mugello.`)}
+                    onClick={() => askOracle(`As ${advisor.name}, explain your vote "${advisor.vote}" and convert it into one exact next-stint instruction for ${getActiveCircuit().name}.`)}
                   >
                     <MessageSquare size={11} /> Ask
                   </button>

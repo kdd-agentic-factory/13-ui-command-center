@@ -765,7 +765,7 @@ export function DigitalTwinReportPage() {
           <div className="card-header"><span className="card-title flex items-center gap-2"><Shield size={13} />Model Validation</span></div>
           <div className="card-body" style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.7 }}>
             <strong style={{ color: 'var(--text)' }}>Training samples:</strong> 847 race samples<br />
-            <strong style={{ color: 'var(--text)' }}>Current track match:</strong> Mugello  ◆  high similarity<br />
+            <strong style={{ color: 'var(--text)' }}>Current track match:</strong> {session.ctx.circuitName}  ◆  high similarity<br />
             <strong style={{ color: 'var(--text)' }}>Prediction accuracy:</strong> 94.2% vs physical model<br />
             <strong style={{ color: 'var(--text)' }}>Current confidence:</strong> 86%<br />
             <strong style={{ color: 'var(--text)' }}>Uncertainty drivers:</strong> rear tyre thermal drift  ◆  traffic after pit stop  ◆  P2/P4 pace variance
@@ -790,7 +790,7 @@ export function DigitalTwinReportPage() {
             {INTEGRITY_CHECKS.map(check => (
               <div key={check.label} style={{ display: 'flex', justifyContent: 'space-between', gap: 10, padding: '6px 0', borderBottom: '1px solid var(--border)' }}>
                 <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{check.label}</span>
-                <span style={{ fontSize: 11, color: check.status === 'warn' ? 'var(--accent)' : check.status === 'info' ? 'var(--yellow)' : 'var(--green)', fontWeight: 700 }}>{check.value}</span>
+                <span style={{ fontSize: 11, color: check.status === 'warn' ? 'var(--accent)' : check.status === 'info' ? 'var(--yellow)' : 'var(--green)', fontWeight: 700 }}>{check.label === 'Track model' ? `${session.ctx.circuitName} loaded` : check.value}</span>
               </div>
             ))}
           </div>

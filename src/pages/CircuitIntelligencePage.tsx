@@ -465,7 +465,7 @@ function CircuitIntegrity({ fuelValid, fuelLoad, speed }: { fuelValid: boolean; 
     warnings.push({
       label: 'Circuit geometry',
       critical: true,
-      message: 'Expected Mugello GP layout · received generic placeholder.',
+      message: `Expected ${getActiveCircuit().name} GP layout · received generic placeholder.`,
     });
   }
 

@@ -16,6 +16,7 @@ import { RiderCoachInsight } from '../components/RiderCoachInsight';
 import { COPILOT_SEED_KEY } from '../context/NavContext';
 import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 import { getSessionContext } from '../domain/sessionContext';
+import { getActiveCircuit } from '../domain/circuits';
 
 // ──── Helpers ────
 
@@ -59,7 +60,7 @@ const BRIEFINGS: BriefingTpl[] = [
   {
     label: 'Race Start Brief', icon: '🚦', color: 'var(--green)',
     build: (lap, pos, grip, fuel) =>
-      `Provide a complete race start briefing for Lap ${lap}: Position P${pos}, rear SOFT tyre (~${grip.toFixed(0)}% grip), ${fuel.toFixed(1)} kg fuel. Cover: (1) tyre management plan for the first stint, (2) gap management vs rivals, (3) pit window recommendation, (4) key corners to protect rear grip at Mugello.`,
+      `Provide a complete race start briefing for Lap ${lap}: Position P${pos}, rear SOFT tyre (~${grip.toFixed(0)}% grip), ${fuel.toFixed(1)} kg fuel. Cover: (1) tyre management plan for the first stint, (2) gap management vs rivals, (3) pit window recommendation, (4) key corners to protect rear grip at ${getSessionContext().circuitName}.`,
   },
   {
     label: 'Mid-Race Analysis', icon: '🏁', color: 'var(--blue)',
@@ -206,7 +207,7 @@ export function AICopilotPage() {
 
   const systemPrompt = `You are the KDD Rider Coach AI, an expert motorcycle race strategist and telemetry analyst inside KDD Moto Intelligence — the AI telemetry and rider-performance platform.
 
-## Live Race Context — GP Mugello, Italy
+## Live Race Context — GP ${getSessionContext().circuitName}, ${getActiveCircuit().country}
 - Lap: ${t.lapCount} / 23  |  Position: P${t.position}  |  Gap to P2: ${t.gap}
 - Last lap: ${formatLap(t.lastLap)}  |  Personal best: ${formatLap(t.bestLap)}  |  Delta: ${lapDelta >= 0 ? '+' : ''}${lapDelta.toFixed(3)}s
 - Rear tyre: ${t.rearCompound} —· ${t.rearTyreAge} laps old —· ~${rearWear.toFixed(1)}% wear —· ~${rearGrip.toFixed(1)}% grip remaining

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, type CSSProperties, type ElementType } from 'react';
+import React, { Suspense, useState, useEffect, useRef, useCallback, type CSSProperties, type ElementType } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard, Activity, Map, Circle, Sliders, Wrench,
@@ -32,73 +32,76 @@ import {
 
 import { ErrorBoundary } from '../components/ErrorBoundary';
 
+// Primary tabs — static imports (always visible)
 import { OverviewPage } from '../pages/OverviewPage';
-import { LiveTelemetryPage } from '../pages/LiveTelemetryPage';
-import { CircuitIntelligencePage } from '../pages/CircuitIntelligencePage';
-import { CornerIntelligencePage } from '../pages/CornerIntelligencePage';
-import { LapReplayPage } from '../pages/LapReplayPage';
-import { TireDegradationPage } from '../pages/TireDegradationPage';
-import { SetupManagementPage } from '../pages/SetupManagementPage';
-import { GarageSetupAdvisorPage } from '../pages/GarageSetupAdvisorPage';
-import { PartDesignPage } from '../pages/PartDesignPage';
-import { BikeComparisonPage } from '../pages/BikeComparisonPage';
-import { SetupLabPage } from '../pages/SetupLabPage';
-import { PreGrandPrixPage } from '../pages/PreGrandPrixPage';
-import { CrewChiefPage } from '../pages/CrewChiefPage';
-import { AICopilotPage } from '../pages/AICopilotPage';
-import { DigitalTwinReportPage } from '../pages/DigitalTwinReportPage';
-import { ScenarioSandboxPage } from '../pages/ScenarioSandboxPage';
-import { SessionReportPage } from '../pages/SessionReportPage';
-import { DebriefRoomPage } from '../pages/DebriefRoomPage';
-import { BlackBoxPage } from '../pages/BlackBoxPage';
-import { KnowledgeGraphPage } from '../pages/KnowledgeGraphPage';
-import { GhostLapPage } from '../pages/GhostLapPage';
-import { RiderLearningPathPage } from '../pages/RiderLearningPathPage';
-import { ExperimentEnginePage } from '../pages/ExperimentEnginePage';
-import { VideoStudioPage } from '../pages/VideoStudioPage';
-import { TrackEvolutionPage } from '../pages/TrackEvolutionPage';
-import { PitRadioPage } from '../pages/PitRadioPage';
-import { TeamWorkspacePage } from '../pages/TeamWorkspacePage';
 import { CockpitPage } from '../pages/CockpitPage';
-import { DataTrustPage } from '../pages/DataTrustPage';
-import { DataCubePage } from '../pages/DataCubePage';
-import { PlatformConsolePage } from '../pages/PlatformConsolePage';
-import { PatternMinerPage } from '../pages/PatternMinerPage';
-import { EventEnginePage } from '../pages/EventEnginePage';
-import { TrackSurfacePage } from '../pages/TrackSurfacePage';
-import { VisualWorkbenchPage } from '../pages/VisualWorkbenchPage';
-import { OrchestratorPage } from '../pages/OrchestratorPage';
-import { HumanPerformancePage } from '../pages/HumanPerformancePage';
-import { FederatedPage } from '../pages/FederatedPage';
-import { SimLabPage } from '../pages/SimLabPage';
-import { EdgeHubPage } from '../pages/EdgeHubPage';
-import { LakehousePage } from '../pages/LakehousePage';
-import { CausalEnginePage } from '../pages/CausalEnginePage';
-import { DevHubPage } from '../pages/DevHubPage';
-import { RaceStrategyPage } from '../pages/RaceStrategyPage';
-import { RivalRadarPage } from '../pages/RivalRadarPage';
-import { ChampionshipPage } from '../pages/ChampionshipPage';
-import { QualifyingPage } from '../pages/QualifyingPage';
-import { BrakeThermalPage } from '../pages/BrakeThermalPage';
-import { ElectronicsPage } from '../pages/ElectronicsPage';
-import { WeatherPage } from '../pages/WeatherPage';
-import { AeroPage } from '../pages/AeroPage';
-import { FuelPage } from '../pages/FuelPage';
-import { TyrePressurePage } from '../pages/TyrePressurePage';
-import { ChassisPage } from '../pages/ChassisPage';
-import { RaceDayControlPage } from '../pages/RaceDayControlPage';
-import { RaceControlPage } from '../pages/RaceControlPage';
-import { GearingPage } from '../pages/GearingPage';
-import { EngineeringControlPage } from '../pages/EngineeringControlPage';
-import { AICrewPage } from '../pages/AICrewPage';
-import { ConnectDataPage } from '../pages/ConnectDataPage';
-import { TrackLivePage } from '../pages/TrackLivePage';
-import { RiderComparisonPage } from '../pages/RiderComparisonPage';
-import { CrashRiskPage } from '../pages/CrashRiskPage';
-import { CircuitHistoryPage } from '../pages/CircuitHistoryPage';
-import { PredictiveModelPage } from '../pages/PredictiveModelPage';
-import { RidingStylePage } from '../pages/RidingStylePage';
+import { LiveTelemetryPage } from '../pages/LiveTelemetryPage';
 import { SettingsPage } from '../pages/SettingsPage';
+
+// Secondary/tertiary tabs — lazy-loaded
+const CircuitIntelligencePage = React.lazy(() => import('../pages/CircuitIntelligencePage'));
+const CornerIntelligencePage = React.lazy(() => import('../pages/CornerIntelligencePage'));
+const LapReplayPage = React.lazy(() => import('../pages/LapReplayPage'));
+const TireDegradationPage = React.lazy(() => import('../pages/TireDegradationPage'));
+const SetupManagementPage = React.lazy(() => import('../pages/SetupManagementPage'));
+const GarageSetupAdvisorPage = React.lazy(() => import('../pages/GarageSetupAdvisorPage'));
+const PartDesignPage = React.lazy(() => import('../pages/PartDesignPage'));
+const BikeComparisonPage = React.lazy(() => import('../pages/BikeComparisonPage'));
+const SetupLabPage = React.lazy(() => import('../pages/SetupLabPage'));
+const PreGrandPrixPage = React.lazy(() => import('../pages/PreGrandPrixPage'));
+const CrewChiefPage = React.lazy(() => import('../pages/CrewChiefPage'));
+const AICopilotPage = React.lazy(() => import('../pages/AICopilotPage'));
+const DigitalTwinReportPage = React.lazy(() => import('../pages/DigitalTwinReportPage'));
+const ScenarioSandboxPage = React.lazy(() => import('../pages/ScenarioSandboxPage'));
+const SessionReportPage = React.lazy(() => import('../pages/SessionReportPage'));
+const DebriefRoomPage = React.lazy(() => import('../pages/DebriefRoomPage'));
+const BlackBoxPage = React.lazy(() => import('../pages/BlackBoxPage'));
+const KnowledgeGraphPage = React.lazy(() => import('../pages/KnowledgeGraphPage'));
+const GhostLapPage = React.lazy(() => import('../pages/GhostLapPage'));
+const RiderLearningPathPage = React.lazy(() => import('../pages/RiderLearningPathPage'));
+const ExperimentEnginePage = React.lazy(() => import('../pages/ExperimentEnginePage'));
+const VideoStudioPage = React.lazy(() => import('../pages/VideoStudioPage'));
+const TrackEvolutionPage = React.lazy(() => import('../pages/TrackEvolutionPage'));
+const PitRadioPage = React.lazy(() => import('../pages/PitRadioPage'));
+const TeamWorkspacePage = React.lazy(() => import('../pages/TeamWorkspacePage'));
+const DataTrustPage = React.lazy(() => import('../pages/DataTrustPage'));
+const DataCubePage = React.lazy(() => import('../pages/DataCubePage'));
+const PlatformConsolePage = React.lazy(() => import('../pages/PlatformConsolePage'));
+const PatternMinerPage = React.lazy(() => import('../pages/PatternMinerPage'));
+const EventEnginePage = React.lazy(() => import('../pages/EventEnginePage'));
+const TrackSurfacePage = React.lazy(() => import('../pages/TrackSurfacePage'));
+const VisualWorkbenchPage = React.lazy(() => import('../pages/VisualWorkbenchPage'));
+const OrchestratorPage = React.lazy(() => import('../pages/OrchestratorPage'));
+const HumanPerformancePage = React.lazy(() => import('../pages/HumanPerformancePage'));
+const FederatedPage = React.lazy(() => import('../pages/FederatedPage'));
+const SimLabPage = React.lazy(() => import('../pages/SimLabPage'));
+const EdgeHubPage = React.lazy(() => import('../pages/EdgeHubPage'));
+const LakehousePage = React.lazy(() => import('../pages/LakehousePage'));
+const CausalEnginePage = React.lazy(() => import('../pages/CausalEnginePage'));
+const DevHubPage = React.lazy(() => import('../pages/DevHubPage'));
+const RaceStrategyPage = React.lazy(() => import('../pages/RaceStrategyPage'));
+const RivalRadarPage = React.lazy(() => import('../pages/RivalRadarPage'));
+const ChampionshipPage = React.lazy(() => import('../pages/ChampionshipPage'));
+const QualifyingPage = React.lazy(() => import('../pages/QualifyingPage'));
+const BrakeThermalPage = React.lazy(() => import('../pages/BrakeThermalPage'));
+const ElectronicsPage = React.lazy(() => import('../pages/ElectronicsPage'));
+const WeatherPage = React.lazy(() => import('../pages/WeatherPage'));
+const AeroPage = React.lazy(() => import('../pages/AeroPage'));
+const FuelPage = React.lazy(() => import('../pages/FuelPage'));
+const TyrePressurePage = React.lazy(() => import('../pages/TyrePressurePage'));
+const ChassisPage = React.lazy(() => import('../pages/ChassisPage'));
+const RaceDayControlPage = React.lazy(() => import('../pages/RaceDayControlPage'));
+const RaceControlPage = React.lazy(() => import('../pages/RaceControlPage'));
+const GearingPage = React.lazy(() => import('../pages/GearingPage'));
+const EngineeringControlPage = React.lazy(() => import('../pages/EngineeringControlPage'));
+const AICrewPage = React.lazy(() => import('../pages/AICrewPage'));
+const ConnectDataPage = React.lazy(() => import('../pages/ConnectDataPage'));
+const TrackLivePage = React.lazy(() => import('../pages/TrackLivePage'));
+const RiderComparisonPage = React.lazy(() => import('../pages/RiderComparisonPage'));
+const CrashRiskPage = React.lazy(() => import('../pages/CrashRiskPage'));
+const CircuitHistoryPage = React.lazy(() => import('../pages/CircuitHistoryPage'));
+const PredictiveModelPage = React.lazy(() => import('../pages/PredictiveModelPage'));
+const RidingStylePage = React.lazy(() => import('../pages/RidingStylePage'));
 
 interface NavItemDef {
   id: TabId;
@@ -544,7 +547,9 @@ function DashboardShellContent() {
                 onNavigate={navigateTo}
               />
               <SessionContextStrip />
-              <PageContent tab={activeTab} />
+              <Suspense fallback={<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', color: 'var(--text-muted)', fontSize: 13 }}>Loading…</div>}>
+                <PageContent tab={activeTab} />
+              </Suspense>
             </NavContext.Provider>
           </div>
         </main>

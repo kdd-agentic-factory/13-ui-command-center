@@ -1165,7 +1165,7 @@ export function OverviewPage() {
       <div className="grid-2 mb-4">
         <div className="card">
           <div className="card-header">
-            <span className="card-title">Live Track Position — Mugello</span>
+            <span className="card-title">Live Track Position — {session.ctx.circuitName}</span>
             <span className="badge badge-muted" style={{ fontFamily:'JetBrains Mono,monospace' }}>
               {Math.round(t.trackPos * 100)}% lap —· procedural map
             </span>

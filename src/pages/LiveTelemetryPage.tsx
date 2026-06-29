@@ -17,6 +17,7 @@ import { useAnimeCount } from '../hooks/useAnimeCount';
 import { MultiChannelChart, Channel, XAxisMode, ScaleMode } from '../components/MultiChannelChart';
 import { WiFiDevicePanel } from '../components/WiFiDevicePanel';
 import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
+import { getActiveCircuit } from '../domain/circuits';
 import { useSessionContext } from '../hooks/useSessionContext';
 import { useGarage } from '../hooks/useGarage';
 
@@ -53,7 +54,7 @@ function RaceHeader({ lap, totalLaps, pos, gap, speed, fuel, clock, anomaly }: {
         <div>
           <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--accent)', fontFamily: 'JetBrains Mono,monospace', textTransform: 'uppercase' }}>RACE</div>
           <div style={{ fontSize: 12, fontFamily: 'JetBrains Mono,monospace', color: 'var(--text)' }}>
-            GP Mugello · Italy · Round 7/20 · 2026
+            GP {getActiveCircuit().name} · {getActiveCircuit().country} · Round 7/20 · 2026
           </div>
           <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', marginTop: 2 }}>
             {MUGELLO_TRACK_KM} km · {MUGELLO_TURNS} turns · main straight {MUGELLO_MAIN_STRAIGHT_M} m
