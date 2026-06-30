@@ -12,6 +12,7 @@ const POSTHOG_HOST = 'https://us.i.posthog.com';
 // ──── Init ────
 
 export function initAnalytics(): void {
+  if (!POSTHOG_KEY) return;
   posthog.init(POSTHOG_KEY, {
     api_host: POSTHOG_HOST,
     // Capture page-leave events for session duration

@@ -845,3 +845,5 @@ export function RiderComparisonPage() {
     </div>
   );
 }
+
+export default RiderComparisonPage;

@@ -179,3 +179,5 @@ export function ScenarioSandboxPage() {
     </div>
   );
 }
+
+export default ScenarioSandboxPage;

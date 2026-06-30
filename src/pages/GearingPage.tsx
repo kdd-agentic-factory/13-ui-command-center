@@ -109,3 +109,5 @@ export function GearingPage() {
 }
 
 const hdr: React.CSSProperties = { fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase' };
+
+export default GearingPage;

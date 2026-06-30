@@ -420,3 +420,5 @@ export function AICrewPage() {
     </div>
   );
 }
+
+export default AICrewPage;

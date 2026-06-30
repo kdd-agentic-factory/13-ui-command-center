@@ -531,3 +531,5 @@ export function CornerIntelligencePage() {
     </div>
   );
 }
+
+export default CornerIntelligencePage;

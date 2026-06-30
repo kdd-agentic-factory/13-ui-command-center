@@ -18,6 +18,7 @@ import { COPILOT_SEED_KEY } from '../context/NavContext';
 import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 import { getSessionContext } from '../domain/sessionContext';
 import { getActiveCircuit } from '../domain/circuits';
+import type { RaceCopilotVehicleContext } from '../services/api';
 
 // ──── Helpers ────
 
@@ -235,7 +236,38 @@ export function AICopilotPage() {
 - Always reference the live race context above.
 - Today: ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}.`;
 
-  const { messages, isStreaming, sendMessage, clearMessages } = useAIChat(systemPrompt);
+  const vehicleContext: RaceCopilotVehicleContext = {
+    circuit_name: getSessionContext().circuitName,
+    country: getActiveCircuit().country,
+    lap: telemetry.lapCount,
+    total_laps: MUGELLO_CIRCUIT.raceLaps,
+    position: telemetry.position,
+    gap: telemetry.gap,
+    speed_kmh: telemetry.speed,
+    gear: telemetry.gear,
+    rpm: telemetry.rpm,
+    throttle_pct: telemetry.throttle,
+    brake_pct: telemetry.brake,
+    lean_angle_deg: telemetry.leanAngle,
+    last_lap_s: telemetry.lastLap,
+    best_lap_s: telemetry.bestLap,
+    lap_delta_s: lapDelta,
+    rear_compound: telemetry.rearCompound,
+    rear_tyre_age_laps: telemetry.rearTyreAge,
+    rear_grip_pct: rearGrip,
+    fuel_kg: telemetry.fuelLoad,
+    tyre_temps_c: {
+      front_left: telemetry.tireFrontLeft,
+      front_right: telemetry.tireFrontRight,
+      rear_left: telemetry.tireRearLeft,
+      rear_right: telemetry.tireRearRight,
+    },
+  };
+
+  const { messages, isStreaming, sendMessage, clearMessages } = useAIChat(systemPrompt, {
+    commandCenterId: 'kdd-pit-wall-command-center',
+    vehicleContext,
+  });
 
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -284,7 +316,7 @@ export function AICopilotPage() {
           <div>
             <div style={{ fontWeight: 700, fontSize: 15 }}>{t('aiCopilot.title', 'Race Engineering AI Copilot')}</div>
             <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-              Powered by InsForge Gateway —· gpt-4o-mini
+              Connected to 16-race-ai-copilot —· InsForge Gateway fallback
               {msgCount > 0 && (
                 <span style={{ marginLeft: 8 }}>
                   —· {msgCount} messages —· ~{estimatedTokens.toLocaleString()} tokens
@@ -562,3 +594,5 @@ export function AICopilotPage() {
     </div>
   );
 }
+
+export default AICopilotPage;

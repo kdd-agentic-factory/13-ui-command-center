@@ -1,12 +1,13 @@
 /**
- * useAIChat — streaming chat hook powered by InsForge Model Gateway.
+ * useAIChat — Race AI Copilot chat hook with InsForge Gateway fallback.
  *
- * Streams completions token-by-token using the OpenAI-compatible SSE API
- * exposed by InsForge. Falls back to a plain error message if the gateway
- * is unreachable.
+ * Routes live Command Center context to 16-race-ai-copilot when available.
+ * If that backend/BFF is unreachable, streams completions token-by-token using
+ * the OpenAI-compatible SSE API exposed by InsForge.
  */
 import { useState, useCallback, useRef } from 'react';
 import { insforge } from '../lib/insforge';
+import { askRaceCopilot, type RaceCopilotVehicleContext } from '../services/api';
 
 // ──── Types ────
 
@@ -20,6 +21,11 @@ export interface ChatMessage {
   streaming?: boolean;
 }
 
+export interface AIChatOptions {
+  vehicleContext?: RaceCopilotVehicleContext;
+  commandCenterId?: string;
+}
+
 // ──── Constants ────
 
 /** Default model exposed via InsForge → OpenRouter gateway */
@@ -27,7 +33,14 @@ const MODEL = 'openai/gpt-4o-mini';
 
 // ──── Hook ────
 
-export function useAIChat(systemPrompt: string) {
+function formatCopilotResponse(answer: string, nextStep?: string | null, approvalRequired?: boolean): string {
+  const sections = [answer];
+  if (nextStep) sections.push(`Next step: ${nextStep}`);
+  if (approvalRequired) sections.push('Approval gate: crew-chief review required before operational execution.');
+  return sections.join('\n\n');
+}
+
+export function useAIChat(systemPrompt: string, options: AIChatOptions = {}) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
   // Keep a stable ref to the latest messages for the sendMessage closure
@@ -60,6 +73,35 @@ export function useAIChat(systemPrompt: string) {
         const history = [...messagesRef.current, userMsg]
           .filter(m => !m.streaming)
           .map(m => ({ role: m.role, content: m.content }));
+
+        if (options.vehicleContext) {
+          const copilot = await askRaceCopilot({
+            query: trimmed,
+            history,
+            vehicleContext: options.vehicleContext,
+            systemPrompt,
+            commandCenterId: options.commandCenterId,
+          });
+
+          if (copilot) {
+            setMessages(prev =>
+              prev.map(m =>
+                m.id === assistantId
+                  ? {
+                      ...m,
+                      content: formatCopilotResponse(
+                        copilot.answer,
+                        copilot.next_step,
+                        copilot.approval.required,
+                      ),
+                      streaming: false,
+                    }
+                  : m,
+              ),
+            );
+            return;
+          }
+        }
 
         const stream = await insforge.ai.chat.completions.create({
           model: MODEL,
@@ -106,7 +148,7 @@ export function useAIChat(systemPrompt: string) {
         setIsStreaming(false);
       }
     },
-    [isStreaming, systemPrompt],
+    [isStreaming, options.commandCenterId, options.vehicleContext, systemPrompt],
   );
 
   const clearMessages = useCallback(() => setMessages([]), []);

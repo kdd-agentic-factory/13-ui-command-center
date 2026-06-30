@@ -177,3 +177,5 @@ export function SimLabPage() {
     </div>
   );
 }
+
+export default SimLabPage;

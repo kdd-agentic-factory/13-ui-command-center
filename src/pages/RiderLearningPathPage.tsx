@@ -144,3 +144,5 @@ export function RiderLearningPathPage() {
     </div>
   );
 }
+
+export default RiderLearningPathPage;

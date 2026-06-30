@@ -10,8 +10,9 @@ import { useState, useEffect } from 'react';
 import { ShieldCheck, AlertTriangle, CheckCircle2, Wifi, WifiOff } from 'lucide-react';
 import { useGarage } from '../hooks/useGarage';
 import { useSessionContext } from '../hooks/useSessionContext';
-import { buildDataTrust, channelColor, scoreColor, loadPipelineLineage, PipelineLineage } from '../domain/dataTrust';
-import { fetchPipelines } from '../services/api';
+import { buildDataTrust, channelColor, scoreColor, loadPipelineLineage, loadPipelineEvidenceSummary } from '../domain/dataTrust';
+import type { PipelineEvidenceSummary, PipelineLineage } from '../domain/dataTrust';
+import { fetchPipelineEvidence, fetchPipelines } from '../services/api';
 
 const MONO = 'JetBrains Mono, monospace';
 
@@ -23,9 +24,11 @@ export function DataTrustPage() {
 
   // Live KDD pipelines lineage (06-kdd-data-pipelines), live-with-fallback.
   const [pipe, setPipe] = useState<PipelineLineage | null>(null);
+  const [pipelineEvidence, setPipelineEvidence] = useState<PipelineEvidenceSummary | null>(null);
   useEffect(() => {
     let alive = true;
     loadPipelineLineage({ fetchPipelines }).then(p => { if (alive) setPipe(p); }).catch(() => {});
+    loadPipelineEvidenceSummary({ fetchPipelineEvidence }).then(e => { if (alive) setPipelineEvidence(e); }).catch(() => {});
     return () => { alive = false; };
   }, []);
 
@@ -176,6 +179,23 @@ export function DataTrustPage() {
             {pipe && pipe.state !== 'live' && (
               <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>Lineage shown from the calibration profile; live pipeline registry needs a server-side key.</div>
             )}
+            {pipelineEvidence && (
+              <div style={{ marginTop: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                  <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', flex: 1 }}>Evidence store</span>
+                  {pipelineEvidence.state === 'live'
+                    ? <span title="Pipeline evidence exported by 06-kdd-data-pipelines" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 9, fontFamily: MONO, color: 'var(--green)', border: '1px solid rgba(0,230,118,0.4)', borderRadius: 4, padding: '0 6px' }}><Wifi size={10} /> {pipelineEvidence.count} evidence</span>
+                    : pipelineEvidence.state === 'reachable'
+                      ? <span title="Evidence endpoint reachable but no evidence exported yet" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 9, fontFamily: MONO, color: 'var(--cyan)', border: '1px solid rgba(0,183,255,0.4)', borderRadius: 4, padding: '0 6px' }}><Wifi size={10} /> EMPTY</span>
+                      : <span title="Evidence endpoint unreachable / asleep" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', border: '1px solid var(--border)', borderRadius: 4, padding: '0 6px' }}><WifiOff size={10} /> OFFLINE</span>}
+                </div>
+                {pipelineEvidence.items.length > 0 && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                    {pipelineEvidence.items.map(item => <span key={item} style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 4, padding: '1px 6px' }}>{item}</span>)}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -221,3 +241,5 @@ function Line({ k, v, color }: { k: string; v: string; color?: string }) {
     </div>
   );
 }
+
+export default DataTrustPage;

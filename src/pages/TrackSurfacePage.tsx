@@ -181,3 +181,5 @@ export function TrackSurfacePage() {
     </div>
   );
 }
+
+export default TrackSurfacePage;

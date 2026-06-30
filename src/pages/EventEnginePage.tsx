@@ -172,3 +172,5 @@ export function EventEnginePage() {
     </div>
   );
 }
+
+export default EventEnginePage;

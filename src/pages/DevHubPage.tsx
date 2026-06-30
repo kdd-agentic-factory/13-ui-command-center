@@ -5,9 +5,11 @@
  * health, a typed plugin ecosystem with trust levels + permissions, the SDK/API
  * surface, a plugin sandbox run, the plugin→orchestrator flow and a marketplace.
  */
+import type { CSSProperties } from 'react';
 import { Plug, Boxes, Code2, ShieldCheck, Store, GitMerge } from 'lucide-react';
 import { useGarage } from '../hooks/useGarage';
 import { useSessionContext } from '../hooks/useSessionContext';
+import { useServiceData } from '../hooks/useServiceData';
 import { buildDevHub, connColor, trustColor } from '../domain/devHub';
 
 const MONO = 'JetBrains Mono, monospace';
@@ -15,7 +17,9 @@ const MONO = 'JetBrains Mono, monospace';
 export function DevHubPage() {
   const garage = useGarage();
   const { ctx } = useSessionContext();
+  const live = useServiceData();
   const d = buildDevHub(garage.profile.rider.name, `${garage.profile.bike.brand} ${garage.profile.bike.model}`, ctx.circuitName);
+  const mcpOnline = Boolean(live.health.mcp);
 
   return (
     <div className="page">
@@ -31,10 +35,38 @@ export function DevHubPage() {
       </div>
 
       <div className="card mb-4" style={{ padding: 12, display: 'flex', gap: 26, flexWrap: 'wrap' }}>
-        {[['Installed plugins', d.installedPlugins], ['Verified', d.verifiedPlugins], ['Team-private', d.privatePlugins], ['Connectors', d.connectors.length], ['SDKs', d.sdks.length]].map(([k, v]) => (
+        {[['Installed plugins', d.installedPlugins], ['Verified', d.verifiedPlugins], ['Team-private', d.privatePlugins], ['Connectors', d.connectors.length], ['MCP tools', live.liveMcpTools.length], ['SDKs', d.sdks.length]].map(([k, v]) => (
           <div key={k as string}><div style={{ fontSize: 16, fontWeight: 800, fontFamily: MONO, color: 'var(--text)' }}>{v}</div><div style={{ fontSize: 8.5, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>{k}</div></div>
         ))}
         <div style={{ marginLeft: 'auto', alignSelf: 'center', fontSize: 10, fontFamily: MONO, color: 'var(--text-muted)' }}>SDKs: {d.sdks.join(' · ')}</div>
+      </div>
+
+      {/* live MCP registry */}
+      <div className="card mb-4" style={{ padding: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}>
+          <GitMerge size={14} style={{ color: mcpOnline ? 'var(--cyan)' : 'var(--text-muted)' }} />
+          <span style={hdr}>02 MCP Gateway · live tool registry</span>
+          <span style={{ marginLeft: 'auto', fontSize: 9, fontFamily: MONO, color: mcpOnline ? 'var(--green)' : 'var(--text-muted)', border: `1px solid ${mcpOnline ? 'rgba(0,230,118,0.35)' : 'var(--border)'}`, borderRadius: 4, padding: '1px 7px', textTransform: 'uppercase' }}>
+            {mcpOnline ? `live · ${live.liveMcpTools.length}` : 'offline'}
+          </span>
+        </div>
+        <div style={{ fontSize: 10.5, color: 'var(--text-muted)', marginBottom: 8 }}>
+          Browser surface is registry/read-only. Tool execution stays behind orchestrator approval and server-side principal headers.
+        </div>
+        {mcpOnline && live.liveMcpTools.length > 0 ? (
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+            {live.liveMcpTools.slice(0, 24).map((tool) => (
+              <span key={`${tool.server ?? 'mcp'}:${tool.name}`} style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--cyan)', border: '1px solid rgba(0,183,255,0.3)', borderRadius: 5, padding: '2px 7px', background: 'rgba(0,183,255,0.06)' }}>
+                {tool.namespace ? `${tool.namespace}.` : ''}{tool.name}
+              </span>
+            ))}
+            {live.liveMcpTools.length > 24 && <span style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--text-muted)', padding: '2px 7px' }}>+{live.liveMcpTools.length - 24} more</span>}
+          </div>
+        ) : (
+          <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+            MCP Gateway is asleep, unreachable, or returned an empty registry. Static plugin catalogue remains available below.
+          </div>
+        )}
       </div>
 
       {/* schema + sample */}
@@ -160,4 +192,6 @@ export function DevHubPage() {
   );
 }
 
-const hdr: React.CSSProperties = { fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase' };
+const hdr: CSSProperties = { fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase' };
+
+export default DevHubPage;

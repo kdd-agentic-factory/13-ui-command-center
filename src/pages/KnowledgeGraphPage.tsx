@@ -6,22 +6,79 @@
  * the confidence and the session count behind it – plus the recommended
  * starting setup for the next visit. The learning loop made visible.
  */
-import { Network, ArrowRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Network, ArrowRight, BookOpen, Loader2, Wifi, WifiOff } from 'lucide-react';
 import { useNavigate } from '../context/NavContext';
 import { useGarage } from '../hooks/useGarage';
 import { useSessionContext } from '../hooks/useSessionContext';
 import { getKnowledgePatterns, KnowledgePattern } from '../domain/pitMemory';
+import { ragSearch, type RagEvidenceItem } from '../services/api';
 
 const MONO = 'JetBrains Mono, monospace';
 const CONF_COLOR: Record<KnowledgePattern['confidence'], string> = {
   High: 'var(--green)', Medium: 'var(--yellow)', Low: 'var(--text-muted)',
 };
 
+const KNOWLEDGE_STATE = {
+  LOADING: 'loading',
+  GROUNDED: 'grounded',
+  REACHABLE: 'reachable',
+  OFFLINE: 'offline',
+} as const;
+
+type KnowledgeState = (typeof KNOWLEDGE_STATE)[keyof typeof KNOWLEDGE_STATE];
+
+interface LiveKnowledgeEvidence {
+  sourceId: string;
+  excerpt: string;
+  score: number;
+}
+
+function normalizeEvidence(items: RagEvidenceItem[]): LiveKnowledgeEvidence[] {
+  return items
+    .map((item) => ({
+      sourceId: item.source_id,
+      excerpt: (item.text ?? item.text_excerpt ?? '').trim().slice(0, 220),
+      score: item.score ?? 0,
+    }))
+    .filter((item) => item.excerpt.length > 0)
+    .slice(0, 3);
+}
+
 export function KnowledgeGraphPage() {
   const navigate = useNavigate();
   const garage = useGarage();
   const { ctx } = useSessionContext();
-  const patterns = getKnowledgePatterns(garage.profile.rider.name, `${garage.profile.bike.brand} ${garage.profile.bike.model}`, ctx.circuitName);
+  const bike = `${garage.profile.bike.brand} ${garage.profile.bike.model}`;
+  const patterns = getKnowledgePatterns(garage.profile.rider.name, bike, ctx.circuitName);
+  const [knowledgeState, setKnowledgeState] = useState<KnowledgeState>(KNOWLEDGE_STATE.LOADING);
+  const [liveEvidence, setLiveEvidence] = useState<LiveKnowledgeEvidence[]>([]);
+
+  useEffect(() => {
+    let active = true;
+    setKnowledgeState(KNOWLEDGE_STATE.LOADING);
+    setLiveEvidence([]);
+
+    const query = `${ctx.circuitName} ${bike} learned setup patterns limiter best fix measured result`;
+    ragSearch(query, 3)
+      .then((out) => {
+        if (!active) return;
+        if (!out.ok) {
+          setKnowledgeState(out.reason === 'unreachable' ? KNOWLEDGE_STATE.OFFLINE : KNOWLEDGE_STATE.REACHABLE);
+          return;
+        }
+        const evidence = out.data.results?.length
+          ? normalizeEvidence(out.data.results.map((result) => ({ source_id: result.source_id, text: result.text, score: result.score })))
+          : normalizeEvidence(out.data.evidence ?? []);
+        setLiveEvidence(evidence);
+        setKnowledgeState(evidence.length ? KNOWLEDGE_STATE.GROUNDED : KNOWLEDGE_STATE.REACHABLE);
+      })
+      .catch(() => {
+        if (active) setKnowledgeState(KNOWLEDGE_STATE.OFFLINE);
+      });
+
+    return () => { active = false; };
+  }, [bike, ctx.circuitName]);
 
   return (
     <div className="page">
@@ -30,7 +87,27 @@ export function KnowledgeGraphPage() {
           <h1 className="page-title flex items-center gap-2"><Network size={18} /> Garage Knowledge Graph</h1>
           <p className="page-subtitle">What KDD has learned · {garage.profile.rider.name} · {garage.profile.bike.brand} {garage.profile.bike.model} · {ctx.circuitName}</p>
         </div>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 9.5, fontFamily: MONO, color: knowledgeState === KNOWLEDGE_STATE.GROUNDED ? 'var(--green)' : knowledgeState === KNOWLEDGE_STATE.REACHABLE ? 'var(--cyan)' : 'var(--text-muted)', border: `1px solid ${knowledgeState === KNOWLEDGE_STATE.GROUNDED ? 'rgba(0,230,118,0.4)' : knowledgeState === KNOWLEDGE_STATE.REACHABLE ? 'rgba(0,183,255,0.4)' : 'var(--border)'}`, borderRadius: 5, padding: '3px 8px', textTransform: 'uppercase' }}>
+          {knowledgeState === KNOWLEDGE_STATE.LOADING ? <Loader2 size={11} className="spin" /> : knowledgeState === KNOWLEDGE_STATE.OFFLINE ? <WifiOff size={11} /> : <Wifi size={11} />}
+          {knowledgeState === KNOWLEDGE_STATE.GROUNDED ? 'KB grounded' : knowledgeState === KNOWLEDGE_STATE.REACHABLE ? 'KB reachable' : knowledgeState === KNOWLEDGE_STATE.LOADING ? 'grounding' : 'KB offline'}
+        </span>
       </div>
+
+      {liveEvidence.length > 0 && (
+        <div className="card mb-4" style={{ padding: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
+            <BookOpen size={13} style={{ color: 'var(--green)' }} />
+            <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Retrieved knowledge evidence · 03-rag-cag</span>
+          </div>
+          {liveEvidence.map((evidence) => (
+            <div key={`${evidence.sourceId}:${evidence.excerpt}`} style={{ display: 'flex', gap: 10, marginBottom: 7 }}>
+              <span style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--cyan)', flexShrink: 0, width: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={evidence.sourceId}>{evidence.sourceId}</span>
+              <span style={{ fontSize: 11.5, color: 'var(--text)', lineHeight: 1.45, flex: 1 }}>{evidence.excerpt}</span>
+              <span style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--text-muted)' }}>{(evidence.score * 100).toFixed(0)}%</span>
+            </div>
+          ))}
+        </div>
+      )}
 
       <div style={{ display: 'grid', gap: 14 }}>
         {patterns.map((p, i) => (
@@ -78,3 +155,5 @@ export function KnowledgeGraphPage() {
     </div>
   );
 }
+
+export default KnowledgeGraphPage;

@@ -187,3 +187,5 @@ export function FederatedPage() {
     </div>
   );
 }
+
+export default FederatedPage;

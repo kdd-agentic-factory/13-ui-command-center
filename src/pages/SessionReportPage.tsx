@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useState } from 'react';
 import {
   AlertTriangle,
   ArrowRight,
@@ -11,6 +12,7 @@ import {
   Flag,
   Gauge,
   Lightbulb,
+  Loader2,
   Send,
   Shield,
   Target,
@@ -21,6 +23,7 @@ import {
 import { useToast } from '../components/ToastProvider';
 import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
 import { useSessionContext } from '../hooks/useSessionContext';
+import { DOCUMENT_TYPE, generateDocument, type DocumentGenerateResult } from '../services/api';
 
 interface MetricCard {
   label: string;
@@ -220,6 +223,40 @@ function NumberedAction({ index, title, body }: { index: number; title: string; 
 export function SessionReportPage() {
   const session = useSessionContext();
   const { toast } = useToast();
+  const [generatedReport, setGeneratedReport] = useState<DocumentGenerateResult | null>(null);
+  const [generating, setGenerating] = useState(false);
+
+  async function generateEvidenceReport() {
+    if (generating) return;
+    setGenerating(true);
+    const result = await generateDocument({
+      document_type: DOCUMENT_TYPE.CREW_CHIEF_REPORT,
+      title: `${session.ctx.circuitName} ${session.ctx.setup.stint ?? 'Stint 03'} Evidence Report`,
+      target_repository: '13-ui-command-center',
+      workflow_id: 'kdd-command-center-session-report',
+      evidence_required: true,
+      write_file: false,
+      data: {
+        session_id: session.ctx.setup.session ?? 'race',
+        circuit: session.ctx.circuitName,
+        session_type: 'Post-stint report',
+        bike_id: session.ctx.setup.bike ?? 'Yamaha R1',
+        observed_issue: 'Rear traction loss and late throttle pickup on corner exits.',
+        evidence: CRITICAL_CORNERS.map(corner => `${corner.corner}: ${corner.evidence}`),
+        interpretation: 'The highest-confidence loss cluster is exit-phase rear grip management, especially T15 Bucine and T12 Correntaio.',
+        recommendations: NEXT_STINT_PLAN.map(item => `${item.title}: ${item.body}`),
+        risk_level: 'medium',
+        approval_status: 'pending',
+      },
+    });
+    setGenerating(false);
+    if (!result) {
+      toast({ type: 'info', title: 'Documentation Agent unavailable', message: 'Keeping the local report. The evidence generator may be asleep or not configured.' });
+      return;
+    }
+    setGeneratedReport(result);
+    toast({ type: 'success', title: 'Evidence report generated', message: `${result.document_type} · ${result.document_id}` });
+  }
 
   function handleAction(label: string) {
     if (label === 'Generate PDF') {
@@ -239,10 +276,32 @@ export function SessionReportPage() {
         <div className="flex items-center gap-2" style={{ flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           <span className="badge badge-blue">Post-stint</span>
           <span className="badge badge-green">Data confidence 94%</span>
+          <button className="btn btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }} onClick={generateEvidenceReport} disabled={generating}>
+            {generating ? <Loader2 size={13} className="spin" /> : <FileText size={13} />} Generate evidence report
+          </button>
           <button className="btn btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }} onClick={() => handleAction('Generate PDF')}><Download size={13} /> Export PDF</button>
           <button className="btn btn-ghost btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }} onClick={() => handleAction('Send to rider')}><Send size={13} /> Send to rider</button>
         </div>
       </div>
+
+      {generatedReport && (
+        <div className="card mb-4" style={{ borderColor: 'color-mix(in srgb, var(--green) 38%, transparent)', background: 'rgba(34,197,94,0.06)' }}>
+          <div className="card-header">
+            <span className="card-title flex items-center gap-2"><FileText size={14} style={{ color: 'var(--green)' }} /> Documentation Agent Evidence Packet</span>
+            <span className="badge badge-green">05-documentation-agent</span>
+          </div>
+          <div className="card-body">
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 10, fontSize: 10.5, fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
+              <span>ID: {generatedReport.document_id}</span>
+              <span>Type: {generatedReport.document_type}</span>
+              <span>Written: {generatedReport.written ? 'yes' : 'no'}</span>
+            </div>
+            <pre style={{ whiteSpace: 'pre-wrap', margin: 0, maxHeight: 260, overflow: 'auto', fontSize: 11.5, lineHeight: 1.55, color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>
+              {generatedReport.content}
+            </pre>
+          </div>
+        </div>
+      )}
 
       <div className="card mb-4" style={{
  }}>
@@ -496,3 +555,5 @@ export function SessionReportPage() {
 function BarChartIcon() {
   return <FileSpreadsheet size={14} style={{ color: 'var(--yellow)' }} />;
 }
+
+export default SessionReportPage;

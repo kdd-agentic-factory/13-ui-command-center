@@ -176,3 +176,5 @@ export function GhostLapPage() {
     </div>
   );
 }
+
+export default GhostLapPage;

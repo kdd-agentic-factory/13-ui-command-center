@@ -833,3 +833,5 @@ export function SetupManagementPage() {
     </div>
   );
 }
+
+export default SetupManagementPage;

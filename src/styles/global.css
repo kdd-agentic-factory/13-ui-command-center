@@ -1179,6 +1179,7 @@ button:hover .mini-track path {
 .text-yellow { color: var(--yellow); }
 .text-blue   { color: var(--blue); }
 .text-orange { color: var(--orange); }
+.text-purple { color: var(--purple); }
 
 .flex  { display: flex; }
 .flex-col  { display: flex; flex-direction: column; }
@@ -1608,41 +1609,546 @@ textarea:focus-visible {
 .spin { animation: spin 0.8s linear infinite; }
 
 /* ── Additional utility classes ───────────────────────────────────────────────── */
-.mt-2 { margin-top: 8px; }
-.mt-3 { margin-top: 12px; }
-.mt-4 { margin-top: 16px; }
-.mb-2 { margin-bottom: 8px; }
-.mb-5 { margin-bottom: 20px; }
-.p-2 { padding: 8px; }
-.p-3 { padding: 12px; }
-.p-4 { padding: 16px; }
-.px-3 { padding-left: 12px; padding-right: 12px; }
-.px-4 { padding-left: 16px; padding-right: 16px; }
-.py-2 { padding-top: 8px; padding-bottom: 8px; }
-.py-3 { padding-top: 12px; padding-bottom: 12px; }
-.w-full { width: 100%; }
-.h-full { height: 100%; }
-.overflow-hidden { overflow: hidden; }
-.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.text-center { text-align: center; }
-.text-right { text-align: right; }
-.uppercase { text-transform: uppercase; }
-.font-bold { font-weight: 700; }
-.font-semibold { font-weight: 600; }
-.opacity-70 { opacity: 0.7; }
-.opacity-50 { opacity: 0.5; }
-.rounded-lg { border-radius: var(--radius-lg); }
-.rounded-xl { border-radius: var(--radius-xl); }
-.border { border: 1px solid var(--border); }
-.border-b { border-bottom: 1px solid var(--border); }
-.border-t { border-top: 1px solid var(--border); }
-.flex-1 { flex: 1; }
-.shrink-0 { flex-shrink: 0; }
-.min-w-0 { min-width: 0; }
-.relative { position: relative; }
-.absolute { position: absolute; }
-.inline-flex { display: inline-flex; }
-.inline-block { display: inline-block; }
+.mt-1 { margin-top: 4px; }
+.mb-1 { margin-bottom: 4px; }
+.mb-8 { margin-bottom: 32px; }
+.ml-auto { margin-left: auto; }
+.mr-auto { margin-right: auto; }
+.pa-14 { padding: 14px; }
+.px-10 { padding-left: 10px; padding-right: 10px; }
+.py-6 { padding-top: 4px; padding-bottom: 4px; }
+.op-50 { opacity: 0.5; }
+.op-70 { opacity: 0.7; }
+.br-2 { border-radius: 2px; }
+.bs-none { box-shadow: none; }
+.pos-relative { position: relative; }
+.pos-absolute { position: absolute; }
+.d-flex { display: flex; }
+.d-block { display: block; }
+.d-inline-flex { display: inline-flex; }
+.d-inline-block { display: inline-block; }
+.of-hidden { overflow: hidden; }
+
+/* ── Font sizes (additions) ──────────────────────────────────────────────────── */
+.fs-9  { font-size: 9px; }
+.fs-10 { font-size: 10px; }
+.fs-11 { font-size: 11px; }
+.fs-12 { font-size: 12px; }
+.fs-13 { font-size: 13px; }
+.fs-14 { font-size: 14px; }
+.fs-15 { font-size: 15px; }
+.fs-16 { font-size: 16px; }
+.fs-18 { font-size: 18px; }
+.fs-24 { font-size: 24px; }
+
+/* ── Font weights (additions) ────────────────────────────────────────────────── */
+.fw-900 { font-weight: 900; }
+
+/* ── Letter spacing (additions) ──────────────────────────────────────────────── */
+.ls-05em { letter-spacing: 0.05em; }
+.ls-07em { letter-spacing: 0.07em; }
+
+/* ── Line height (additions) ─────────────────────────────────────────────────── */
+.lh-1_3 { line-height: 1.3; }
+.lh-1_5 { line-height: 1.5; }
+.lh-1_6 { line-height: 1.6; }
+
+/* ── Font size utilities ──────────────────────────────────────────────────────── */\n.fs-8  { font-size: 8px; }\n.fs-9  { font-size: 9px; }
+.fs-10 { font-size: 10px; }
+.fs-11 { font-size: 11px; }
+.fs-12 { font-size: 12px; }
+.fs-13 { font-size: 13px; }
+.fs-14 { font-size: 14px; }
+.fs-15 { font-size: 15px; }
+.fs-16 { font-size: 16px; }
+.fs-18 { font-size: 18px; }
+.fs-20 { font-size: 20px; }
+.fs-22 { font-size: 22px; }
+.fs-24 { font-size: 24px; }
+.fs-28 { font-size: 28px; }
+.fs-30 { font-size: 30px; }
+
+/* ── Font weight utilities ────────────────────────────────────────────────────── */
+.fw-500 { font-weight: 500; }
+.fw-600 { font-weight: 600; }
+.fw-700 { font-weight: 700; }
+.fw-800 { font-weight: 800; }
+
+/* ── Letter spacing utilities ─────────────────────────────────────────────────── */
+.ls-04em { letter-spacing: 0.04em; }
+.ls-06em { letter-spacing: 0.06em; }
+.ls-08em { letter-spacing: 0.08em; }
+.ls-09em { letter-spacing: 0.09em; }
+.ls-10em { letter-spacing: 0.10em; }
+.ls-12em { letter-spacing: 0.12em; }
+
+/* ── Line height utilities ────────────────────────────────────────────────────── */
+.lh-1   { line-height: 1; }
+.lh-11  { line-height: 1.1; }
+.lh-12  { line-height: 1.2; }
+.lh-13  { line-height: 1.3; }
+.lh-15  { line-height: 1.5; }
+
+/* ── Text transform ──────────────────────────────────────────────────────────── */
+.tt-upper { text-transform: uppercase; }
+
+/* ── Padding all-sides ──────────────────────────────────────────────────────── */
+.pa-6  { padding: 6px; }
+.pa-8  { padding: 8px; }
+.pa-10 { padding: 10px; }
+.pa-12 { padding: 12px; }
+.pa-16 { padding: 16px; }
+
+/* ── Directional padding ─────────────────────────────────────────────────────── */
+.px-8  { padding-left: 8px; padding-right: 8px; }
+.px-12 { padding-left: 12px; padding-right: 12px; }
+.px-14 { padding-left: 14px; padding-right: 14px; }
+.px-16 { padding-left: 16px; padding-right: 16px; }
+.py-4  { padding-top: 4px; padding-bottom: 4px; }
+.py-6  { padding-top: 6px; padding-bottom: 6px; }
+.py-8  { padding-top: 8px; padding-bottom: 8px; }
+.py-10 { padding-top: 10px; padding-bottom: 10px; }
+.py-12 { padding-top: 12px; padding-bottom: 12px; }
+.pt-0  { padding-top: 0; }
+
+/* ── Margin utilities ────────────────────────────────────────────────────────── */
+.ma-0   { margin: 0; }
+.mx-auto { margin-left: auto; margin-right: auto; }
+.ml-auto { margin-left: auto; }
+.mr-auto { margin-right: auto; }
+
+/* ── Text alignment ──────────────────────────────────────────────────────────── */
+.ta-left   { text-align: left; }
+.ta-center { text-align: center; }
+.ta-right  { text-align: right; }
+
+/* ── Border radius ───────────────────────────────────────────────────────────── */
+.br-4  { border-radius: 4px; }
+.br-5  { border-radius: 5px; }
+.br-6  { border-radius: 6px; }
+.br-8  { border-radius: 8px; }
+.br-10 { border-radius: 10px; }
+.br-12 { border-radius: 12px; }
+
+/* ── Box shadow ──────────────────────────────────────────────────────────────── */
+.bs-none { box-shadow: none; }
+
+/* ── Overflow ────────────────────────────────────────────────────────────────── */
+.of-hidden { overflow: hidden; }
+
+/* ── Display ─────────────────────────────────────────────────────────────────── */
+.d-flex      { display: flex; }
+.d-block     { display: block; }
+.d-inline-flex { display: inline-flex; }
+
+/* ── Position ────────────────────────────────────────────────────────────────── */
+.pos-relative { position: relative; }
+.pos-absolute { position: absolute; }
+
+/* ── Opacity ─────────────────────────────────────────────────────────────────── */
+.op-50 { opacity: 0.5; }
+.op-70 { opacity: 0.7; }
+.op-90 { opacity: 0.9; }
+
+/* ── Transition shorthand ─────────────────────────────────────────────────────── */
+.tr-bg { transition: background ease, color ease, box-shadow ease; }
+
+/* ── Gap utilities (beyond existing gap-2/3/4) ─────────────────────────────── */
+.gap-1 { gap: 4px; }
+.gap-5 { gap: 20px; }
+.gap-6 { gap: 24px; }
+.gap-8 { gap: 32px; }
+
+/* ── Additional margin utilities ──────────────────────────────────────────────── */
+.mb-8  { margin-bottom: 32px; }
+.mb-10 { margin-bottom: 40px; }
+.mt-6  { margin-top: 24px; }
+
+/* ── Pill toggle button (analysis controls) ──────────────────────────────────── */
+.pill-btn {
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 10px;
+  font-family: var(--font-mono);
+}
+.pill-btn-active {
+  background: rgba(255,255,255,0.1);
+  color: var(--text);
+}
+.pill-btn-inactive {
+  background: transparent;
+  color: var(--text-muted);
+}
+
+/* ── Channel indicator dot ───────────────────────────────────────────────────── */
+.ch-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  flex: none;
+}
+
+/* ── Info banner (limited telemetry, analysis footer) ────────────────────────── */
+.info-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-radius: 8px;
+  margin: 0 0 10px;
+  font-size: 11px;
+  color: var(--text);
+}
+.info-banner--accent {
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+  border: 1px solid var(--accent);
+}
+.info-banner--blue {
+  background: color-mix(in srgb, var(--blue) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--blue) 15%, transparent);
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+/* ── Channel panel ───────────────────────────────────────────────────────────── */
+.channel-panel {
+  border-right: 1px solid var(--border);
+  padding: 8px 6px;
+  max-height: 540px;
+  overflow-y: auto;
+}
+
+/* ── Chart container ─────────────────────────────────────────────────────────── */
+.chart-container {
+  background: rgba(11,13,18,0.4);
+  min-width: 0;
+}
+
+/* ── Small-step margin utilities ───────────────────────────────────────────── */
+.mb-05  { margin-bottom: 2px; }
+.mb-075 { margin-bottom: 3px; }
+.mb-1   { margin-bottom: 4px; }
+.mb-1_5 { margin-bottom: 6px; }
+.mb-2_5 { margin-bottom: 10px; }
+.mt-05  { margin-top: 2px; }
+.mt-075 { margin-top: 3px; }
+.mt-1   { margin-top: 4px; }
+.mt-1_5 { margin-top: 6px; }
+.mt-2_5 { margin-top: 10px; }
+
+/* ── Small-step padding utilities ──────────────────────────────────────────── */
+.py-05   { padding-top: 2px; padding-bottom: 2px; }
+.py-1_5  { padding-top: 6px; padding-bottom: 6px; }
+.px-1    { padding-left: 4px; padding-right: 4px; }
+.px-1_5  { padding-left: 6px; padding-right: 6px; }
+.px-2    { padding-left: 8px; padding-right: 8px; }
+.px-2_5  { padding-left: 10px; padding-right: 10px; }
+.pa-4-8  { padding: 4px 8px; }
+.pa-4-10 { padding: 4px 10px; }
+.pa-6-8  { padding: 6px 8px; }
+.pa-8-10 { padding: 8px 10px; }
+.pa-8-12 { padding: 8px 12px; }
+.pa-8-20 { padding: 8px 20px; }
+.pa-24-16 { padding: 24px 16px; }
+
+/* ── Small-step border radius ──────────────────────────────────────────────── */
+.br-1 { border-radius: 1px; }
+.br-3 { border-radius: 3px; }
+.br-5 { border-radius: 5px; }
+
+/* ── Flex utilities ────────────────────────────────────────────────────────── */
+.flex-none { flex: none; }
+.flex-wrap { flex-wrap: wrap; }
+.justify-end { justify-content: flex-end; }
+
+/* ── Color utilities ───────────────────────────────────────────────────────── */
+.text-cyan { color: var(--cyan); }
+.text-40   { color: rgba(255,255,255,0.4); }
+.text-15   { color: rgba(255,255,255,0.15); }
+.text-50   { color: rgba(255,255,255,0.5); }
+
+/* ── Background utilities ──────────────────────────────────────────────────── */
+.bg-surface-faint { background: rgba(255,255,255,0.02); }
+.bg-surface-soft  { background: rgba(255,255,255,0.04); }
+
+/* ── Dimension utilities ───────────────────────────────────────────────────── */
+.w-1  { width: 1px; }
+.w-6  { width: 6px; }
+.w-8  { width: 8px; }
+.w-52 { width: 52px; }
+.h-3  { height: 3px; }
+.h-4  { height: 4px; }
+.h-6  { height: 6px; }
+.h-7  { height: 7px; }
+.h-8  { height: 8px; }
+.h-14 { height: 14px; }
+
+/* ── Opacity utilities ─────────────────────────────────────────────────────── */
+.op-40 { opacity: 0.4; }
+.op-55 { opacity: 0.55; }
+
+/* ── Composite: vertical separator ─────────────────────────────────────────── */
+.v-sep { width: 1px; height: 14px; background: var(--border); display: inline-block; }
+
+/* ── Composite: session context bar ────────────────────────────────────────── */
+.session-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.02);
+  font-size: 11px;
+  font-family: var(--font-mono);
+}
+
+/* ── Composite: card info note ─────────────────────────────────────────────── */
+.card-note {
+  margin-top: 6px;
+  padding: 4px 8px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 4px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+}
+
+/* ── Composite: card info note green ───────────────────────────────────────── */
+.card-note-green {
+  margin-top: 6px;
+  padding: 4px 8px;
+  background: rgba(34,197,94,0.06);
+  border-radius: 4px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--green);
+}
+
+/* ── Composite: empty state ────────────────────────────────────────────────── */
+.empty-state {
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-family: var(--font-mono);
+}
+
+/* ── Composite: mini progress bar ──────────────────────────────────────────── */
+.mini-bar {
+  width: 52px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.06);
+  overflow: hidden;
+}
+
+/* ── Composite: mini bar track (3px) ──────────────────────────────────────── */
+.mini-bar-track {
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.06);
+  overflow: hidden;
+}
+
+/* ── Composite: mini bar track (7px) ──────────────────────────────────────── */
+.mini-bar-track-lg {
+  height: 7px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.04);
+  overflow: hidden;
+}
+
+/* ── Composite: mini bar track (6px) ──────────────────────────────────────── */
+.mini-bar-track-md {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.04);
+  overflow: hidden;
+}
+
+/* ── Composite: sync button ────────────────────────────────────────────────── */
+.sync-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 5px;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-family: var(--font-mono);
+}
+
+/* ── Composite: icon-only button ───────────────────────────────────────────── */
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 4px;
+}
+
+/* ── Composite: workflow step base ─────────────────────────────────────────── */
+.wf-step {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+}
+
+/* ── Composite: info grid row ──────────────────────────────────────────────── */
+.info-grid-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  padding: 2px 4px;
+}
+
+/* ── Composite: printer row ────────────────────────────────────────────────── */
+.printer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  background: rgba(255,255,255,0.02);
+}
+
+/* ── Composite: approval/checklist row ─────────────────────────────────────── */
+.approval-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  background: rgba(255,255,255,0.02);
+}
+
+/* ── Composite: QC row ─────────────────────────────────────────────────────── */
+.qc-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  background: rgba(255,255,255,0.02);
+  margin-bottom: 2px;
+}
+
+/* ── Composite: load case item ─────────────────────────────────────────────── */
+.load-case-item {
+  padding: 2px 6px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 4px;
+  color: var(--text-dim);
+}
+
+/* ── Composite: legend row ─────────────────────────────────────────────────── */
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+/* ── Composite: print job info ─────────────────────────────────────────────── */
+.print-job-info {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.02);
+  font-size: 11px;
+  font-family: var(--font-mono);
+}
+
+/* ── Composite: print job grid ─────────────────────────────────────────────── */
+.print-job-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 12px;
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+/* ── Composite: lifecycle bar wrapper ──────────────────────────────────────── */
+.lifecycle-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── Composite: fea info note ─────────────────────────────────────────────── */
+.fea-note {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: rgba(34,197,94,0.06);
+  border: 1px solid rgba(34,197,94,0.2);
+  border-radius: var(--radius);
+  font-size: 10px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+/* ── Composite: lifecycle heatmap cell ─────────────────────────────────────── */
+.hm-cell {
+  padding: 8px 10px;
+  cursor: default;
+}
+
+/* ── Composite: lifecycle heatmap label ────────────────────────────────────── */
+.hm-label {
+  font-size: 9px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  line-height: 1.3;
+}
+
+/* ── Composite: lifecycle heatmap bar ──────────────────────────────────────── */
+.hm-bar {
+  margin-top: 4px;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.06);
+  overflow: hidden;
+}
+
+/* ── Composite: blueprint grid ─────────────────────────────────────────────── */
+.blueprint-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+/* ── Composite: print queue detail row ─────────────────────────────────────── */
+.print-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+}
 
 /* ── Pit board glow effect ─────────────────────────────────────────────────────
    The live pit board uses large monospace numbers with text-shadow.

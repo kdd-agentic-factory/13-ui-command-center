@@ -50,54 +50,50 @@ function RaceHeader({ lap, totalLaps, pos, gap, speed, fuel, clock, anomaly }: {
       background: 'linear-gradient(135deg, rgba(224,55,55,0.12) 0%, rgba(11,13,18,0.8) 100%)',
       border: '1px solid rgba(224,55,55,0.25)',
     }}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: 12, alignItems: 'center' }}>
+      <div className="d-flex items-center" style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: 12 }}>
         {/* Left: Session info */}
         <div>
-          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--accent)', fontFamily: 'JetBrains Mono,monospace', textTransform: 'uppercase' }}>RACE</div>
-          <div style={{ fontSize: 12, fontFamily: 'JetBrains Mono,monospace', color: 'var(--text)' }}>
-            GP {getActiveCircuit().name} · {getActiveCircuit().country} · Round 7/20 · 2026
-          </div>
-          <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', marginTop: 2 }}>
-            {MUGELLO_TRACK_KM} km · {MUGELLO_TURNS} turns · main straight {MUGELLO_MAIN_STRAIGHT_M} m
-          </div>
+          <div className="fs-10 fw-700 ls-10em text-accent text-mono tt-upper">RACE</div>
+          <div className="fs-12 text-mono">GP {getActiveCircuit().name} · {getActiveCircuit().country} · Round 7/20 · 2026</div>
+          <div className="fs-9 text-muted text-mono mt-2">{MUGELLO_TRACK_KM} km · {MUGELLO_TURNS} turns · main straight {MUGELLO_MAIN_STRAIGHT_M} m</div>
         </div>
 
         {/* Center: Key metrics */}
-        <div style={{ display: 'flex', gap: 20, justifyContent: 'center' }}>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', letterSpacing: '0.06em' }}>LAP</div>
-            <div className="text-mono" style={{ fontSize: 22, fontWeight: 700, color: 'var(--text)', lineHeight: 1.1 }}>
-              {lap}<span style={{ fontSize: 14, color: 'var(--text-muted)' }}>/{totalLaps}</span>
+        <div className="d-flex gap-5 justify-center">
+          <div className="text-center">
+            <div className="fs-9 text-muted text-mono ls-06em">LAP</div>
+            <div className="text-mono fs-22 fw-700 lh-11">
+              {lap}<span className="fs-14 text-muted">/{totalLaps}</span>
             </div>
           </div>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', letterSpacing: '0.06em' }}>POSITION</div>
-            <div className="text-mono" style={{ fontSize: 22, fontWeight: 700, color: 'var(--yellow)', lineHeight: 1.1 }}>P{pos}</div>
+          <div className="text-center">
+            <div className="fs-9 text-muted text-mono ls-06em">POSITION</div>
+            <div className="text-mono fs-22 fw-700 text-yellow lh-11">P{pos}</div>
           </div>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', letterSpacing: '0.06em' }}>GAP</div>
-            <div className="text-mono" style={{ fontSize: 16, fontWeight: 700, color: gap.includes('leader') ? 'var(--green)' : gap.startsWith('-') ? 'var(--green)' : 'var(--accent)', lineHeight: 1.1 }}>
+          <div className="text-center">
+            <div className="fs-9 text-muted text-mono ls-06em">GAP</div>
+            <div className="text-mono fs-16 fw-700 lh-11" style={{ color: gap.includes('leader') ? 'var(--green)' : gap.startsWith('-') ? 'var(--green)' : 'var(--accent)' }}>
               {gap.includes('leader') ? 'LEADER' : `${gap}s`}
             </div>
           </div>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', letterSpacing: '0.06em' }}>SPEED</div>
-            <div className="text-mono" style={{ fontSize: 16, fontWeight: 700, color: speed > 300 ? 'var(--accent)' : 'var(--text)', lineHeight: 1.1 }}>
-              {speed}<span style={{ fontSize: 11, color: 'var(--text-muted)' }}> km/h</span>
+          <div className="text-center">
+            <div className="fs-9 text-muted text-mono ls-06em">SPEED</div>
+            <div className="text-mono fs-16 fw-700 lh-11" style={{ color: speed > 300 ? 'var(--accent)' : 'var(--text)' }}>
+              {speed}<span className="fs-11 text-muted"> km/h</span>
             </div>
           </div>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', letterSpacing: '0.06em' }}>FUEL</div>
-            <div className="text-mono" style={{ fontSize: 16, fontWeight: 700, color: fuelCritical ? 'var(--accent)' : 'var(--orange)', lineHeight: 1.1 }}>
-              {fuel.toFixed(1)}<span style={{ fontSize: 11, color: 'var(--text-muted)' }}> kg</span>
+          <div className="text-center">
+            <div className="fs-9 text-muted text-mono ls-06em">FUEL</div>
+            <div className="text-mono fs-16 fw-700 lh-11" style={{ color: fuelCritical ? 'var(--accent)' : 'var(--orange)' }}>
+              {fuel.toFixed(1)}<span className="fs-11 text-muted"> kg</span>
             </div>
             {fuelCritical && (
-              <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--accent)', fontFamily: 'JetBrains Mono,monospace', animation: 'pulse 1.5s ease-in-out infinite' }}>
+              <div className="fs-9 fw-700 text-accent text-mono" style={{ animation: 'pulse 1.5s ease-in-out infinite' }}>
                 CRITICAL · {fuelRange} lap{fuelRange !== 1 ? 's' : ''} range
               </div>
             )}
             {!fuelCritical && (
-              <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>
+              <div className="fs-9 text-muted text-mono">
                 ~{fuelRange} lap{fuelRange !== 1 ? 's' : ''} range
               </div>
             )}
@@ -105,18 +101,16 @@ function RaceHeader({ lap, totalLaps, pos, gap, speed, fuel, clock, anomaly }: {
         </div>
 
         {/* Right: Track status */}
-        <div style={{ textAlign: 'right' }}>
-          <div style={{
-            display: 'inline-block', padding: '3px 10px', borderRadius: 4,
+        <div className="ta-right">
+          <div className="inline-block fs-10 fw-700 ls-08em text-mono br-4" style={{
+            padding: '3px 10px',
             background: anomaly ? 'rgba(224,55,55,0.15)' : 'rgba(34,197,94,0.15)',
             border: `1px solid ${anomaly ? 'rgba(224,55,55,0.3)' : 'rgba(34,197,94,0.3)'}`,
-            fontSize: 10, fontWeight: 700, letterSpacing: '0.08em',
             color: anomaly ? 'var(--accent)' : 'var(--green)',
-            fontFamily: 'JetBrains Mono,monospace',
           }}>
             {anomaly ? 'YELLOW FLAG' : 'GREEN FLAG'}
           </div>
-          <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', marginTop: 4 }}>
+          <div className="fs-9 text-muted text-mono mt-2">
             {anomaly ? 'Incident on track' : 'All sectors clear'} · {clock}
           </div>
         </div>
@@ -140,28 +134,24 @@ function DataLinkStatus({ showWifi, onToggleWifi }: {
 
   return (
     <div className="card mb-4" style={{ padding: '6px 14px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+      <div className="flex items-center gap-2" style={{ flexWrap: 'wrap' }}>
         <button
           onClick={onToggleWifi}
+          className="flex items-center fs-10 text-mono tr-bg"
           style={{
-            display: 'flex', alignItems: 'center', gap: 5,
-            padding: '3px 10px', borderRadius: 5,
+            gap: 5, padding: '3px 10px', borderRadius: 5,
             background: showWifi ? 'color-mix(in srgb, var(--blue) 15%, transparent)' : 'rgba(255,255,255,0.04)',
             border: `1px solid ${showWifi ? 'color-mix(in srgb, var(--blue) 40%, transparent)' : 'rgba(255,255,255,0.08)'}`,
             cursor: 'pointer', color: showWifi ? 'var(--cyan)' : 'var(--text-muted)',
-            fontSize: 10, fontFamily: 'JetBrains Mono,monospace',
-            transition: 'background  ease, color  ease, box-shadow  ease',
           }}
         ><Wifi size={11} /> WI-FI</button>
         {links.map(l => (
-          <span key={l.label} style={{
-            fontSize: 9, fontFamily: 'JetBrains Mono,monospace',
-            padding: '2px 7px', borderRadius: 4,
+          <span key={l.label} className="fs-9 text-mono ls-04em br-4" style={{
+            padding: '2px 7px',
             color: l.color, background: `color-mix(in srgb, ${l.color} 14%, transparent)`,
-            letterSpacing: '0.04em',
           }}>{l.label}</span>
         ))}
-        <span className="badge badge-green" style={{ marginLeft: 'auto' }}>—● LIVE</span>
+        <span className="badge badge-green ml-auto">—● LIVE</span>
       </div>
     </div>
   );
@@ -253,7 +243,7 @@ function SpeedTrace({ history }: { history: number[] }) {
   }).join(' ');
   return (
     <svg width="100%" height={h} viewBox={`0 0 ${w} ${h}`}
-      preserveAspectRatio="none" style={{ display: 'block' }}>
+      preserveAspectRatio="none" className="d-block">
       <defs>
         <linearGradient id="speedGrad" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#E03737" stopOpacity="0.4" />
@@ -291,14 +281,14 @@ function AnimKpi({ label, target, unit, color, decimals = 0 }: {
 }) {
   const display = useAnimeCount(target, decimals, 700);
   return (
-    <div className="stat-tile" style={{ textAlign: 'center' }}>
+    <div className="stat-tile text-center">
       <div className="stat-tile__label">{label}</div>
-      <div className="text-mono" style={{
-        fontSize: 28, fontWeight: 700, color, lineHeight: 1.1,
+      <div className="text-mono fs-28 fw-700 lh-11" style={{
+        color,
         fontVariantNumeric: 'tabular-nums',
       }}>
         {display}
-        <span style={{ fontSize: 13, color: 'var(--text-muted)', marginLeft: 3 }}>{unit}</span>
+        <span className="fs-13 text-muted" style={{ marginLeft: 3 }}>{unit}</span>
       </div>
     </div>
   );
@@ -311,10 +301,7 @@ interface LapRecord { lap: number; time: number; best: number; }
 function LapDeltaHistory({ records }: { records: LapRecord[] }) {
   if (records.length === 0) {
     return (
-      <div style={{
-        textAlign: 'center', padding: '20px',
-        color: 'var(--text-muted)', fontSize: 12,
-      }}>
+      <div className="text-center pa-16 text-muted fs-12">
         Accumulating lap data—…
       </div>
     );
@@ -322,14 +309,14 @@ function LapDeltaHistory({ records }: { records: LapRecord[] }) {
   const maxDelta = 2.5;
   return (
     <div>
-      <div style={{ display: 'flex', gap: 4, alignItems: 'flex-end', height: 56 }}>
+      <div className="d-flex" style={{ gap: 4, alignItems: 'flex-end', height: 56 }}>
         {records.map(r => {
           const delta  = r.time - r.best;
           const isBase = delta === 0;
           const pct    = isBase ? 4 : Math.min(100, (Math.abs(delta) / maxDelta) * 100);
           const color  = isBase ? 'var(--yellow)' : delta < 0 ? 'var(--green)' : 'var(--accent)';
           return (
-            <div key={r.lap} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div key={r.lap} className="flex-1 text-center">
               <div style={{
                 width: '70%', height: 48,
                 background: color, borderRadius: 'var(--radius) var(--radius) 0 0',
@@ -341,20 +328,19 @@ function LapDeltaHistory({ records }: { records: LapRecord[] }) {
           );
         })}
       </div>
-      <div style={{ display: 'flex', gap: 4, marginTop: 4 }}>
+      <div className="d-flex" style={{ gap: 4, marginTop: 4 }}>
         {records.map(r => {
           const delta = r.time - r.best;
           const isBase = delta === 0;
           return (
-            <div key={r.lap} style={{ flex: 1, textAlign: 'center' }}>
-              <div style={{
-                fontSize: 9, fontFamily: 'JetBrains Mono,monospace',
+            <div key={r.lap} className="flex-1 text-center">
+              <div className="fs-9 text-mono fw-700" style={{
                 color: isBase ? 'var(--yellow)' : delta < 0 ? 'var(--green)' : 'var(--accent)',
                 fontWeight: isBase ? 700 : 400,
               }}>
                 {isBase ? 'BEST' : `${delta > 0 ? '+' : ''}${delta.toFixed(2)}`}
               </div>
-              <div style={{ fontSize: 8, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>
+              <div className="fs-8 text-muted text-mono">
                 L{r.lap}
               </div>
             </div>
@@ -386,35 +372,32 @@ function MotoTyreCard({ label, leftTemp, centerTemp, rightTemp, compound, age, p
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+      <div className="flex items-center justify-between mb-6">
         <span className="card-label">{label}</span>
-        <span style={{ fontSize: 9, fontFamily: 'JetBrains Mono,monospace', color: 'var(--text-muted)' }}>
+        <span className="fs-9 text-muted text-mono">
           {compound} · {age} laps · {pressure.toFixed(2)} bar · {wear.toFixed(1)}% wear
         </span>
       </div>
       {/* 3-zone thermal bar */}
-      <div style={{ display: 'flex', gap: 2, height: 8, borderRadius: 4, overflow: 'hidden', marginBottom: 4 }}>
+      <div className="flex gap-2 of-hidden br-4" style={{ height: 8, marginBottom: 4 }}>
         {sections.map((s, i) => (
-          <div key={i} style={{ flex: 1, background: tempColor(s.temp), opacity: 0.9 }} />
+          <div key={i} className="flex-1 op-90" style={{ background: tempColor(s.temp) }} />
         ))}
       </div>
       {sections.map((s, i) => (
-        <div key={i} style={{
-          display: 'flex', justifyContent: 'space-between', marginBottom: 2,
-          fontSize: 11, fontFamily: 'JetBrains Mono,monospace',
-        }}>
-          <span style={{ color: 'var(--text-muted)' }}>{s.name}</span>
-          <span style={{ color: tempColor(s.temp), fontWeight: 600 }}>{s.temp}°C</span>
+        <div key={i} className="flex justify-between mb-2 fs-11 text-mono">
+          <span className="text-muted">{s.name}</span>
+          <span className="fw-600" style={{ color: tempColor(s.temp) }}>{s.temp}°C</span>
         </div>
       ))}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginTop: 6 }}>
-        <div style={{ padding: '5px 7px', borderRadius: 5, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-          <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>Pressure</div>
-          <div className="text-mono" style={{ fontSize: 12, color: 'var(--cyan)', fontWeight: 700 }}>{pressure.toFixed(2)} bar</div>
+        <div className="pa-10 br-5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="fs-9 text-muted">Pressure</div>
+          <div className="text-mono fs-12 fw-700" style={{ color: 'var(--cyan)' }}>{pressure.toFixed(2)} bar</div>
         </div>
-        <div style={{ padding: '5px 7px', borderRadius: 5, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-          <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>Wear</div>
-          <div className="text-mono" style={{ fontSize: 12, color: wear > 55 ? 'var(--accent)' : wear > 35 ? 'var(--yellow)' : 'var(--green)', fontWeight: 700 }}>{wear.toFixed(1)}%</div>
+        <div className="pa-10 br-5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="fs-9 text-muted">Wear</div>
+          <div className="text-mono fs-12 fw-700" style={{ color: wear > 55 ? 'var(--accent)' : wear > 35 ? 'var(--yellow)' : 'var(--green)' }}>{wear.toFixed(1)}%</div>
         </div>
       </div>
     </div>
@@ -432,7 +415,7 @@ function SectorTimingStrip({ trackPos }: { trackPos: number }) {
   ];
 
   return (
-    <div style={{ display: 'flex', gap: 6 }}>
+    <div className="flex" style={{ gap: 6 }}>
       {sectors.map(sec => {
         const active   = trackPos >= sec.from && trackPos < sec.to;
         const done     = trackPos >= sec.to;
@@ -449,29 +432,25 @@ function SectorTimingStrip({ trackPos }: { trackPos: number }) {
             borderRadius: 'var(--radius)',
             transition: 'background  ease, color  ease, box-shadow  ease',
           }}>
-            <div style={{
-              fontSize: 10, fontWeight: 700, letterSpacing: '0.08em',
+            <div className="fs-10 fw-700 ls-08em text-mono" style={{
               color: active ? 'var(--text)' : done ? (isFaster ? 'var(--green)' : 'var(--accent)') : 'var(--text-muted)',
-              fontFamily: 'JetBrains Mono,monospace',
             }}>
               {sec.id}
             </div>
             {done && (
-              <div className="text-mono" style={{
-                fontSize: 13, fontWeight: 700, marginTop: 2,
+              <div className="text-mono fs-13 fw-700 mt-2" style={{
                 color: isFaster ? 'var(--green)' : 'var(--accent)',
               }}>
                 {sec.bestDelta > 0 ? '+' : ''}{sec.bestDelta.toFixed(3)}s
               </div>
             )}
             {active && (
-              <div style={{
+              <div className="pos-relative of-hidden mt-6" style={{
                 width: '100%', height: 2, background: 'rgba(255,255,255,0.3)',
-                borderRadius: 1, marginTop: 6,
-                position: 'relative', overflow: 'hidden',
+                borderRadius: 1,
               }}>
-                <div style={{
-                  position: 'absolute', left: 0, top: 0, height: '100%',
+                <div className="pos-absolute" style={{
+                  left: 0, top: 0, height: '100%',
                   width: '100%',
                   background: 'white',
                   transform: `scaleX(${((trackPos - sec.from) / (sec.to - sec.from))})`,
@@ -481,7 +460,7 @@ function SectorTimingStrip({ trackPos }: { trackPos: number }) {
               </div>
             )}
             {!done && !active && (
-              <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>—</div>
+              <div className="fs-10 text-muted mt-2">—</div>
             )}
           </div>
         );
@@ -504,30 +483,17 @@ function ChannelStatsStrip({ channels }: { channels: Channel[] }) {
   }), [channels]);
 
   return (
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: 'repeat(6, 1fr)',
-      gap: 8,
-    }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 8 }}>
       {stats.map(s => (
-        <div key={s.id} style={{
-          padding: '10px 12px',
+        <div key={s.id} className="pa-12 br-6" style={{
           background: 'rgba(255,255,255,0.03)',
           border: `1px solid ${s.color}33`,
-          borderRadius: 'var(--radius)',
         }}>
-          <div style={{
-            display: 'flex', justifyContent: 'space-between',
-            marginBottom: 8,
-          }}>
-            <span style={{
-              fontSize: 10, fontWeight: 700,
-              color: s.color, letterSpacing: '0.08em',
-              fontFamily: 'JetBrains Mono,monospace',
-            }}>
+          <div className="flex justify-between mb-2">
+            <span className="fs-10 fw-700 text-mono ls-08em" style={{ color: s.color }}>
               {s.name}
             </span>
-            <span style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>
+            <span className="fs-9 text-muted text-mono">
               {s.unit}
             </span>
           </div>
@@ -537,18 +503,11 @@ function ChannelStatsStrip({ channels }: { channels: Channel[] }) {
             { label: 'MIN',  val: s.min,  color: 'var(--text-muted)' },
             { label: 'LAST', val: s.last, color: 'var(--text)' },
           ].map(row => (
-            <div key={row.label} style={{
-              display: 'flex', justifyContent: 'space-between',
-              marginBottom: 3,
-            }}>
-              <span style={{
-                fontSize: 9, color: 'var(--text-muted)',
-                fontFamily: 'JetBrains Mono,monospace',
-              }}>
+            <div key={row.label} className="flex justify-between" style={{ marginBottom: 3 }}>
+              <span className="fs-9 text-muted text-mono">
                 {row.label}
               </span>
-              <span style={{
-                fontSize: 10, fontFamily: 'JetBrains Mono,monospace',
+              <span className="fs-10 text-mono fw-700" style={{
                 color: row.color, fontWeight: row.label === 'MAX' ? 700 : 400,
               }}>
                 {s.id === 'gear'
@@ -775,16 +734,16 @@ export function LiveTelemetryPage() {
       {/* DATA LINK STATUS */}
       <DataLinkStatus showWifi={showWifi} onToggleWifi={() => setShowWifi(v => !v)} />
       {garage.telemetryLimited && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 12px', borderRadius: 8, margin: '0 0 10px', background: 'color-mix(in srgb, var(--accent) 6%, transparent)', border: '1px solid var(--accent)', fontSize: 11, color: 'var(--text)' }}>
+        <div className="info-banner info-banner--accent">
           <Zap size={12} style={{ color: 'var(--accent)' }} />
-          <strong style={{ color: 'var(--accent)', fontFamily: 'JetBrains Mono,monospace' }}>LIMITED TELEMETRY</strong>
+          <strong className="text-accent text-mono">LIMITED TELEMETRY</strong>
           <span>{garage.profile.bike.brand} {garage.profile.bike.model} provides GPS only — ECU channels (throttle, RPM, gear, TC) are estimated from GPS/IMU, not measured.</span>
         </div>
       )}
 
       {/* Wi-Fi device panel */}
       {showWifi && (
-        <div style={{ marginBottom: 24, animation: 'pageEnter 0.2s var(--ease-out) both' }}>
+        <div className="mb-6" style={{ animation: 'pageEnter 0.2s var(--ease-out) both' }}>
           <WiFiDevicePanel onClose={() => setShowWifi(false)} />
         </div>
       )}
@@ -800,21 +759,20 @@ export function LiveTelemetryPage() {
         </div>
 
         <div className="flex items-center gap-3">
-          <div style={{
-            display: 'flex', background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8, padding: 3,
+          <div className="d-flex br-8" style={{
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.08)', padding: 3,
           }}>
             {(['live', 'analysis'] as Mode[]).map(m => (
               <button key={m}
                 onClick={() => handleModeChange(m)}
+                className="flex items-center br-6 text-mono ls-08em tt-upper tr-bg"
                 style={{
-                  display: 'flex', alignItems: 'center', gap: 5,
-                  padding: '5px 14px',
+                  gap: 5, padding: '5px 14px',
                   background: mode === m ? 'rgba(255,255,255,0.09)' : 'transparent',
-                  border: 'none', borderRadius: 'var(--radius)', cursor: 'pointer',
+                  border: 'none', cursor: 'pointer',
                   color: mode === m ? 'var(--text)' : 'var(--text-muted)',
-                  fontSize: 11, fontFamily: 'JetBrains Mono,monospace',
-                  letterSpacing: '0.08em', textTransform: 'uppercase',
+                  fontSize: 11,
                   transition: 'background 0.15s, color 0.15s',
                 }}
               >
@@ -840,7 +798,7 @@ export function LiveTelemetryPage() {
           <div className="card mb-4">
             <div className="card-header">
               <span className="card-title">{t('liveTelemetry.liveSnapshot', 'LIVE SNAPSHOT')}</span>
-              <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>
+              <span className="fs-11 text-muted text-mono">
                 Lap {telemetry.lapCount} · track pos {(telemetry.trackPos * 100).toFixed(0)}%
               </span>
             </div>
@@ -855,9 +813,9 @@ export function LiveTelemetryPage() {
                   { label: 'Lean',      val: `${telemetry.leanAngle}°`,            color: 'var(--purple)' },
                   { label: 'Lat G',     val: `${gForce.toFixed(2)}g`,      color: 'var(--cyan)' },
                 ].map(k => (
-                  <div key={k.label} style={{ textAlign: 'center', padding: '8px 4px', background: 'rgba(255,255,255,0.03)', borderRadius: 'var(--radius)' }}>
-                    <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', letterSpacing: '0.06em' }}>{k.label}</div>
-                    <div className="text-mono" style={{ fontSize: 16, fontWeight: 700, color: k.color, lineHeight: 1.2, fontVariantNumeric: 'tabular-nums' }}>{k.val}</div>
+                  <div key={k.label} className="text-center pa-8 br-6" style={{ background: 'rgba(255,255,255,0.03)' }}>
+                    <div className="fs-9 text-muted text-mono ls-06em">{k.label}</div>
+                    <div className="text-mono fs-16 fw-700 lh-12" style={{ color: k.color, fontVariantNumeric: 'tabular-nums' }}>{k.val}</div>
                   </div>
                 ))}
               </div>
@@ -868,11 +826,11 @@ export function LiveTelemetryPage() {
           <div className="card mb-4">
             <div className="card-header">
               <span className="card-title">{t('liveTelemetry.sectorSplits', 'SECTOR SPLITS')} — {t('liveTelemetry.lap', 'Lap')} {telemetry.lapCount}</span>
-              <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>
+              <span className="fs-11 text-muted text-mono">
                 track pos {(telemetry.trackPos * 100).toFixed(0)}%
               </span>
             </div>
-            <div className="card-body" style={{ padding: '10px 16px' }}>
+            <div className="card-body py-10 px-16">
               <SectorTimingStrip trackPos={telemetry.trackPos} />
             </div>
           </div>
@@ -882,7 +840,7 @@ export function LiveTelemetryPage() {
             {/* Speed gauge */}
             <div className="card">
               <div className="card-header"><span className="card-title">Speed</span></div>
-              <div className="card-body" style={{ display: 'flex', justifyContent: 'center', padding: '8px 0 0' }}>
+              <div className="card-body d-flex justify-center pt-0">
                 <SpeedGaugeSVG value={telemetry.speed} />
               </div>
             </div>
@@ -891,13 +849,13 @@ export function LiveTelemetryPage() {
             <div className="card flex-col">
               <div className="card-header"><span className="card-title">Gear / RPM</span></div>
               <div className="card-body" style={{ flex: 1 }}>
-                <div className="gear-display" style={{ fontSize: 80, marginBottom: 16 }}>{telemetry.gear}</div>
+                <div className="gear-display mb-4" style={{ fontSize: 80 }}>{telemetry.gear}</div>
                 <div className="card-label mb-3" style={{ marginBottom: 4 }}>RPM — {telemetry.rpm.toLocaleString()}</div>
                 <RPMBar value={telemetry.rpm} />
                 <div className="flex items-center justify-between mt-2">
-                  <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>0</span>
-                  <span style={{ fontSize: 11, color: 'var(--accent)' }}>14k REDLINE</span>
-                  <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>15.5k</span>
+                  <span className="fs-11 text-muted">0</span>
+                  <span className="fs-11 text-accent">14k REDLINE</span>
+                  <span className="fs-11 text-muted">15.5k</span>
                 </div>
               </div>
             </div>
@@ -907,33 +865,33 @@ export function LiveTelemetryPage() {
               <div className="card-header"><span className="card-title">Controls</span></div>
               <div className="card-body flex-col gap-4" style={{ gap: 18 }}>
                 <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                  <div className="flex justify-between mb-6">
                     <span className="card-label">Throttle</span>
-                    <span className="telem-md text-mono" style={{ color: 'var(--green)' }}>{telemetry.throttle}%</span>
+                    <span className="telem-md text-mono text-green">{telemetry.throttle}%</span>
                   </div>
                   <div className="bar-track" style={{ height: 20 }}>
                     <div className="bar-fill green" style={{ width: '100%', transform: `scaleX(${telemetry.throttle / 100})`, transformOrigin: 'left center', transition: 'transform 0.1s var(--ease-ui)' }} />
                   </div>
                 </div>
-                <div style={{ padding: 10, borderRadius: 8, border: '1px solid rgba(224,55,55,0.18)', background: 'rgba(224,55,55,0.05)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                <div className="pa-10 br-8" style={{ border: '1px solid rgba(224,55,55,0.18)', background: 'rgba(224,55,55,0.05)' }}>
+                  <div className="flex justify-between mb-8">
                     <span className="card-label">Brake pressure split</span>
-                    <span className="text-mono" style={{ fontSize: 11, color: 'var(--text-muted)' }}>total {telemetry.brake}%</span>
+                    <span className="text-mono fs-11 text-muted">total {telemetry.brake}%</span>
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <div className="flex-col gap-2">
                     <div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                      <div className="flex justify-between mb-2">
                         <span className="card-label">Front brake</span>
-                        <span className="telem-md text-mono" style={{ color: 'var(--accent)' }}>{(telemetry.brakePressureFront * 0.11).toFixed(1)} bar</span>
+                        <span className="telem-md text-mono text-accent">{(telemetry.brakePressureFront * 0.11).toFixed(1)} bar</span>
                       </div>
                       <div className="bar-track" style={{ height: 14 }}>
                         <div className="bar-fill" style={{ width: '100%', background: 'var(--accent)', transform: `scaleX(${Math.min(1, (telemetry.brakePressureFront * 0.11) / 20)})`, transformOrigin: 'left center', transition: 'transform 0.1s var(--ease-ui)' }} />
                       </div>
                     </div>
                     <div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                      <div className="flex justify-between mb-2">
                         <span className="card-label">Rear brake</span>
-                        <span className="telem-md text-mono" style={{ color: 'var(--orange)' }}>{(telemetry.brakePressureRear * 0.05).toFixed(1)} bar</span>
+                        <span className="telem-md text-mono text-orange">{(telemetry.brakePressureRear * 0.05).toFixed(1)} bar</span>
                       </div>
                       <div className="bar-track" style={{ height: 14 }}>
                         <div className="bar-fill" style={{ width: '100%', background: 'var(--orange)', transform: `scaleX(${Math.min(1, (telemetry.brakePressureRear * 0.05) / 20)})`, transformOrigin: 'left center', transition: 'transform 0.1s var(--ease-ui)' }} />
@@ -942,11 +900,11 @@ export function LiveTelemetryPage() {
                   </div>
                 </div>
                 <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                  <div className="flex justify-between mb-6">
                     <span className="card-label">Lean / Lateral G</span>
-                    <span style={{ display: 'flex', gap: 8 }}>
-                      <span className="telem-md text-mono" style={{ color: 'var(--purple)' }}>{telemetry.leanAngle}°</span>
-                      <span className="text-mono" style={{ fontSize: 13, color: 'var(--cyan)', fontWeight: 600 }}>
+                    <span className="flex gap-2">
+                      <span className="telem-md text-mono text-purple">{telemetry.leanAngle}°</span>
+                      <span className="text-mono fs-13 fw-600" style={{ color: 'var(--cyan)' }}>
                         <Zap size={10} style={{ display: 'inline', verticalAlign: 'middle' }} />{gForce.toFixed(2)}G
                       </span>
                     </span>
@@ -961,7 +919,7 @@ export function LiveTelemetryPage() {
             {/* Lap times */}
             <div className="card">
               <div className="card-header"><span className="card-title">Lap Times</span></div>
-              <div className="card-body flex-col gap-4" style={{ gap: 16 }}>
+              <div className="card-body flex-col gap-4">
                 <div>
                   <div className="card-label">Current Lap</div>
                   <div className="telem-md text-mono">{formatTime(telemetry.lapTime)}</div>
@@ -970,8 +928,7 @@ export function LiveTelemetryPage() {
                 <div>
                   <div className="card-label">Last Lap</div>
                   <div className="telem-md text-mono">{formatTime(telemetry.lastLap)}</div>
-                  <div style={{
-                    fontSize: 12, marginTop: 2,
+                  <div className="fs-12 mt-2" style={{
                     color: telemetry.lastLap > telemetry.bestLap ? 'var(--accent)' : 'var(--green)',
                   }}>
                     {telemetry.lastLap > telemetry.bestLap
@@ -982,8 +939,8 @@ export function LiveTelemetryPage() {
                 <div className="divider" />
                 <div>
                   <div className="card-label">Personal Best</div>
-                  <div className="telem-md text-mono" style={{ color: 'var(--yellow)' }}>{formatTime(telemetry.bestLap)}</div>
-                  <div style={{ fontSize: 12, color: 'var(--yellow)', marginTop: 2 }}>🏁 Best of race</div>
+                  <div className="telem-md text-mono text-yellow">{formatTime(telemetry.bestLap)}</div>
+                  <div className="fs-12 text-yellow mt-2">🏁 Best of race</div>
                 </div>
               </div>
             </div>
@@ -994,10 +951,10 @@ export function LiveTelemetryPage() {
             <div className="card-header">
               <span className="card-title">Speed Trace — Last {LIVE_LEN} samples · {LIVE_LEN / 10}s window</span>
               <div className="flex items-center gap-3">
-                <span className="text-mono" style={{ fontSize: 10, color: 'var(--text-muted)' }}>
+                <span className="text-mono fs-10 text-muted">
                   min {speedStats.min} · max {speedStats.max}
                 </span>
-                <span className="text-mono" style={{ fontSize: 12, color: 'var(--accent)', fontWeight: 700 }}>
+                <span className="text-mono fs-12 fw-700 text-accent">
                   {telemetry.speed} km/h
                 </span>
               </div>
@@ -1014,7 +971,7 @@ export function LiveTelemetryPage() {
             <div className="card">
               <div className="card-header">
                 <span className="card-title">Lap Delta History</span>
-                <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>
+                <span className="fs-11 text-muted text-mono">
                   last 8 laps vs personal best
                 </span>
               </div>
@@ -1032,7 +989,7 @@ export function LiveTelemetryPage() {
                 </span>
               </div>
               <div className="card-body">
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div className="flex-col gap-4">
                   <MotoTyreCard
                     label="FRONT TYRE"
                     leftTemp={telemetry.tireFrontLeft}
@@ -1062,12 +1019,12 @@ export function LiveTelemetryPage() {
             <div className="card">
               <div className="card-header"><span className="card-title">Fuel & Engine</span></div>
               <div className="card-body">
-                <div style={{ marginBottom: 20 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                <div className="mb-6">
+                  <div className="flex justify-between mb-8">
                     <span className="card-label">Fuel Load</span>
                     <span className="telem-md text-mono">
                       {telemetry.fuelLoad}
-                      <span style={{ color: 'var(--text-muted)', fontSize: 14 }}> kg</span>
+                      <span className="fs-14 text-muted"> kg</span>
                     </span>
                   </div>
                   <div className="bar-track" style={{ height: 14 }}>
@@ -1077,25 +1034,24 @@ export function LiveTelemetryPage() {
                       transition: 'background  ease, color  ease, box-shadow  ease',
                     }} />
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
-                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>0 kg</span>
-                    <span style={{
-                      fontSize: 11, fontFamily: 'JetBrains Mono,monospace',
+                  <div className="flex justify-between mt-2">
+                    <span className="fs-11 text-muted">0 kg</span>
+                    <span className="fs-11 text-mono" style={{
                       color: telemetry.fuelLoad <= FUEL_CRITICAL_THRESHOLD ? 'var(--accent)' : 'var(--orange)',
                       fontWeight: telemetry.fuelLoad <= FUEL_CRITICAL_THRESHOLD ? 700 : 400,
                     }}>
                       ~{(telemetry.fuelLoad / FUEL_BURN).toFixed(1)} laps range
                       {telemetry.fuelLoad <= FUEL_CRITICAL_THRESHOLD && ' · CRITICAL'}
                     </span>
-                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{FUEL_CAP} kg</span>
+                    <span className="fs-11 text-muted">{FUEL_CAP} kg</span>
                   </div>
-                  <div style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', marginTop: 2 }}>
+                  <div className="fs-10 text-muted text-mono mt-2">
                     Fuel burn {FUEL_BURN} kg/lap
                   </div>
                 </div>
                 <div className="divider" />
-                <div style={{ marginTop: 14 }}>
-                  <div className="card-label" style={{ marginBottom: 10 }}>Engine Parameters</div>
+                <div className="mt-6">
+                  <div className="card-label mb-2" style={{ marginBottom: 10 }}>Engine Parameters</div>
                   {[
                     { name: 'Engine Map',      value: '6'   },
                     { name: 'Traction Control', value: 'TC3' },
@@ -1103,9 +1059,9 @@ export function LiveTelemetryPage() {
                     { name: 'Wheelie Control',  value: 'WC2' },
                     { name: 'Anti-hop Clutch',  value: 'ON'  },
                   ].map(p => (
-                    <div key={p.name} className="setup-row" style={{ padding: '6px 0' }}>
+                    <div key={p.name} className="setup-row py-6">
                       <span className="setup-name">{p.name}</span>
-                      <span className="setup-val text-mono" style={{ color: 'var(--cyan)' }}>{p.value}</span>
+                      <span className="setup-val text-mono text-cyan">{p.value}</span>
                     </div>
                   ))}
                 </div>
@@ -1129,92 +1085,70 @@ export function LiveTelemetryPage() {
           </div>
 
           {/* Chart controls */}
-          <div className="card mb-4" style={{ padding: '8px 14px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+          <div className="card mb-4 px-14 py-8">
+            <div className="flex items-center gap-4" style={{ flexWrap: 'wrap' }}>
               {/* Window selector */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                <span style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Window</span>
-                <div style={{ display: 'flex', gap: 2 }}>
+              <div className="flex items-center gap-1">
+                <span className="fs-9 text-muted text-mono ls-06em tt-upper">Window</span>
+                <div className="flex" style={{ gap: 2 }}>
                   {[
                     { label: '10s',  val: 100 },
                     { label: '30s',  val: 300 },
                     { label: '60s',  val: 600 },
                   ].map(w => (
                     <button key={w.label} onClick={() => setAnalysisWin(w.val)}
-                      style={{
-                        padding: '2px 8px', borderRadius: 4, border: 'none', cursor: 'pointer',
-                        fontSize: 10, fontFamily: 'JetBrains Mono,monospace',
-                        background: analysisWin === w.val ? 'rgba(255,255,255,0.1)' : 'transparent',
-                        color: analysisWin === w.val ? 'var(--text)' : 'var(--text-muted)',
-                      }}
+                      className={`pill-btn text-mono ${analysisWin === w.val ? 'pill-btn-active' : 'pill-btn-inactive'}`}
                     >{w.label}</button>
                   ))}
                 </div>
               </div>
 
               {/* X-axis selector */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                <span style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', letterSpacing: '0.06em', textTransform: 'uppercase' }}>X-axis</span>
-                <div style={{ display: 'flex', gap: 2 }}>
+              <div className="flex items-center gap-1">
+                <span className="fs-9 text-muted text-mono ls-06em tt-upper">X-axis</span>
+                <div className="flex" style={{ gap: 2 }}>
                   {(['time', 'distance', 'trackPos'] as XAxisMode[]).map(m => (
                     <button key={m} onClick={() => setXAxisMode(m)}
-                      style={{
-                        padding: '2px 8px', borderRadius: 4, border: 'none', cursor: 'pointer',
-                        fontSize: 10, fontFamily: 'JetBrains Mono,monospace',
-                        background: xAxisMode === m ? 'rgba(255,255,255,0.1)' : 'transparent',
-                        color: xAxisMode === m ? 'var(--text)' : 'var(--text-muted)',
-                      }}
+                      className={`pill-btn text-mono ${xAxisMode === m ? 'pill-btn-active' : 'pill-btn-inactive'}`}
                     >{m === 'trackPos' ? 'Track %' : m.charAt(0).toUpperCase() + m.slice(1)}</button>
                   ))}
                 </div>
               </div>
 
               {/* Compare selector — reference ghost trace */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                <span style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Compare</span>
-                <div style={{ display: 'flex', gap: 2 }}>
+              <div className="flex items-center gap-1">
+                <span className="fs-9 text-muted text-mono ls-06em tt-upper">Compare</span>
+                <div className="flex" style={{ gap: 2 }}>
                   {(['none', 'best', 'previous', 'ideal'] as const).map(m => (
                     <button key={m} onClick={() => setCompare(m)}
-                      style={{
-                        padding: '2px 8px', borderRadius: 4, border: 'none', cursor: 'pointer',
-                        fontSize: 10, fontFamily: 'JetBrains Mono,monospace',
-                        background: compare === m ? 'rgba(255,255,255,0.1)' : 'transparent',
-                        color: compare === m ? 'var(--text)' : 'var(--text-muted)',
-                      }}
+                      className={`pill-btn text-mono ${compare === m ? 'pill-btn-active' : 'pill-btn-inactive'}`}
                     >{m === 'none' ? 'None' : m === 'best' ? 'Best lap' : m === 'previous' ? 'Prev lap' : 'Ideal'}</button>
                   ))}
                 </div>
                 {compare !== 'none' && (
-                  <span style={{ fontSize: 9, fontFamily: 'JetBrains Mono,monospace', color: 'var(--text-muted)' }}>
+                  <span className="fs-9 text-mono text-muted">
                     —dashed = {compare === 'best' ? 'best lap' : compare === 'previous' ? 'previous lap' : 'ideal line'}
                   </span>
                 )}
               </div>
 
               {/* Scale selector */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                <span style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Scale</span>
-                <div style={{ display: 'flex', gap: 2 }}>
+              <div className="flex items-center gap-1">
+                <span className="fs-9 text-muted text-mono ls-06em tt-upper">Scale</span>
+                <div className="flex" style={{ gap: 2 }}>
                   {(['auto', 'manual'] as ScaleMode[]).map(m => (
                     <button key={m} onClick={() => setScaleMode(m)}
-                      style={{
-                        padding: '2px 8px', borderRadius: 4, border: 'none', cursor: 'pointer',
-                        fontSize: 10, fontFamily: 'JetBrains Mono,monospace',
-                        background: scaleMode === m ? 'rgba(255,255,255,0.1)' : 'transparent',
-                        color: scaleMode === m ? 'var(--text)' : 'var(--text-muted)',
-                      }}
+                      className={`pill-btn text-mono ${scaleMode === m ? 'pill-btn-active' : 'pill-btn-inactive'}`}
                     >{m.charAt(0).toUpperCase() + m.slice(1)}</button>
                   ))}
                 </div>
               </div>
 
               {/* Readout mode */}
-              <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span style={{
-                  fontSize: 9, fontFamily: 'JetBrains Mono,monospace',
-                  padding: '2px 7px', borderRadius: 4,
+              <div className="ml-auto flex items-center" style={{ gap: 6 }}>
+                <span className="fs-9 text-mono ls-04em br-4" style={{
+                  padding: '2px 7px',
                   color: 'var(--blue)', background: 'color-mix(in srgb, var(--blue) 12%, transparent)',
-                  letterSpacing: '0.04em',
                 }}>
                   {cursorIndex !== null ? `Cursor #${cursorIndex}` : 'Live now'}
                 </span>
@@ -1226,29 +1160,30 @@ export function LiveTelemetryPage() {
           <div className="card mb-4">
             <div className="card-header">
               <span className="card-title">Synchronized Channel Analysis · Last {analysisWin / 10}s · Lap {telemetry.lapCount}</span>
-              <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono,monospace' }}>
+              <span className="fs-11 text-muted text-mono">
                 {analysisSnapshot[0]?.length ?? 0} / {analysisWin} samples
               </span>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '212px 1fr', gap: 0 }}>
               {/* Channels panel */}
-              <div style={{ borderRight: '1px solid var(--border)', padding: '8px 6px', maxHeight: 540, overflowY: 'auto' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 4px 6px' }}>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)' }}>CHANNELS</span>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--blue)' }}>{visibleCh.size}/{CHANNEL_DEFS.length}</span>
+              <div className="channel-panel">
+                <div className="flex justify-between items-center" style={{ padding: '0 4px 6px' }}>
+                  <span className="text-mono fs-10 ls-10em text-muted">CHANNELS</span>
+                  <span className="text-mono fs-9 text-blue">{visibleCh.size}/{CHANNEL_DEFS.length}</span>
                 </div>
                 {channelGroups.map(g => (
-                  <div key={g} style={{ marginBottom: 6 }}>
-                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8.5, letterSpacing: '0.08em', color: 'var(--text-muted)', padding: '4px 4px 2px', textTransform: 'uppercase' }}>{g}</div>
+                  <div key={g} className="mb-6">
+                    <div className="text-mono fs-8 ls-08em text-muted tt-upper" style={{ padding: '4px 4px 2px' }}>{g}</div>
                     {allChannels.filter(c => c.group === g).map(c => {
                       const on = visibleCh.has(c.id);
                       return (
                         <button key={c.id} onClick={() => toggleCh(c.id)}
-                          style={{ display: 'flex', alignItems: 'center', gap: 7, width: '100%', padding: '5px 6px', borderRadius: 5, border: 'none', cursor: 'pointer', background: on ? 'rgba(255,255,255,0.05)' : 'transparent', textAlign: 'left' }}>
-                          <span style={{ width: 9, height: 9, borderRadius: 2, flex: 'none', background: on ? c.color : 'transparent', border: `1.5px solid ${c.color}` }} />
-                          <span style={{ flex: 1, fontSize: 11, fontWeight: on ? 700 : 400, color: on ? 'var(--text)' : 'var(--text-dim)' }}>{c.name}</span>
-                          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8.5, color: 'var(--text-muted)' }}>{c.unit || '—'}</span>
-                          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8, padding: '0 4px', borderRadius: 3, color: c.quality === 'OK' ? 'var(--green)' : 'var(--yellow)', background: c.quality === 'OK' ? 'var(--green-dim)' : 'var(--yellow-dim)' }}>{c.quality}</span>
+                          className="flex items-center w-full br-5 ta-left"
+                          style={{ gap: 7, padding: '5px 6px', border: 'none', cursor: 'pointer', background: on ? 'rgba(255,255,255,0.05)' : 'transparent' }}>
+                          <span className="ch-dot" style={{ background: on ? c.color : 'transparent', border: `1.5px solid ${c.color}` }} />
+                          <span className="flex-1 fs-11" style={{ fontWeight: on ? 700 : 400, color: on ? 'var(--text)' : 'var(--text-dim)' }}>{c.name}</span>
+                          <span className="text-mono fs-8 text-muted">{c.unit || '—'}</span>
+                          <span className="text-mono fs-8 br-3" style={{ padding: '0 4px', borderRadius: 3, color: c.quality === 'OK' ? 'var(--green)' : 'var(--yellow)', background: c.quality === 'OK' ? 'var(--green-dim)' : 'var(--yellow-dim)' }}>{c.quality}</span>
                         </button>
                       );
                     })}
@@ -1256,7 +1191,7 @@ export function LiveTelemetryPage() {
                 ))}
               </div>
               {/* Stacked synchronized chart */}
-              <div style={{ background: 'rgba(11,13,18,0.4)', minWidth: 0 }}>
+              <div className="chart-container">
                 {channels.length > 0
                   ? <MultiChannelChart
                       channels={channels}
@@ -1266,7 +1201,7 @@ export function LiveTelemetryPage() {
                       trackLength={MUGELLO_TRACK_KM * 1000}
                       onCursorChange={handleCursor}
                     />
-                  : <div style={{ padding: 48, textAlign: 'center', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: 12 }}>Select channels from the panel to plot.</div>}
+                  : <div className="pa-16 text-center text-muted text-mono fs-12">Select channels from the panel to plot.</div>}
               </div>
             </div>
           </div>
@@ -1275,10 +1210,7 @@ export function LiveTelemetryPage() {
           <div className="card mb-4">
             <div className="card-header">
               <span className="card-title">Channel Summary</span>
-              <span style={{
-                fontSize: 11, color: 'var(--text-muted)',
-                fontFamily: 'JetBrains Mono,monospace',
-              }}>
+              <span className="fs-11 text-muted text-mono">
                 {analysisSnapshot[0]?.length ?? 0} / {analysisWin} samples · {cursorValues ? 'Cursor readout' : 'Window stats'}
               </span>
             </div>
@@ -1288,15 +1220,8 @@ export function LiveTelemetryPage() {
           </div>
 
           {/* Analysis footer */}
-          <div style={{
-            padding: '10px 16px',
-            background: 'color-mix(in srgb, var(--blue) 6%, transparent)',
-            border: '1px solid color-mix(in srgb, var(--blue) 15%, transparent)',
-            borderRadius: 8, fontSize: 12,
-            color: 'var(--text-muted)',
-            fontFamily: 'JetBrains Mono,monospace',
-          }}>
-            <span style={{ color: 'var(--cyan)', marginRight: 8 }}>↧</span>
+          <div className="info-banner info-banner--blue">
+            <span className="text-cyan" style={{ marginRight: 8 }}>↧</span>
             Move the cursor over the chart to sync channel values, track position and lap phase.
             Scale mode: {scaleMode === 'auto' ? 'Auto per channel' : 'Manual per channel range'}. Window: {analysisWin / 10}s at 10 Hz.
           </div>

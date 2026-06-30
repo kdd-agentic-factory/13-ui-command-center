@@ -70,9 +70,38 @@ export interface PipelineLineage {
   pipelines: string[];
   total: number;
 }
+
+export const PIPELINE_EVIDENCE_STATE = {
+  LIVE: 'live',
+  REACHABLE: 'reachable',
+  UNAVAILABLE: 'unavailable',
+} as const;
+
+export type PipelineEvidenceState = (typeof PIPELINE_EVIDENCE_STATE)[keyof typeof PIPELINE_EVIDENCE_STATE];
+
+export interface PipelineEvidenceSummary {
+  state: PipelineEvidenceState;
+  count: number;
+  total: number;
+  items: string[];
+}
+
 export interface PipelinesOutcomeLike {
   ok: boolean;
   data?: { pipelines: string[]; total: number };
+  reason?: 'unauthorized' | 'unreachable';
+}
+
+export interface PipelineEvidenceItemLike {
+  evidence_id: string;
+  description: string;
+  confidence: number;
+  kdd_stage: string;
+}
+
+export interface PipelineEvidenceOutcomeLike {
+  ok: boolean;
+  data?: { evidence: PipelineEvidenceItemLike[]; count: number; total: number };
   reason?: 'unauthorized' | 'unreachable';
 }
 
@@ -91,6 +120,26 @@ export async function loadPipelineLineage(
     return { state: out.reason === 'unauthorized' ? 'reachable' : 'unavailable', pipelines: [], total: 0 };
   } catch {
     return { state: 'unavailable', pipelines: [], total: 0 };
+  }
+}
+
+export async function loadPipelineEvidenceSummary(
+  deps: { fetchPipelineEvidence: () => Promise<PipelineEvidenceOutcomeLike> },
+): Promise<PipelineEvidenceSummary> {
+  try {
+    const out = await deps.fetchPipelineEvidence();
+    if (out.ok && out.data) {
+      const items = (out.data.evidence ?? []).map(e => `${e.evidence_id} · ${e.kdd_stage} · ${Math.round(e.confidence * 100)}%`);
+      return {
+        state: items.length ? PIPELINE_EVIDENCE_STATE.LIVE : PIPELINE_EVIDENCE_STATE.REACHABLE,
+        count: out.data.count ?? items.length,
+        total: out.data.total ?? items.length,
+        items: items.slice(0, 6),
+      };
+    }
+    return { state: out.reason === 'unauthorized' ? PIPELINE_EVIDENCE_STATE.REACHABLE : PIPELINE_EVIDENCE_STATE.UNAVAILABLE, count: 0, total: 0, items: [] };
+  } catch {
+    return { state: PIPELINE_EVIDENCE_STATE.UNAVAILABLE, count: 0, total: 0, items: [] };
   }
 }
 

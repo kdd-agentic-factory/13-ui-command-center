@@ -84,3 +84,5 @@ export function TeamWorkspacePage() {
     </div>
   );
 }
+
+export default TeamWorkspacePage;

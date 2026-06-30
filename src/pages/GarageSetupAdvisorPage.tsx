@@ -651,3 +651,5 @@ export function GarageSetupAdvisorPage() {
     </div>
   );
 }
+
+export default GarageSetupAdvisorPage;

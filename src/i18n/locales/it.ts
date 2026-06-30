@@ -92,7 +92,7 @@ const it = {
         eyebrow: 'Telemetria in basso. Intelligenza in alto.',
         title: 'Strato di intelligenza decisionale',
         subtitle: 'KDD non sostituisce la telemetria; si posiziona sopra, trasforma i dati in decisioni e alimenta una rete di conoscenza federata.',
-        valueProps: ['La telemetria resta intatta', 'Lo strato decide sopra', 'L'apprendimento si federizza'],
+        valueProps: ['La telemetria resta intatta', 'Lo strato decide sopra', 'L\'apprendimento si federizza'],
         questions: ['Cosa decide lo strato?', 'Cosa può apprendere la rete?', 'Come valido la decisione?', 'Cosa resta privato?'],
         body: 'La telemetria resta al suo posto; KDD la trasforma in decisioni e apprendimento condiviso.',
         resumeIndicator: 'Bentornato — riprendi la tua ultima sessione',
@@ -103,11 +103,11 @@ const it = {
       },
       designs: {
         eyebrow: 'Tre design visivi',
-        title: 'Tre modi per leggere la piattaforma a colpo d'occhio',
+        title: `Tre modi per leggere la piattaforma a colpo d'occhio`,
         body: 'Questi pannelli mostrano lo strato decisionale, la rete di conoscenza federata e il flusso guidato per capitoli.',
         cards: [
-          { eyebrow: '01', title: 'Dati → Decisione', body: 'Telemetria, video, setup e contesto diventano una pipeline d'azione chiara.', chips: ['Osserva', 'Spiega', 'Agisci'], accent: '#60a5fa' },
-          { eyebrow: '02', title: 'Privato / Team / Federato', body: 'Scegli quanta conoscenza lascia il nodo e come viene condiviso l'apprendimento.', chips: ['Privato', 'Team', 'Federato'], accent: '#8b5cf6' },
+          { eyebrow: '01', title: 'Dati → Decisione', body: `Telemetria, video, setup e contesto diventano una pipeline d'azione chiara.`, chips: ['Osserva', 'Spiega', 'Agisci'], accent: '#60a5fa' },
+          { eyebrow: '02', title: 'Privato / Team / Federato', body: `Scegli quanta conoscenza lascia il nodo e come viene condiviso l'apprendimento.`, chips: ['Privato', 'Team', 'Federato'], accent: '#8b5cf6' },
           { eyebrow: '03', title: 'Rete di conoscenza', body: 'I nodi imparano localmente e migliorano insieme senza esporre i dati grezzi.', chips: ['Locale', 'Aggregato', 'Migliora'], accent: '#34d399' },
         ],
       },
@@ -201,7 +201,7 @@ const it = {
       },
       access: {
         eyebrow: 'Access the network',
-        title: 'Richiedi l'accesso e trasforma il tuo nodo in parte della rete di conoscenza federata.',
+        title: `Richiedi l'accesso e trasforma il tuo nodo in parte della rete di conoscenza federata.`,
         body: 'No access yet? Request early access for your academy, team, garage or project.',
         trialCta: 'Request Early Access',
         foundingCta: 'Become a Founding Node',
@@ -209,7 +209,7 @@ const it = {
       closing: {
         eyebrow: 'Closing line',
         title: 'KDD impara con te e si compone con la rete.',
-        body: 'Il contesto privato resta locale mentre l'intelligenza condivisa aiuta tutti.',
+        body: `Il contesto privato resta locale mentre l'intelligenza condivisa aiuta tutti.`,
       },
     },
     login: {

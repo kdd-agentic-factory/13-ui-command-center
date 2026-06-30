@@ -7,9 +7,10 @@
  * operating it.
  */
 import { useState } from 'react';
-import { Crosshair, ArrowDown, Zap, CheckCircle2, ClipboardList, GitMerge } from 'lucide-react';
+import { Crosshair, ArrowDown, Zap, CheckCircle2, ClipboardList, GitMerge, Loader2 } from 'lucide-react';
 import { useGarage } from '../hooks/useGarage';
 import { useSessionContext } from '../hooks/useSessionContext';
+import { orchestrate, type OrchestrationResult } from '../services/api';
 import {
   buildOrchestrator, missionStatusMeta, queueColor, taskColor, ORCH_MODES,
   OrchestratorMode, DecisionQueueItem, OrchTask,
@@ -26,9 +27,27 @@ export function OrchestratorPage() {
   const [mode, setMode] = useState<OrchestratorMode>('assisted');
   const [queue, setQueue] = useState<DecisionQueueItem[]>(o.decisionQueue);
   const [tasks, setTasks] = useState<OrchTask[]>(o.tasks);
+  const [livePlan, setLivePlan] = useState<OrchestrationResult | 'fail' | null>(null);
+  const [planning, setPlanning] = useState(false);
 
   const approve = (id: string) => setQueue(q => q.map(d => d.id === id ? { ...d, status: 'approved' } : d));
   const toggleTask = (id: string) => setTasks(ts => ts.map(t => t.id === id && t.status === 'pending' ? { ...t, status: 'done' } : t));
+  const requestLivePlan = async () => {
+    setPlanning(true);
+    setLivePlan(null);
+    const request = [
+      `Plan next best action for ${garage.profile.rider.name} on ${garage.profile.bike.brand} ${garage.profile.bike.model}`,
+      `Circuit: ${ctx.circuitName}`,
+      `Session: ${session}`,
+      `Action: ${o.nextBestAction.action}`,
+      `Root hypothesis: ${o.rootHypothesis}`,
+      `Primary finding: ${o.context.primaryFinding}`,
+      'Return a governed KDD workflow plan only; do not execute tools.',
+    ].join('\n');
+    const result = await orchestrate(request);
+    setLivePlan(result ?? 'fail');
+    setPlanning(false);
+  };
   const mm = missionStatusMeta(o.mission.status);
 
   return (
@@ -111,12 +130,28 @@ export function OrchestratorPage() {
           <Zap size={15} style={{ color: 'var(--cyan)' }} />
           <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--cyan)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Next best action</span>
           <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--text)' }}>{o.nextBestAction.action}</span>
+          <button onClick={requestLivePlan} disabled={planning}
+            style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 9.5, fontFamily: MONO, color: 'var(--cyan)', background: 'rgba(0,183,255,0.08)', border: '1px solid rgba(0,183,255,0.35)', borderRadius: 'var(--radius)', padding: '4px 9px', cursor: planning ? 'default' : 'pointer', opacity: planning ? 0.65 : 1 }}>
+            {planning ? <Loader2 size={11} className="spin" /> : <GitMerge size={11} />} Plan with 01
+          </button>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14, fontSize: 11 }}>
           <div><div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 3 }}>Why now</div>{o.nextBestAction.why.map(w => <div key={w} style={{ color: 'var(--text-muted)' }}>─—· {w}</div>)}</div>
           <div><div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--green)', textTransform: 'uppercase', marginBottom: 3 }}>Expected</div>{o.nextBestAction.expectedOutcome.map(w => <div key={w} style={{ color: 'var(--text)' }}>─—· {w}</div>)}</div>
           <div><div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--accent)', textTransform: 'uppercase', marginBottom: 3 }}>Do not yet</div>{o.nextBestAction.doNotYet.map(w => <div key={w} style={{ color: 'var(--text-muted)' }}>─—· {w}</div>)}</div>
         </div>
+        {livePlan && livePlan !== 'fail' && (
+          <div style={{ marginTop: 10, paddingTop: 9, borderTop: '1px solid rgba(255,255,255,0.08)', fontSize: 11 }}>
+            <span style={{ color: 'var(--text-muted)' }}>01-agent-orchestrator plan </span>
+            <b style={{ color: 'var(--green)' }}>{livePlan.status}</b>
+            {livePlan.workflow_id && <> —· <span style={{ color: 'var(--text-muted)' }}>workflow </span><b style={{ color: 'var(--cyan)' }}>{livePlan.workflow_id}</b></>}
+            {livePlan.classification?.intent && <> —· <span style={{ color: 'var(--text-muted)' }}>intent </span><b style={{ color: 'var(--violet)' }}>{livePlan.classification.intent}</b></>}
+            {livePlan.kdd?.kdd_stage && <> —· <span style={{ color: 'var(--text-muted)' }}>KDD </span><b style={{ color: 'var(--accent)' }}>{livePlan.kdd.kdd_stage}</b></>}
+            {typeof livePlan.plan?.approval_required === 'boolean' && <> —· <span style={{ color: 'var(--text-muted)' }}>approval </span><b style={{ color: livePlan.plan.approval_required ? 'var(--accent)' : 'var(--green)' }}>{livePlan.plan.approval_required ? 'required' : 'not required'}</b></>}
+            {livePlan.execution_status && <> —· <span style={{ color: 'var(--text-muted)' }}>execution </span><b style={{ color: 'var(--text)' }}>{livePlan.execution_status}</b></>}
+          </div>
+        )}
+        {livePlan === 'fail' && <div style={{ marginTop: 10, fontSize: 10.5, color: 'var(--text-muted)' }}>01-agent-orchestrator unavailable — local mission model remains active.</div>}
       </div>
 
       {/* Decision queue + task board */}
@@ -188,3 +223,5 @@ export function OrchestratorPage() {
     </div>
   );
 }
+
+export default OrchestratorPage;

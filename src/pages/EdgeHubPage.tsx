@@ -6,6 +6,7 @@
  * video sync, edge→"cloud sync, edge/cloud AI split, sim-to-real live check,
  * security and the session buffer. Offline-first, low-latency, multi-device.
  */
+import type { CSSProperties } from 'react';
 import { Radio, Wifi, CheckCircle2, AlertTriangle, Cloud, Cpu, Lock } from 'lucide-react';
 import { useGarage } from '../hooks/useGarage';
 import { useSessionContext } from '../hooks/useSessionContext';
@@ -183,5 +184,7 @@ export function EdgeHubPage() {
   );
 }
 
-const hdr: React.CSSProperties = { fontSize: 8.5, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' };
-const card: React.CSSProperties = { fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 10 };
+const hdr: CSSProperties = { fontSize: 8.5, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' };
+const card: CSSProperties = { fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 10 };
+
+export default EdgeHubPage;

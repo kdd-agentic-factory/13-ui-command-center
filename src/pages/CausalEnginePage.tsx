@@ -156,3 +156,5 @@ export function CausalEnginePage() {
 
 const hdr: React.CSSProperties = { fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase' };
 const sub: React.CSSProperties = { fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 3 };
+
+export default CausalEnginePage;

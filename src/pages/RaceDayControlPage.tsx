@@ -79,3 +79,5 @@ export function RaceDayControlPage() {
     </div>
   );
 }
+
+export default RaceDayControlPage;

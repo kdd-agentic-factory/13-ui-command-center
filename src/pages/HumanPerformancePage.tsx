@@ -169,3 +169,5 @@ export function HumanPerformancePage() {
     </div>
   );
 }
+
+export default HumanPerformancePage;

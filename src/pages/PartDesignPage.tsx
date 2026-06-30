@@ -161,30 +161,27 @@ function partMaterialColor(component: string): string {
 }
 
 const wfIcon = (status: string) => {
-  if (status === 'complete') return <CheckCircle size={13} style={{ color: 'var(--green)' }} />;
-  if (status === 'running')  return <div style={{ width: 13, height: 13, borderRadius: '50%', border: '2px solid var(--yellow)', animation: 'spin 1s linear infinite', borderTopColor: 'transparent' }} />;
-  if (status === 'blocked')  return <XCircle size={13} style={{ color: 'var(--accent)' }} />;
+  if (status === 'complete') return <CheckCircle size={13} className="text-green" />;
+  if (status === 'running')  return <div className="spinner" style={{ width: 13, height: 13, borderRadius: '50%', border: '2px solid var(--yellow)', animation: 'spin 1s linear infinite', borderTopColor: 'transparent' }} />;
+  if (status === 'blocked')  return <XCircle size={13} className="text-accent" />;
   return <div style={{ width: 13, height: 13, borderRadius: '50%', border: '2px solid rgba(255,255,255,0.1)' }} />;
 };
 
 function StatusIcon({ status }: { status: string }) {
-  if (status === 'ok')        return <CheckCircle   size={16} style={{ color: 'var(--green)' }} />;
-  if (status === 'warn')      return <AlertTriangle size={16} style={{ color: 'var(--yellow)' }} />;
-  if (status === 'scheduled') return <CalendarCheck size={16} style={{ color: 'var(--blue)' }} />;
-  return <XCircle size={16} style={{ color: 'var(--accent)' }} />;
+  if (status === 'ok')        return <CheckCircle   size={16} className="text-green" />;
+  if (status === 'warn')      return <AlertTriangle size={16} className="text-yellow" />;
+  if (status === 'scheduled') return <CalendarCheck size={16} className="text-blue" />;
+  return <XCircle size={16} className="text-accent" />;
 }
 
 /* ══ Sub-components ═══════════════════════════════════════════════════════ */
 
 function WorkflowPipeline({ steps }: { steps: WorkflowStatus[] }) {
   return (
-    <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+    <div className="flex gap-1 flex-wrap">
       {steps.map((s, i) => (
-        <div key={s.step} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 4,
-            padding: '4px 8px', borderRadius: 4, fontSize: 10,
-            fontFamily: 'var(--font-mono)',
+        <div key={s.step} className="flex items-center gap-1">
+          <div className="wf-step" style={{
             background: s.status === 'complete' ? 'rgba(34,197,94,0.08)'
               : s.status === 'running' ? 'rgba(251,191,36,0.08)'
               : s.status === 'blocked' ? 'rgba(224,55,55,0.08)'
@@ -204,7 +201,7 @@ function WorkflowPipeline({ steps }: { steps: WorkflowStatus[] }) {
             {s.label}
           </div>
           {i < steps.length - 1 && (
-            <ChevronRight size={10} style={{ color: 'rgba(255,255,255,0.15)', flex: 'none' }} />
+            <ChevronRight size={10} className="text-15 flex-none" />
           )}
         </div>
       ))}
@@ -214,27 +211,26 @@ function WorkflowPipeline({ steps }: { steps: WorkflowStatus[] }) {
 
 function EligibilityGate() {
   return (
-    <div className="card" style={{
- }}>
-      <div className="card-header" style={{ marginBottom: 6 }}>
-        <span className="card-title flex items-center gap-2"><Shield size={14} style={{ color: 'var(--yellow)' }} /> PRINT ELIGIBILITY</span>
+    <div className="card">
+      <div className="card-header mb-1_5">
+        <span className="card-title flex items-center gap-2"><Shield size={14} className="text-yellow" /> PRINT ELIGIBILITY</span>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, fontSize: 11, fontFamily: 'var(--font-mono)' }}>
+      <div className="blueprint-grid-3 fs-11 text-mono">
         <div>
-          <div style={{ color: 'var(--text-muted)', marginBottom: 2 }}>Requested part</div>
-          <div style={{ color: 'var(--text)', fontWeight: 600 }}>Aero winglet support bracket</div>
+          <div className="text-muted mb-05">Requested part</div>
+          <div className="fw-600">Aero winglet support bracket</div>
         </div>
         <div>
-          <div style={{ color: 'var(--text-muted)', marginBottom: 2 }}>Eligibility</div>
-          <div style={{ color: 'var(--yellow)', fontWeight: 600 }}>Conditional</div>
+          <div className="text-muted mb-05">Eligibility</div>
+          <div className="text-yellow fw-600">Conditional</div>
         </div>
         <div>
-          <div style={{ color: 'var(--text-muted)', marginBottom: 2 }}>Allowed use</div>
-          <div style={{ color: 'var(--green)' }}>Practice / fit check</div>
+          <div className="text-muted mb-05">Allowed use</div>
+          <div className="text-green">Practice / fit check</div>
         </div>
       </div>
-      <div style={{ marginTop: 6, fontSize: 10, color: 'var(--text-dim)', fontFamily: 'var(--font-mono)', padding: '4px 8px', background: 'rgba(255,255,255,0.02)', borderRadius: 4 }}>
-        <span style={{ color: 'var(--yellow)' }}>⚠</span> Aero support under load requires FEA validation and signed engineering approval. Race use requires technical compliance.
+      <div className="card-note">
+        <span className="text-yellow">⚠</span> Aero support under load requires FEA validation and signed engineering approval. Race use requires technical compliance.
       </div>
     </div>
   );
@@ -242,7 +238,7 @@ function EligibilityGate() {
 
 function LifecycleHeatmap({ parts, scheduled }: { parts: ComponentPart[]; scheduled: Set<string> }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6 }}>
+    <div className="blueprint-grid-3">
       {parts.map(p => {
         const lifePct = Math.round((p.km / p.maxKm) * 100);
         const isScheduled = scheduled.has(p.name);
@@ -252,17 +248,17 @@ function LifecycleHeatmap({ parts, scheduled }: { parts: ComponentPart[]; schedu
           : lifePct > 40 ? 'var(--blue)'
           : 'var(--green)';
         return (
-          <div key={p.name} style={{
-            padding: '8px 10px', background: `${color}12`,
-            border: `1px solid ${color}35`, borderRadius: 'var(--radius)', cursor: 'default',
+          <div key={p.name} className="hm-cell" style={{
+            background: `${color}12`,
+            border: `1px solid ${color}35`, borderRadius: 'var(--radius)',
           }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color, fontFamily: 'var(--font-mono)' }}>
+            <div className="fs-11 fw-700 text-mono" style={{ color }}>
               {isScheduled ? '✓' : `${lifePct}%`}
             </div>
-            <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 2, lineHeight: 1.3 }}>
+            <div className="hm-label">
               {p.name.length > 18 ? p.name.slice(0, 16) + '…' : p.name}
             </div>
-            <div style={{ marginTop: 4, height: 3, borderRadius: 2, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+            <div className="hm-bar">
               <div style={{ width: `${lifePct}%`, height: '100%', background: color, borderRadius: 2 }} />
             </div>
           </div>
@@ -283,23 +279,23 @@ function SystemMassChart({ parts }: { parts: ComponentPart[] }) {
   return (
     <div>
       {massBySystem.map(s => (
-        <div key={s.system} style={{ marginBottom: 8 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
-            <span style={{ fontSize: 11, color: s.color, fontWeight: 600 }}>{s.system}</span>
-            <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
+        <div key={s.system} className="mb-2">
+          <div className="flex justify-between mb-075">
+            <span className="fs-11 fw-600" style={{ color: s.color }}>{s.system}</span>
+            <span className="fs-10 text-mono text-muted">
               {s.mass.toFixed(1)} kg ({((s.mass / total) * 100).toFixed(0)}%)
             </span>
           </div>
-          <div style={{ height: 6, borderRadius: 3, background: 'rgba(255,255,255,0.04)', overflow: 'hidden' }}>
+          <div className="mini-bar-track-md">
             <div style={{ width: '100%', height: '100%', background: s.color, borderRadius: 3, transform: `scaleX(${s.mass / total})`, transformOrigin: 'left center', transition: 'transform 0.5s var(--ease-ui)' }} />
           </div>
         </div>
       ))}
-      <div style={{ marginTop: 10, display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderTop: '1px solid var(--border)' }}>
-        <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text)' }}>Total monitored</span>
-        <span style={{ fontSize: 13, fontWeight: 700, fontFamily: 'var(--font-mono)', color: 'var(--text)' }}>{total.toFixed(1)} kg</span>
+      <div className="flex justify-between mt-2_5 py-2 border-t">
+        <span className="fs-11 fw-700">Total monitored</span>
+        <span className="fs-13 fw-700 text-mono">{total.toFixed(1)} kg</span>
       </div>
-      <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
+      <div className="fs-9 text-muted text-mono mt-05">
         This is monitored component mass, not total bike weight.
       </div>
     </div>
@@ -319,25 +315,25 @@ function FEAStressPanel({ variants }: { variants: DesignVariant[] }) {
         const stressPct = Math.min(100, (v.stress / MAX_DISP) * 100);
         const yieldPct = Math.min(100, (v.yieldMPa / MAX_DISP) * 100);
         return (
-          <div key={`${v.part}-${v.variant}`} style={{ marginBottom: 14, opacity: v.status === 'Archive' ? 0.55 : 1 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-              <span style={{ fontSize: 11, fontWeight: isActive ? 700 : 400, color: isActive ? 'var(--text)' : isTesting ? 'var(--blue)' : 'var(--text-muted)' }}>
+          <div key={`${v.part}-${v.variant}`} className="mb-2_5" style={{ opacity: v.status === 'Archive' ? 0.55 : 1 }}>
+            <div className="flex justify-between mb-1">
+              <span className="fs-11" style={{ fontWeight: isActive ? 700 : 400, color: isActive ? 'var(--text)' : isTesting ? 'var(--blue)' : 'var(--text-muted)' }}>
                 {v.variant} — {v.part}
               </span>
-              <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', fontWeight: 700, color: sfColor }}>SF {sf}</span>
+              <span className="fs-11 text-mono fw-700" style={{ color: sfColor }}>SF {sf}</span>
             </div>
-            <div style={{ position: 'relative', height: 8, background: 'rgba(255,255,255,0.04)', borderRadius: 4, overflow: 'visible' }}>
+            <div className="pos-relative h-8 bg-surface-soft br-4 of-visible">
               <div style={{ width: '100%', height: '100%', background: sfNum >= 2.0 ? 'var(--green)' : sfNum >= 1.5 ? 'var(--yellow)' : 'var(--accent)', borderRadius: 4, transform: `scaleX(${stressPct / 100})`, transformOrigin: 'left center', transition: 'transform 0.5s var(--ease-ui)' }} />
-              <div style={{ position: 'absolute', left: `${yieldPct}%`, top: -3, width: 2, height: 14, background: 'rgba(255,255,255,0.5)', borderRadius: 1 }} />
+              <div className="pos-absolute h-14 br-1" style={{ left: `${yieldPct}%`, top: -3, width: 2, background: 'rgba(255,255,255,0.5)' }} />
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 3 }}>
-              <span style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{v.stress} MPa peak</span>
-              <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', fontFamily: 'var(--font-mono)' }}>≤ {v.yieldMPa} MPa yield</span>
+            <div className="flex justify-between mt-075">
+              <span className="fs-9 text-muted text-mono">{v.stress} MPa peak</span>
+              <span className="fs-9 text-40 text-mono">≤ {v.yieldMPa} MPa yield</span>
             </div>
           </div>
         );
       })}
-      <div style={{ marginTop: 8, padding: '8px 10px', background: 'rgba(34,197,94,0.06)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 'var(--radius)', fontSize: 10, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+      <div className="fea-note">
         White marker = material yield strength · SF ≥ 2.5 = design safe
       </div>
     </div>
@@ -353,8 +349,8 @@ function MassEvolutionChart({ variants }: { variants: DesignVariant[] }) {
         const pvs = variants.filter(v => v.part === part);
         const base = pvs[0]?.mass ?? 1;
         return (
-          <div key={part} style={{ marginBottom: 18 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text)', marginBottom: 8, letterSpacing: '0.02em' }}>{part}</div>
+          <div key={part} className="mb-4">
+            <div className="fs-11 fw-700 mb-2 ls-02em">{part}</div>
             {pvs.map(v => {
               const pct = (v.mass / maxMass) * 100;
               const saving = ((base - v.mass) / base * 100).toFixed(1);
@@ -362,17 +358,17 @@ function MassEvolutionChart({ variants }: { variants: DesignVariant[] }) {
               const isTesting = v.status === 'Testing';
               const barColor = isActive ? 'var(--green)' : isTesting ? 'var(--blue)' : 'rgba(255,255,255,0.15)';
               return (
-                <div key={v.variant} style={{ marginBottom: 7 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
-                    <span style={{ fontSize: 11, color: isActive ? 'var(--green)' : isTesting ? 'var(--blue)' : 'var(--text-muted)', fontWeight: isActive ? 700 : 400 }}>
+                <div key={v.variant} className="mb-075">
+                  <div className="flex justify-between mb-075">
+                    <span className="fs-11 fw-600" style={{ color: isActive ? 'var(--green)' : isTesting ? 'var(--blue)' : 'var(--text-muted)', fontWeight: isActive ? 700 : 400 }}>
                       {v.variant}
-                      {isActive && <span style={{ marginLeft: 6, fontSize: 9, color: 'var(--green)', fontFamily: 'var(--font-mono)' }}>✓ ACTIVE</span>}
+                      {isActive && <span className="ml-1_5 fs-9 text-green text-mono">✓ ACTIVE</span>}
                     </span>
-                    <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: isActive ? 'var(--green)' : isTesting ? 'var(--blue)' : 'var(--text-muted)' }}>
+                    <span className="fs-10 text-mono" style={{ color: isActive ? 'var(--green)' : isTesting ? 'var(--blue)' : 'var(--text-muted)' }}>
                       {v.mass} kg{parseFloat(saving) > 0 ? ` (-${saving}%)` : ''}
                     </span>
                   </div>
-                  <div style={{ height: 7, borderRadius: 3, background: 'rgba(255,255,255,0.04)', overflow: 'hidden' }}>
+                  <div className="mini-bar-track-lg">
                     <div style={{ width: '100%', height: '100%', background: barColor, borderRadius: 3, transform: `scaleX(${pct / 100})`, transformOrigin: 'left center', transition: 'transform 0.5s var(--ease-ui)' }} />
                   </div>
                 </div>
@@ -964,7 +960,7 @@ export function PartDesignPage() {
         <table className="data-table">
           <thead>
             <tr>
-              <th>Material</th><th>ρ (g/cm—th><th>σ  yield (MPa)</th><th>UTS (MPa)</th>
+              <th>Material</th><th>ρ (g/cm³)</th><th>σ  yield (MPa)</th><th>UTS (MPa)</th>
               <th>E (GPa)</th><th>Fatigue (MPa)</th><th>T max (°C)</th><th>Applications</th>
             </tr>
           </thead>
@@ -1143,3 +1139,5 @@ export function PartDesignPage() {
     </div>
   );
 }
+
+export default PartDesignPage;

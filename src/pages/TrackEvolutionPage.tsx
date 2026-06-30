@@ -75,3 +75,5 @@ export function TrackEvolutionPage() {
     </div>
   );
 }
+
+export default TrackEvolutionPage;

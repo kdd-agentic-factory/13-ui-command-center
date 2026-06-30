@@ -614,3 +614,5 @@ function riskColorFromStr(risk: string): string {
   };
   return map[risk] || 'var(--text-muted)';
 }
+
+export default PredictiveModelPage;

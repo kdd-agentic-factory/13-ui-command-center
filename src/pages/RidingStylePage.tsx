@@ -471,3 +471,5 @@ export function RidingStylePage() {
     </div>
   );
 }
+
+export default RidingStylePage;

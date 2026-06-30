@@ -58,7 +58,7 @@ export function buildPitRadio(rider: string, circuit: string): PitRadio {
       { phrase: '"Open Crash-Risk"',      action: 'Brings up the Safety Guardian panel' },
       { phrase: '"Start experiment"',     action: 'Opens the active experiment validation' },
       { phrase: '"Send: box this lap"',   action: 'Pushes the canned radio message to the rider' },
-      { phrase: '"What's the verdict?"',  action: 'Reads the latest Oracle recommendation' },
+      { phrase: '"What\'s the verdict?"',  action: 'Reads the latest Oracle recommendation' },
     ],
   };
 }

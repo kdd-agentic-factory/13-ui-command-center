@@ -91,3 +91,5 @@ export function BlackBoxPage() {
     </div>
   );
 }
+
+export default BlackBoxPage;

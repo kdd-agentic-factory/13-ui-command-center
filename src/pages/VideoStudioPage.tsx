@@ -204,3 +204,5 @@ const btn: React.CSSProperties = {
   background: 'transparent', border: '1px solid var(--border)', color: 'var(--text)',
   borderRadius: 'var(--radius)', padding: '5px 8px', cursor: 'pointer',
 };
+
+export default VideoStudioPage;

@@ -1194,3 +1194,5 @@ export function CircuitIntelligencePage() {
     </div>
   );
 }
+
+export default CircuitIntelligencePage;

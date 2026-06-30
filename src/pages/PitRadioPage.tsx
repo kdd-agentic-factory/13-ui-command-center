@@ -82,3 +82,5 @@ export function PitRadioPage() {
     </div>
   );
 }
+
+export default PitRadioPage;

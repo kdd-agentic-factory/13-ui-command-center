@@ -74,3 +74,5 @@ export function BikeComparisonPage() {
     </div>
   );
 }
+
+export default BikeComparisonPage;

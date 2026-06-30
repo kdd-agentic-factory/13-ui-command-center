@@ -6,7 +6,7 @@
  * decision stores, the model registry, feature lineage, data versioning and the
  * privacy-aware federated export.
  */
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { Database, Search, GitBranch, Boxes, Cpu, Lock } from 'lucide-react';
 import { useGarage } from '../hooks/useGarage';
 import { useSessionContext } from '../hooks/useSessionContext';
@@ -196,4 +196,6 @@ export function LakehousePage() {
   );
 }
 
-const hdr: React.CSSProperties = { fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase' };
+const hdr: CSSProperties = { fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase' };
+
+export default LakehousePage;

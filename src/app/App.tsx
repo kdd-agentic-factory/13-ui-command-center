@@ -1,5 +1,5 @@
 import '../i18n'; // must be first — initialises i18next before any component renders
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { AuthProvider, useProfile, PROFILES, type ProfileId } from '../context/AuthContext';
 import { IntroExperience } from '../components/intro/IntroExperience';
@@ -37,7 +37,15 @@ import { FoundingNodesPage } from '../pages/public/FoundingNodesPage';
 
 function getPathname(): string {
   if (typeof window === 'undefined') return '/';
-  return window.location.pathname;
+
+  const pathname = window.location.pathname;
+  const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+  if (basePath && basePath !== '/' && (pathname === basePath || pathname.startsWith(`${basePath}/`))) {
+    return pathname.slice(basePath.length) || '/';
+  }
+
+  return pathname;
 }
 
 function getAppRoute(pathname: string): 'home' | 'login' | 'trial' | 'thanks' | 'founding-nodes' | 'app' {
@@ -59,12 +67,18 @@ function AppEntryFlowContent() {
   const [sessionCtx, setSessionCtx] = useState<SessionContext | null>(null);
   const [resumeSnapshot, setResumeSnapshot] = useState<import('./sessionResume').SessionResumeSnapshot | null>(null);
 
+  /** Tracks whether we auto-launched the demo for first-time visitors (pit-wall mode). */
+  const autoDemoLaunched = useRef(false);
+
   useEffect(() => {
     let cancelled = false;
 
     async function resumeLatestSession() {
       if (authLoading) return;
       if (!profile) return;
+
+      // Auto-demo launched — don't override the stage to 'mission'
+      if (autoDemoLaunched.current) return;
 
       if (!user) {
         setStage('mission');
@@ -97,6 +111,18 @@ function AppEntryFlowContent() {
     void resumeLatestSession();
     return () => { cancelled = true; };
   }, [authLoading, profile?.id, user?.id]);
+
+  // ── Auto-demo for first-time visitors (pit-wall / no saved profile) ──
+  useEffect(() => {
+    if (autoDemoLaunched.current) return;
+
+    const savedProfile = localStorage.getItem('kdd-profile');
+    if (!savedProfile) {
+      autoDemoLaunched.current = true;
+      login('founding-node');
+      presetGuidedDemo(); // jump to LaunchBriefPage → BootSequence → DashboardShell
+    }
+  }, [login]);
 
   function presetLatestSession() {
     const mugello = getCircuitLibrary().find(c => c.id === 'mugello')!;
@@ -149,6 +175,9 @@ function AppEntryFlowContent() {
       </div>
     );
   }
+
+  // Do not block the public demo on remote auth. If the auto-demo effect has not
+  // run yet, fall through to the intro instead of freezing on a loading screen.
 
   if (!profile) {
     const pendingLabel = pendingProfile

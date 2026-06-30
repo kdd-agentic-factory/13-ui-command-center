@@ -169,6 +169,28 @@ server {
         proxy_connect_timeout 15s;
         proxy_read_timeout 60s;
     }
+    # Documentation agent — evidence-backed reports and paper sections.
+    location /api/documentation/ {
+        proxy_pass https://kdd-rjz-docs.fly.dev/;
+        proxy_ssl_server_name on;
+        proxy_set_header Host kdd-rjz-docs.fly.dev;
+        proxy_set_header X-API-Key "${KDD_INTERNAL_API_KEY}";
+        proxy_connect_timeout 15s;
+        proxy_read_timeout 90s;
+    }
+    # Race AI Copilot — external AI service for the KDD Command Center.
+    location /api/copilot-service/ {
+        proxy_pass https://kdd-rjz-copilot.fly.dev/;
+        proxy_ssl_server_name on;
+        proxy_set_header Host kdd-rjz-copilot.fly.dev;
+        proxy_set_header X-API-Key "${KDD_INTERNAL_API_KEY}";
+        proxy_set_header X-Tenant-ID "kdd-demo";
+        proxy_set_header X-Principal-ID "ui-command-center";
+        proxy_set_header X-Principal-Role "race_engineer";
+        proxy_set_header X-Approval-Scope "propose";
+        proxy_connect_timeout 15s;
+        proxy_read_timeout 90s;
+    }
     # KDD data pipelines — backs the Data Trust lineage (X-API-Key injected).
     location /api/pipelines/ {
         proxy_pass https://kdd-rjz-pipelines.fly.dev/;
@@ -184,7 +206,7 @@ server {
         proxy_pass https://kdd-rjz-security.fly.dev/;
         proxy_ssl_server_name on;
         proxy_set_header Host kdd-rjz-security.fly.dev;
-        proxy_set_header X-Internal-API-Key "${KDD_SECURITY_INTERNAL_KEY}";
+        proxy_set_header X-Internal-API-Key "${KDD_INTERNAL_API_KEY}";
         proxy_set_header X-Principal-Id "ui-command-center";
         proxy_set_header X-Principal-Role "race_engineer";
         proxy_connect_timeout 15s;

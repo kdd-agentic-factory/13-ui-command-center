@@ -200,10 +200,10 @@ function GripBudgetMeter({ compound, lapAge }: { compound: CompoundId; lapAge: n
   const color       = currentGrip <= c.cliffAt ? 'var(--accent)' : safeMargin < 10 ? 'var(--yellow)' : 'var(--green)';
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: 13, fontWeight: 700 }}>{c.name} — Grip Budget</span>
-        <span style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 14, fontWeight: 800, color }}>
+    <div className="flex-col gap-3">
+      <div className="flex justify-between items-center">
+        <span className="fs-13 fw-700">{c.name} — Grip Budget</span>
+        <span className="text-mono fs-14 fw-800" style={{ color }}>
           {currentGrip.toFixed(1)}%
         </span>
       </div>
@@ -216,20 +216,20 @@ function GripBudgetMeter({ compound, lapAge }: { compound: CompoundId; lapAge: n
           {currentGrip.toFixed(0)}% GRIP
         </div>
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 9, fontFamily: 'JetBrains Mono,monospace' }}>
+      <div className="flex justify-between fs-9 text-mono">
         <span style={{ color: 'rgba(224,55,55,0.55)' }}>CLIFF: {c.cliffAt}%</span>
         <span style={{ color: 'rgba(34,197,94,0.55)' }}>SAFE +{safeMargin.toFixed(1)}%</span>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6 }}>
+      <div className="grid-4" style={{ gap: 6 }}>
         {([
           { label: 'Grip Now',    value: `${currentGrip.toFixed(0)}%`, color },
           { label: 'Used',        value: `${usedPct.toFixed(0)}%`,     color: 'var(--accent)' },
           { label: 'Safe Margin', value: `+${safeMargin.toFixed(1)}%`, color: 'var(--green)' },
           { label: 'Cliff Lap',   value: `L${cliffLap}`,               color: cliffLap <= lapAge + 3 ? 'var(--yellow)' : 'var(--text-muted)' },
         ] as { label:string; value:string; color:string }[]).map(s => (
-          <div key={s.label} style={{ textAlign:'center' }}>
-            <div style={{ fontSize:8, color:'var(--text-muted)', textTransform:'uppercase', marginBottom:2, letterSpacing:'0.06em' }}>{s.label}</div>
-            <div style={{ fontFamily:'JetBrains Mono,monospace', fontWeight:800, fontSize:12, color:s.color }}>{s.value}</div>
+          <div key={s.label} className="ta-center">
+            <div className="fs-8 text-muted tt-upper mb-1 ls-06em">{s.label}</div>
+            <div className="text-mono fw-800 fs-12" style={{ color: s.color }}>{s.value}</div>
           </div>
         ))}
       </div>
@@ -303,50 +303,49 @@ function TyreStatusCard({ position, compound, leftShoulder, center, rightShoulde
       display: 'flex', flexDirection: 'column', gap: 10,
     }}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <span style={{ fontFamily: 'JetBrains Mono,monospace', fontWeight: 700, fontSize: 16 }}>
+      <div className="flex justify-between items-center">
+        <div className="flex items-center" style={{ gap: 8 }}>
+          <span className="text-mono fw-700 fs-16">
             {position} TYRE
           </span>
-          <span style={{
-            fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 4,
+          <span className="fs-10 fw-700 tt-upper ls-07em" style={{
+            padding: '2px 6px', borderRadius: 4,
             background: `${cmp.color}22`, color: cmp.color,
-            textTransform: 'uppercase', letterSpacing: '0.07em',
           }}>
             {compound}
           </span>
         </div>
-        <span style={{
-          fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 4,
+        <span className="fs-10 fw-700 tt-upper ls-08em" style={{
+          padding: '2px 8px', borderRadius: 4,
           background: `color-mix(in srgb, ${statusColor} 18%, transparent)`,
-          color: statusColor, textTransform: 'uppercase', letterSpacing: '0.08em',
+          color: statusColor,
         }}>
           {status}
         </span>
       </div>
 
       {/* Temp row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6 }}>
+      <div className="grid-3" style={{ gap: 6 }}>
         {[
           { label: 'Left shoulder', temp: leftShoulder },
           { label: 'Center', temp: center },
           { label: 'Right shoulder', temp: rightShoulder },
         ].map(z => (
-          <div key={z.label} style={{
-            textAlign: 'center', padding: '6px 4px', borderRadius: 'var(--radius)',
+          <div key={z.label} className="ta-center br-4" style={{
+            padding: '6px 4px',
             background: `color-mix(in srgb, ${tempColor(z.temp)} 18%, transparent)`,
             border: `1px solid color-mix(in srgb, ${tempColor(z.temp)} 30%, transparent)`,
           }}>
-            <div style={{ fontSize: 16, fontWeight: 800, fontFamily: 'JetBrains Mono,monospace', color: tempColor(z.temp) }}>
+            <div className="fs-16 fw-800 text-mono" style={{ color: tempColor(z.temp) }}>
               {z.temp}°
             </div>
-            <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 1 }}>{z.label}</div>
+            <div className="fs-9 text-muted mt-1">{z.label}</div>
           </div>
         ))}
       </div>
 
       {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 6, marginTop: 2 }}>
+      <div className="mt-2" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 6 }}>
         {([
           { label: 'Avg temp', value: `${avgTemp}°C` },
           { label: 'Peak', value: `${peakTemp}°C ${peakZone}` },
@@ -354,20 +353,18 @@ function TyreStatusCard({ position, compound, leftShoulder, center, rightShoulde
           { label: 'Wear', value: `${wear.toFixed(0)}%` },
           { label: 'Grip', value: `${grip.toFixed(1)}%` },
         ] as { label: string; value: string }[]).map(s => (
-          <div key={s.label} style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 8, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 1, letterSpacing: '0.06em' }}>{s.label}</div>
-            <div style={{ fontFamily: 'JetBrains Mono,monospace', fontWeight: 700, fontSize: 10, color: 'var(--text-dim)' }}>{s.value}</div>
+          <div key={s.label} className="ta-center">
+            <div className="fs-8 text-muted tt-upper mb-1 ls-06em">{s.label}</div>
+            <div className="text-mono fw-700 fs-10 text-dim">{s.value}</div>
           </div>
         ))}
       </div>
 
       {/* Window indicator */}
-      <div style={{
-        fontSize: 10, fontWeight: 700, textAlign: 'center',
-        padding: '3px 0', borderRadius: 4,
+      <div className="fs-10 fw-700 ta-center br-4 ls-05em" style={{
+        padding: '3px 0',
         background: inWindow ? 'rgba(34,197,94,0.12)' : 'rgba(245,158,11,0.12)',
         color: inWindow ? 'var(--green)' : 'var(--yellow)',
-        letterSpacing: '0.05em',
       }}>
         {inWindow
           ? '✓—œ Within optimal temperature window'
@@ -382,22 +379,22 @@ function TyreStatusCard({ position, compound, leftShoulder, center, rightShoulde
 
 function CompoundTempWindows() {
   return (
-    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+    <div className="flex" style={{ gap: 8, flexWrap: 'wrap' }}>
       {(Object.entries(COMPOUNDS) as [CompoundId, typeof COMPOUNDS.SOFT][]).map(([id, c]) => (
-        <div key={id} style={{ flex: 1, minWidth: 180, padding: '10px 12px', borderRadius: 8, background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-            <span style={{ width: 8, height: 8, borderRadius: '50%', background: c.color }} />
-            <span style={{ fontSize: 11, fontWeight: 700, fontFamily: 'JetBrains Mono,monospace' }}>{c.name}</span>
+        <div key={id} className="flex-1 br-8 border" style={{ minWidth: 180, padding: '10px 12px', background: 'rgba(255,255,255,0.02)' }}>
+          <div className="flex items-center mb-2" style={{ gap: 6 }}>
+            <span className="d-inline-block" style={{ width: 8, height: 8, borderRadius: '50%', background: c.color }} />
+            <span className="text-mono fs-11 fw-700">{c.name}</span>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 3, fontSize: 10, fontFamily: 'JetBrains Mono,monospace' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: 'var(--green)' }}>Optimal</span><span>{c.optTempLow}–{c.optTempHigh}°C</span>
+          <div className="flex-col text-mono fs-10" style={{ gap: 3 }}>
+            <div className="flex justify-between">
+              <span className="text-green">Optimal</span><span>{c.optTempLow}–{c.optTempHigh}°C</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: 'var(--yellow)' }}>Hot</span><span>{c.optTempHigh + 1}–{c.optTempHigh + 14}°C</span>
+            <div className="flex justify-between">
+              <span className="text-yellow">Hot</span><span>{c.optTempHigh + 1}–{c.optTempHigh + 14}°C</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: 'var(--accent)' }}>Critical</span><span>&gt;{c.optTempHigh + 14}°C</span>
+            <div className="flex justify-between">
+              <span className="text-accent">Critical</span><span>&gt;{c.optTempHigh + 14}°C</span>
             </div>
           </div>
         </div>
@@ -448,7 +445,7 @@ function TempHistoryHeatmap({
       <div style={{ display:'grid', gridTemplateColumns:'36px repeat(6, 1fr)', gap:3, marginBottom:4 }}>
         <span />
         {zones.map(z => (
-          <span key={z.key} style={{ textAlign:'center', fontSize:9, color:'var(--text-muted)', fontFamily:'JetBrains Mono,monospace', fontWeight:700 }}>{z.label}</span>
+          <span key={z.key} className="ta-center fs-9 text-muted text-mono fw-700">{z.label}</span>
         ))}
       </div>
       {history.map((row, i) => {
@@ -456,14 +453,14 @@ function TempHistoryHeatmap({
         const isLatest = i === 7;
         return (
           <div key={i} style={{ display:'grid', gridTemplateColumns:'36px repeat(6, 1fr)', gap:3, marginBottom:2 }}>
-            <span style={{ fontSize:9, color:isLatest ? 'var(--text)' : 'var(--text-muted)', fontFamily:'JetBrains Mono,monospace', lineHeight:'26px', fontWeight:isLatest ? 700 : 400 }}>
+            <span className="fs-9 text-mono lh-1_3" style={{ color: isLatest ? 'var(--text)' : 'var(--text-muted)', fontWeight: isLatest ? 700 : 400, lineHeight: '26px' }}>
               L{lap}
             </span>
             {zones.map(z => {
               const temp = row[z.key];
               return (
-                <div key={z.key} style={{ height:26, borderRadius:4, display:'flex', alignItems:'center', justifyContent:'center', background:tempColor(temp), border:isLatest ? '1px solid rgba(255,255,255,0.3)' : '1px solid transparent', opacity:0.55 + i * 0.06 }}>
-                  <span style={{ fontSize:9, fontWeight:700, color:'var(--bg-base)', fontFamily:'JetBrains Mono,monospace' }}>{temp}°</span>
+                <div className="flex items-center justify-center br-4" style={{ height: 26, background: tempColor(temp), border: isLatest ? '1px solid rgba(255,255,255,0.3)' : '1px solid transparent', opacity: 0.55 + i * 0.06 }}>
+                  <span className="fs-9 fw-700 text-mono" style={{ color: 'var(--bg-base)' }}>{temp}°</span>
                 </div>
               );
             })}
@@ -471,15 +468,15 @@ function TempHistoryHeatmap({
         );
       })}
       {/* Legend */}
-      <div style={{ display:'flex', gap:8, justifyContent:'center', marginTop:8, flexWrap:'wrap' }}>
+      <div className="flex justify-center mt-2" style={{ gap: 8, flexWrap: 'wrap' }}>
         {([['<56°','var(--blue)','Cold'],['56–72°','var(--green)','Warm'],['72–93°','var(--yellow)','Opt.'],['93–109°','var(--orange)','Hot'],['>109°','var(--accent)','Crit.']] as [string,string,string][]).map(([range, col, label]) => (
-          <span key={label} style={{ display:'flex', alignItems:'center', gap:3, fontSize:9, color:'var(--text-muted)' }}>
-            <span style={{ width:8, height:8, borderRadius:2, background:col, display:'inline-block' }} />
+          <span key={label} className="flex items-center fs-9 text-muted" style={{ gap: 3 }}>
+            <span className="d-inline-block br-2" style={{ width: 8, height: 8, background: col }} />
             {label} ({range})
           </span>
         ))}
       </div>
-      <div style={{ fontSize:9, color:'var(--text-muted)', textAlign:'center', marginTop:4 }}>
+      <div className="fs-9 text-muted ta-center mt-1">
         F = Front · R = Rear · L = Left shoulder · C = Center · R = Right shoulder
       </div>
     </div>
@@ -490,20 +487,19 @@ function TempHistoryHeatmap({
 
 function MugelloThermalLoadMap() {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+    <div className="flex-col gap-3">
       {[
         { title: 'High thermal load zones', items: MUGELLO.highThermalZones, color: 'var(--accent)' },
         { title: 'Rear tyre stress', items: MUGELLO.rearStressZones, color: 'var(--yellow)' },
         { title: 'Front tyre stress', items: MUGELLO.frontStressZones, color: 'var(--blue)' },
         { title: 'Left shoulder overload', items: [MUGELLO.leftShoulderZones], color: 'var(--orange)' },
       ].map(section => (
-        <div key={section.title} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
-          <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-dim)', minWidth: 140, flexShrink: 0 }}>{section.title}</span>
-          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+        <div key={section.title} className="flex items-center" style={{ gap: 8, alignItems: 'flex-start' }}>
+          <span className="fs-11 fw-600 text-dim shrink-0" style={{ minWidth: 140 }}>{section.title}</span>
+          <div className="flex" style={{ gap: 4, flexWrap: 'wrap' }}>
             {section.items.map(item => (
-              <span key={item} style={{
-                fontSize: 10, fontFamily: 'JetBrains Mono,monospace', fontWeight: 600,
-                padding: '2px 7px', borderRadius: 4,
+              <span key={item} className="text-mono fs-10 fw-600 br-4" style={{
+                padding: '2px 7px',
                 background: `color-mix(in srgb, ${section.color} 14%, transparent)`,
                 color: section.color,
               }}>
@@ -513,7 +509,7 @@ function MugelloThermalLoadMap() {
           </div>
         </div>
       ))}
-      <div style={{ marginTop: 4, fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.6, padding: '8px 10px', borderRadius: 'var(--radius)', background: 'rgba(34,197,94,0.05)', border: '1px solid rgba(34,197,94,0.1)' }}>
+      <div className="mt-1 fs-11 text-muted lh-1_6 br-4" style={{ padding: '8px 10px', background: 'rgba(34,197,94,0.05)', border: '1px solid rgba(34,197,94,0.1)' }}>
         <strong style={{ color: 'var(--green)' }}>AI diagnosis:</strong> Rear soft is thermally overloaded but still delivering usable grip. Left shoulder overload is concentrated in high-load sections and corner exits.
       </div>
     </div>
@@ -529,23 +525,23 @@ function GripCliffPredictor({ compound, lapAge, grip }: { compound: CompoundId; 
   const danger = grip <= c.cliffAt ? 'var(--accent)' : cliff <= 3 ? 'var(--yellow)' : 'var(--green)';
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+    <div className="flex-col" style={{ gap: 8 }}>
+      <div className="grid-4" style={{ gap: 8 }}>
         {[
           { label: 'Current lap', value: `L${lapAge}` },
           { label: 'Rear grip', value: `${grip.toFixed(1)}%` },
           { label: 'Estimated cliff lap', value: `L${cliffLap}` },
           { label: 'Laps to cliff', value: cliff > 0 ? `${cliff}` : '!', color: danger },
         ].map(s => (
-          <div key={s.label} style={{ textAlign: 'center', padding: '6px 4px', borderRadius: 'var(--radius)', background: 'rgba(255,255,255,0.02)' }}>
-            <div style={{ fontSize: 8, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{s.label}</div>
-            <div style={{ fontFamily: 'JetBrains Mono,monospace', fontWeight: 800, fontSize: 16, color: s.color || 'var(--text)' }}>{s.value}</div>
+          <div key={s.label} className="ta-center br-4" style={{ padding: '6px 4px', background: 'rgba(255,255,255,0.02)' }}>
+            <div className="fs-8 text-muted tt-upper ls-06em">{s.label}</div>
+            <div className="text-mono fw-800 fs-16" style={{ color: s.color || 'var(--text)' }}>{s.value}</div>
           </div>
         ))}
       </div>
-      <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start', padding: '6px 8px', borderRadius: 'var(--radius)', background: 'rgba(34,197,94,0.06)', border: '1px solid rgba(34,197,94,0.1)' }}>
-        <span style={{ fontSize: 10, color: 'var(--green)', fontWeight: 700, flexShrink: 0 }}>AI note</span>
-        <span style={{ fontSize: 10, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+      <div className="flex items-center br-4" style={{ gap: 6, alignItems: 'flex-start', padding: '6px 8px', background: 'rgba(34,197,94,0.06)', border: '1px solid rgba(34,197,94,0.1)' }}>
+        <span className="fs-10 text-green fw-700 shrink-0">AI note</span>
+        <span className="fs-10 text-muted lh-1_5">
           Grip remains usable, but thermal overload is accelerating degradation.
           Risk increases if rear peak temperature stays above 125°C for two consecutive laps.
         </span>
@@ -568,38 +564,38 @@ function TyreManagementStrategy({ lapAge, rearGrip }: { lapAge: number; rearGrip
   ];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+    <div className="flex-col gap-3">
       {/* Info bar */}
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+      <div className="flex" style={{ gap: 10, flexWrap: 'wrap' }}>
         {[
           { label: 'Race mode', value: session.ctx.setup.rules ?? 'Dry GP race', color: 'var(--blue)' },
           { label: 'Pit stop', value: session.ctx.pitStrategyEnabled ? 'Strategy enabled' : 'Not planned', color: 'var(--text-muted)' },
           { label: 'Objective', value: `Manage rear soft to race distance (L23)`, color: 'var(--green)' },
           { label: 'Risk point', value: `From L${lapAge + Math.max(1, Math.round((78 - rearGrip) / 3.6))}`, color: 'var(--yellow)' },
         ].map(s => (
-          <div key={s.label} style={{ padding: '6px 10px', borderRadius: 'var(--radius)', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border)', flex: 1, minWidth: 120 }}>
-            <div style={{ fontSize: 8, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>{s.label}</div>
-            <div style={{ fontSize: 12, fontWeight: 600, fontFamily: 'JetBrains Mono,monospace', color: s.color }}>{s.value}</div>
+          <div key={s.label} className="flex-1 br-4 border" style={{ padding: '6px 10px', background: 'rgba(255,255,255,0.02)', minWidth: 120 }}>
+            <div className="fs-8 text-muted tt-upper ls-08em mb-1">{s.label}</div>
+            <div className="fs-12 fw-600 text-mono" style={{ color: s.color }}>{s.value}</div>
           </div>
         ))}
       </div>
 
       {/* Recommended mode */}
-      <div style={{
-        padding: '8px 12px', borderRadius: 'var(--radius)',
+      <div className="br-4" style={{
+        padding: '8px 12px',
         background: riskActive ? 'rgba(245,158,11,0.08)' : 'rgba(34,197,94,0.06)',
         border: `1px solid ${riskActive ? 'rgba(245,158,11,0.2)' : 'rgba(34,197,94,0.1)'}`,
       }}>
-        <div style={{ fontSize: 11, fontWeight: 700, fontFamily: 'JetBrains Mono,monospace', marginBottom: 6 }}>
+        <div className="fs-11 fw-700 text-mono mb-2">
           {riskActive ? '⚠ Rear tyre protection recommended · L6–L13' : '✓—œ Tyre condition normal'}
         </div>
         {riskActive && (
           <>
-            <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 6 }}>Actions:</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <div className="fs-10 text-muted mb-2">Actions:</div>
+            <div className="flex-col" style={{ gap: 3 }}>
               {recActions.map(a => (
-                <div key={a.n} style={{ display: 'flex', gap: 6, alignItems: 'flex-start', fontSize: 10, color: 'var(--text-dim)' }}>
-                  <span style={{ color: 'var(--yellow)', fontWeight: 700, flexShrink: 0 }}>{a.n}.</span>
+                <div key={a.n} className="flex items-center fs-10 text-dim" style={{ gap: 6, alignItems: 'flex-start' }}>
+                  <span className="text-yellow fw-700 shrink-0">{a.n}.</span>
                   <span>{a.text}</span>
                 </div>
               ))}
@@ -609,14 +605,14 @@ function TyreManagementStrategy({ lapAge, rearGrip }: { lapAge: number; rearGrip
       </div>
 
       {/* Expected effect */}
-      <div style={{ display: 'flex', gap: 14 }}>
+      <div className="flex" style={{ gap: 14 }}>
         {[
           { label: 'Risk change', value: '—¢11 pts', color: 'var(--green)' },
           { label: 'Lap-time cost', value: '+0.040s/lap', color: 'var(--yellow)' },
         ].map(s => (
-          <div key={s.label} style={{ textAlign: 'center', flex: 1, padding: '6px 8px', borderRadius: 'var(--radius)', background: 'rgba(255,255,255,0.02)' }}>
-            <div style={{ fontSize: 8, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{s.label}</div>
-            <div style={{ fontFamily: 'JetBrains Mono,monospace', fontWeight: 800, fontSize: 14, color: s.color }}>{s.value}</div>
+          <div key={s.label} className="ta-center flex-1 br-4" style={{ padding: '6px 8px', background: 'rgba(255,255,255,0.02)' }}>
+            <div className="fs-8 text-muted tt-upper ls-06em">{s.label}</div>
+            <div className="text-mono fw-800 fs-14" style={{ color: s.color }}>{s.value}</div>
           </div>
         ))}
       </div>
@@ -629,25 +625,25 @@ function TyreManagementStrategy({ lapAge, rearGrip }: { lapAge: number; rearGrip
 function ModelIntegrity() {
   const session = useSessionContext();
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+    <div className="flex-col" style={{ gap: 8 }}>
       {/* Confidence */}
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-        <div style={{ flex: 1, minWidth: 160, padding: '8px 12px', borderRadius: 8, background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border)' }}>
-          <div style={{ fontSize: 9, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Tyre Model Confidence</div>
-          <div style={{ fontSize: 24, fontWeight: 900, fontFamily: 'JetBrains Mono,monospace', color: 'var(--green)' }}>87%</div>
-          <div style={{ height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.07)', marginTop: 4 }}>
-            <div style={{ width: '87%', height: '100%', borderRadius: 2, background: 'var(--green)' }} />
+      <div className="flex" style={{ gap: 10, flexWrap: 'wrap' }}>
+        <div className="flex-1 br-8 border" style={{ minWidth: 160, padding: '8px 12px', background: 'rgba(255,255,255,0.02)' }}>
+          <div className="fs-9 text-muted tt-upper ls-08em mb-1">Tyre Model Confidence</div>
+          <div className="fs-24 fw-900 text-mono text-green">87%</div>
+          <div className="mt-1 br-2" style={{ height: 4, background: 'rgba(255,255,255,0.07)' }}>
+            <div className="br-2" style={{ width: '87%', height: '100%', background: 'var(--green)' }} />
           </div>
         </div>
-        <div style={{ flex: 2, minWidth: 240, padding: '8px 12px', borderRadius: 8, background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border)' }}>
-          <div style={{ fontSize: 9, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>Inputs</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3, fontSize: 10, fontFamily: 'JetBrains Mono,monospace' }}>
+        <div className="flex-2 br-8 border" style={{ minWidth: 240, padding: '8px 12px', background: 'rgba(255,255,255,0.02)' }}>
+          <div className="fs-9 text-muted tt-upper ls-08em mb-2">Inputs</div>
+          <div className="text-mono fs-10" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3 }}>
             {[
               ['Tyre temperature', 'OK'], ['Pressure', 'OK'], ['IMU', 'OK'],
               ['Rear grip', 'estimated'], ['Track temperature', 'OK'], ['Wear model', 'simulated'],
             ].map(([k, v]) => (
-              <div key={k} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ color: 'var(--text-muted)' }}>{k}</span>
+              <div key={k} className="flex justify-between">
+                <span className="text-muted">{k}</span>
                 <span style={{ color: v === 'OK' ? 'var(--green)' : 'var(--yellow)' }}>{v}</span>
               </div>
             ))}
@@ -656,16 +652,16 @@ function ModelIntegrity() {
       </div>
 
       {/* Strategy Integrity */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6, marginTop: 4 }}>
+      <div className="grid-4 mt-1" style={{ gap: 6 }}>
         {[
           ['Race mode', session.ctx.setup.rules ?? 'Dry GP race', 'var(--blue)'],
           ['Scheduled pit stops', session.ctx.pitStrategyEnabled ? 'Enabled (simulation)' : 'Disabled', 'var(--text-muted)'],
           ['Strategy model', 'Tyre management', 'var(--green)'],
           ['Warnings', 'None', 'var(--green)'],
         ].map(([k, v, c]) => (
-          <div key={k} style={{ textAlign: 'center', padding: '6px 4px', borderRadius: 'var(--radius)', background: 'rgba(255,255,255,0.02)' }}>
-            <div style={{ fontSize: 8, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{k}</div>
-            <div style={{ fontFamily: 'JetBrains Mono,monospace', fontWeight: 700, fontSize: 11, color: c as string }}>{v}</div>
+          <div key={k} className="ta-center br-4" style={{ padding: '6px 4px', background: 'rgba(255,255,255,0.02)' }}>
+            <div className="fs-8 text-muted tt-upper ls-06em">{k}</div>
+            <div className="text-mono fw-700 fs-11" style={{ color: c as string }}>{v}</div>
           </div>
         ))}
       </div>
@@ -728,7 +724,7 @@ export function TireDegradationPage() {
           <span className="card-title flex items-center gap-2"><Circle size={14} style={{ color: 'var(--orange)' }} /> Tyre Passport</span>
           <span className="badge" style={{ fontSize: 9, fontFamily: 'JetBrains Mono,monospace', color: 'var(--text-muted)' }}>Rear Soft · Set R03</span>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 10, marginTop: 6 }}>
+        <div className="mt-2" style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 10 }}>
           {[
             ['Stint history', '01·5 / 02·6 / 03·8'],
             ['Total laps', String(5 + 6 + Math.max(0, t.lapCount))],
@@ -738,18 +734,18 @@ export function TireDegradationPage() {
             ['Status', t.lapCount > 13 ? 'Warm-up only' : 'Race-usable'],
           ].map(([k, v]) => (
             <div key={k}>
-              <div style={{ fontSize: 9, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{k}</div>
-              <div style={{ fontSize: 15, fontFamily: 'JetBrains Mono,monospace', fontWeight: 700, color: k === 'Status' && t.lapCount > 13 ? 'var(--accent)' : 'var(--text)' }}>{v}</div>
+              <div className="fs-9 text-muted tt-upper ls-08em">{k}</div>
+              <div className="fs-15 text-mono fw-700" style={{ color: k === 'Status' && t.lapCount > 13 ? 'var(--accent)' : 'var(--text)' }}>{v}</div>
             </div>
           ))}
         </div>
-        <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 8 }}>
+        <div className="fs-10 text-muted mt-2">
           A tyre's life follows the set across stints — total laps, peak temperature and grip trend decide whether it goes back on for the race or is retired to warm-up duty.
         </div>
       </div>
 
       {/* Circuit validation */}
-      <div style={{ display: 'flex', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
+      <div className="flex" style={{ gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
         <span className="badge badge-green" style={{ fontSize: 10 }}>{MUGELLO_CIRCUIT.shortName} GP · Race Lap {t.lapCount}/{MUGELLO_CIRCUIT.raceLaps}</span>
         <span className="badge" style={{ fontSize: 10, background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)' }}>{session.ctx.pitStrategyEnabled ? 'KDD Simulation Mode · Pit strategy enabled' : 'Dry race mode · No scheduled pit stops'}</span>
       </div>
@@ -761,11 +757,11 @@ export function TireDegradationPage() {
         <div className="card-header">
           <span className="card-title"><AlertTriangle size={13} style={{ marginRight: 4, verticalAlign: -1 }} />AI Tyre Alerts</span>
         </div>
-        <div style={{ padding: '8px 16px 12px', display: 'flex', flexDirection: 'column', gap: 4, fontSize: 12 }}>
-          <div style={{ color: 'var(--accent)', fontWeight: 600 }}>Rear soft running hot from Lap {Math.max(1, lapAge - 1)}.</div>
-          <div style={{ color: 'var(--text-dim)' }}>Peak rear temperature: {Math.max(rearLeft, rearRight)}°C on left shoulder.</div>
-          <div style={{ color: 'var(--yellow)' }}>Front pressure slightly above optimal at 2.10 bar.</div>
-          <div style={{ color: 'var(--text-dim)' }}>Grip drop detected on corner exits, especially T15 Bucine.</div>
+        <div className="flex-col" style={{ padding: '8px 16px 12px', gap: 4, fontSize: 12 }}>
+          <div className="text-accent fw-600">Rear soft running hot from Lap {Math.max(1, lapAge - 1)}.</div>
+          <div className="text-dim">Peak rear temperature: {Math.max(rearLeft, rearRight)}°C on left shoulder.</div>
+          <div className="text-yellow">Front pressure slightly above optimal at 2.10 bar.</div>
+          <div className="text-dim">Grip drop detected on corner exits, especially T15 Bucine.</div>
         </div>
       </div>
 
@@ -775,7 +771,7 @@ export function TireDegradationPage() {
           <div className="card-header">
             <span className="card-title">3D Tyre Visualization</span>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, padding: '12px 16px' }}>
+          <div className="grid-4" style={{ gap: 8, padding: '12px 16px' }}>
             <TireModel3D temperature={t.tireFrontLeft}  compound={t.frontCompound} label="Front L" height={160} />
             <TireModel3D temperature={t.tireFrontRight} compound={t.frontCompound} label="Front R" height={160} />
             <TireModel3D temperature={t.tireRearLeft}   compound={t.rearCompound}  label="Rear L" height={160} />
@@ -789,7 +785,7 @@ export function TireDegradationPage() {
         <div className="card-header" style={{ padding: '0 0 8px 0' }}>
           <span className="card-title"><Thermometer size={14} style={{ color: 'var(--accent)', verticalAlign: -1, marginRight: 4 }} />Tyre Status Summary</span>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+        <div className="grid-2" style={{ gap: 12 }}>
           <TyreStatusCard
             position="Front"
             compound={t.frontCompound}
@@ -832,65 +828,65 @@ export function TireDegradationPage() {
             <Thermometer size={14} style={{ color: 'var(--accent)' }} />
             Tyre Thermal Map — Left shoulder · Center · Right shoulder
           </span>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <div className="flex items-center" style={{ gap: 8, alignItems: 'center' }}>
             {([
               ['<56°', 'var(--blue)'], ['56–72°', 'var(--green)'], ['72–93°', 'var(--yellow)'],
               ['93–109°', 'var(--orange)'], ['>109°', 'var(--accent)'],
             ] as [string, string][]).map(([l, col]) => (
-              <span key={l} style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 10, color: 'var(--text-muted)' }}>
-                <span style={{ width: 8, height: 8, borderRadius: 2, background: col, display: 'inline-block' }} />
+              <span key={l} className="flex items-center fs-10 text-muted" style={{ gap: 3 }}>
+                <span className="d-inline-block br-2" style={{ width: 8, height: 8, background: col }} />
                 {l}
               </span>
             ))}
           </div>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12, padding: '12px 16px' }}>
+        <div className="grid-2" style={{ gap: 12, padding: '12px 16px' }}>
           {/* Front Tyre zones */}
-          <div style={{ padding: 10, borderRadius: 8, background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border)' }}>
-            <div style={{ fontFamily: 'JetBrains Mono,monospace', fontWeight: 700, fontSize: 13, marginBottom: 8 }}>
+          <div className="br-8 border" style={{ padding: 10, background: 'rgba(255,255,255,0.02)' }}>
+            <div className="text-mono fw-700 fs-13 mb-2">
               Front Tyre · {t.frontCompound}</div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6 }}>
+            <div className="grid-3" style={{ gap: 6 }}>
               {[
                 { label: 'Left shoulder', temp: frontLeft },
                 { label: 'Center', temp: frontCenter },
                 { label: 'Right shoulder', temp: frontRight },
               ].map(z => (
-                <div key={z.label} style={{
-                  textAlign: 'center', padding: '8px 4px', borderRadius: 'var(--radius)',
+                <div key={z.label} className="ta-center br-4" style={{
+                  padding: '8px 4px',
                   background: `color-mix(in srgb, ${tempColor(z.temp)} 18%, transparent)`,
                 }}>
-                  <div style={{ fontSize: 18, fontWeight: 800, fontFamily: 'JetBrains Mono,monospace', color: tempColor(z.temp) }}>{z.temp}°</div>
-                  <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>{z.label}</div>
+                  <div className="fs-18 fw-800 text-mono" style={{ color: tempColor(z.temp) }}>{z.temp}°</div>
+                  <div className="fs-9 text-muted">{z.label}</div>
                 </div>
               ))}
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, fontSize: 10, fontFamily: 'JetBrains Mono,monospace' }}>
-              <span style={{ color: 'var(--text-muted)' }}>Age: {lapAge}L</span>
+            <div className="flex justify-between mt-2 text-mono fs-10">
+              <span className="text-muted">Age: {lapAge}L</span>
               <span style={{ color: frontWear > 65 ? 'var(--accent)' : 'var(--yellow)' }}>Wear: {frontWear.toFixed(0)}%</span>
               <span style={{ color: frontGrip < 62 ? 'var(--accent)' : 'var(--green)' }}>Grip: {frontGrip.toFixed(0)}%</span>
             </div>
           </div>
           {/* Rear Tyre zones */}
-          <div style={{ padding: 10, borderRadius: 8, background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border)' }}>
-            <div style={{ fontFamily: 'JetBrains Mono,monospace', fontWeight: 700, fontSize: 13, marginBottom: 8 }}>
+          <div className="br-8 border" style={{ padding: 10, background: 'rgba(255,255,255,0.02)' }}>
+            <div className="text-mono fw-700 fs-13 mb-2">
               Rear Tyre · {t.rearCompound}</div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6 }}>
+            <div className="grid-3" style={{ gap: 6 }}>
               {[
                 { label: 'Left shoulder', temp: rearLeft },
                 { label: 'Center', temp: rearCenter },
                 { label: 'Right shoulder', temp: rearRight },
               ].map(z => (
-                <div key={z.label} style={{
-                  textAlign: 'center', padding: '8px 4px', borderRadius: 'var(--radius)',
+                <div key={z.label} className="ta-center br-4" style={{
+                  padding: '8px 4px',
                   background: `color-mix(in srgb, ${tempColor(z.temp)} 18%, transparent)`,
                 }}>
-                  <div style={{ fontSize: 18, fontWeight: 800, fontFamily: 'JetBrains Mono,monospace', color: tempColor(z.temp) }}>{z.temp}°</div>
-                  <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>{z.label}</div>
+                  <div className="fs-18 fw-800 text-mono" style={{ color: tempColor(z.temp) }}>{z.temp}°</div>
+                  <div className="fs-9 text-muted">{z.label}</div>
                 </div>
               ))}
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, fontSize: 10, fontFamily: 'JetBrains Mono,monospace' }}>
-              <span style={{ color: 'var(--text-muted)' }}>Age: {lapAge}L</span>
+            <div className="flex justify-between mt-2 text-mono fs-10">
+              <span className="text-muted">Age: {lapAge}L</span>
               <span style={{ color: rearWear > 65 ? 'var(--accent)' : 'var(--yellow)' }}>Wear: {rearWear.toFixed(0)}%</span>
               <span style={{ color: rearGrip < 62 ? 'var(--accent)' : 'var(--green)' }}>Grip: {rearGrip.toFixed(0)}%</span>
             </div>
@@ -916,7 +912,7 @@ export function TireDegradationPage() {
             <Thermometer size={14} style={{ color: 'var(--orange)' }} />
             Thermal History — Last 8 Laps →— 6 Tyre Zones
           </span>
-          <span style={{ fontSize:9, color:'var(--text-muted)' }}>Darker rows = older laps</span>
+          <span className="fs-9 text-muted">Darker rows = older laps</span>
         </div>
         <div style={{ padding: '12px 16px' }}>
           <TempHistoryHeatmap
@@ -934,7 +930,7 @@ export function TireDegradationPage() {
           <div className="stat-tile__value" style={{ color: rearGrip < 62 ? 'var(--accent)' : rearGrip < 78 ? 'var(--yellow)' : 'var(--green)' }}>
             {rearGrip.toFixed(1)}<span className="stat-tile__unit">%</span>
           </div>
-          <div className="bar-track" style={{ marginTop: 8 }}>
+          <div className="bar-track mt-2">
             <div className="bar-fill" style={{
               width: `${rearGrip}%`,
               background: rearGrip < 62 ? 'var(--accent)' : rearGrip < 78 ? 'var(--yellow)' : 'var(--green)',
@@ -947,33 +943,33 @@ export function TireDegradationPage() {
           <div className="stat-tile__value" style={{ color: 'var(--blue)' }}>
             {frontGrip.toFixed(1)}<span className="stat-tile__unit">%</span>
           </div>
-          <div className="bar-track" style={{ marginTop: 8 }}>
+          <div className="bar-track mt-2">
             <div className="bar-fill blue" style={{ width: `${frontGrip}%` }} />
           </div>
         </div>
 
         <div className="stat-tile" style={{ border: `1px solid ${cliffColor}44` }}>
-          <div className="stat-tile__label" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <div className="stat-tile__label flex items-center" style={{ gap: 4 }}>
             <AlertTriangle size={11} style={{ color: cliffColor, flexShrink: 0 }} />
             Laps to Cliff
           </div>
           <div className="stat-tile__value text-mono" style={{ color: cliffColor }}>
             {lapsToCliff > 0 ? lapsToCliff : '!'}
           </div>
-          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>
+          <div className="fs-11 text-muted mt-1">
             {lapsToCliff <= 0 ? '⚠ CLIFF REACHED' : lapsToCliff <= 3 ? 'CRITICAL — manage rear' : 'until grip drop'}
           </div>
         </div>
 
         <div className="stat-tile" style={{ border: `1px solid ${rearStatus === 'CRITICAL' ? 'rgba(224,55,55,0.5)' : 'rgba(245,158,11,0.4)'}` }}>
-          <div className="stat-tile__label" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            <Target size={11} style={{ flexShrink: 0 }} />
+          <div className="stat-tile__label flex items-center" style={{ gap: 4 }}>
+            <Target size={11} className="shrink-0" />
             Peak Rear Temp
           </div>
           <div className="stat-tile__value text-mono" style={{ color: rearStatus === 'CRITICAL' ? 'var(--accent)' : 'var(--yellow)' }}>
             {Math.max(rearLeft, rearRight)}°
           </div>
-          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>
+          <div className="fs-11 text-muted mt-1">
             left shoulder · {tempLabel(Math.max(rearLeft, rearRight))}
           </div>
         </div>
@@ -986,10 +982,10 @@ export function TireDegradationPage() {
             <TrendingDown size={14} style={{ color: 'var(--text-muted)' }} />
             Grip Level Model — All Compounds
           </span>
-          <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
+          <div className="flex items-center" style={{ gap: 14, alignItems: 'center' }}>
             {(Object.entries(COMPOUNDS) as [CompoundId, typeof COMPOUNDS.SOFT][]).map(([id, c]) => (
-              <span key={id} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'var(--text-muted)' }}>
-                <span style={{ width: 14, height: 3, background: c.color, borderRadius: 2, display: 'inline-block' }} />
+              <span key={id} className="flex items-center fs-12 text-muted" style={{ gap: 5 }}>
+                <span className="d-inline-block br-2" style={{ width: 14, height: 3, background: c.color }} />
                 {c.name}
               </span>
             ))}
@@ -1044,9 +1040,9 @@ export function TireDegradationPage() {
         <div className="card">
           <div className="card-header">
             <span className="card-title">Compound Radar — 5-Axis Performance</span>
-            <span style={{ fontSize:11, color:'var(--text-muted)' }}>Scale 0–100 · model-estimated</span>
+            <span className="fs-11 text-muted">Scale 0–100 · model-estimated</span>
           </div>
-          <div className="card-body" style={{ justifyContent:'center' }}>
+          <div className="card-body" style={{ justifyContent: 'center' }}>
             <CompoundRadarChart />
           </div>
         </div>
@@ -1055,7 +1051,7 @@ export function TireDegradationPage() {
             <span className="card-title">Grip Budget Meter</span>
             <span className="badge badge-orange">Current: {t.rearCompound}</span>
           </div>
-          <div className="card-body" style={{ flexDirection:'column', gap:20 }}>
+          <div className="card-body flex-col" style={{ gap: 20 }}>
             {(Object.keys(COMPOUNDS) as CompoundId[]).map(id => (
               <GripBudgetMeter key={id} compound={id} lapAge={lapAge} />
             ))}
@@ -1064,8 +1060,7 @@ export function TireDegradationPage() {
       </div>
 
       {/* -- Tyre Management Strategy - Dry Race Mode --------------------------- */}
-      <div className="card mb-4" style={{
-      }}>
+      <div className="card mb-4">
         <div className="card-header">
           <span className="card-title"><Target size={13} style={{ verticalAlign: -1, marginRight: 4 }} />Tyre Management Strategy · Dry Race Mode</span>
           <span className="badge badge-green">MotoGP</span>
@@ -1076,24 +1071,23 @@ export function TireDegradationPage() {
       </div>
 
       {/* -- Safety Guardian Link ------------------------------------------- */}
-      <div className="card mb-4" style={{
- }}>
+      <div className="card mb-4">
         <div className="card-header">
           <span className="card-title"><AlertTriangle size={13} style={{ verticalAlign: -1, marginRight: 4 }} />Safety Guardian Link</span>
         </div>
-        <div style={{ padding: '10px 16px 14px', fontSize: 12, lineHeight: 1.6 }}>
-          <p style={{ color: 'var(--accent)', fontWeight: 600 }}>
+        <div className="fs-12 lh-1_6" style={{ padding: '10px 16px 14px' }}>
+          <p className="text-accent fw-600">
             Rear tyre thermal risk is active.
           </p>
-          <p style={{ color: 'var(--text-dim)', marginTop: 4 }}>
+          <p className="text-dim mt-1">
             Do not combine earlier throttle at <strong>T15 Bucine</strong> with TC reduction until rear temperature drops below <strong>116°C</strong>.
           </p>
-          <div style={{ marginTop: 8, padding: '6px 8px', borderRadius: 4, background: 'color-mix(in srgb, var(--yellow) 8%, transparent)', border: '1px solid color-mix(in srgb, var(--yellow) 15%, transparent)' }}>
-            <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}>
-              <AlertTriangle size={12} style={{ color: 'var(--yellow)', marginTop: 2, flexShrink: 0 }} />
+          <div className="mt-2 br-4" style={{ padding: '6px 8px', background: 'color-mix(in srgb, var(--yellow) 8%, transparent)', border: '1px solid color-mix(in srgb, var(--yellow) 15%, transparent)' }}>
+            <div className="flex items-center" style={{ gap: 6, alignItems: 'flex-start' }}>
+              <AlertTriangle size={12} className="text-yellow mt-1 shrink-0" />
               <div>
-                <div style={{ fontWeight: 600, fontSize: 11 }}>Risk +6 points if ignored</div>
-                <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>
+                <div className="fw-600 fs-11">Risk +6 points if ignored</div>
+                <div className="fs-10 text-muted mt-1">
                   Aggressive throttle at Bucine with rear tyre above 118°C increases high-side probability, especially at Arrabbiata exit.
                 </div>
               </div>
@@ -1108,12 +1102,12 @@ export function TireDegradationPage() {
           <div key={id} className="card">
             <div className="card-header">
               <span className="card-title flex items-center gap-2">
-                <span style={{ width: 8, height: 8, borderRadius: '50%', background: c.color, flexShrink: 0, display: 'inline-block' }} />
+              <span className="d-inline-block" style={{ width: 8, height: 8, borderRadius: '50%', background: c.color, flexShrink: 0 }} />
                 {c.name}
               </span>
               {t.rearCompound === id && <span className="badge badge-orange">FITTED</span>}
             </div>
-            <div className="card-body" style={{ flexDirection: 'column', gap: 10 }}>
+            <div className="card-body flex-col" style={{ gap: 10 }}>
               {([
                 { l: 'Grip at peak',     v: `${c.grip0}%` },
                 { l: 'Loss rate',        v: `${c.gripLossPerLap.toFixed(1)}% / lap` },
@@ -1123,12 +1117,12 @@ export function TireDegradationPage() {
                 { l: 'Temp window',      v: `${c.optTempLow}–${c.optTempHigh}°C` },
                 { l: 'Est. cliff lap',   v: `L${cliffLapFor(id)}` },
               ] as { l: string; v: string }[]).map(p => (
-                <div key={p.l} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{p.l}</span>
-                  <span style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 13, fontWeight: 600 }}>{p.v}</span>
+                <div key={p.l} className="flex justify-between items-center">
+                  <span className="fs-12 text-muted">{p.l}</span>
+                  <span className="text-mono fs-13 fw-600">{p.v}</span>
                 </div>
               ))}
-              <div className="bar-track" style={{ marginTop: 4 }}>
+              <div className="bar-track mt-1">
                 <div className="bar-fill" style={{ width: `${c.grip0}%`, background: c.color }} />
               </div>
             </div>
@@ -1149,3 +1143,5 @@ export function TireDegradationPage() {
     </div>
   );
 }
+
+export default TireDegradationPage;

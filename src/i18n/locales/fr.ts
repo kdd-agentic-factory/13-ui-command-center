@@ -82,18 +82,18 @@ const fr = {
     heroVisual: {
       subtitle: 'KDD se place au-dessus de la télémétrie, pas à sa place.',
       phrase: 'Une intelligence de décision au-dessus de la télémétrie, dans un réseau de connaissance fédéré.',
-      fallback: 'Couche d'intelligence de décision au-dessus de la télémétrie et dans un réseau de connaissance fédéré.',
-      sr: 'Hero visuel de KDD : une couche d'intelligence de décision qui s'élève au-dessus de la télémétrie et alimente un réseau de connaissance fédéré.',
+      fallback: `Couche d'intelligence de décision au-dessus de la télémétrie et dans un réseau de connaissance fédéré.`,
+      sr: `Hero visuel de KDD : une couche d'intelligence de décision qui s'élève au-dessus de la télémétrie et alimente un réseau de connaissance fédéré.`,
     },
     home: {
       header: { eyebrow: 'KDD Knowledge Network', title: 'KDD Knowledge Network', signedInCue: 'Bon retour' },
       nav: { foundingNodes: 'Join Founding Nodes', login: 'Sign in', stack: 'See architecture', language: 'Langue' },
       hero: {
         eyebrow: 'Télémétrie en bas. Intelligence en haut.',
-        title: 'Couche d'intelligence de décision',
+        title: `Couche d'intelligence de décision`,
         subtitle: 'KDD ne remplace pas la télémétrie ; il se place au-dessus, transforme les données en décisions et alimente un réseau de connaissance fédéré.',
-        valueProps: ['La télémétrie reste intacte', 'La couche décide au-dessus', 'L'apprentissage se fédère'],
-        questions: ['Que décide la couche ?', 'Que peut apprendre le réseau ?', 'Comment valider la décision ?', 'Qu'est-ce qui reste privé ?'],
+        valueProps: ['La télémétrie reste intacte', 'La couche décide au-dessus', 'L\'apprentissage se fédère'],
+        questions: ['Que décide la couche ?', 'Que peut apprendre le réseau ?', 'Comment valider la décision ?', `Qu'est-ce qui reste privé ?`],
         body: 'La télémétrie reste en place ; KDD la transforme en décisions et en apprentissage partagé.',
         resumeIndicator: 'Bon retour — reprenez votre dernière session',
         foundingCta: 'Join Founding Nodes',
@@ -103,12 +103,12 @@ const fr = {
       },
       designs: {
         eyebrow: 'Trois visuels',
-        title: 'Trois façons de lire la plateforme en un coup d'œil',
+        title: `Trois façons de lire la plateforme en un coup d'œil`,
         body: 'Ces panneaux montrent la couche de décision, le réseau de connaissance fédéré et le flux guidé par chapitres.',
         cards: [
-          { eyebrow: '01', title: 'Données → Décision', body: 'La télémétrie, la vidéo, le setup et le contexte deviennent un pipeline d'action clair.', chips: ['Observer', 'Expliquer', 'Agir'], accent: '#60a5fa' },
-          { eyebrow: '02', title: 'Privé / Équipe / Fédéré', body: 'Choisissez combien de connaissance quitte le nœud et comment l'apprentissage est partagé.', chips: ['Privé', 'Équipe', 'Fédéré'], accent: '#8b5cf6' },
-          { eyebrow: '03', title: 'Réseau de connaissance', body: 'Les nœuds apprennent localement et s'améliorent ensemble sans exposer les données brutes.', chips: ['Local', 'Agrégé', 'Progresser'], accent: '#34d399' },
+          { eyebrow: '01', title: 'Données → Décision', body: `La télémétrie, la vidéo, le setup et le contexte deviennent un pipeline d'action clair.`, chips: ['Observer', 'Expliquer', 'Agir'], accent: '#60a5fa' },
+          { eyebrow: '02', title: 'Privé / Équipe / Fédéré', body: `Choisissez combien de connaissance quitte le nœud et comment l'apprentissage est partagé.`, chips: ['Privé', 'Équipe', 'Fédéré'], accent: '#8b5cf6' },
+          { eyebrow: '03', title: 'Réseau de connaissance', body: `Les nœuds apprennent localement et s'améliorent ensemble sans exposer les données brutes.`, chips: ['Local', 'Agrégé', 'Progresser'], accent: '#34d399' },
         ],
       },
       foundingPanel: {
@@ -201,7 +201,7 @@ const fr = {
       },
       access: {
         eyebrow: 'Access the network',
-        title: 'Demandez l'accès et faites de votre nœud une partie du réseau de connaissance fédéré.',
+        title: `Demandez l'accès et faites de votre nœud une partie du réseau de connaissance fédéré.`,
         body: 'No access yet? Request early access for your academy, team, garage or project.',
         trialCta: 'Request Early Access',
         foundingCta: 'Become a Founding Node',
@@ -209,7 +209,7 @@ const fr = {
       closing: {
         eyebrow: 'Closing line',
         title: 'KDD apprend avec vous et se compose avec le réseau.',
-        body: 'Le contexte privé reste local tandis que l'intelligence partagée profite à tous.',
+        body: `Le contexte privé reste local tandis que l'intelligence partagée profite à tous.`,
       },
     },
     login: {

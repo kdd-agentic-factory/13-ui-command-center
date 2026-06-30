@@ -135,3 +135,5 @@ export function CircuitHistoryPage() {
     </div>
   );
 }
+
+export default CircuitHistoryPage;

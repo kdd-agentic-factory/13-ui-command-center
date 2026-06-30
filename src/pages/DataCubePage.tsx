@@ -241,3 +241,5 @@ function Legend({ c, t }: { c: string; t: string }) {
     </span>
   );
 }
+
+export default DataCubePage;

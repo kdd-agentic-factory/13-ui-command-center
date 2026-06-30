@@ -6,6 +6,7 @@
  * a historical comparison, setup-effectiveness history and the Oracle's
  * historical context. From single-stint analysis to longitudinal intelligence.
  */
+import type { CSSProperties } from 'react';
 import { Layers, ArrowRight, TrendingUp, Sparkles } from 'lucide-react';
 import { useNavigate } from '../context/NavContext';
 import { useGarage } from '../hooks/useGarage';
@@ -82,7 +83,7 @@ function PatternCardView({ p, onNav }: { p: PatternCard; onNav: (t: 'learning-pa
   );
 }
 
-const chip = (color: string): React.CSSProperties => ({
+const chip = (color: string): CSSProperties => ({
   display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 10, fontFamily: MONO, color,
   background: 'none', border: `1px solid ${color}`, borderRadius: 5, padding: '3px 8px', cursor: 'pointer',
 });
@@ -167,3 +168,5 @@ export function PatternMinerPage() {
     </div>
   );
 }
+
+export default PatternMinerPage;

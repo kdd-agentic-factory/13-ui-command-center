@@ -607,3 +607,5 @@ export function CrashRiskPage() {
     </div>
   );
 }
+
+export default CrashRiskPage;

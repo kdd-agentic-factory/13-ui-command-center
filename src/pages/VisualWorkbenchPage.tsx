@@ -208,3 +208,5 @@ const btn: React.CSSProperties = {
   background: 'transparent', border: '1px solid var(--border)', color: 'var(--text)',
   borderRadius: 'var(--radius)', padding: '6px 9px', cursor: 'pointer',
 };
+
+export default VisualWorkbenchPage;

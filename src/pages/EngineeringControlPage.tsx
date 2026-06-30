@@ -78,3 +78,5 @@ export function EngineeringControlPage() {
     </div>
   );
 }
+
+export default EngineeringControlPage;

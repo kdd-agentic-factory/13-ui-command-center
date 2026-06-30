@@ -960,3 +960,5 @@ export function CrewChiefPage() {
     </div>
   );
 }
+
+export default CrewChiefPage;

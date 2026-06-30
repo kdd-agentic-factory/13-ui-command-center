@@ -6,7 +6,7 @@
  * council, and an "ask the debrief" of curated questions answered in place –
  * with a hand-off to the live Rider Coach for free-form follow-up.
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type CSSProperties } from 'react';
 import { MessagesSquare, ChevronRight, Bot, BookOpen, Wifi, WifiOff, Loader2 } from 'lucide-react';
 import { useNavigate } from '../context/NavContext';
 import { useGarage } from '../hooks/useGarage';
@@ -16,7 +16,7 @@ import { ragSearch } from '../services/api';
 
 const MONO = 'JetBrains Mono, monospace';
 
-function gBadge(color: string, border: string): React.CSSProperties {
+function gBadge(color: string, border: string): CSSProperties {
   return { display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 9.5, fontFamily: MONO, color, border: `1px solid ${border}`, borderRadius: 5, padding: '3px 8px' };
 }
 
@@ -162,3 +162,5 @@ export function DebriefRoomPage() {
     </div>
   );
 }
+
+export default DebriefRoomPage;

@@ -153,3 +153,5 @@ export function SetupLabPage() {
     </div>
   );
 }
+
+export default SetupLabPage;

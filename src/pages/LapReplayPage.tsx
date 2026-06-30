@@ -203,3 +203,5 @@ export function LapReplayPage() {
     </div>
   );
 }
+
+export default LapReplayPage;

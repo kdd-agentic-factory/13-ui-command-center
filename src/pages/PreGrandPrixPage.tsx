@@ -757,3 +757,5 @@ function parseLapTime(lapTime: string): number {
   const [minutes, seconds] = lapTime.split(':');
   return parseInt(minutes, 10) * 60 + parseFloat(seconds);
 }
+
+export default PreGrandPrixPage;
