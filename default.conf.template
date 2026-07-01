@@ -139,7 +139,7 @@ server {
         proxy_connect_timeout 15s;
         proxy_read_timeout 60s;
     }
-    location /api/twin/ {
+    location /api/digital-twin/ {
         proxy_pass https://kdd-rjz-digital-twin.fly.dev/;
         proxy_ssl_server_name on;
         proxy_set_header Host kdd-rjz-digital-twin.fly.dev;
@@ -147,7 +147,7 @@ server {
         proxy_connect_timeout 15s;
         proxy_read_timeout 60s;
     }
-    location /api/mcp/ {
+    location /api/mcp-gateway/ {
         proxy_pass https://kdd-rjz-mcp-gateway.fly.dev/;
         proxy_ssl_server_name on;
         proxy_set_header Host kdd-rjz-mcp-gateway.fly.dev;
@@ -180,7 +180,7 @@ server {
         proxy_read_timeout 90s;
     }
     # Race AI Copilot — external AI service for the KDD Command Center.
-    location /api/copilot-service/ {
+    location /api/copilot/ {
         proxy_pass https://kdd-rjz-copilot.fly.dev/;
         proxy_ssl_server_name on;
         proxy_set_header Host kdd-rjz-copilot.fly.dev;
