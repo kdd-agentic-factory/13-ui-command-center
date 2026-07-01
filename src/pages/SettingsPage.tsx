@@ -504,7 +504,7 @@ export function SettingsPage() {
               {[
                 { k: 'Platform',        v: 'KDD Moto Intelligence' },
                 { k: 'Version',         v: 'v3.0.0 — Race Edition' },
-                { k: 'Project ID',      v: PROJECT_ID },
+                { k: 'Project ID',      v: INSFORGE_PROJECT_ID },
                 { k: 'InsForge Plan',   v: 'Pro Plan' },
                 { k: 'Architecture',    v: 'Hybrid — InsForge + Fly.io' },
                 { k: 'InsForge Compute',v: '5 services managed' },
@@ -539,7 +539,7 @@ export function SettingsPage() {
                     <p className="insight-panel__body">
                       Pro plan upgraded. InsForge API still reports 5-service limit —
                       this typically resolves within a few minutes. Verify the plan is linked
-                      to project {PROJECT_ID.slice(0, 8)}—… then re-run{' '}
+                      to project {INSFORGE_PROJECT_ID.slice(0, 8)}—… then re-run{' '}
                       <code>deploy_compute.py</code>.
                     </p>
                   </div>

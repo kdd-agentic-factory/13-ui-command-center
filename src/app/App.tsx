@@ -29,7 +29,7 @@ import {
 import { buildSessionResumeSnapshot } from './sessionResume';
 
 import { DashboardShell } from './DashboardShell';
-import { HomePage } from '../pages/public/HomePage';
+import { KddHubPage, PublicModulePage } from '../pages/public/KddHubPage';
 import { LoginPage } from '../pages/public/LoginPage';
 import { TrialHomePage } from '../pages/public/TrialHomePage';
 import { ThanksPage } from '../pages/public/ThanksPage';
@@ -48,21 +48,62 @@ function getPathname(): string {
   return pathname;
 }
 
-function getAppRoute(pathname: string): 'home' | 'login' | 'trial' | 'thanks' | 'founding-nodes' | 'app' {
+type AppRoute =
+  | 'home'
+  | 'hub'
+  | 'core'
+  | 'login'
+  | 'trial'
+  | 'thanks'
+  | 'founding-nodes'
+  | 'app'
+  | 'research'
+  | 'architecture'
+  | 'status'
+  | 'admin';
+
+function getAppRoute(pathname: string): AppRoute {
+  if (pathname === '/hub' || pathname.startsWith('/hub/')) return 'hub';
+
+  if (
+    pathname === '/core' ||
+    pathname.startsWith('/core/') ||
+    pathname === '/profiles' ||
+    pathname.startsWith('/profiles/') ||
+    pathname === '/modules' ||
+    pathname.startsWith('/modules/')
+  ) return 'core';
+
   if (
     pathname === '/app' ||
     pathname.startsWith('/app/') ||
+    pathname === '/pitwall' ||
+    pathname.startsWith('/pitwall/') ||
+    pathname === '/pit-wall' ||
+    pathname.startsWith('/pit-wall/') ||
     pathname === '/pit-wall/app' ||
-    pathname.startsWith('/pit-wall/app/')
+    pathname.startsWith('/pit-wall/app/') ||
+    pathname === '/dashboard' ||
+    pathname.startsWith('/dashboard/') ||
+    pathname === '/copilot' ||
+    pathname.startsWith('/copilot/') ||
+    pathname === '/command' ||
+    pathname.startsWith('/command/') ||
+    pathname === '/command-center' ||
+    pathname.startsWith('/command-center/')
   ) return 'app';
   if (pathname === '/login') return 'login';
   if (pathname === '/trial' || pathname.startsWith('/trial/')) return 'trial';
   if (pathname === '/founding-node-thanks') return 'thanks';
   if (pathname === '/founding-nodes') return 'founding-nodes';
+  if (pathname === '/research' || pathname.startsWith('/research/')) return 'research';
+  if (pathname === '/architecture' || pathname.startsWith('/architecture/')) return 'architecture';
+  if (pathname === '/status' || pathname.startsWith('/status/')) return 'status';
+  if (pathname === '/admin' || pathname.startsWith('/admin/')) return 'admin';
   return 'home';
 }
 
-function AppEntryFlowContent() {
+function AppEntryFlowContent({ autoLaunchDemo = true }: { autoLaunchDemo?: boolean }) {
   const { profile, login, user, authLoading } = useProfile();
   const [pendingProfile, setPendingProfile] = useState<ProfileId | null>(null);
   type Stage = 'restoring' | 'mission' | 'circuit' | 'garage' | 'mode' | 'data' | 'launch' | 'booting' | 'dashboard';
@@ -119,6 +160,7 @@ function AppEntryFlowContent() {
 
   // ── Auto-demo for first-time visitors (pit-wall / no saved profile) ──
   useEffect(() => {
+    if (!autoLaunchDemo) return;
     if (autoDemoLaunched.current) return;
 
     const savedProfile = localStorage.getItem('kdd-profile');
@@ -127,7 +169,7 @@ function AppEntryFlowContent() {
       login('founding-node');
       presetGuidedDemo(); // jump to LaunchBriefPage → BootSequence → DashboardShell
     }
-  }, [login]);
+  }, [autoLaunchDemo, login]);
 
   function presetLatestSession() {
     const mugello = getCircuitLibrary().find(c => c.id === 'mugello')!;
@@ -319,11 +361,11 @@ function AppEntryFlowContent() {
   return <DashboardShell />;
 }
 
-function AppEntryFlow() {
+function AppEntryFlow({ autoLaunchDemo = true }: { autoLaunchDemo?: boolean }) {
   return (
     <AuthProvider>
       <ToastProvider>
-        <AppEntryFlowContent />
+        <AppEntryFlowContent autoLaunchDemo={autoLaunchDemo} />
       </ToastProvider>
     </AuthProvider>
   );
@@ -341,11 +383,55 @@ function AppRouter() {
       return <ThanksPage />;
     case 'founding-nodes':
       return <FoundingNodesPage />;
+    case 'hub':
+      return <KddHubPage />;
+    case 'core':
+      return <AppEntryFlow autoLaunchDemo={false} />;
+    case 'research':
+      return (
+        <PublicModulePage
+          eyebrow="Applied Research Layer"
+          title="KDD Research Lab"
+          body="ORCID-backed applied research powering KDD modules, validation methods, reproducibility evidence and the governance model behind the Knowledge Circuit. Module not connected yet; this public page keeps the route stable while the research surface is integrated."
+          primaryHref="/hub"
+          primaryLabel="Back to Hub"
+        />
+      );
+    case 'architecture':
+      return (
+        <PublicModulePage
+          eyebrow="Technical Architecture"
+          title="Architecture"
+          body="Route map, routing contract, entity model and architecture documentation live here instead of the public home. The home orients the product; this page documents the system. Module not connected yet."
+          primaryHref="/hub"
+          primaryLabel="Back to Hub"
+        />
+      );
+    case 'status':
+      return (
+        <PublicModulePage
+          eyebrow="Operational Status"
+          title="Status"
+          body="Runtime health, incidents, blocked services and operational snapshots belong in status — not in the public home. Module not connected yet."
+          primaryHref="/hub"
+          primaryLabel="Back to Hub"
+        />
+      );
+    case 'admin':
+      return (
+        <PublicModulePage
+          eyebrow="Admin Layer"
+          title="Admin"
+          body="Module health, learning signals, audit events, model updates and operator-only context belong in Admin. Module not connected yet."
+          primaryHref="/hub"
+          primaryLabel="Back to Hub"
+        />
+      );
     case 'app':
       return <AppEntryFlow />;
     case 'home':
     default:
-      return <AuthProvider><HomePage /></AuthProvider>;
+      return <KddHubPage autoRedirectTo="/core" />;
   }
 }
 

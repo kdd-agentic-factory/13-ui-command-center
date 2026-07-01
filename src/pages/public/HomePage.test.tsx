@@ -131,7 +131,8 @@ describe('HomePage knowledge circuit redesign', () => {
     expect(experimentalDesignLink).toHaveAttribute('href', '/paper-kit/experimental-design.pdf');
     expect(experimentalDesignLink).toHaveAttribute('download');
 
-    const evidenceManualLink = screen.getAllByRole('link', { name: /Download application manual/i }).at(-1);
+    const evidenceManualLinks = screen.getAllByRole('link', { name: /Download application manual/i });
+    const evidenceManualLink = evidenceManualLinks[evidenceManualLinks.length - 1];
     expect(evidenceManualLink).toHaveAttribute('href', '/kdd-application-manual.md');
     expect(evidenceManualLink).toHaveAttribute('download');
   });
