@@ -8,6 +8,22 @@ type HubModule = {
   href: string;
 };
 
+type ProfileOption = {
+  id: string;
+  name: string;
+  detail: string;
+  icon: string;
+};
+
+const PROFILE_OPTIONS: ProfileOption[] = [
+  { id: 'race-engineer', name: 'Race Engineer', detail: 'Telemetría, setup, estrategia y decisiones de carrera.', icon: '⚙️' },
+  { id: 'team-principal', name: 'Team Principal', detail: 'Vista ejecutiva, riesgos, reportes y coordinación de equipo.', icon: '👤' },
+  { id: 'data-analyst', name: 'Data Analyst', detail: 'Datos, replay, comparación, causalidad y conocimiento.', icon: '📊' },
+  { id: 'mechanic', name: 'Mechanic', detail: 'Garage, electrónica, frenos, presión, geometría y setup.', icon: '🔧' },
+  { id: 'founding-node', name: 'Founding Node', detail: 'Acceso completo para operar y validar el circuito de conocimiento.', icon: '✨' },
+  { id: 'spectator', name: 'Spectator', detail: 'Entrada rápida sin login para revisar la experiencia pública.', icon: '👁️' },
+];
+
 const CONNECTED_MODULES: HubModule[] = [
   {
     title: 'Core Tool',
@@ -80,7 +96,7 @@ type KddHubPageProps = {
   redirectDelayMs?: number;
 };
 
-export function KddHubPage({ autoRedirectTo, redirectDelayMs = 1200 }: KddHubPageProps) {
+export function KddHubPage({ autoRedirectTo, redirectDelayMs = 5000 }: KddHubPageProps) {
   useEffect(() => {
     if (!autoRedirectTo) return;
 
@@ -90,6 +106,11 @@ export function KddHubPage({ autoRedirectTo, redirectDelayMs = 1200 }: KddHubPag
 
     return () => window.clearTimeout(timeout);
   }, [autoRedirectTo, redirectDelayMs]);
+
+  function enterWithProfile(profileId: string) {
+    window.localStorage.setItem('kdd-profile', profileId);
+    window.location.assign(autoRedirectTo ?? '/core');
+  }
 
   return (
     <main className="kdd-hub">
@@ -217,6 +238,47 @@ export function KddHubPage({ autoRedirectTo, redirectDelayMs = 1200 }: KddHubPag
           gap: 10px;
           flex-wrap: wrap;
           margin-top: 28px;
+        }
+
+        .kdd-hub__profiles {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 10px;
+          margin-top: 28px;
+        }
+
+        .kdd-hub__profile {
+          display: grid;
+          gap: 8px;
+          min-height: 132px;
+          padding: 14px;
+          border: 1px solid var(--border);
+          border-radius: 18px;
+          background: rgba(255, 255, 255, 0.58);
+          color: inherit;
+          text-align: left;
+          cursor: pointer;
+        }
+
+        .kdd-hub__profile:hover,
+        .kdd-hub__profile:focus-visible {
+          border-color: var(--red);
+          outline: 0;
+        }
+
+        .kdd-hub__profile strong {
+          font-size: 15px;
+        }
+
+        .kdd-hub__profile span {
+          font-size: 24px;
+        }
+
+        .kdd-hub__profile p {
+          margin: 0;
+          color: var(--muted);
+          font-size: 12px;
+          line-height: 1.45;
         }
 
         .kdd-hub__panel,
@@ -350,6 +412,7 @@ export function KddHubPage({ autoRedirectTo, redirectDelayMs = 1200 }: KddHubPag
           .kdd-hub__hero,
           .kdd-hub__modules,
           .kdd-hub__flow,
+          .kdd-hub__profiles,
           .kdd-hub__technical {
             grid-template-columns: 1fr;
           }
@@ -388,9 +451,18 @@ export function KddHubPage({ autoRedirectTo, redirectDelayMs = 1200 }: KddHubPag
             </p>
             {autoRedirectTo ? (
               <p className="kdd-hub__support">
-                Entrando al core de la herramienta… perfiles, módulos y PitWall OS se abrirán en segundos.
+                Elegí un perfil para entrar directo. Si no seleccionás nada, abrimos el core en unos segundos.
               </p>
             ) : null}
+            <div className="kdd-hub__profiles" aria-label="Select operational profile">
+              {PROFILE_OPTIONS.map(profile => (
+                <button key={profile.id} className="kdd-hub__profile" type="button" onClick={() => enterWithProfile(profile.id)}>
+                  <span>{profile.icon}</span>
+                  <strong>{profile.name}</strong>
+                  <p>{profile.detail}</p>
+                </button>
+              ))}
+            </div>
             <div className="kdd-hub__actions">
               <a className="kdd-hub__button kdd-hub__button--primary" href="/">
                 Open Core Tool
