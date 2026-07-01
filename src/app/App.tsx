@@ -49,7 +49,12 @@ function getPathname(): string {
 }
 
 function getAppRoute(pathname: string): 'home' | 'login' | 'trial' | 'thanks' | 'founding-nodes' | 'app' {
-  if (pathname === '/app' || pathname.startsWith('/app/')) return 'app';
+  if (
+    pathname === '/app' ||
+    pathname.startsWith('/app/') ||
+    pathname === '/pit-wall/app' ||
+    pathname.startsWith('/pit-wall/app/')
+  ) return 'app';
   if (pathname === '/login') return 'login';
   if (pathname === '/trial' || pathname.startsWith('/trial/')) return 'trial';
   if (pathname === '/founding-node-thanks') return 'thanks';
