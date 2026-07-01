@@ -17,6 +17,7 @@ import {
   SERVICE_STATUS,
   type OrchestrationResult,
   type ServiceRegistryHealthEntry,
+  type WorkflowEntry,
 } from '../services/api';
 
 const MONO = 'JetBrains Mono, monospace';
@@ -112,9 +113,42 @@ function Chips({ items }: { items: string[] }) {
   if (!items.length) return <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>No records returned.</div>;
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
-      {items.slice(0, 24).map((x, i) => (
+      {items.map((x, i) => (
         <span key={i} style={{ fontSize: 10, fontFamily: MONO, color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 5, padding: '2px 7px' }}>{x}</span>
       ))}
+    </div>
+  );
+}
+
+function WorkflowCatalog({ workflows }: { workflows: WorkflowEntry[] }) {
+  if (!workflows.length) {
+    return <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>No workflows returned by 07-agentic-workflows.</div>;
+  }
+
+  return (
+    <div style={{ display: 'grid', gap: 8 }}>
+      <div style={{ fontSize: 10, fontFamily: MONO, color: 'var(--green)', textTransform: 'uppercase' }}>
+        {workflows.length} workflows loaded from 07-agentic-workflows
+      </div>
+      <div style={{ display: 'grid', gap: 6, maxHeight: 420, overflow: 'auto', paddingRight: 4 }}>
+        {workflows.map((workflow) => {
+          const workflowId = workflow.workflow_id ?? workflow.id;
+          const triggers = workflow.triggers?.length ? workflow.triggers.join(', ') : 'manual';
+          return (
+            <div key={workflowId} style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: 10, background: 'rgba(255,255,255,0.02)' }}>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'baseline', flexWrap: 'wrap' }}>
+                <strong style={{ color: 'var(--text)', fontSize: 12 }}>{workflow.name}</strong>
+                <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--cyan)' }}>{workflowId}</span>
+                {workflow.version && <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)' }}>v{workflow.version}</span>}
+              </div>
+              {workflow.description && <div style={{ marginTop: 5, fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.45 }}>{workflow.description}</div>}
+              <div style={{ marginTop: 6, fontSize: 9, fontFamily: MONO, color: 'var(--accent)', textTransform: 'uppercase' }}>
+                triggers: {triggers}
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -240,7 +274,7 @@ export function PlatformConsolePage() {
           <Chips items={live.liveSkills.map(s => s.name)} />
         </Panel>
         <Panel icon={Workflow} title="Workflows" count={live.liveWorkflows.length} online={!!h?.workflows}>
-          <Chips items={live.liveWorkflows.map(w => w.name)} />
+          <WorkflowCatalog workflows={live.liveWorkflows} />
         </Panel>
         <Panel icon={FlaskConical} title="Experiments" count={live.liveExperiments.length} online={!!h?.experiments}>
           <Chips items={live.liveExperiments.map(e => e.name)} />
