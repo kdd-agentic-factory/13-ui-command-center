@@ -48,7 +48,7 @@ server {
         proxy_read_timeout 60s;
     }
     location /api/orchestrator/ {
-        proxy_pass https://kdd-rjz-orchestrator.fly.dev/api/;
+        proxy_pass https://kdd-rjz-orchestrator.fly.dev/;
         proxy_ssl_server_name on;
         proxy_set_header Host kdd-rjz-orchestrator.fly.dev;
         proxy_set_header X-API-Key "${KDD_INTERNAL_API_KEY}";
