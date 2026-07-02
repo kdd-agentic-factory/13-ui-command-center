@@ -3,38 +3,39 @@ import { expect, test, type Page } from '@playwright/test';
 const criticalRoutes = [
   {
     path: '/',
-    title: /KDD Knowledge Network|KDD Agentic Factory/i,
-    visibleText: /Telemetry measures|KDD Agentic Factory/i,
+    title: /KDD Hub by Keedio/i,
+    visibleText: /Keedio Knowledge Circuit|KDD Command Center|PitWall/i,
   },
   {
     path: '/pit-wall/',
-    title: /KDD Knowledge Network/i,
-    visibleText: /KDD|Knowledge|Decision/i,
+    title: /KDD Hub by Keedio/i,
+    visibleText: /KDD|Keedio|PitWall|Aplicación/i,
   },
   {
     path: '/pit-wall/app',
-    title: /KDD Knowledge Network/i,
-    visibleText: /KDD|Race|Engineer|Mission|Dashboard|Oracle|Telemetry/i,
+    title: /KDD Hub by Keedio/i,
+    visibleText: /KDD|Keedio|PitWall|Aplicación|Command Center/i,
   },
   {
     path: '/pit-wall/app/',
-    title: /KDD Knowledge Network/i,
-    visibleText: /KDD|Race|Engineer|Mission|Dashboard|Oracle|Telemetry/i,
+    title: /KDD Hub by Keedio/i,
+    visibleText: /KDD|Keedio|PitWall|Aplicación|Command Center/i,
   },
   {
     path: '/status/',
-    title: /KDD System Status|KDD Agentic Factory/i,
-    visibleText: /Frontends and service health|Infrastructure Health/i,
+    title: /KDD Hub by Keedio.*System Status/i,
+    visibleText: /Operational Status|Frontends|service health|Estado/i,
   },
   {
     path: '/command-center/',
-    title: /Race Command Center/i,
-    visibleText: /Race|Command|Telemetry|Circuit|Dashboard/i,
+    title: /KDD Hub by Keedio/i,
+    visibleText: /KDD|Keedio|PitWall|Aplicación|Command Center/i,
+    expectedUrl: /\/pit-wall\/app\/?$/,
   },
   {
     path: '/copilot/',
-    title: /Race AI Copilot/i,
-    visibleText: /Copilot|AI|Telemetry|Ask/i,
+    title: /KDD Hub by Keedio.*Copilot/i,
+    visibleText: /Copilot|AI|Telemetry|Ask|Intelligence/i,
   },
 ];
 
@@ -68,6 +69,9 @@ test.describe('Production site composition', () => {
         const response = await page.goto(route.path, { waitUntil: 'load' });
 
         expect(response?.ok(), `${route.path} should return a successful HTTP response`).toBe(true);
+        if ('expectedUrl' in route) {
+          await expect(page).toHaveURL(route.expectedUrl);
+        }
         await expect(page).toHaveTitle(route.title);
         await expect(page.locator('body')).toContainText(route.visibleText);
 
@@ -85,10 +89,10 @@ test.describe('Production site composition', () => {
     async ({ page }) => {
       await page.goto('/', { waitUntil: 'networkidle' });
 
-      const pitWallLink = page.getByRole('link', { name: /Open the canonical Pit Wall|KDD Command Center/i }).first();
+      const pitWallLink = page.locator('a[href="/pit-wall/app"]').first();
       await expect(pitWallLink).toBeVisible();
       await expect(pitWallLink).toHaveAttribute('href', '/pit-wall/app');
-      await expect(page.locator('body')).toContainText(/canonical|Pit Wall|Decision/i);
+      await expect(page.locator('body')).toContainText(/canonical|PitWall|KDD Command Center|decisión/i);
       await expect(page.locator('body')).not.toContainText(/InsForge Managed/i);
     },
   );
