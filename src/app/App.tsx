@@ -431,7 +431,7 @@ function AppRouter() {
       return <AppEntryFlow />;
     case 'home':
     default:
-      return <KddHubPage autoRedirectTo="/core" />;
+      return <KddHubPage autoRedirectTo={`${import.meta.env.BASE_URL}app`} />;
   }
 }
 
