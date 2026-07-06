@@ -1,28 +1,39 @@
 /**
  * CockpitPage — Adaptive Pit-Wall Cockpit.
  *
- * The dashboard that reorganises itself: a priority engine reads the context
- * and decides the cockpit mode, the primary panel, the supporting panels, a
- * per-module priority score and the single Next Best Action. Manual / adaptive
- * / hybrid layout modes, and a hybrid suggestion the user can accept, ignore or
- * pin. The dashboard adapts to the track, not the other way round.
+ * The operational surface where KDD turns telemetry into track decisions.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LayoutGrid, ArrowRight, Sparkles, Zap } from 'lucide-react';
+import { ArrowRight, LayoutGrid, Sparkles, Zap } from 'lucide-react';
 import { useNavigate } from '../context/NavContext';
 import { getSessionContext } from '../domain/sessionContext';
-import { decideCockpit, modeMeta, COCKPIT_SCENARIOS, CockpitContext } from '../domain/cockpit';
+import { decideCockpit, modeMeta, COCKPIT_SCENARIOS, type CockpitContext, type CockpitMode } from '../domain/cockpit';
 
-const MONO = 'JetBrains Mono, monospace';
 type LayoutMode = 'adaptive' | 'manual' | 'hybrid';
 
-/** Map the current session to a starting scenario so the cockpit opens live. */
 function scenarioForSession(): string {
   const mode = getSessionContext().sessionMode;
   if (mode === 'demo') return 'live';
   if (mode === 'pre-gp') return 'pre';
   return 'live';
+}
+
+function modeClass(mode: CockpitMode): string {
+  return `cockpit-mode--${mode}`;
+}
+
+function scoreTone(score: number): 'high' | 'medium' | 'low' {
+  if (score >= 80) return 'high';
+  if (score >= 60) return 'medium';
+  return 'low';
+}
+
+function riskTone(risk: string): 'high' | 'medium' | 'low' {
+  const normalized = risk.toLowerCase();
+  if (normalized.includes('high')) return 'high';
+  if (normalized.includes('medium')) return 'medium';
+  return 'low';
 }
 
 export function CockpitPage() {
@@ -38,116 +49,146 @@ export function CockpitPage() {
   const layoutOut = decideCockpit(ctx);
   const mm = modeMeta(layoutOut.mode);
   const showSuggestion = layout === 'hybrid' && layoutOut.suggestion && !pinned && !dismissed;
+  const modeTone = modeClass(layoutOut.mode);
+  const actionRisk = riskTone(layoutOut.nextBestAction.risk);
 
   return (
-    <div className="page">
-      <div className="flex items-center justify-between mb-6">
+    <div className="page cockpit-page">
+      <header className="cockpit-hero">
         <div>
-          <h1 className="page-title flex items-center gap-2"><LayoutGrid size={18} /> {t('cockpit.title', 'Adaptive Pit-Wall Cockpit')}</h1>
+          <h1 className="page-title cockpit-title"><LayoutGrid size={18} /> {t('cockpit.title', 'Adaptive Pit-Wall Cockpit')}</h1>
           <p className="page-subtitle">{t('cockpit.subtitle', 'Context-aware dashboard for race decisions — the dashboard adapts to the track, not the other way round')}</p>
         </div>
-        <div style={{ display: 'flex', gap: 4 }}>
+        <div className="cockpit-layout-switch" aria-label="Cockpit layout mode">
           {(['adaptive', 'hybrid', 'manual'] as LayoutMode[]).map(m => (
-            <button key={m} onClick={() => { setLayout(m); setDismissed(false); setPinned(false); }}
-              style={{ fontSize: 10, fontFamily: MONO, padding: '4px 9px', borderRadius: 'var(--radius)', cursor: 'pointer', textTransform: 'capitalize',
-                background: layout === m ? 'rgba(0,183,255,0.12)' : 'transparent', border: `1px solid ${layout === m ? 'var(--cyan)' : 'var(--border)'}`, color: layout === m ? 'var(--cyan)' : 'var(--text-muted)' }}>
+            <button
+              key={m}
+              type="button"
+              className={`cockpit-chip${layout === m ? ' cockpit-chip--active' : ''}`}
+              aria-pressed={layout === m}
+              onClick={() => { setLayout(m); setDismissed(false); setPinned(false); }}
+            >
               {m}
             </button>
           ))}
         </div>
-      </div>
+      </header>
 
-      {/* scenario preview chips */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 14, alignItems: 'center' }}>
-        <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>{t('cockpit.context', 'Context')}</span>
+      <section className="cockpit-context" aria-label="Cockpit preview context">
+        <span className="cockpit-label">{t('cockpit.context', 'Context')}</span>
         {COCKPIT_SCENARIOS.map(s => (
-          <button key={s.id} onClick={() => { setScenarioId(s.id); setDismissed(false); setPinned(false); }}
-            style={{ fontSize: 10, fontFamily: MONO, padding: '3px 8px', borderRadius: 5, cursor: 'pointer',
-              background: s.id === scenarioId ? 'rgba(255,255,255,0.08)' : 'transparent', border: `1px solid ${s.id === scenarioId ? 'var(--text)' : 'var(--border)'}`, color: s.id === scenarioId ? 'var(--text)' : 'var(--text-muted)' }}>
+          <button
+            key={s.id}
+            type="button"
+            className={`cockpit-chip cockpit-chip--scenario${s.id === scenarioId ? ' cockpit-chip--selected' : ''}`}
+            aria-pressed={s.id === scenarioId}
+            onClick={() => { setScenarioId(s.id); setDismissed(false); setPinned(false); }}
+          >
             {s.label}
           </button>
         ))}
-      </div>
+      </section>
 
-      {/* mode banner */}
-      <div className="card" style={{ padding: '12px 16px', marginBottom: 14,
- display: 'flex', alignItems: 'center', gap: 14 }}>
-        <span style={{ fontSize: 16, fontWeight: 800, color: mm.color }}>{mm.label}</span>
-        <span style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>{layoutOut.trigger}</span>
-        <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text)', fontStyle: 'italic' }}>"{layoutOut.oracleVerdict}"</span>
-      </div>
-
-      {/* hybrid suggestion */}
-      {showSuggestion && (
-        <div className="card" style={{ padding: '10px 14px', marginBottom: 14, background: 'rgba(139,92,246,0.07)', border: '1px solid rgba(139,92,246,0.35)', display: 'flex', alignItems: 'center', gap: 12 }}>
-          <Sparkles size={15} style={{ color: 'var(--violet)' }} />
-          <span style={{ fontSize: 12, color: 'var(--text)' }}>KDD suggests switching to <b style={{ color: modeMeta(layoutOut.suggestion!.toMode).color }}>{modeMeta(layoutOut.suggestion!.toMode).label}</b> — {layoutOut.suggestion!.reason}</span>
-          <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
-            <button onClick={() => setLayout('adaptive')} style={sBtn('var(--green)')}>{t('cockpit.accept', 'Accept')}</button>
-            <button onClick={() => setDismissed(true)} style={sBtn('var(--text-muted)')}>{t('cockpit.ignore', 'Ignore')}</button>
-            <button onClick={() => setPinned(true)} style={sBtn('var(--cyan)')}>{t('cockpit.pinCurrent', 'Pin current')}</button>
-          </div>
+      <section className={`cockpit-status card ${modeTone}`} aria-label="Current cockpit state">
+        <div className="cockpit-status__main">
+          <span className="cockpit-status__mode">{mm.label}</span>
+          <span className="cockpit-status__trigger">{layoutOut.trigger}</span>
         </div>
+        <blockquote className="cockpit-status__verdict">“{layoutOut.oracleVerdict}”</blockquote>
+      </section>
+
+      {showSuggestion && (
+        <section className="cockpit-suggestion card" aria-label="Hybrid cockpit suggestion">
+          <Sparkles size={15} className="cockpit-suggestion__icon" />
+          <span>
+            KDD suggests switching to <b>{modeMeta(layoutOut.suggestion!.toMode).label}</b> — {layoutOut.suggestion!.reason}
+          </span>
+          <div className="cockpit-suggestion__actions">
+            <button type="button" className="cockpit-mini-btn cockpit-mini-btn--accept" onClick={() => setLayout('adaptive')}>{t('cockpit.accept', 'Accept')}</button>
+            <button type="button" className="cockpit-mini-btn" onClick={() => setDismissed(true)}>{t('cockpit.ignore', 'Ignore')}</button>
+            <button type="button" className="cockpit-mini-btn cockpit-mini-btn--pin" onClick={() => setPinned(true)}>{t('cockpit.pinCurrent', 'Pin current')}</button>
+          </div>
+        </section>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 16, alignItems: 'start' }}>
-        {/* primary + supporting */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          <div className="card" style={{ padding: 18, borderTop: `3px solid ${mm.color}` }}>
-            <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 4 }}>{t('cockpit.primaryPanel', 'Primary panel')}</div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ fontSize: 20, fontWeight: 800, color: 'var(--text)' }}>{layoutOut.primary.label}</span>
-              <button onClick={() => navigate(layoutOut.primary.tab)} style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 11, fontFamily: MONO, color: 'var(--bg-base)', background: 'var(--cyan)', border: 'none', borderRadius: 'var(--radius)', padding: '6px 11px', cursor: 'pointer' }}>
-                {t('cockpit.open', 'open')} <ArrowRight size={13} />
+      <section className="cockpit-grid">
+        <div className="cockpit-stack">
+          <article className={`card cockpit-primary ${modeTone}`}>
+            <span className="cockpit-label">{t('cockpit.primaryPanel', 'Primary panel')}</span>
+            <div className="cockpit-primary__row">
+              <div>
+                <h2>{layoutOut.primary.label}</h2>
+                <p>Current operating surface selected by KDD for this session context.</p>
+              </div>
+              <button type="button" className="cockpit-action-btn" onClick={() => navigate(layoutOut.primary.tab)}>
+                {t('cockpit.open', 'Open')} <ArrowRight size={13} />
               </button>
             </div>
-            <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase', margin: '14px 0 6px' }}>{t('cockpit.supportingPanels', 'Supporting panels')}</div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
+
+            <div className="cockpit-decision-chain" aria-label="Decision chain">
+              {['Data', 'Event', 'Cause', 'Recommendation', 'Mission', 'Validation'].map(item => (
+                <span key={item}>{item}</span>
+              ))}
+            </div>
+
+            <span className="cockpit-label cockpit-label--section">{t('cockpit.supportingPanels', 'Supporting panels')}</span>
+            <div className="cockpit-supporting">
               {layoutOut.supporting.map(s => (
-                <button key={s.tab} onClick={() => navigate(s.tab)}
-                  style={{ fontSize: 11, fontFamily: MONO, color: 'var(--text)', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '6px 10px', cursor: 'pointer' }}>
+                <button key={s.tab} type="button" className="cockpit-support-btn" onClick={() => navigate(s.tab)}>
                   {s.label}
                 </button>
               ))}
             </div>
-          </div>
+          </article>
 
-          {/* next best action */}
-          <div className="card" style={{ padding: 16, background: 'rgba(0,183,255,0.05)', border: '1px solid rgba(0,183,255,0.3)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-              <Zap size={15} style={{ color: 'var(--cyan)' }} />
-              <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--cyan)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{t('cockpit.nextBestAction', 'Next best action  ◆  ')}{layoutOut.nextBestAction.priority}</span>
+          <article className={`card cockpit-next cockpit-risk--${actionRisk}`}>
+            <div className="cockpit-next__header">
+              <Zap size={15} />
+              <span>{t('cockpit.nextBestAction', 'Next best action')}</span>
+              <strong>{layoutOut.nextBestAction.priority}</strong>
             </div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{layoutOut.nextBestAction.action}</div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>{layoutOut.nextBestAction.why}</div>
-            <div style={{ display: 'flex', gap: 14, marginTop: 8, fontSize: 11 }}>
-              <span><span style={{ color: 'var(--text-muted)' }}>{t('cockpit.expected', 'Expected: ')}</span><span style={{ color: 'var(--green)', fontFamily: MONO }}>{layoutOut.nextBestAction.expectedGain}</span></span>
-              <span><span style={{ color: 'var(--text-muted)' }}>{t('cockpit.risk', 'Risk: ')}</span><span style={{ color: 'var(--yellow)' }}>{layoutOut.nextBestAction.risk}</span></span>
+            <h2>{layoutOut.nextBestAction.action}</h2>
+            <p>{layoutOut.nextBestAction.why}</p>
+            <div className="cockpit-next__meta">
+              <span><b>{t('cockpit.expected', 'Expected')}</b>{layoutOut.nextBestAction.expectedGain}</span>
+              <span><b>{t('cockpit.risk', 'Risk')}</b>{layoutOut.nextBestAction.risk}</span>
             </div>
-          </div>
+          </article>
         </div>
 
-        {/* priority engine */}
-        <div className="card" style={{ padding: 16 }}>
-          <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 12 }}>{t('cockpit.priorityEngine', 'Priority engine  ◆  live module scores')}</div>
-          {layoutOut.priorities.slice(0, 9).map(p => (
-            <div key={p.tab} onClick={() => navigate(p.tab)} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 9, cursor: 'pointer' }}>
-              <span style={{ width: 120, fontSize: 11, color: 'var(--text)' }}>{p.label}</span>
-              <div style={{ flex: 1, height: 7, borderRadius: 4, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
-                <div style={{ width: `${p.score}%`, height: '100%', background: p.score >= 80 ? 'var(--accent)' : p.score >= 60 ? 'var(--cyan)' : 'rgba(255,255,255,0.25)' }} />
-              </div>
-              <span style={{ width: 26, textAlign: 'right', fontSize: 10.5, fontFamily: MONO, color: p.score >= 80 ? 'var(--accent)' : 'var(--text-muted)' }}>{p.score}</span>
-            </div>
-          ))}
-          <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 6 }}>
-            {layout === 'manual' ? t('cockpit.manualLayout', 'Manual layout — you pin the modules; the engine only advises.') : layout === 'hybrid' ? t('cockpit.hybridLayout', 'Hybrid — KDD suggests, you accept or pin.') : t('cockpit.adaptiveLayout', 'Adaptive — the cockpit reorganises automatically.')}
+        <aside className="card cockpit-priority" aria-label="Priority engine live module scores">
+          <div className="cockpit-priority__header">
+            <span className="cockpit-label">{t('cockpit.priorityEngine', 'Priority engine')}</span>
+            <strong>Live module scores</strong>
           </div>
-        </div>
-      </div>
+          <div className="cockpit-priority__list">
+            {layoutOut.priorities.slice(0, 9).map((p, index) => {
+              const tone = scoreTone(p.score);
+              return (
+                <button
+                  key={p.tab}
+                  type="button"
+                  className={`cockpit-priority-item cockpit-score--${tone}`}
+                  onClick={() => navigate(p.tab)}
+                  aria-label={`Open ${p.label}, priority score ${p.score}`}
+                >
+                  <span className="cockpit-priority-item__rank">{String(index + 1).padStart(2, '0')}</span>
+                  <span className="cockpit-priority-item__label">{p.label}</span>
+                  <span className="cockpit-priority-item__bar" aria-hidden="true"><span /></span>
+                  <span className="cockpit-priority-item__score">{p.score}</span>
+                </button>
+              );
+            })}
+          </div>
+          <p className="cockpit-priority__note">
+            {layout === 'manual'
+              ? t('cockpit.manualLayout', 'Manual layout — you pin the modules; the engine only advises.')
+              : layout === 'hybrid'
+                ? t('cockpit.hybridLayout', 'Hybrid — KDD suggests, you accept or pin.')
+                : t('cockpit.adaptiveLayout', 'Adaptive — the cockpit reorganises automatically.')}
+          </p>
+        </aside>
+      </section>
     </div>
   );
 }
-
-const sBtn = (color: string): React.CSSProperties => ({
-  fontSize: 10, fontFamily: MONO, color, background: 'transparent', border: `1px solid ${color}`, borderRadius: 5, padding: '3px 9px', cursor: 'pointer',
-});

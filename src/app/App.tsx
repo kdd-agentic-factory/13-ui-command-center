@@ -87,6 +87,14 @@ function getAppRoute(pathname: string): AppRoute {
     pathname.startsWith('/dashboard/') ||
     pathname === '/copilot' ||
     pathname.startsWith('/copilot/') ||
+    pathname === '/nodes' ||
+    pathname.startsWith('/nodes/') ||
+    pathname === '/federation' ||
+    pathname.startsWith('/federation/') ||
+    pathname === '/research-lab' ||
+    pathname.startsWith('/research-lab/') ||
+    pathname === '/platform' ||
+    pathname.startsWith('/platform/') ||
     pathname === '/command' ||
     pathname.startsWith('/command/') ||
     pathname === '/command-center' ||
@@ -158,17 +166,14 @@ function AppEntryFlowContent({ autoLaunchDemo = true }: { autoLaunchDemo?: boole
     return () => { cancelled = true; };
   }, [authLoading, profile?.id, user?.id]);
 
-  // ── Auto-demo for first-time visitors (pit-wall / no saved profile) ──
+  // ── Auto-demo for hub entry (opens PitWall OS in demo mode) ──
   useEffect(() => {
     if (!autoLaunchDemo) return;
     if (autoDemoLaunched.current) return;
 
-    const savedProfile = localStorage.getItem('kdd-profile');
-    if (!savedProfile) {
-      autoDemoLaunched.current = true;
-      login('founding-node');
-      presetGuidedDemo(); // jump to LaunchBriefPage → BootSequence → DashboardShell
-    }
+    autoDemoLaunched.current = true;
+    login('founding-node');
+    presetGuidedDemo(); // jump to LaunchBriefPage → BootSequence → DashboardShell
   }, [autoLaunchDemo, login]);
 
   function presetLatestSession() {

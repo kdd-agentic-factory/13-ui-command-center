@@ -12,6 +12,10 @@ ARG VITE_TELEMETRY_URL=https://kdd-rjz-telemetry.fly.dev
 ENV VITE_TELEMETRY_URL=$VITE_TELEMETRY_URL
 ARG VITE_TWIN_URL=https://kdd-rjz-digital-twin.fly.dev
 ENV VITE_TWIN_URL=$VITE_TWIN_URL
+ARG VITE_RACE_COMMAND_CENTER_URL=https://kdd-rjz-race.fly.dev
+ENV VITE_RACE_COMMAND_CENTER_URL=$VITE_RACE_COMMAND_CENTER_URL
+ARG VITE_ENABLE_RACE_COMMAND_CENTER_PREVIEW=true
+ENV VITE_ENABLE_RACE_COMMAND_CENTER_PREVIEW=$VITE_ENABLE_RACE_COMMAND_CENTER_PREVIEW
 # RAG / pipelines / security are API-key/credentialed: they are NOT baked to a
 # direct URL here. They default to the same-origin BFF paths (/api/rag,
 # /api/pipelines, /api/security) which the nginx BFF below proxies to the Fly

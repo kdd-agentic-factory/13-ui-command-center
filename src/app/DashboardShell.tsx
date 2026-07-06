@@ -6,6 +6,7 @@ import {
   Route, Film, Lightbulb, FileText, Users, Database, MonitorPlay, GitCompare, ShieldAlert, History,
   Sparkles, Fingerprint, MessagesSquare, FlaskConical, CircleDot, Network, Ghost, GraduationCap, TestTubes, Video,
   LayoutGrid, TrendingUp, Mic, ShieldCheck, Boxes, Server, Layers, Mountain, Crosshair, HeartPulse, Globe2, FlaskRound, GitMerge, Plug, Flag, Radar, Trophy, Timer, Disc, CircuitBoard, CloudRain, Wind, Fuel, Gauge, Bike, ClipboardList, Gavel, Cog, SlidersHorizontal,
+  Menu, X,
 } from 'lucide-react';
 
 import { useProfile, type TabId } from '../context/AuthContext';
@@ -102,6 +103,7 @@ const CrashRiskPage = React.lazy(() => import('../pages/CrashRiskPage'));
 const CircuitHistoryPage = React.lazy(() => import('../pages/CircuitHistoryPage'));
 const PredictiveModelPage = React.lazy(() => import('../pages/PredictiveModelPage'));
 const RidingStylePage = React.lazy(() => import('../pages/RidingStylePage'));
+const ResearchLabPage = React.lazy(() => import('../pages/ResearchLabPage'));
 
 interface NavItemDef {
   id: TabId;
@@ -117,94 +119,119 @@ interface NavSectionDef {
 }
 
 const ALL_NAV_SECTIONS: NavSectionDef[] = [
-  { section: 'nav.sections.race', items: [
-    { id: 'cockpit', labelKey: 'nav.cockpit', icon: LayoutGrid, badge: 'AI', badgeColor: 'blue' },
-    { id: 'pre-gp', labelKey: 'nav.preGp', icon: CalendarDays },
+  // ── 1. MISSION CONTROL — operational entry points ──────────────────
+  { section: 'nav.sections.missionControl', items: [
     { id: 'overview', labelKey: 'nav.overview', icon: LayoutDashboard },
+    { id: 'pre-gp', labelKey: 'nav.preGp', icon: CalendarDays },
     { id: 'raceday', labelKey: 'nav.raceday', icon: ClipboardList, badge: 'AI', badgeColor: 'blue' },
     { id: 'live', labelKey: 'nav.live', icon: MonitorPlay, badge: 'LIVE', badgeColor: 'red' },
+  ]},
+  // ── 2. PITWALL OS — primary operational product ────────────────────
+  { section: 'nav.sections.pitwall', items: [
+    { id: 'cockpit', labelKey: 'nav.cockpit', icon: LayoutGrid, badge: 'AI', badgeColor: 'blue' },
     { id: 'telemetry', labelKey: 'nav.telemetry', icon: Activity, badge: '10Hz', badgeColor: 'green' },
     { id: 'circuit', labelKey: 'nav.circuit', icon: Map },
     { id: 'corners', labelKey: 'nav.corners', icon: Route, badge: 'AI', badgeColor: 'blue' },
-    { id: 'replay', labelKey: 'nav.replay', icon: Film },
-    { id: 'studio', labelKey: 'nav.studio', icon: Video, badge: 'AI', badgeColor: 'blue' },
-    { id: 'compare', labelKey: 'nav.compare', icon: GitCompare },
-    { id: 'ghost-lap', labelKey: 'nav.ghostLap', icon: Ghost, badge: 'AI', badgeColor: 'blue' },
+    { id: 'setup', labelKey: 'nav.setup', icon: Sliders },
+    { id: 'parts', labelKey: 'nav.parts', icon: Wrench },
+    { id: 'twin', labelKey: 'nav.twin', icon: GitBranch },
     { id: 'tires', labelKey: 'nav.tires', icon: Circle },
     { id: 'pressure', labelKey: 'nav.pressure', icon: Gauge, badge: 'AI', badgeColor: 'blue' },
-    { id: 'track-evo', labelKey: 'nav.trackEvo', icon: TrendingUp },
-    { id: 'surface', labelKey: 'nav.surface', icon: Mountain, badge: 'AI', badgeColor: 'blue' },
-    { id: 'weather', labelKey: 'nav.weather', icon: CloudRain, badge: 'AI', badgeColor: 'blue' },
-    { id: 'risk', labelKey: 'nav.risk', icon: ShieldAlert },
-    { id: 'predict', labelKey: 'nav.predict', icon: Sparkles, badge: 'AI', badgeColor: 'blue' },
-    { id: 'strategy', labelKey: 'nav.strategy', icon: Flag, badge: 'AI', badgeColor: 'blue' },
-    { id: 'rivals', labelKey: 'nav.rivals', icon: Radar, badge: 'AI', badgeColor: 'blue' },
-    { id: 'quali', labelKey: 'nav.quali', icon: Timer, badge: 'AI', badgeColor: 'blue' },
+    { id: 'crew', labelKey: 'nav.crew', icon: Radio },
   ]},
-  { section: 'nav.sections.engineering', items: [
-    { id: 'engctrl', labelKey: 'nav.engctrl', icon: SlidersHorizontal, badge: 'AI', badgeColor: 'blue' },
-    { id: 'setup', labelKey: 'nav.setup', icon: Sliders },
+  // ── 3. PERFORMANCE — analytics, reports, workflows ─────────────────
+  { section: 'nav.sections.performance', items: [
+    { id: 'replay', labelKey: 'nav.replay', icon: Film },
+    { id: 'compare', labelKey: 'nav.compare', icon: GitCompare },
+    { id: 'ghost-lap', labelKey: 'nav.ghostLap', icon: Ghost, badge: 'AI', badgeColor: 'blue' },
+    { id: 'studio', labelKey: 'nav.studio', icon: Video, badge: 'AI', badgeColor: 'blue' },
+    { id: 'report', labelKey: 'nav.report', icon: FileText, badge: 'PDF', badgeColor: 'muted' },
+    { id: 'debrief', labelKey: 'nav.debrief', icon: MessagesSquare, badge: 'AI', badgeColor: 'blue' },
+  ]},
+  // ── 4. AI LAYER — copilot and intelligence ─────────────────────────
+  { section: 'nav.sections.ai', items: [
+    { id: 'copilot', labelKey: 'nav.copilot', icon: Bot, badge: 'AI', badgeColor: 'blue' },
     { id: 'advisor', labelKey: 'nav.advisor', icon: Lightbulb, badge: 'AI', badgeColor: 'blue' },
+    { id: 'strategy', labelKey: 'nav.strategy', icon: Flag, badge: 'AI', badgeColor: 'blue' },
+    { id: 'predict', labelKey: 'nav.predict', icon: Sparkles, badge: 'AI', badgeColor: 'blue' },
+    { id: 'risk', labelKey: 'nav.risk', icon: ShieldAlert },
+    { id: 'weather', labelKey: 'nav.weather', icon: CloudRain, badge: 'AI', badgeColor: 'blue' },
+  ]},
+  // ── 5. KNOWLEDGE NETWORK — nodes, federation, learning ─────────────
+  { section: 'nav.sections.knowledge', items: [
+    { id: 'knowledge', labelKey: 'nav.knowledge', icon: Network },
+    { id: 'federated', labelKey: 'nav.federated', icon: Globe2, badge: 'AI', badgeColor: 'blue' },
+    { id: 'learning-path', labelKey: 'nav.learningPath', icon: GraduationCap },
+    { id: 'patterns', labelKey: 'nav.patterns', icon: Layers, badge: 'AI', badgeColor: 'blue' },
+  ]},
+  // ── 6. RESEARCH — applied research and experimentation ─────────────
+  { section: 'nav.sections.research', items: [
+    { id: 'research', labelKey: 'nav.research', icon: FlaskConical, badge: 'AI', badgeColor: 'blue' },
+    { id: 'sandbox', labelKey: 'nav.sandbox', icon: FlaskConical, badge: 'AI', badgeColor: 'blue' },
+    { id: 'sim-lab', labelKey: 'nav.simLab', icon: FlaskRound, badge: 'AI', badgeColor: 'blue' },
+    { id: 'experiments', labelKey: 'nav.experiments', icon: TestTubes, badge: 'AI', badgeColor: 'blue' },
+    { id: 'causal', labelKey: 'nav.causal', icon: GitMerge, badge: 'AI', badgeColor: 'blue' },
+  ]},
+  // ── 7. PLATFORM — admin, infrastructure, config (secondary) ────────
+  { section: 'nav.sections.platform', items: [
+    { id: 'platform', labelKey: 'nav.platform', icon: Server, badge: 'LIVE', badgeColor: 'green' },
+    { id: 'settings', labelKey: 'nav.settings', icon: Settings },
+    { id: 'edge', labelKey: 'nav.edge', icon: Radio, badge: 'AI', badgeColor: 'blue' },
+    { id: 'lakehouse', labelKey: 'nav.lakehouse', icon: Database, badge: 'AI', badgeColor: 'blue' },
+    { id: 'devhub', labelKey: 'nav.devhub', icon: Plug, badge: 'AI', badgeColor: 'blue' },
+    { id: 'trust', labelKey: 'nav.trust', icon: ShieldCheck },
+    { id: 'data', labelKey: 'nav.data', icon: Database },
+  ]},
+  // ── DEMOTED — secondary tools, hidden from primary nav ─────────────
+  { section: 'nav.sections.tools', items: [
+    { id: 'orchestrator', labelKey: 'nav.orchestrator', icon: Crosshair, badge: 'AI', badgeColor: 'blue' },
+    { id: 'stewards', labelKey: 'nav.stewards', icon: Gavel, badge: 'AI', badgeColor: 'blue' },
+    { id: 'pit-radio', labelKey: 'nav.pitRadio', icon: Mic },
+    { id: 'team', labelKey: 'nav.team', icon: Users },
+    { id: 'workbench', labelKey: 'nav.workbench', icon: LayoutDashboard, badge: 'AI', badgeColor: 'blue' },
+    { id: 'human', labelKey: 'nav.human', icon: HeartPulse, badge: 'AI', badgeColor: 'blue' },
+    { id: 'ai-crew', labelKey: 'nav.aiCrew', icon: Users, badge: 'AI', badgeColor: 'blue' },
+    { id: 'black-box', labelKey: 'nav.blackBox', icon: CircleDot },
+    { id: 'style', labelKey: 'nav.style', icon: Fingerprint },
+    { id: 'engctrl', labelKey: 'nav.engctrl', icon: SlidersHorizontal, badge: 'AI', badgeColor: 'blue' },
     { id: 'electronics', labelKey: 'nav.electronics', icon: CircuitBoard, badge: 'AI', badgeColor: 'blue' },
     { id: 'aero', labelKey: 'nav.aero', icon: Wind, badge: 'AI', badgeColor: 'blue' },
     { id: 'fuel', labelKey: 'nav.fuel', icon: Fuel, badge: 'AI', badgeColor: 'blue' },
     { id: 'chassis', labelKey: 'nav.chassis', icon: Bike, badge: 'AI', badgeColor: 'blue' },
     { id: 'gearing', labelKey: 'nav.gearing', icon: Cog, badge: 'AI', badgeColor: 'blue' },
     { id: 'setup-lab', labelKey: 'nav.setupLab', icon: GitBranch },
-    { id: 'parts', labelKey: 'nav.parts', icon: Wrench },
     { id: 'brakes', labelKey: 'nav.brakes', icon: Disc, badge: 'AI', badgeColor: 'blue' },
     { id: 'bike-compare', labelKey: 'nav.bikeCompare', icon: GitCompare },
-    { id: 'twin', labelKey: 'nav.twin', icon: GitBranch },
-    { id: 'sandbox', labelKey: 'nav.sandbox', icon: FlaskConical, badge: 'AI', badgeColor: 'blue' },
-    { id: 'sim-lab', labelKey: 'nav.simLab', icon: FlaskRound, badge: 'AI', badgeColor: 'blue' },
-    { id: 'experiments', labelKey: 'nav.experiments', icon: TestTubes, badge: 'AI', badgeColor: 'blue' },
+    { id: 'track-evo', labelKey: 'nav.trackEvo', icon: TrendingUp },
+    { id: 'surface', labelKey: 'nav.surface', icon: Mountain, badge: 'AI', badgeColor: 'blue' },
     { id: 'events', labelKey: 'nav.events', icon: Zap, badge: 'AI', badgeColor: 'blue' },
-    { id: 'causal', labelKey: 'nav.causal', icon: GitMerge, badge: 'AI', badgeColor: 'blue' },
     { id: 'history', labelKey: 'nav.history', icon: History },
-    { id: 'knowledge', labelKey: 'nav.knowledge', icon: Network },
-    { id: 'patterns', labelKey: 'nav.patterns', icon: Layers, badge: 'AI', badgeColor: 'blue' },
-    { id: 'federated', labelKey: 'nav.federated', icon: Globe2, badge: 'AI', badgeColor: 'blue' },
     { id: 'cube', labelKey: 'nav.cube', icon: Boxes, badge: 'AI', badgeColor: 'blue' },
-  ]},
-  { section: 'nav.sections.command', items: [
-    { id: 'orchestrator', labelKey: 'nav.orchestrator', icon: Crosshair, badge: 'AI', badgeColor: 'blue' },
     { id: 'season', labelKey: 'nav.season', icon: Trophy, badge: 'AI', badgeColor: 'blue' },
-    { id: 'stewards', labelKey: 'nav.stewards', icon: Gavel, badge: 'AI', badgeColor: 'blue' },
-    { id: 'crew', labelKey: 'nav.crew', icon: Radio },
-    { id: 'pit-radio', labelKey: 'nav.pitRadio', icon: Mic },
-    { id: 'team', labelKey: 'nav.team', icon: Users },
-    { id: 'workbench', labelKey: 'nav.workbench', icon: LayoutDashboard, badge: 'AI', badgeColor: 'blue' },
-    { id: 'copilot', labelKey: 'nav.copilot', icon: Bot, badge: 'AI', badgeColor: 'blue' },
-    { id: 'learning-path', labelKey: 'nav.learningPath', icon: GraduationCap },
-    { id: 'human', labelKey: 'nav.human', icon: HeartPulse, badge: 'AI', badgeColor: 'blue' },
-    { id: 'ai-crew', labelKey: 'nav.aiCrew', icon: Users, badge: 'AI', badgeColor: 'blue' },
-    { id: 'report', labelKey: 'nav.report', icon: FileText, badge: 'PDF', badgeColor: 'muted' },
-    { id: 'debrief', labelKey: 'nav.debrief', icon: MessagesSquare, badge: 'AI', badgeColor: 'blue' },
-    { id: 'black-box', labelKey: 'nav.blackBox', icon: CircleDot },
-    { id: 'style', labelKey: 'nav.style', icon: Fingerprint },
-  ]},
-  { section: 'nav.sections.system', items: [
-    { id: 'edge', labelKey: 'nav.edge', icon: Radio, badge: 'AI', badgeColor: 'blue' },
-    { id: 'lakehouse', labelKey: 'nav.lakehouse', icon: Database, badge: 'AI', badgeColor: 'blue' },
-    { id: 'devhub', labelKey: 'nav.devhub', icon: Plug, badge: 'AI', badgeColor: 'blue' },
-    { id: 'platform', labelKey: 'nav.platform', icon: Server, badge: 'LIVE', badgeColor: 'green' },
-    { id: 'trust', labelKey: 'nav.trust', icon: ShieldCheck },
-    { id: 'data', labelKey: 'nav.data', icon: Database },
-    { id: 'settings', labelKey: 'nav.settings', icon: Settings },
+    { id: 'quali', labelKey: 'nav.quali', icon: Timer, badge: 'AI', badgeColor: 'blue' },
+    { id: 'rivals', labelKey: 'nav.rivals', icon: Radar, badge: 'AI', badgeColor: 'blue' },
   ]},
 ];
 
 const ALL_TAB_IDS: TabId[] = ALL_NAV_SECTIONS.flatMap(section => section.items.map(item => item.id));
 
 const PRIMARY_TAB_IDS_BY_MODE: Record<SessionMode, readonly TabId[]> = {
-  race: ['cockpit', 'raceday', 'live', 'telemetry', 'strategy', 'rivals', 'tires', 'weather', 'crew', 'copilot', 'team', 'stewards'],
-  test: ['cockpit', 'telemetry', 'setup', 'advisor', 'engctrl', 'electronics', 'brakes', 'pressure', 'setup-lab', 'compare', 'team', 'trust'],
-  practice: ['cockpit', 'overview', 'live', 'telemetry', 'corners', 'track-evo', 'tires', 'pressure', 'setup', 'advisor', 'crew', 'copilot'],
-  trackday: ['cockpit', 'live', 'telemetry', 'corners', 'replay', 'ghost-lap', 'risk', 'tires', 'learning-path', 'human', 'copilot', 'report'],
-  replay: ['cockpit', 'replay', 'telemetry', 'corners', 'compare', 'ghost-lap', 'studio', 'report', 'debrief', 'black-box', 'style', 'knowledge'],
-  demo: ['cockpit', 'overview', 'live', 'telemetry', 'circuit', 'corners', 'replay', 'setup', 'twin', 'copilot', 'orchestrator', 'platform'],
-  'pre-gp': ['cockpit', 'pre-gp', 'circuit', 'weather', 'surface', 'strategy', 'rivals', 'tires', 'setup', 'advisor', 'sandbox', 'team'],
-  simulation: ['cockpit', 'twin', 'sandbox', 'sim-lab', 'causal', 'predict', 'circuit', 'surface', 'weather', 'setup', 'advisor', 'copilot'],
+  // Race: Mission Control + PitWall OS + AI Layer (12 items)
+  race: ['overview', 'raceday', 'live', 'cockpit', 'telemetry', 'tires', 'crew', 'copilot', 'strategy', 'weather', 'risk', 'debrief'],
+  // Test: PitWall OS + Performance (12 items)
+  test: ['cockpit', 'telemetry', 'setup', 'pressure', 'compare', 'replay', 'report', 'debrief', 'advisor', 'electronics', 'brakes', 'trust'],
+  // Practice: Mission Control + PitWall OS + AI (12 items)
+  practice: ['overview', 'live', 'cockpit', 'telemetry', 'corners', 'setup', 'tires', 'pressure', 'advisor', 'copilot', 'crew', 'report'],
+  // Track Day: Mission Control + PitWall + Performance (12 items)
+  trackday: ['overview', 'live', 'cockpit', 'telemetry', 'corners', 'replay', 'ghost-lap', 'risk', 'tires', 'copilot', 'learning-path', 'report'],
+  // Replay: PitWall + Performance + Knowledge (12 items)
+  replay: ['cockpit', 'telemetry', 'corners', 'replay', 'compare', 'ghost-lap', 'studio', 'report', 'debrief', 'knowledge', 'black-box', 'style'],
+  // Demo: Mission Control + PitWall + Platform (12 items)
+  demo: ['overview', 'live', 'cockpit', 'telemetry', 'circuit', 'setup', 'twin', 'copilot', 'platform', 'orchestrator', 'replay', 'report'],
+  // Pre-GP: Mission Control + PitWall OS + Research (12 items)
+  'pre-gp': ['overview', 'pre-gp', 'circuit', 'weather', 'surface', 'strategy', 'tires', 'setup', 'advisor', 'sandbox', 'copilot', 'team'],
+  // Simulation: PitWall + Research + AI (12 items)
+  simulation: ['cockpit', 'twin', 'sandbox', 'sim-lab', 'causal', 'predict', 'circuit', 'weather', 'setup', 'advisor', 'copilot', 'report'],
 };
 
 function filterSectionsByIds(sections: NavSectionDef[], ids: readonly TabId[]): NavSectionDef[] {
@@ -289,6 +316,7 @@ function PageContent({ tab }: { tab: TabId }) {
     case 'style': return <RidingStylePage />;
     case 'data': return <ConnectDataPage />;
     case 'twin': return <DigitalTwinReportPage />;
+    case 'research': return <ResearchLabPage />;
     case 'sandbox': return <ScenarioSandboxPage />;
     case 'sim-lab': return <SimLabPage />;
     case 'experiments': return <ExperimentEnginePage />;
@@ -302,6 +330,9 @@ function DashboardShellContent() {
   const { profile, logout } = useProfile();
   const { t } = useTranslation();
   const [transitioning, setTransitioning] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const drawerRef = useRef<HTMLElement>(null);
+  const hamburgerRef = useRef<HTMLButtonElement>(null);
   const sessionCtx = getSessionContext();
   const prevTabRef = useRef<TabId>(profile?.defaultTab ?? 'overview');
   const telem = useLiveTelemetry();
@@ -361,7 +392,82 @@ function DashboardShellContent() {
   function navigate(newTab: TabId, seed?: string) {
     if (seed) sessionStorage.setItem(COPILOT_SEED_KEY, seed);
     navigateTo(newTab);
+    setDrawerOpen(false); // close drawer on route change
   }
+
+  // ── URL-to-TabId auto-navigation ──────────────────────────────
+  // When the user enters the SPA via /pit-wall/{section}, auto-select the
+  // corresponding dashboard tab so direct Hub CTAs land on the right section.
+  useEffect(() => {
+    const path = window.location.pathname;
+    const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
+    const subPath = path.startsWith(basePath) ? path.slice(basePath.length) : path;
+
+    const urlTabMap: Record<string, TabId> = {
+      '/nodes': 'knowledge',
+      '/federation': 'federated',
+      '/research-lab': 'research',
+      '/dashboard': 'overview',
+      '/platform': 'platform',
+    };
+
+    const target = urlTabMap[subPath];
+    if (target && allowedTabIds.includes(target) && target !== activeTab) {
+      // Small delay to let the dashboard settle before switching
+      window.setTimeout(() => setTab(target), 200);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Drawer: Escape key + body scroll lock
+  useEffect(() => {
+    if (!drawerOpen) return;
+    function handleEscape(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        setDrawerOpen(false);
+        hamburgerRef.current?.focus();
+      }
+    }
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [drawerOpen]);
+
+  // Drawer: focus trap (document-level to prevent escape)
+  useEffect(() => {
+    if (!drawerOpen || !drawerRef.current) return;
+    const drawer = drawerRef.current;
+    function handleTab(e: KeyboardEvent) {
+      if (e.key !== 'Tab') return;
+      const focusable = drawer.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), summary, [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      // Always trap: if focus somehow left the drawer, bring it back
+      if (!drawer.contains(document.activeElement)) {
+        e.preventDefault();
+        first.focus();
+        return;
+      }
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+    // Auto-focus first item in drawer
+    const firstBtn = drawer.querySelector<HTMLElement>('button.sidebar-item');
+    if (firstBtn) firstBtn.focus();
+    document.addEventListener('keydown', handleTab);
+    return () => document.removeEventListener('keydown', handleTab);
+  }, [drawerOpen]);
 
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
@@ -389,13 +495,28 @@ function DashboardShellContent() {
 
   return (
     <div className="app-shell">
-      <aside className="sidebar">
+      {/* Mobile drawer overlay */}
+      <div
+        className={`sidebar-drawer-overlay${drawerOpen ? ' sidebar-drawer-open' : ''}`}
+        onClick={() => setDrawerOpen(false)}
+        aria-hidden="true"
+      />
+
+      <aside className={`sidebar${drawerOpen ? ' sidebar-drawer-open' : ''}`} ref={drawerRef}>
         <div className="sidebar-brand">
           <div className="sidebar-brand-icon"><Zap size={16} /></div>
           <div>
-            <div className="sidebar-brand-name">KDD MOTO</div>
-            <div className="sidebar-brand-sub">Intelligence</div>
+            <div className="sidebar-brand-name">KDD Hub</div>
+            <div className="sidebar-brand-sub">by Keedio</div>
           </div>
+          <button
+            type="button"
+            className="sidebar-drawer-close"
+            onClick={() => { setDrawerOpen(false); hamburgerRef.current?.focus(); }}
+            aria-label="Close navigation menu"
+          >
+            <X size={18} />
+          </button>
         </div>
 
         <div className="sidebar-profile-chip" style={{ '--chip-color': profile.color } as CSSProperties}>
@@ -403,24 +524,26 @@ function DashboardShellContent() {
           <span style={{ fontSize: 12, fontWeight: 600 }}>{t(profile.nameKey)}</span>
         </div>
 
-        <nav className="sidebar-nav">
+        <nav className="sidebar-nav" id="sidebar-nav">
           {primarySections.map(({ section, items }) => (
             <div key={section} className="sidebar-section">
               <div className="sidebar-section-title">{t(section)}</div>
               {items.map(item => {
                 const Icon = item.icon;
+                const isActive = activeTab === item.id;
                 return (
                   <button
                     key={item.id}
-                    className={`sidebar-item${activeTab === item.id ? ' sidebar-item-active' : ''}`}
-                    onClick={() => navigateTo(item.id)}
+                    className={`sidebar-item${isActive ? ' sidebar-item-active' : ''}`}
+                    aria-current={isActive ? 'page' : undefined}
+                    onClick={() => { navigateTo(item.id); setDrawerOpen(false); }}
                   >
                     <span className="sidebar-item-icon"><Icon size={15} /></span>
                     <span className="sidebar-item-label">{t(item.labelKey)}</span>
                     {item.badge && (
                       <span className={`sidebar-badge sidebar-badge-${item.badgeColor ?? 'muted'}`}>{item.badge}</span>
                     )}
-                    {activeTab === item.id && <ChevronRight size={12} className="sidebar-item-arrow" />}
+                    {isActive && <ChevronRight size={12} className="sidebar-item-arrow" />}
                   </button>
                 );
               })}
@@ -434,23 +557,25 @@ function DashboardShellContent() {
                 <span className="sidebar-more-count">{secondaryItemCount}</span>
               </summary>
               <div className="sidebar-more-body">
-                {secondarySections.map(({ section, items }) => (
+                {secondarySections.filter(s => s.section === 'nav.sections.platform' || s.section === 'nav.sections.tools').map(({ section, items }) => (
                   <div key={section} className="sidebar-more-group">
                     <div className="sidebar-section-title sidebar-section-title-compact">{t(section)}</div>
                     {items.map(item => {
                       const Icon = item.icon;
+                      const isActive = activeTab === item.id;
                       return (
                         <button
                           key={item.id}
-                          className={`sidebar-item sidebar-item-secondary${activeTab === item.id ? ' sidebar-item-active' : ''}`}
-                          onClick={() => navigateTo(item.id)}
+                          className={`sidebar-item sidebar-item-secondary${isActive ? ' sidebar-item-active' : ''}`}
+                          aria-current={isActive ? 'page' : undefined}
+                          onClick={() => { navigateTo(item.id); setDrawerOpen(false); }}
                         >
                           <span className="sidebar-item-icon"><Icon size={15} /></span>
                           <span className="sidebar-item-label">{t(item.labelKey)}</span>
                           {item.badge && (
                             <span className={`sidebar-badge sidebar-badge-${item.badgeColor ?? 'muted'}`}>{item.badge}</span>
                           )}
-                          {activeTab === item.id && <ChevronRight size={12} className="sidebar-item-arrow" />}
+                          {isActive && <ChevronRight size={12} className="sidebar-item-arrow" />}
                         </button>
                       );
                     })}
@@ -477,6 +602,17 @@ function DashboardShellContent() {
 
       <div className="app-body">
         <header className="app-header">
+          {/* Mobile hamburger */}
+          <button
+            ref={hamburgerRef}
+            className="hamburger-btn"
+            onClick={() => setDrawerOpen(prev => !prev)}
+            aria-label={drawerOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            aria-expanded={drawerOpen}
+            aria-controls="sidebar-nav"
+          >
+            {drawerOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
           <div className="header-gp">
             <span className={`badge ${sessionState.badgeClass}`} style={{ fontSize: 10, letterSpacing: '0.1em' }}>{sessionState.badgeLabel}</span>
             <span className="header-gp-name">{sessionCtx.circuitName}</span>

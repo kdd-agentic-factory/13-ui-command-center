@@ -8,7 +8,10 @@
  * registry health matrix for canonical app and external capabilities.
  */
 import { useEffect, useState, type ReactNode } from 'react';
-import { Server, Cpu, Workflow, FlaskConical, Wrench, Layers, Bot, Send, Loader2 } from 'lucide-react';
+import { Server, Cpu, Workflow, FlaskConical, Wrench, Layers, Bot, Send, Loader2, GitBranch } from 'lucide-react';
+import { EcosystemStatusPanel } from '../components/EcosystemStatusPanel';
+import { ModuleGateway } from '../components/ModuleGateway';
+import { RACE_COMMAND_CENTER, RACE_COMMAND_CENTER_ENABLED } from '../config/serviceRegistry';
 import { useServiceData } from '../hooks/useServiceData';
 import { useInsForgeData } from '../hooks/useInsForgeData';
 import {
@@ -203,6 +206,10 @@ export function PlatformConsolePage() {
 
       <HealthMatrix entries={registryHealth} loading={registryLoading} />
 
+      <div style={{ marginTop: 14 }}>
+        <EcosystemStatusPanel />
+      </div>
+
       <div className="card mb-4" style={{ padding: 14 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
           <Workflow size={14} style={{ color: insforge.error ? 'var(--text-muted)' : 'var(--cyan)' }} />
@@ -282,6 +289,29 @@ export function PlatformConsolePage() {
         <Panel icon={Server} title="MCP tools" count={live.liveMcpTools.length} online={!!h?.mcp}>
           <Chips items={live.liveMcpTools.map(t => t.name)} />
         </Panel>
+      </div>
+
+      {/* ── External Services: Race Command Center Preview ── */}
+      <div className="card" style={{ padding: 14, marginTop: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+          <GitBranch size={15} style={{ color: 'var(--purple)' }} />
+          <span style={{
+            fontFamily: MONO, fontSize: 10, fontWeight: 800,
+            letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)',
+          }}>
+            External Services
+          </span>
+        </div>
+        <div style={{ marginBottom: 12 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>
+            Race Command Center Preview
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+            Dedicated operational preview for PitWall OS, AI Copilot, telemetry, strategy, simulation and debrief.
+            Each link opens the corresponding route in module 15 with demo context.
+          </div>
+        </div>
+        <ModuleGateway service={RACE_COMMAND_CENTER} disabled={!RACE_COMMAND_CENTER_ENABLED} />
       </div>
     </div>
   );

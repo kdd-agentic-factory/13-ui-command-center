@@ -214,6 +214,11 @@ server {
         proxy_read_timeout 60s;
     }
 
+    location /pit-wall/ {
+        alias /usr/share/nginx/html/;
+        try_files $uri $uri/ /pit-wall/index.html;
+    }
+
     location /pit-wall-os/ {
         alias /usr/share/nginx/html/pit-wall-os/;
         index index.html;

@@ -22,58 +22,64 @@ export function FoundingNodesPage() {
   };
 
   return (
-    <main style={{ minHeight: '100vh', padding: 24, background: 'var(--bg-base)', color: 'var(--text)' }}>
-      <section style={{ width: 'min(1160px, 100%)', margin: '0 auto', display: 'grid', gap: 20 }}>
-        <div style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', padding: '30px clamp(20px, 4vw, 42px)', background: 'var(--bg-card)', boxShadow: 'var(--shadow)' }}>
-          <p style={{ margin: 0, color: 'var(--purple)', textTransform: 'uppercase', letterSpacing: '0.16em', fontSize: 11, fontWeight: 700 }}>{copy.eyebrow}</p>
-          <h1 style={{ margin: '12px 0 14px', fontSize: 'clamp(34px, 6vw, 64px)', lineHeight: 0.96, maxWidth: 900 }}>{copy.title}</h1>
-          <p style={{ margin: '0 0 18px', fontSize: 18, lineHeight: 1.7, color: 'var(--text-dim)', maxWidth: 860 }}>
-            {copy.body}
-          </p>
+    <main className="founding-nodes-page">
+      <section className="founding-nodes-container">
+        <div className="founding-nodes-hero">
+          <p className="founding-nodes-eyebrow">{copy.eyebrow}</p>
+          <h1 className="founding-nodes-title">{copy.title}</h1>
+          <p className="founding-nodes-body">{copy.body}</p>
 
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 22 }}>
-            <a href="/trial" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 'var(--radius-xl)', background: 'var(--blue)', color: 'var(--white)', fontWeight: 700 }}>
+          <div className="founding-nodes-actions">
+            <a
+              href="/trial"
+              className="founding-nodes-cta founding-nodes-cta--primary"
+              aria-label={copy.primaryCta}
+            >
               {copy.primaryCta} <ArrowRight size={16} />
             </a>
-            <a href="/login" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 'var(--radius-xl)', border: '1px solid var(--border-mid)', background: 'var(--surface-faint)', color: 'var(--text)', fontWeight: 700 }}>
+            <a
+              href="/login"
+              className="founding-nodes-cta founding-nodes-cta--secondary"
+              aria-label={copy.secondaryCta}
+            >
               {copy.secondaryCta} <Sparkles size={16} />
             </a>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
+          <div className="founding-nodes-segments">
             {segments.map(([titleKey, bodyKey]) => (
-              <article key={titleKey} style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: 18, background: 'var(--bg-surface)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-                  <Users size={16} color="var(--blue)" />
-                  <h3 style={{ margin: 0, fontSize: 18 }}>{t(titleKey)}</h3>
+              <article key={titleKey} className="founding-nodes-segment">
+                <div className="founding-nodes-segment-header">
+                  <Users size={16} />
+                  <h3 className="founding-nodes-segment-title">{t(titleKey)}</h3>
                 </div>
-                <p style={{ margin: 0, color: 'var(--text-dim)', lineHeight: 1.55 }}>{t(bodyKey)}</p>
+                <p className="founding-nodes-segment-body">{t(bodyKey)}</p>
               </article>
             ))}
           </div>
         </div>
 
-        <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
-          <article style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', padding: 24, background: 'var(--bg-card)' }}>
-            <p style={{ margin: 0, color: 'var(--blue)', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{copy.nodeBenefits.eyebrow}</p>
-            <h2 style={{ margin: '10px 0 12px', fontSize: 28, lineHeight: 1.08 }}>{copy.nodeBenefits.title}</h2>
-            <div style={{ display: 'grid', gap: 10 }}>
+        <section className="founding-nodes-grid">
+          <article className="founding-nodes-panel">
+            <p className="founding-nodes-panel-eyebrow">{copy.nodeBenefits.eyebrow}</p>
+            <h2 className="founding-nodes-panel-title">{copy.nodeBenefits.title}</h2>
+            <div className="founding-nodes-panel-items">
               {copy.nodeBenefits.items.map(item => (
-                <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--text)' }}>
-                  <CheckCircle2 size={16} color="var(--green)" />
+                <div key={item} className="founding-nodes-item founding-nodes-item--benefit">
+                  <CheckCircle2 size={16} />
                   <span>{item}</span>
                 </div>
               ))}
             </div>
           </article>
 
-          <article style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', padding: 24, background: 'var(--bg-card)' }}>
-            <p style={{ margin: 0, color: 'var(--blue)', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{copy.privacy.eyebrow}</p>
-            <h2 style={{ margin: '10px 0 12px', fontSize: 28, lineHeight: 1.08 }}>{copy.privacy.title}</h2>
-            <div style={{ display: 'grid', gap: 10 }}>
+          <article className="founding-nodes-panel">
+            <p className="founding-nodes-panel-eyebrow">{copy.privacy.eyebrow}</p>
+            <h2 className="founding-nodes-panel-title">{copy.privacy.title}</h2>
+            <div className="founding-nodes-panel-items">
               {copy.privacy.items.map(item => (
-                <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--text)' }}>
-                  <ShieldCheck size={16} color="var(--purple)" />
+                <div key={item} className="founding-nodes-item founding-nodes-item--privacy">
+                  <ShieldCheck size={16} />
                   <span>{item}</span>
                 </div>
               ))}
@@ -81,17 +87,21 @@ export function FoundingNodesPage() {
           </article>
         </section>
 
-        <section style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', padding: 24, background: 'var(--bg-card)' }}>
-          <p style={{ margin: 0, color: 'var(--blue)', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: 11, fontWeight: 700 }}>{copy.offer.eyebrow}</p>
-          <h2 style={{ margin: '10px 0 12px', fontSize: 28, lineHeight: 1.08 }}>{copy.offer.title}</h2>
-          <p style={{ margin: '0 0 16px', color: 'var(--text-dim)', lineHeight: 1.65, maxWidth: 820 }}>
-            {copy.offer.body}
-          </p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-            <a href="/trial" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderRadius: 'var(--radius-xl)', background: 'var(--green)', color: 'var(--bg-base)', fontWeight: 700 }}>
+        <section className="founding-nodes-offer">
+          <p className="founding-nodes-offer-eyebrow">{copy.offer.eyebrow}</p>
+          <h2 className="founding-nodes-offer-title">{copy.offer.title}</h2>
+          <p className="founding-nodes-offer-body">{copy.offer.body}</p>
+          <div className="founding-nodes-offer-actions">
+            <a
+              href="/trial"
+              className="founding-nodes-cta--offer"
+              aria-label={copy.offer.cta}
+            >
               {copy.offer.cta} <NotebookText size={16} />
             </a>
-            <a href="/" style={{ color: 'inherit', display: 'inline-flex', alignItems: 'center', gap: 8, alignSelf: 'center' }}>{copy.offer.home}</a>
+            <a href="/" className="founding-nodes-home-link" aria-label={copy.offer.home}>
+              {copy.offer.home}
+            </a>
           </div>
         </section>
       </section>

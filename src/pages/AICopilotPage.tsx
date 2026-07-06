@@ -1,244 +1,263 @@
 /**
- * AICopilotPage — Race Engineering AI Copilot.
+ * AICopilotPage — KDD Copilot AI Layer.
  *
- * Expert improvements:
- *   - Live context sidebar — telemetry snapshot always visible alongside chat
- *   - Categorized quick prompts — Strategy / Tyres / Rivals / Setup
- *   - Rich message rendering — numbers/positions/laps highlighted
- *   - Conversation statistics — token estimate + message count
- *   - Category chips for toggling prompt categories
+ * The Copilot is not a generic chat surface. It is the explanation and mission
+ * layer for the KDD decision loop: Telemetry → Event → Cause → Recommendation →
+ * Mission → Validation.
  */
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bot, Send, Trash2, Zap, ChevronDown, ChevronUp } from 'lucide-react';
+import { Bot, ChevronDown, ChevronUp, ClipboardList, FileText, Send, ShieldAlert, Target, Trash2, Zap } from 'lucide-react';
 import { useAIChat } from '../hooks/useAIChat';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { RiderCoachInsight } from '../components/RiderCoachInsight';
 import { COPILOT_SEED_KEY } from '../context/NavContext';
 import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
-import { getSessionContext } from '../domain/sessionContext';
 import { getActiveCircuit } from '../domain/circuits';
+import { getSessionContext } from '../domain/sessionContext';
 import type { RaceCopilotVehicleContext } from '../services/api';
-
-// ──── Helpers ────
 
 function formatLap(s: number) {
   return `${Math.floor(s / 60)}:${(s % 60).toFixed(3).padStart(6, '0')}`;
 }
 
-/** Highlight key racing values inline in message text */
+function toneForDelta(delta: number) {
+  if (delta > 0.35) return 'is-critical';
+  if (delta > 0) return 'is-warning';
+  return 'is-valid';
+}
+
+function toneForGrip(grip: number) {
+  if (grip < 58) return 'is-critical';
+  if (grip < 68) return 'is-warning';
+  return 'is-valid';
+}
+
+function toneForFuel(fuel: number) {
+  if (fuel < 4) return 'is-critical';
+  if (fuel < 6) return 'is-warning';
+  return 'is-muted';
+}
+
+function toneForTemp(temp: number) {
+  if (temp > 108) return 'is-critical';
+  if (temp > 94) return 'is-hot';
+  if (temp > 72) return 'is-warning';
+  if (temp < 56) return 'is-cool';
+  return 'is-valid';
+}
+
 function HighlightedMessage({ text }: { text: string }) {
-  // Patterns to highlight: P1-P9, L+number, time 1:23.456, speed km/h, percentages
-  const parts = text.split(/(P[1-9]|L\d+|[\d]+\.\d{3}|[\d]+\s*km\/h|[\d]+\.?\d*\s*%|[\d]+\s*kg|-[\d]+\.?\d*s|\+[\d]+\.?\d*s)/g);
+  const parts = text.split(/(P[1-9]|L\d+|\d+\.\d{3}|\d+\s*km\/h|\d+\.?\d*\s*%|\d+\s*kg|-\d+\.?\d*s|\+\d+\.?\d*s)/g);
+
   return (
     <>
-      {parts.map((part, i) => {
-        const isMatch = /^(P[1-9]|L\d+|\d+\.\d{3}|\d+\s*km\/h|\d+\.?\d*\s*%|\d+\s*kg|-\d+\.?\d*s|\+\d+\.?\d*s)$/.test(part);
-        if (!isMatch) return <span key={i}>{part}</span>;
-        const isNeg = part.startsWith('-');
-        const isPos = part.startsWith('+') || part.match(/^P[1-3]$/);
-        return (
-          <strong key={i} style={{
-            color: isNeg ? 'var(--accent)' : isPos ? 'var(--green)' : 'var(--cyan)',
-            fontFamily: 'JetBrains Mono, monospace',
-            fontSize: '0.95em',
-          }}>
-            {part}
-          </strong>
-        );
+      {parts.map((part, index) => {
+        const isMetric = /^(P[1-9]|L\d+|\d+\.\d{3}|\d+\s*km\/h|\d+\.?\d*\s*%|\d+\s*kg|-\d+\.?\d*s|\+\d+\.?\d*s)$/.test(part);
+        if (!isMetric) return <span key={index}>{part}</span>;
+
+        const tone = part.startsWith('-') ? 'is-critical' : part.startsWith('+') || /^P[1-3]$/.test(part) ? 'is-valid' : 'is-info';
+        return <strong key={index} className={`copilot-inline-metric ${tone}`}>{part}</strong>;
       })}
     </>
   );
 }
 
-// ──── Auto-briefing templates ────
+type PromptCategory = 'decision' | 'mission' | 'evidence' | 'coach';
 
-interface BriefingTpl {
-  label: string; icon: string; color: string;
+const CATEGORY_LABELS: Record<PromptCategory, string> = {
+  decision: 'Decision loop',
+  mission: 'Mission builder',
+  evidence: 'Evidence review',
+  coach: 'Coach summary',
+};
+
+const QUICK_PROMPTS: Record<PromptCategory, string[]> = {
+  decision: [
+    'Why am I losing time in T15?',
+    'Is this rider issue, setup issue or tyre issue?',
+    'What should we test first?',
+    'Explain the current PitWall recommendation.',
+  ],
+  mission: [
+    'Create a validation mission for the next stint.',
+    'Turn the T15 issue into a rider drill and setup check.',
+    'Define success criteria for a rear-grip intervention.',
+    'Build a two-lap test plan with risk gates.',
+  ],
+  evidence: [
+    'Show the evidence chain from telemetry to recommendation.',
+    'What data is missing before we make this call?',
+    'Summarize confidence and uncertainty for the decision.',
+    'Compare live telemetry against the Digital Twin expectation.',
+  ],
+  coach: [
+    'Summarize this session for the coach.',
+    'Create rider feedback in plain language.',
+    'What should the rider focus on next lap?',
+    'Give me a post-stint debrief with one priority only.',
+  ],
+};
+
+interface BriefingTemplate {
+  id: string;
+  label: string;
+  meta: string;
+  icon: typeof Target;
   build: (lap: number, pos: number, grip: number, fuel: number, lastLap: string) => string;
 }
 
-const BRIEFINGS: BriefingTpl[] = [
+const BRIEFINGS: BriefingTemplate[] = [
   {
-    label: 'Race Start Brief', icon: '🚦', color: 'var(--green)',
-    build: (lap, pos, grip, fuel) =>
-      `Provide a complete race start briefing for Lap ${lap}: Position P${pos}, rear SOFT tyre (~${grip.toFixed(0)}% grip), ${fuel.toFixed(1)} kg fuel. Cover: (1) tyre management plan for the first stint, (2) gap management vs rivals, (3) pit window recommendation, (4) key corners to protect rear grip at ${getSessionContext().circuitName}.`,
-  },
-  {
-    label: 'Mid-Race Analysis', icon: '🏁', color: 'var(--blue)',
+    id: 'explain',
+    label: 'Explain PitWall decision',
+    meta: 'Telemetry → cause → recommendation',
+    icon: Zap,
     build: (lap, pos, grip, fuel, lastLap) =>
-      `Mid-race analysis at Lap ${lap}: P${pos}, rear grip ~${grip.toFixed(0)}%, fuel ${fuel.toFixed(1)} kg, last lap ${lastLap}. Analyze: (1) pace vs Digital Twin model delta, (2) best remaining stint options, (3) undercut vs overcut timing, (4) championship points impact of current trajectory.`,
+      `Explain the current PitWall decision using the KDD loop: Telemetry → Event → Cause → Recommendation → Mission → Validation. Context: Lap ${lap}, P${pos}, rear grip ${grip.toFixed(0)}%, fuel ${fuel.toFixed(1)} kg, last lap ${lastLap}. Keep it concise and include uncertainty.`,
   },
   {
-    label: 'Final Stint Plan', icon: '🏁', color: 'var(--accent)',
-    build: (lap, pos, grip, fuel) =>
-      `Final stint plan from Lap ${lap}: P${pos}, ~${grip.toFixed(0)}% rear grip, ${fuel.toFixed(1)} kg fuel. Give: (1) lap-by-lap fuel and tyre management, (2) attack or defend position decision, (3) exact engine map recommendation, (4) championship risk assessment and any safety margins.`,
+    id: 'mission',
+    label: 'Generate validation mission',
+    meta: 'Next stint plan with success criteria',
+    icon: Target,
+    build: (lap, pos, grip, fuel, lastLap) =>
+      `Create a validation mission for the next stint. Context: Lap ${lap}, P${pos}, rear grip ${grip.toFixed(0)}%, fuel ${fuel.toFixed(1)} kg, last lap ${lastLap}. Include objective, intervention, measurement, risk gate, and validation criteria.`,
+  },
+  {
+    id: 'coach',
+    label: 'Coach-ready summary',
+    meta: 'One priority, plain language',
+    icon: ClipboardList,
+    build: (lap, pos, grip, fuel, lastLap) =>
+      `Summarize this session for the coach. Context: Lap ${lap}, P${pos}, rear grip ${grip.toFixed(0)}%, fuel ${fuel.toFixed(1)} kg, last lap ${lastLap}. Give one rider priority, one setup watchpoint, and one validation question.`,
   },
 ];
 
-// ──── Quick prompt categories ────
-
-type PromptCategory = 'strategy' | 'tyres' | 'rivals' | 'setup';
-
-const QUICK_PROMPTS: Record<PromptCategory, string[]> = {
-  strategy: [
-    'Should I pit now or extend the stint?',
-    'Optimal pit lap for 1-stop strategy?',
-    '2-stop vs 1-stop — time delta analysis',
-    'Undercut window vs P2 — when to pull the trigger?',
-  ],
-  tyres: [
-    'Rear tyre cliff prediction — laps remaining?',
-    'How does current soft degradation compare to model?',
-    'Front vs rear grip balance — any setup changes needed?',
-    'Hard tyre stint pace estimate for final 10 laps',
-  ],
-  rivals: [
-    'Compare my race pace to the riders ahead over last 5 laps',
-    "What's the gap trend to P2 in last 3 laps?",
-    "What engine map is Martin likely using on Straight 1?",
-    'P4 closing pace — how many laps until DRS zone?',
-  ],
-  setup: [
-    'TC level recommendation for current rear temp?',
-    'Engine map for saving 0.2 kg/lap — pace cost?',
-    'Braking adjustment for T10 to recover front grip',
-    'Why is traction control firing more in T7?',
-  ],
-};
-
-const CATEGORY_LABELS: Record<PromptCategory, string> = {
-  strategy: '📋 Strategy',
-  tyres:    '🏍️ Tyres',
-  rivals:   '🏁 Rivals',
-  setup:    '⚙️ Setup',
-};
-
-// ──── Live metric bar ────
-
 function LiveMetricBar({ lap, pos, gap, speed, gear, grip, fuel, lastLap }: {
-  lap: number; pos: number; gap: string; speed: number;
-  gear: number; grip: number; fuel: number; lastLap: string;
+  lap: number;
+  pos: number;
+  gap: string;
+  speed: number;
+  gear: number;
+  grip: number;
+  fuel: number;
+  lastLap: string;
 }) {
   const items = [
-    { k: 'LAP',  v: `${lap}/${MUGELLO_CIRCUIT.raceLaps}`,    c: 'var(--text-muted)' },
-    { k: 'POS',  v: `P${pos}`,      c: 'var(--accent)' },
-    { k: 'GAP',  v: gap,            c: 'var(--yellow)' },
-    { k: 'SPD',  v: `${speed}`,     c: 'var(--blue)' },
-    { k: 'GEAR', v: `G${gear}`,     c: 'var(--text)' },
-    { k: 'GRIP', v: `${grip.toFixed(0)}%`, c: grip < 62 ? 'var(--accent)' : 'var(--green)' },
-    { k: 'FUEL', v: `${fuel.toFixed(1)} kg`, c: fuel < 4 ? 'var(--accent)' : 'var(--text-muted)' },
-    { k: 'LAST', v: lastLap,        c: 'var(--text-muted)' },
+    { k: 'Lap', v: `${lap}/${MUGELLO_CIRCUIT.raceLaps}`, tone: 'is-muted' },
+    { k: 'Pos', v: `P${pos}`, tone: 'is-critical' },
+    { k: 'Gap', v: gap, tone: 'is-warning' },
+    { k: 'Speed', v: `${speed} km/h`, tone: 'is-info' },
+    { k: 'Gear', v: `G${gear}`, tone: 'is-text' },
+    { k: 'Grip', v: `${grip.toFixed(0)}%`, tone: toneForGrip(grip) },
+    { k: 'Fuel', v: `${fuel.toFixed(1)} kg`, tone: toneForFuel(fuel) },
+    { k: 'Last', v: lastLap, tone: 'is-muted' },
   ];
+
   return (
-    <div style={{
-      display:'flex', alignItems:'center', gap:12, padding:'5px 14px',
-      background:'rgba(255,255,255,0.025)', borderTop:'1px solid var(--border)',
-      fontSize:10, fontFamily:'JetBrains Mono,monospace', flexWrap:'wrap',
-    }}>
+    <div className="copilot-live-strip" aria-label="Live telemetry context">
       {items.map(item => (
-        <div key={item.k} style={{ display:'flex', alignItems:'center', gap:3 }}>
-          <span style={{ color:'rgba(255,255,255,0.2)', fontSize:8 }}>{item.k}</span>
-          <span style={{ fontWeight:700, color:item.c }}>{item.v}</span>
-        </div>
+        <span key={item.k} className="copilot-live-strip__item">
+          <span className="copilot-live-strip__key">{item.k}</span>
+          <strong className={`copilot-live-strip__value ${item.tone}`}>{item.v}</strong>
+        </span>
       ))}
-      <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:4 }}>
-        <span style={{ width:5, height:5, background:'var(--green)', borderRadius:'50%', display:'inline-block', animation:'pulse 1.5s infinite' }} />
-        <span style={{ color:'var(--green)', fontSize:9 }}>10 Hz context</span>
-      </div>
+      <span className="copilot-live-strip__status"><span aria-hidden="true" />10 Hz context</span>
     </div>
   );
 }
-
-// ──── Tyre thermal mini sidebar ────
 
 function TyreThermalMini({ fl, fr, rl, rr }: { fl: number; fr: number; rl: number; rr: number }) {
-  const bg = (t: number) => {
-    if (t < 56) return 'var(--blue)';
-    if (t < 72) return 'var(--green)';
-    if (t < 93) return 'var(--yellow)';
-    if (t < 109) return 'var(--orange)';
-    return 'var(--accent)';
-  };
+  const tyres: [string, number][] = [['FL', fl], ['FR', fr], ['RL', rl], ['RR', rr]];
+
   return (
-    <div style={{ padding:'8px 10px', display:'grid', gridTemplateColumns:'1fr 1fr', gap:4 }}>
-      {([['FL',fl],['FR',fr],['RL',rl],['RR',rr]] as [string, number][]).map(([label, temp]) => (
-        <div key={label} style={{ background:bg(temp), borderRadius:4, padding:'5px 0', textAlign:'center' }}>
-          <div style={{ fontSize:10, fontWeight:800, color:'var(--bg-base)', fontFamily:'JetBrains Mono,monospace' }}>{Math.round(temp)}°</div>
-          <div style={{ fontSize:8, color:'rgba(0,0,0,0.55)', fontFamily:'JetBrains Mono,monospace' }}>{label}</div>
+    <div className="copilot-tyres" aria-label="Tyre temperatures">
+      {tyres.map(([label, temp]) => (
+        <div key={label} className={`copilot-tyre ${toneForTemp(temp)}`}>
+          <strong>{Math.round(temp)}°</strong>
+          <span>{label}</span>
         </div>
       ))}
     </div>
   );
 }
 
-// ──── Context sidebar tile ────
-
-function CtxTile({ label, value, color, unit }: {
-  label: string; value: string | number; color?: string; unit?: string;
+function CtxTile({ label, value, tone = 'is-text', unit }: {
+  label: string;
+  value: string | number;
+  tone?: string;
+  unit?: string;
 }) {
   return (
-    <div style={{ padding: '8px 10px', borderBottom: '1px solid var(--border)' }}>
-      <div style={{ fontSize: 9, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>
-        {label}
-      </div>
-      <div style={{
-        fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: 14,
-        color: color ?? 'var(--text)',
-        fontVariantNumeric: 'tabular-nums',
-      }}>
-        {value}{unit && <span style={{ fontSize: 10, fontWeight: 400, color: 'var(--text-muted)', marginLeft: 2 }}>{unit}</span>}
-      </div>
+    <div className="copilot-ctx-tile">
+      <span className="copilot-ctx-tile__label">{label}</span>
+      <strong className={`copilot-ctx-tile__value ${tone}`}>{value}{unit && <small>{unit}</small>}</strong>
     </div>
   );
 }
 
-// ──── Page component ────
+function EvidenceCard({ icon: Icon, label, value, body, tone = 'is-text' }: {
+  icon: typeof Target;
+  label: string;
+  value: string;
+  body: string;
+  tone?: string;
+}) {
+  return (
+    <article className="copilot-evidence-card">
+      <div className="copilot-evidence-card__header">
+        <Icon size={15} aria-hidden="true" />
+        <span>{label}</span>
+      </div>
+      <strong className={`copilot-evidence-card__value ${tone}`}>{value}</strong>
+      <p>{body}</p>
+    </article>
+  );
+}
 
 export function AICopilotPage() {
   const { t } = useTranslation();
   const telemetry = useLiveTelemetry();
-  const scrollRef  = useRef<HTMLDivElement>(null);
-  const inputRef   = useRef<HTMLTextAreaElement>(null);
-  const [input, setInput]            = useState('');
-  const [activeCategory, setCategory] = useState<PromptCategory>('strategy');
-  const [showContext, setCtx]         = useState(true);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const [input, setInput] = useState('');
+  const [activeCategory, setCategory] = useState<PromptCategory>('decision');
+  const [showContext, setCtx] = useState(true);
 
+  const session = getSessionContext();
+  const activeCircuit = getActiveCircuit();
   const rearWear = Math.min(99, telemetry.rearTyreAge * 4.8);
   const rearGrip = Math.max(0, 96 - rearWear * 0.52);
-  const lapDelta  = telemetry.lastLap - telemetry.bestLap;
+  const lapDelta = telemetry.lastLap - telemetry.bestLap;
+  const lapDeltaLabel = `${lapDelta >= 0 ? '+' : ''}${lapDelta.toFixed(3)}s`;
 
-  const systemPrompt = `You are the KDD Rider Coach AI, an expert motorcycle race strategist and telemetry analyst inside KDD Moto Intelligence — the AI telemetry and rider-performance platform.
+  const systemPrompt = `You are KDD Copilot, the AI Layer of KDD Hub by Keedio. You are not a generic chatbot: you explain and operationalize the KDD decision loop.
 
-## Live Race Context — GP ${getSessionContext().circuitName}, ${getActiveCircuit().country}
-- Lap: ${telemetry.lapCount} / 23  |  Position: P${telemetry.position}  |  Gap to P2: ${telemetry.gap}
-- Last lap: ${formatLap(telemetry.lastLap)}  |  Personal best: ${formatLap(telemetry.bestLap)}  |  Delta: ${lapDelta >= 0 ? '+' : ''}${lapDelta.toFixed(3)}s
-- Rear tyre: ${telemetry.rearCompound} —· ${telemetry.rearTyreAge} laps old —· ~${rearWear.toFixed(1)}% wear —· ~${rearGrip.toFixed(1)}% grip remaining
-- Front tyre: ${telemetry.frontCompound} —· ${telemetry.rearTyreAge} laps old
-- Tyre temps: FL ${telemetry.tireFrontLeft}° / FR ${telemetry.tireFrontRight}° / RL ${telemetry.tireRearLeft}° / RR ${telemetry.tireRearRight}°
-- Speed: ${telemetry.speed} km/h  |  Gear: ${telemetry.gear}  |  RPM: ${telemetry.rpm.toLocaleString()}
-- Throttle: ${telemetry.throttle}%  |  Brake: ${telemetry.brake}%  |  Lean: ${telemetry.leanAngle.toFixed(1)}°
-- Fuel: ${telemetry.fuelLoad.toFixed(1)} kg remaining (~${(telemetry.fuelLoad / 2.18).toFixed(1)} laps)
-- Track: ${getSessionContext().circuitName} — 48°C asphalt — Grip level HIGH
+## Required decision loop
+Telemetry → Event → Cause → Recommendation → Mission → Validation.
 
-## Your Capabilities
-- Race strategy optimization (tyre, fuel, pit window timing)
-- Telemetry analysis and anomaly detection
-- KDD pipeline insights (pattern mining, feature extraction)
-- Digital twin simulation interpretation
-- Rival comparison and gap management
-- Setup adjustment recommendations (TC, engine maps, braking points)
+## Live session context
+- Circuit: ${session.circuitName}, ${activeCircuit.country}
+- Lap: ${telemetry.lapCount} / ${MUGELLO_CIRCUIT.raceLaps} | Position: P${telemetry.position} | Gap: ${telemetry.gap}
+- Last lap: ${formatLap(telemetry.lastLap)} | Best lap: ${formatLap(telemetry.bestLap)} | Delta: ${lapDeltaLabel}
+- Rear tyre: ${telemetry.rearCompound}, ${telemetry.rearTyreAge} laps old, ${rearWear.toFixed(1)}% wear, ${rearGrip.toFixed(1)}% grip estimate
+- Tyre temps: FL ${telemetry.tireFrontLeft}°C / FR ${telemetry.tireFrontRight}°C / RL ${telemetry.tireRearLeft}°C / RR ${telemetry.tireRearRight}°C
+- Speed: ${telemetry.speed} km/h | Gear: ${telemetry.gear} | RPM: ${telemetry.rpm.toLocaleString()}
+- Throttle: ${telemetry.throttle}% | Brake: ${telemetry.brake}% | Lean: ${telemetry.leanAngle.toFixed(1)}°
+- Fuel: ${telemetry.fuelLoad.toFixed(1)} kg remaining
 
-## Response Style
-- Race engineers need fast, actionable answers. Be concise.
-- Use bullet points. Reference exact numbers (laps, times, percentages).
-- Never fabricate data — say "insufficient data" when needed.
-- Always reference the live race context above.
+## Response rules
+- Start with the decision, then explain evidence.
+- Be concise and operational.
+- State uncertainty when evidence is incomplete.
+- When asked for missions, include objective, intervention, measurement, risk gate, and validation criteria.
+- Never invent unavailable data; say "insufficient evidence".
 - Today: ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}.`;
 
   const vehicleContext: RaceCopilotVehicleContext = {
-    circuit_name: getSessionContext().circuitName,
-    country: getActiveCircuit().country,
+    circuit_name: session.circuitName,
+    country: activeCircuit.country,
     lap: telemetry.lapCount,
     total_laps: MUGELLO_CIRCUIT.raceLaps,
     position: telemetry.position,
@@ -273,7 +292,6 @@ export function AICopilotPage() {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages]);
 
-  // Auto-ask a question seeded by another page (e.g. the AI Crew "Ask" buttons).
   useEffect(() => {
     const seed = sessionStorage.getItem(COPILOT_SEED_KEY);
     if (seed) {
@@ -300,158 +318,106 @@ export function AICopilotPage() {
 
   const isEmpty = messages.length === 0;
   const msgCount = messages.length;
-  const estimatedTokens = messages.reduce((acc, m) => acc + Math.ceil(m.content.length / 4), 0);
+  const estimatedTokens = messages.reduce((acc, message) => acc + Math.ceil(message.content.length / 4), 0);
+
+  const sendPrompt = (prompt: string) => {
+    if (!isStreaming) sendMessage(prompt);
+  };
 
   return (
-    <div className="copilot-page" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-
-      {/* ———— Header ———————————————————————————————————————————————————————————————————————————————————————————————————————————————————————— */}
-      <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
-        padding: '12px 20px', borderBottom: '1px solid var(--border)',
-        background: 'var(--bg-surface)', flexShrink: 0,
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <Bot size={20} style={{ color: 'var(--accent)' }} />
+    <div className="copilot-page">
+      <header className="copilot-header">
+        <div className="copilot-header__identity">
+          <span className="copilot-header__icon" aria-hidden="true"><Bot size={20} /></span>
           <div>
-            <div style={{ fontWeight: 700, fontSize: 15 }}>{t('aiCopilot.title', 'Race Engineering AI Copilot')}</div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-              Connected to 16-race-ai-copilot —· InsForge Gateway fallback
-              {msgCount > 0 && (
-                <span style={{ marginLeft: 8 }}>
-                  —· {msgCount} messages —· ~{estimatedTokens.toLocaleString()} tokens
-                </span>
-              )}
-            </div>
+            <h1>{t('aiCopilot.title', 'KDD Copilot')}</h1>
+            <p>
+              AI Layer · Explains PitWall decisions · {session.circuitName}
+              {msgCount > 0 && <span> · {msgCount} messages · ~{estimatedTokens.toLocaleString()} tokens</span>}
+            </p>
           </div>
-          <span style={{
-            display: 'inline-flex', alignItems: 'center', gap: 4,
-            padding: '2px 8px', borderRadius: 999,
-            background: 'var(--accent-dim)', color: 'var(--accent)', fontSize: 11, fontWeight: 700,
-          }}>
-            <Zap size={10} />LIVE
-          </span>
+          <span className="badge badge-red copilot-live-badge"><Zap size={10} aria-hidden="true" />LIVE</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          {/* Live mini stats strip */}
-          <div style={{
-            display: 'flex', gap: 16, padding: '6px 14px',
-            background: 'var(--bg-card)', borderRadius: 8, border: '1px solid var(--border)',
-          }}>
-            {[
-              { k: 'Lap', v: telemetry.lapCount, c: 'var(--text)' },
-              { k: 'Pos', v: `P${telemetry.position}`, c: 'var(--accent)' },
-              { k: 'Gap', v: telemetry.gap, c: 'var(--yellow)' },
-              { k: 'Grip', v: `${rearGrip.toFixed(0)}%`, c: rearGrip < 62 ? 'var(--accent)' : 'var(--green)' },
-            ].map(item => (
-              <div key={item.k} style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 9, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                  {item.k}
-                </div>
-                <div style={{ fontFamily: 'JetBrains Mono', fontWeight: 700, fontSize: 14, color: item.c }}>
-                  {item.v}
-                </div>
-              </div>
-            ))}
+
+        <div className="copilot-header__actions">
+          <div className="copilot-header-stats" aria-label="Current decision context">
+            <span><small>Lap</small><strong>{telemetry.lapCount}</strong></span>
+            <span><small>Pos</small><strong className="is-critical">P{telemetry.position}</strong></span>
+            <span><small>Grip</small><strong className={toneForGrip(rearGrip)}>{rearGrip.toFixed(0)}%</strong></span>
+            <span><small>Delta</small><strong className={toneForDelta(lapDelta)}>{lapDeltaLabel}</strong></span>
           </div>
-          <button
-            className="btn btn-ghost btn-sm flex items-center gap-1"
-            onClick={() => setCtx(v => !v)}
-            title={showContext ? 'Hide context' : 'Show context'}
-          >
+          <button className="btn btn-ghost btn-sm flex items-center gap-1" type="button" onClick={() => setCtx(value => !value)} aria-expanded={showContext}>
             {showContext ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
             {t('aiCopilot.context', 'Context')}
           </button>
           {!isEmpty && (
-            <button className="btn btn-ghost btn-sm flex items-center gap-2" onClick={clearMessages}>
+            <button className="btn btn-ghost btn-sm flex items-center gap-2" type="button" onClick={clearMessages}>
               <Trash2 size={13} />
               {t('aiCopilot.clear', 'Clear')}
             </button>
           )}
         </div>
-      </div>
+      </header>
 
-      {/* ———— Body: chat + optional context sidebar —————————————————————————————————————————————————————————— */}
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden', minHeight: 0 }}>
-
-        {/* ———— Messages ———————————————————————————————————————————————————————————————————————————————————————————————————————————————— */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-          <div className="copilot-messages" ref={scrollRef} style={{ flex: 1 }}>
+      <div className="copilot-workspace">
+        <main className="copilot-main" aria-label="KDD Copilot conversation">
+          <div className="copilot-messages" ref={scrollRef}>
             {isEmpty ? (
-              <div className="copilot-empty">
-                <Bot size={48} className="copilot-empty-icon" />
-                <p className="copilot-empty-title">Ask anything about your race</p>
+              <section className="copilot-empty" aria-labelledby="copilot-empty-title">
+                <span className="copilot-empty-icon" aria-hidden="true"><Bot size={42} /></span>
+                <h2 id="copilot-empty-title" className="copilot-empty-title">Decision assistant, not generic chat.</h2>
                 <p className="copilot-empty-sub">
-                  Full access to live telemetry, tyre data, race position, rival pace, and the KDD knowledge base.
-                  Select a category and pick a question, or type your own.
+                  Ask the Copilot to explain the PitWall call, expose the evidence chain, generate a validation mission, or translate the session into coach-ready feedback.
                 </p>
 
-                {/* Featured structured coaching insight (problem → evidence → impact → action) */}
-                <div style={{ width: '100%', maxWidth: 640, margin: '0 auto 22px', textAlign: 'left' }}>
-                  <RiderCoachInsight />
+                <div className="copilot-decision-loop" aria-label="KDD decision loop">
+                  {['Telemetry', 'Event', 'Cause', 'Recommendation', 'Mission', 'Validation'].map(step => <span key={step}>{step}</span>)}
                 </div>
 
-                {/* Auto-briefing quick-fire buttons */}
-                <div style={{ display:'flex', gap:8, justifyContent:'center', marginBottom:20, flexWrap:'wrap' }}>
-                  {BRIEFINGS.map(b => (
-                    <button
-                      key={b.label}
-                      onClick={() => sendMessage(b.build(telemetry.lapCount, telemetry.position, rearGrip, telemetry.fuelLoad, formatLap(telemetry.lastLap)))}
-                      style={{
-                        padding:'8px 14px', borderRadius:8, fontSize:12, fontWeight:600, cursor:'pointer',
-                        border:`1px solid ${b.color}44`, background:`${b.color}12`, color:b.color,
-                      }}
-                    >
-                      {b.icon} {b.label}
+                <div className="copilot-evidence-grid" aria-label="Current evidence snapshot">
+                  <EvidenceCard icon={ShieldAlert} label="Current event" value="T15 exit instability" body="Rear grip and lap delta are the first evidence to inspect before changing setup." tone="is-warning" />
+                  <EvidenceCard icon={FileText} label="Evidence" value={lapDeltaLabel} body="Live lap delta anchors the explanation; missing channels must be called out explicitly." tone={toneForDelta(lapDelta)} />
+                  <EvidenceCard icon={Target} label="Next action" value="Validation mission" body="Copilot should turn a recommendation into a measurable stint plan." tone="is-valid" />
+                </div>
+
+                <div className="copilot-briefings" aria-label="High-value Copilot actions">
+                  {BRIEFINGS.map(briefing => {
+                    const Icon = briefing.icon;
+                    return (
+                      <button key={briefing.id} className="copilot-briefing" type="button" onClick={() => sendPrompt(briefing.build(telemetry.lapCount, telemetry.position, rearGrip, telemetry.fuelLoad, formatLap(telemetry.lastLap)))} disabled={isStreaming}>
+                        <Icon size={16} aria-hidden="true" />
+                        <span><strong>{briefing.label}</strong><small>{briefing.meta}</small></span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <RiderCoachInsight />
+
+                <div className="copilot-category-tabs" role="tablist" aria-label="Prompt categories">
+                  {(Object.keys(QUICK_PROMPTS) as PromptCategory[]).map(category => (
+                    <button key={category} type="button" role="tab" aria-selected={activeCategory === category} className={activeCategory === category ? 'is-active' : undefined} onClick={() => setCategory(category)}>
+                      {CATEGORY_LABELS[category]}
                     </button>
                   ))}
                 </div>
 
-                {/* Category selector */}
-                <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginBottom: 16 }}>
-                  {(Object.keys(QUICK_PROMPTS) as PromptCategory[]).map(cat => (
-                    <button
-                      key={cat}
-                      onClick={() => setCategory(cat)}
-                      style={{
-                        padding: '6px 14px', borderRadius: 999, fontSize: 12, fontWeight: 600,
-                        border: `1px solid ${activeCategory === cat ? 'var(--accent)' : 'var(--border)'}`,
-                        background: activeCategory === cat ? 'var(--accent-dim)' : 'var(--bg-surface)',
-                        color: activeCategory === cat ? 'var(--accent)' : 'var(--text-muted)',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      {CATEGORY_LABELS[cat]}
+                <div className="copilot-chips" aria-label="Prompt suggestions">
+                  {QUICK_PROMPTS[activeCategory].map(prompt => (
+                    <button key={prompt} className="copilot-chip" type="button" onClick={() => sendPrompt(prompt)} disabled={isStreaming}>
+                      {prompt}
                     </button>
                   ))}
                 </div>
-
-                {/* Prompts for active category */}
-                <div className="copilot-chips">
-                  {QUICK_PROMPTS[activeCategory].map(p => (
-                    <button key={p} className="copilot-chip" onClick={() => sendMessage(p)}>
-                      {p}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              </section>
             ) : (
               <ul className="copilot-thread">
-                {messages.map(msg => (
-                  <li
-                    key={msg.id}
-                    className={`copilot-msg ${msg.role === 'user' ? 'copilot-msg-user' : 'copilot-msg-assistant'}`}
-                  >
-                    <span className="copilot-msg-role">
-                      {msg.role === 'user' ? 'You' : 'Copilot'}
-                    </span>
+                {messages.map(message => (
+                  <li key={message.id} className={`copilot-msg ${message.role === 'user' ? 'copilot-msg-user' : 'copilot-msg-assistant'}`}>
+                    <span className="copilot-msg-role">{message.role === 'user' ? 'You' : 'Copilot'}</span>
                     <p className="copilot-msg-content">
-                      {msg.role === 'assistant' ? (
-                        <HighlightedMessage text={msg.content} />
-                      ) : (
-                        msg.content
-                      )}
-                      {msg.streaming && <span className="copilot-cursor" />}
+                      {message.role === 'assistant' ? <HighlightedMessage text={message.content} /> : message.content}
+                      {message.streaming && <span className="copilot-cursor" aria-label="Copilot is responding" />}
                     </p>
                   </li>
                 ))}
@@ -459,136 +425,71 @@ export function AICopilotPage() {
             )}
           </div>
 
-          {/* Persistent live telemetry strip above the composer */}
           <LiveMetricBar lap={telemetry.lapCount} pos={telemetry.position} gap={telemetry.gap} speed={telemetry.speed} gear={telemetry.gear} grip={rearGrip} fuel={telemetry.fuelLoad} lastLap={formatLap(telemetry.lastLap)} />
 
-          {/* ———— Input bar —————————————————————————————————————————————————————————————————————————————————————————————————————————— */}
-          <form className="copilot-input-bar" onSubmit={handleSubmit} style={{ flexShrink: 0 }}>
-            {/* Category quick-access when chat is active */}
+          <form className="copilot-input-bar" onSubmit={handleSubmit}>
             {!isEmpty && (
-              <div style={{ display: 'flex', gap: 6, padding: '6px 12px 0', flexWrap: 'wrap' }}>
-                {(Object.keys(QUICK_PROMPTS) as PromptCategory[]).map(cat => (
-                  <button
-                    key={cat}
-                    type="button"
-                    onClick={() => { setCategory(cat); }}
-                    style={{
-                      padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 600,
-                      border: `1px solid ${activeCategory === cat ? 'var(--accent)' : 'var(--border)'}`,
-                      background: activeCategory === cat ? 'var(--accent-dim)' : 'transparent',
-                      color: activeCategory === cat ? 'var(--accent)' : 'var(--text-muted)',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {CATEGORY_LABELS[cat]}
+              <div className="copilot-active-prompts" aria-label="Quick prompts">
+                {(Object.keys(QUICK_PROMPTS) as PromptCategory[]).map(category => (
+                  <button key={category} type="button" className={activeCategory === category ? 'is-active' : undefined} onClick={() => setCategory(category)}>
+                    {CATEGORY_LABELS[category]}
                   </button>
                 ))}
-                {QUICK_PROMPTS[activeCategory].slice(0, 2).map(p => (
-                  <button
-                    key={p}
-                    type="button"
-                    onClick={() => sendMessage(p)}
-                    style={{
-                      padding: '3px 10px', borderRadius: 999, fontSize: 10,
-                      border: '1px solid var(--border)',
-                      background: 'var(--bg-surface)',
-                      color: 'var(--text-muted)',
-                      cursor: 'pointer',
-                      maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {p}
-                  </button>
+                {QUICK_PROMPTS[activeCategory].slice(0, 2).map(prompt => (
+                  <button key={prompt} type="button" onClick={() => sendPrompt(prompt)} disabled={isStreaming}>{prompt}</button>
                 ))}
               </div>
             )}
-            <textarea
-              ref={inputRef}
-              className="copilot-textarea"
-              placeholder="Ask about race strategy, telemetry, tyres, rivals… (Enter to send, Shift+Enter for newline)"
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              rows={2}
-              disabled={isStreaming}
-            />
-            <button
-              className="copilot-send"
-              type="submit"
-              disabled={!input.trim() || isStreaming}
-            >
-              <Send size={16} />
-            </button>
-          </form>
-        </div>
 
-        {/* ———— Live context sidebar —————————————————————————————————————————————————————————————————————————————————————— */}
-        {showContext && (
-          <div style={{
-            width: 200, flexShrink: 0,
-            background: 'var(--bg-surface)',
-            overflowY: 'auto',
-            display: 'flex', flexDirection: 'column',
-          }}>
-            {/* Sidebar header */}
-            <div style={{
-              padding: '10px 10px 8px',
-              fontSize: 9, fontWeight: 700, letterSpacing: '0.1em',
-              textTransform: 'uppercase', color: 'var(--text-muted)',
-              borderBottom: '1px solid var(--border)',
-              background: 'var(--bg-card)',
-            }}>
-              Live Context
+            <div className="copilot-composer">
+              <label className="sr-only" htmlFor="copilot-input">Ask KDD Copilot</label>
+              <textarea
+                id="copilot-input"
+                ref={inputRef}
+                className="copilot-textarea"
+                placeholder="Ask about T15, tyre/setup cause, mission generation, or coach summary…"
+                value={input}
+                onChange={event => setInput(event.target.value)}
+                onKeyDown={handleKeyDown}
+                rows={2}
+                disabled={isStreaming}
+              />
+              <button className="copilot-send" type="submit" disabled={!input.trim() || isStreaming} aria-label="Send message">
+                <Send size={16} aria-hidden="true" />
+              </button>
             </div>
+          </form>
+        </main>
 
+        {showContext && (
+          <aside className="copilot-context" aria-label="Live node and session context">
+            <div className="copilot-context__header">
+              <strong>Live node context</strong>
+              <span>Private learning · raw telemetry protected</span>
+            </div>
+            <CtxTile label="Circuit" value={session.circuitName} />
             <CtxTile label="Lap" value={telemetry.lapCount} />
-            <CtxTile label="Position" value={`P${telemetry.position}`} color="var(--accent)" />
-            <CtxTile label="Gap" value={telemetry.gap} color="var(--yellow)" />
-            <CtxTile label="Speed" value={telemetry.speed} unit="km/h" color="var(--text)" />
-            <CtxTile label="Gear" value={telemetry.gear} color="var(--accent)" />
+            <CtxTile label="Position" value={`P${telemetry.position}`} tone="is-critical" />
+            <CtxTile label="Gap" value={telemetry.gap} tone="is-warning" />
+            <CtxTile label="Speed" value={telemetry.speed} unit="km/h" />
+            <CtxTile label="Gear" value={telemetry.gear} tone="is-critical" />
             <CtxTile label="RPM" value={telemetry.rpm.toLocaleString()} />
 
-            <div style={{
-              padding: '6px 10px 4px', fontSize: 9, fontWeight: 700,
-              letterSpacing: '0.1em', textTransform: 'uppercase',
-              color: 'var(--text-muted)', background: 'var(--bg-card)',
-              borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)',
-            }}>
-              Tyres
-            </div>
-
+            <div className="copilot-context__section">Tyres</div>
             <TyreThermalMini fl={telemetry.tireFrontLeft} fr={telemetry.tireFrontRight} rl={telemetry.tireRearLeft} rr={telemetry.tireRearRight} />
-
-            <CtxTile label="Rear" value={telemetry.rearCompound} color="#E03737" />
+            <CtxTile label="Rear" value={telemetry.rearCompound} tone="is-critical" />
             <CtxTile label="Age" value={`${telemetry.rearTyreAge} laps`} />
-            <CtxTile label="Grip Est." value={`${rearGrip.toFixed(1)}%`}
-              color={rearGrip < 62 ? 'var(--accent)' : 'var(--green)'} />
-            <CtxTile label="RL Temp" value={`${telemetry.tireRearLeft}°`}
-              color={telemetry.tireRearLeft > 105 ? 'var(--accent)' : telemetry.tireRearLeft > 90 ? 'var(--yellow)' : 'var(--text)'} />
-            <CtxTile label="RR Temp" value={`${telemetry.tireRearRight}°`}
-              color={telemetry.tireRearRight > 105 ? 'var(--accent)' : telemetry.tireRearRight > 90 ? 'var(--yellow)' : 'var(--text)'} />
+            <CtxTile label="Grip est." value={`${rearGrip.toFixed(1)}%`} tone={toneForGrip(rearGrip)} />
+            <CtxTile label="RL temp" value={`${telemetry.tireRearLeft}°C`} tone={toneForTemp(telemetry.tireRearLeft)} />
+            <CtxTile label="RR temp" value={`${telemetry.tireRearRight}°C`} tone={toneForTemp(telemetry.tireRearRight)} />
 
-            <div style={{
-              padding: '6px 10px 4px', fontSize: 9, fontWeight: 700,
-              letterSpacing: '0.1em', textTransform: 'uppercase',
-              color: 'var(--text-muted)', background: 'var(--bg-card)',
-              borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)',
-            }}>
-              Performance
-            </div>
-
-            <CtxTile label="Last Lap" value={formatLap(telemetry.lastLap)} />
-            <CtxTile label="Best Lap" value={formatLap(telemetry.bestLap)} color="var(--green)" />
-            <CtxTile
-              label="Delta"
-              value={`${lapDelta >= 0 ? '+' : ''}${lapDelta.toFixed(3)}s`}
-              color={lapDelta > 0.3 ? 'var(--accent)' : lapDelta > 0 ? 'var(--yellow)' : 'var(--green)'}
-            />
-            <CtxTile label="Fuel" value={`${telemetry.fuelLoad.toFixed(1)} kg`}
-              color={telemetry.fuelLoad < 4 ? 'var(--accent)' : 'var(--text)'} />
-            <CtxTile label="Lean" value={`${telemetry.leanAngle.toFixed(1)}°`}
-              color={telemetry.leanAngle > 48 ? 'var(--accent)' : 'var(--text)'} />
-          </div>
+            <div className="copilot-context__section">Performance</div>
+            <CtxTile label="Last lap" value={formatLap(telemetry.lastLap)} />
+            <CtxTile label="Best lap" value={formatLap(telemetry.bestLap)} tone="is-valid" />
+            <CtxTile label="Delta" value={lapDeltaLabel} tone={toneForDelta(lapDelta)} />
+            <CtxTile label="Fuel" value={`${telemetry.fuelLoad.toFixed(1)} kg`} tone={toneForFuel(telemetry.fuelLoad)} />
+            <CtxTile label="Lean" value={`${telemetry.leanAngle.toFixed(1)}°`} tone={telemetry.leanAngle > 48 ? 'is-critical' : 'is-text'} />
+          </aside>
         )}
       </div>
     </div>

@@ -1,11 +1,16 @@
 import { useEffect } from 'react';
 import { ArrowRight, ExternalLink, Layers3, Network, RadioTower, ShieldCheck } from 'lucide-react';
+import { RACE_COMMAND_CENTER_ENABLED } from '../../config/serviceRegistry';
 
 type HubModule = {
   title: string;
   layer: string;
   body: string;
   href: string;
+  accent: 'red' | 'blue' | 'purple' | 'cyan' | 'green' | 'yellow' | 'orange' | 'muted';
+  intent: 'operational' | 'intelligence' | 'learning' | 'credibility' | 'platform';
+  cta: string;
+  featured?: boolean;
 };
 
 type ProfileOption = {
@@ -26,67 +31,109 @@ const PROFILE_OPTIONS: ProfileOption[] = [
 
 const CONNECTED_MODULES: HubModule[] = [
   {
-    title: 'Core Tool',
-    layer: 'Profiles + 50 Modules',
-    body: 'Entrada completa al desarrollo principal: perfiles operativos, selector de rol y más de cincuenta secciones del cockpit.',
-    href: '/core',
-  },
-  {
     title: 'PitWall OS',
-    layer: 'Application Layer',
-    body: 'Cockpit operativo principal para convertir contexto, telemetría y aprendizaje en decisiones accionables.',
+    layer: 'Main operational product',
+    body: 'Cockpit operativo principal: transforma telemetría, contexto y aprendizaje en la próxima decisión de pista.',
     href: '/pitwall',
+    accent: 'red',
+    intent: 'operational',
+    cta: 'Open PitWall OS',
+    featured: true,
   },
   {
-    title: 'Dashboard',
-    layer: 'Analytics / Work Dashboard Layer',
-    body: 'Vista de trabajos, workflows y señales activas conectadas al runtime de KDD.',
-    href: '/dashboard',
+    title: 'Knowledge Nodes',
+    layer: 'Private/team/academy memory',
+    body: 'Cada nodo conserva conocimiento propio: sesiones, pilotos, motos, validaciones y aprendizajes del equipo.',
+    href: '/founding-nodes',
+    accent: 'yellow',
+    intent: 'learning',
+    cta: 'Explore nodes',
   },
   {
     title: 'Copilot',
-    layer: 'AI Layer',
-    body: 'Explica eventos, decisiones, misiones y evidencia sin exponer secretos ni datos crudos innecesarios.',
+    layer: 'Explanation layer',
+    body: 'Explica eventos, riesgos y decisiones con lenguaje operativo. No reemplaza al equipo: acelera el razonamiento.',
     href: '/copilot',
+    accent: 'purple',
+    intent: 'intelligence',
+    cta: 'Ask Copilot',
   },
   {
-    title: 'Command Center',
-    layer: 'Command Layer',
-    body: 'Mission control para coordinar servicios, workflows, validaciones y módulos conectados.',
-    href: '/command',
+    title: 'Federation',
+    layer: 'Protected learning network',
+    body: 'La señal validada viaja entre nodos; el dato sensible queda protegido. La red mejora sin exponer telemetría cruda.',
+    href: '#federation',
+    accent: 'orange',
+    intent: 'learning',
+    cta: 'Review federation',
   },
   {
     title: 'Research Lab',
-    layer: 'Applied Research Layer',
-    body: 'Investigación ORCID-backed que alimenta los modelos, protocolos y evidencia reproducible del Hub.',
+    layer: 'Evidence and validation',
+    body: 'Investigación reproducible que valida hipótesis, protocolos y modelos. Credibilidad, no documentación de relleno.',
     href: '/research',
+    accent: 'green',
+    intent: 'credibility',
+    cta: 'View research lab',
   },
   {
-    title: 'Admin',
-    layer: 'Admin Layer',
-    body: 'Supervisión de módulos, señales de aprendizaje, auditoría y estado interno para operadores.',
+    title: 'Dashboard',
+    layer: 'Operational reporting',
+    body: 'Reportes, workflows y señales activas conectadas al runtime. Observa el sistema sin competir con PitWall.',
+    href: '/dashboard',
+    accent: 'blue',
+    intent: 'platform',
+    cta: 'Open dashboard',
+  },
+  {
+    title: 'Command Center',
+    layer: 'Service coordination',
+    body: 'Coordina servicios, validaciones y módulos conectados. Es control operativo, no la entrada comercial principal.',
+    href: '/command',
+    accent: 'cyan',
+    intent: 'platform',
+    cta: 'Open command',
+  },
+  {
+    title: 'Platform Admin',
+    layer: 'Internal supervision',
+    body: 'Auditoría, estado interno y supervisión para operadores. Intencionalmente secundario frente al producto.',
     href: '/admin',
+    accent: 'muted',
+    intent: 'platform',
+    cta: 'Open admin',
   },
 ];
 
 const SIGNAL_FLOW = [
-  'Data stays in the node',
-  'PitWall decides',
-  'Copilot explains',
-  'Validation teaches',
-  'Federation improves',
+  { step: 'Telemetry stays in the node', icon: '🔒' },
+  { step: 'PitWall decides', icon: '⚡' },
+  { step: 'Nodes learn', icon: '◎' },
+  { step: 'Copilot explains', icon: '💡' },
+  { step: 'Validation teaches', icon: '✓' },
+  { step: 'Federation improves', icon: '🌐' },
 ];
 
-function ModuleCard({ title, layer, body, href }: HubModule) {
+const LAYER_MAP = [
+  { name: 'Application', label: 'PitWall OS', accent: 'red', desc: 'Decides' },
+  { name: 'Nodes', label: 'Knowledge Memory', accent: 'yellow', desc: 'Learns' },
+  { name: 'Federation', label: 'Protected Network', accent: 'orange', desc: 'Improves' },
+  { name: 'AI', label: 'Copilot', accent: 'purple', desc: 'Explains' },
+  { name: 'Research', label: 'Research Lab', accent: 'green', desc: 'Validates' },
+  { name: 'Platform', label: 'Command/Admin', accent: 'cyan', desc: 'Coordinates' },
+];
+
+function ModuleCard({ title, layer, body, href, accent, intent, cta, featured }: HubModule) {
   return (
-    <a className="kdd-hub__card" href={href}>
-      <span>{layer}</span>
-      <h3>{title}</h3>
-      <p>{body}</p>
-      <strong>
-        Open module
-        <ArrowRight size={16} />
-      </strong>
+    <a className={`hub-card hub-card--${intent}${featured ? ' hub-card--featured' : ''}`} href={href}>
+      <span className={`hub-card__signal hub-accent--${accent}`} aria-hidden="true" />
+      <span className="hub-card__layer">{layer}</span>
+      <h3 className="hub-card__title">{title}</h3>
+      <p className="hub-card__body">{body}</p>
+      <span className={`hub-card__cta hub-accent-text--${accent}`}>
+        {cta}
+        <ArrowRight size={14} />
+      </span>
     </a>
   );
 }
@@ -109,449 +156,827 @@ export function KddHubPage({ autoRedirectTo, redirectDelayMs = 5000 }: KddHubPag
 
   function enterWithProfile(profileId: string) {
     window.localStorage.setItem('kdd-profile', profileId);
-    window.location.assign(autoRedirectTo ?? '/core');
+    window.location.assign(autoRedirectTo ?? '/pitwall');
   }
 
   return (
-    <main className="kdd-hub">
+    <main className="hub">
       <style>{`
-        .kdd-hub {
-          --page: #f4f1ea;
-          --ink: #0b0d0f;
-          --muted: #62676d;
-          --panel: rgba(255, 255, 255, 0.72);
-          --border: rgba(11, 13, 15, 0.13);
-          --red: #c8171d;
+        .hub {
           min-height: 100vh;
-          background:
-            radial-gradient(circle at top right, rgba(200, 23, 29, 0.12), transparent 34rem),
-            linear-gradient(180deg, #f7f3ec 0%, var(--page) 100%);
-          color: var(--ink);
-          font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+          background: var(--bg-base);
+          color: var(--text);
+          font-family: var(--font-sans);
         }
 
-        .kdd-hub__shell {
-          width: min(1180px, calc(100% - 40px));
+        .hub__shell {
+          width: min(1200px, calc(100% - 48px));
           margin: 0 auto;
-          padding: 24px 0 72px;
+          padding: 0 0 80px;
         }
 
-        .kdd-hub__nav {
+        /* ── NAV ─────────────────────────────────────────────── */
+        .hub__nav {
           display: flex;
           align-items: center;
           justify-content: space-between;
           gap: 20px;
-          padding: 14px 0 18px;
+          padding: 16px 0 20px;
           border-bottom: 1px solid var(--border);
           flex-wrap: wrap;
         }
 
-        .kdd-hub__brand small,
-        .kdd-hub__eyebrow,
-        .kdd-hub__card span,
-        .kdd-hub__technical span {
-          display: block;
-          color: var(--muted);
-          font-size: 11px;
-          font-weight: 800;
-          letter-spacing: 0.16em;
-          text-transform: uppercase;
-        }
-
-        .kdd-hub__brand strong {
-          display: block;
-          margin-top: 4px;
-          font-size: 18px;
-        }
-
-        .kdd-hub__links {
+        .hub__brand {
           display: flex;
           align-items: center;
-          gap: 8px;
+          gap: 12px;
+          text-decoration: none;
+          color: inherit;
+        }
+
+        .hub__brand-icon {
+          width: 32px;
+          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: var(--accent);
+          border-radius: var(--radius);
+          font-size: 16px;
+        }
+
+        .hub__brand-text small {
+          display: block;
+          font-size: 10px;
+          font-weight: 700;
+          letter-spacing: 0.09em;
+          text-transform: uppercase;
+          color: var(--text-muted);
+        }
+
+        .hub__brand-text strong {
+          display: block;
+          font-size: 15px;
+          font-weight: 700;
+          color: var(--text);
+          margin-top: 1px;
+        }
+
+        .hub__links {
+          display: flex;
+          align-items: center;
+          gap: 4px;
           flex-wrap: wrap;
         }
 
-        .kdd-hub__links a,
-        .kdd-hub__button {
+        .hub__links a {
           display: inline-flex;
           align-items: center;
-          gap: 8px;
-          min-height: 38px;
-          padding: 0 14px;
-          border: 1px solid var(--border);
-          border-radius: 999px;
-          color: var(--ink);
-          background: rgba(255, 255, 255, 0.58);
-          text-decoration: none;
+          min-height: 44px;
+          padding: 0 10px;
+          border-radius: var(--radius);
+          color: var(--text-dim);
           font-size: 13px;
-          font-weight: 750;
+          font-weight: 500;
+          text-decoration: none;
+          transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
         }
 
-        .kdd-hub__button--primary {
-          background: var(--ink);
-          color: var(--page);
-          border-color: var(--ink);
+        @media (hover: hover) and (pointer: fine) {
+          .hub__links a:hover {
+            background: var(--surface-faint);
+            color: var(--text);
+          }
         }
 
-        .kdd-hub__hero {
+        .hub__links a[aria-current="page"] {
+          color: var(--text);
+          background: var(--surface-soft);
+          font-weight: 600;
+        }
+
+        /* ── HERO ────────────────────────────────────────────── */
+        .hub__hero {
+          padding: 56px 0 44px;
           display: grid;
-          grid-template-columns: minmax(0, 1.1fr) minmax(340px, 0.9fr);
-          gap: 34px;
-          align-items: center;
-          padding: 76px 0 54px;
+          grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.88fr);
+          gap: 40px;
+          align-items: start;
         }
 
-        .kdd-hub__hero h1 {
-          margin: 14px 0 0;
-          max-width: 780px;
-          font-size: clamp(52px, 9vw, 112px);
-          line-height: 0.88;
-          letter-spacing: -0.075em;
-        }
-
-        .kdd-hub__hero h1 em {
+        .hub__eyebrow {
           display: block;
-          color: var(--red);
+          font-size: 10px;
+          font-weight: 700;
+          letter-spacing: 0.09em;
+          text-transform: uppercase;
+          color: var(--text-muted);
+          margin-bottom: 12px;
+        }
+
+        .hub__hero h1 {
+          font-family: var(--font-display);
+          font-size: clamp(48px, 8vw, 96px);
+          font-weight: 700;
+          line-height: 0.92;
+          letter-spacing: -0.03em;
+          color: var(--text);
+          max-width: 760px;
+          text-wrap: balance;
+        }
+
+        .hub__hero h1 em {
+          display: block;
+          color: var(--accent);
           font-style: normal;
         }
 
-        .kdd-hub__lead {
-          max-width: 740px;
-          margin: 24px 0 0;
-          color: #25282c;
-          font-size: clamp(22px, 3vw, 34px);
-          line-height: 1.12;
-          letter-spacing: -0.035em;
-          font-weight: 780;
+        .hub__lead {
+          max-width: 720px;
+          margin: 20px 0 0;
+          font-size: clamp(18px, 2.3vw, 22px);
+          line-height: 1.3;
+          font-weight: 600;
+          color: var(--text);
         }
 
-        .kdd-hub__support {
-          max-width: 680px;
-          margin: 18px 0 0;
-          color: var(--muted);
-          font-size: 17px;
+        .hub__support {
+          max-width: 640px;
+          margin: 14px 0 0;
+          font-size: 15px;
           line-height: 1.65;
+          color: var(--text-muted);
         }
 
-        .kdd-hub__actions {
+        .hub__thesis {
+          display: grid;
+          grid-template-columns: repeat(5, minmax(0, 1fr));
+          gap: 8px;
+          margin-top: 20px;
+          max-width: 760px;
+        }
+
+        .hub__thesis-item {
+          display: grid;
+          gap: 4px;
+          min-height: 74px;
+          padding: 12px;
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          background: var(--bg-card);
+        }
+
+        .hub__thesis-item strong {
+          color: var(--text);
+          font-size: 12px;
+          font-weight: 700;
+        }
+
+        .hub__thesis-item span {
+          color: var(--text-muted);
+          font-size: 11px;
+          line-height: 1.35;
+        }
+
+        .hub__actions {
           display: flex;
           gap: 10px;
           flex-wrap: wrap;
           margin-top: 28px;
         }
 
-        .kdd-hub__profiles {
+        .hub__btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          min-height: 44px;
+          padding: 0 16px;
+          border-radius: var(--radius);
+          font-size: 13px;
+          font-weight: 600;
+          text-decoration: none;
+          cursor: pointer;
+          transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+        }
+
+        .hub__btn:active {
+          transform: scale(0.97);
+        }
+
+        .hub__btn--primary {
+          background: #C8171D;
+          color: #fff;
+          border: 1px solid transparent;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+          .hub__btn--primary:hover {
+            background: #B51419;
+          }
+        }
+
+        .hub__btn--primary:focus-visible {
+          outline: 2px solid var(--accent);
+          outline-offset: 2px;
+        }
+
+        .hub__btn--ghost {
+          background: transparent;
+          color: var(--text-dim);
+          border: 1px solid var(--border-mid);
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+          .hub__btn--ghost:hover {
+            background: var(--surface-faint);
+            color: var(--text);
+            border-color: var(--border-bright);
+          }
+        }
+
+        .hub__btn--ghost:focus-visible {
+          outline: 2px solid var(--accent);
+          outline-offset: 2px;
+        }
+
+        .hub__btn--quiet {
+          background: var(--surface-faint);
+          color: var(--text);
+          border: 1px solid var(--border);
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+          .hub__btn--quiet:hover {
+            background: var(--surface-soft);
+            border-color: var(--border-bright);
+          }
+        }
+
+        /* ── PROFILES ────────────────────────────────────────── */
+        .hub__profiles {
           display: grid;
           grid-template-columns: repeat(3, minmax(0, 1fr));
           gap: 10px;
-          margin-top: 28px;
+          margin-top: 24px;
         }
 
-        .kdd-hub__profile {
+        .hub__profile {
           display: grid;
-          gap: 8px;
-          min-height: 132px;
+          gap: 6px;
+          min-height: 110px;
           padding: 14px;
           border: 1px solid var(--border);
-          border-radius: 18px;
-          background: rgba(255, 255, 255, 0.58);
+          border-radius: var(--radius-lg);
+          background: var(--bg-card);
           color: inherit;
           text-align: left;
           cursor: pointer;
+          transition: border-color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
         }
 
-        .kdd-hub__profile:hover,
-        .kdd-hub__profile:focus-visible {
-          border-color: var(--red);
-          outline: 0;
+        @media (hover: hover) and (pointer: fine) {
+          .hub__profile:hover {
+            border-color: var(--accent);
+            background: var(--bg-hover);
+          }
         }
 
-        .kdd-hub__profile strong {
-          font-size: 15px;
+        .hub__profile:focus-visible {
+          outline: 2px solid var(--accent);
+          outline-offset: 2px;
         }
 
-        .kdd-hub__profile span {
-          font-size: 24px;
+        .hub__profile-icon {
+          font-size: 20px;
+          line-height: 1;
         }
 
-        .kdd-hub__profile p {
+        .hub__profile-name {
+          font-size: 13px;
+          font-weight: 600;
+          color: var(--text);
+        }
+
+        .hub__profile-detail {
           margin: 0;
-          color: var(--muted);
+          color: var(--text-muted);
           font-size: 12px;
           line-height: 1.45;
         }
 
-        .kdd-hub__panel,
-        .kdd-hub__card,
-        .kdd-hub__technical {
+        /* ── ACTIVE NODE PANEL ───────────────────────────────── */
+        .hub__panel {
+          background: var(--bg-card);
           border: 1px solid var(--border);
-          border-radius: 28px;
-          background: var(--panel);
-          box-shadow: 0 24px 70px rgba(11, 13, 15, 0.08);
+          border-radius: var(--radius-lg);
+          padding: 20px;
+          position: sticky;
+          top: 20px;
         }
 
-        .kdd-hub__panel {
-          padding: 24px;
+        .hub__panel-summary {
+          margin: 0 0 14px;
+          color: var(--text);
+          font-size: 14px;
+          font-weight: 600;
+          line-height: 1.45;
         }
 
-        .kdd-hub__node {
-          display: grid;
-          gap: 14px;
+        .hub__panel-title {
+          display: block;
+          font-size: 10px;
+          font-weight: 700;
+          letter-spacing: 0.09em;
+          text-transform: uppercase;
+          color: var(--text-muted);
+          margin-bottom: 14px;
         }
 
-        .kdd-hub__node-row {
+        .hub__panel-row {
           display: flex;
           justify-content: space-between;
-          gap: 18px;
-          padding: 14px 0;
-          border-bottom: 1px solid var(--border);
-          font-size: 14px;
-        }
-
-        .kdd-hub__node-row:last-child { border-bottom: 0; }
-        .kdd-hub__node-row strong { color: var(--red); text-align: right; }
-
-        .kdd-hub__section {
-          padding: 42px 0;
-        }
-
-        .kdd-hub__section h2 {
-          margin: 10px 0 14px;
-          font-size: clamp(32px, 5vw, 58px);
-          line-height: 0.98;
-          letter-spacing: -0.055em;
-        }
-
-        .kdd-hub__section > p {
-          max-width: 760px;
-          color: var(--muted);
-          font-size: 17px;
-          line-height: 1.65;
-        }
-
-        .kdd-hub__modules {
-          display: grid;
-          grid-template-columns: repeat(3, minmax(0, 1fr));
-          gap: 16px;
-          margin-top: 24px;
-        }
-
-        .kdd-hub__card {
-          display: grid;
-          gap: 12px;
-          min-height: 250px;
-          padding: 22px;
-          color: inherit;
-          text-decoration: none;
-        }
-
-        .kdd-hub__card h3 {
-          margin: 0;
-          font-size: 26px;
-          letter-spacing: -0.035em;
-        }
-
-        .kdd-hub__card p {
-          margin: 0;
-          color: var(--muted);
-          line-height: 1.55;
-        }
-
-        .kdd-hub__card strong {
-          align-self: end;
-          display: inline-flex;
           align-items: center;
-          gap: 8px;
-          color: var(--red);
+          padding: 10px 0;
+          border-bottom: 1px solid var(--border);
           font-size: 13px;
         }
 
-        .kdd-hub__flow {
+        .hub__panel-row:last-child {
+          border-bottom: 0;
+        }
+
+        .hub__panel-row span {
+          color: var(--text-muted);
+        }
+
+        .hub__panel-row strong {
+          color: var(--text);
+          font-weight: 600;
+          text-align: right;
+        }
+
+        /* ── SECTIONS ────────────────────────────────────────── */
+        .hub__section {
+          padding: 48px 0;
+        }
+
+        .hub__section + .hub__section {
+          border-top: 1px solid var(--border);
+        }
+
+        .hub__section h2 {
+          font-family: var(--font-display);
+          font-size: clamp(28px, 4vw, 44px);
+          font-weight: 700;
+          line-height: 0.96;
+          letter-spacing: -0.02em;
+          color: var(--text);
+          max-width: 700px;
+          margin: 10px 0 14px;
+        }
+
+        .hub__section > p {
+          max-width: 680px;
+          color: var(--text-muted);
+          font-size: 15px;
+          line-height: 1.65;
+        }
+
+        /* ── LAYER MAP ───────────────────────────────────────── */
+        .hub__layers {
           display: grid;
-          grid-template-columns: repeat(5, minmax(0, 1fr));
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
           gap: 10px;
           margin-top: 24px;
         }
 
-        .kdd-hub__flow li {
-          list-style: none;
-          min-height: 110px;
+        .hub__layer {
+          display: grid;
+          gap: 6px;
           padding: 16px;
           border: 1px solid var(--border);
-          border-radius: 22px;
-          background: rgba(255, 255, 255, 0.56);
-          font-weight: 800;
+          border-radius: var(--radius-lg);
+          background: var(--bg-card);
+          transition: border-color var(--dur-fast) var(--ease-out);
         }
 
-        .kdd-hub__technical {
+        @media (hover: hover) and (pointer: fine) {
+          .hub__layer:hover {
+            border-color: var(--border-bright);
+          }
+        }
+
+        .hub__layer-name {
+          font-size: 10px;
+          font-weight: 700;
+          letter-spacing: 0.09em;
+          text-transform: uppercase;
+          color: var(--text-muted);
+        }
+
+        .hub__layer-label {
+          font-family: var(--font-display);
+          font-size: 18px;
+          font-weight: 700;
+          color: var(--text);
+        }
+
+        .hub__layer-desc {
+          font-size: 12px;
+          color: var(--text-muted);
+        }
+
+        .hub__layer-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          margin-top: 4px;
+        }
+
+        .hub-accent--red { background: var(--accent); }
+        .hub-accent--blue { background: var(--blue); }
+        .hub-accent--purple { background: var(--purple); }
+        .hub-accent--cyan { background: var(--cyan); }
+        .hub-accent--green { background: var(--green); }
+        .hub-accent--yellow { background: var(--yellow); }
+        .hub-accent--orange { background: var(--orange); }
+        .hub-accent--muted { background: var(--text-dim); }
+
+        .hub-accent-text--red { color: var(--accent); }
+        .hub-accent-text--blue { color: var(--blue); }
+        .hub-accent-text--purple { color: var(--purple); }
+        .hub-accent-text--cyan { color: var(--cyan); }
+        .hub-accent-text--green { color: var(--green); }
+        .hub-accent-text--yellow { color: var(--yellow); }
+        .hub-accent-text--orange { color: var(--orange); }
+        .hub-accent-text--muted { color: var(--text-dim); }
+
+        /* ── MODULE CARDS ────────────────────────────────────── */
+        .hub__modules {
           display: grid;
-          grid-template-columns: repeat(3, minmax(0, 1fr));
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
           gap: 12px;
-          padding: 20px;
           margin-top: 24px;
         }
 
-        .kdd-hub__technical a {
-          color: var(--ink);
+        .hub-card {
+          display: grid;
+          gap: 10px;
+          padding: 20px;
+          border: 1px solid var(--border);
+          border-radius: var(--radius-lg);
+          background: var(--bg-card);
+          color: inherit;
           text-decoration: none;
-          font-weight: 800;
+          position: relative;
+          overflow: hidden;
+          transition: box-shadow var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out);
         }
 
-        .kdd-hub__footer {
+        .hub-card--featured {
+          grid-column: span 2;
+          min-height: 220px;
+          background: var(--surface-soft);
+          border-color: var(--border-mid);
+        }
+
+        .hub-card__signal {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+        }
+
+        .hub-card--platform {
+          opacity: 0.78;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+          .hub-card:hover {
+            box-shadow: var(--shadow-card-hover);
+            border-color: var(--border-bright);
+          }
+        }
+
+        .hub-card__layer {
+          display: block;
+          font-size: 10px;
+          font-weight: 700;
+          letter-spacing: 0.09em;
+          text-transform: uppercase;
+          color: var(--text-muted);
+        }
+
+        .hub-card__title {
+          font-family: var(--font-display);
+          font-size: 20px;
+          font-weight: 700;
+          color: var(--text);
+          margin: 0;
+        }
+
+        .hub-card__body {
+          margin: 0;
+          font-size: 13px;
+          line-height: 1.55;
+          color: var(--text-muted);
+        }
+
+        .hub-card__cta {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 12px;
+          font-weight: 600;
+          align-self: end;
+          margin-top: 4px;
+        }
+
+        /* ── SIGNAL FLOW ─────────────────────────────────────── */
+        .hub__flow {
+          display: grid;
+          grid-template-columns: repeat(6, minmax(0, 1fr));
+          gap: 10px;
+          margin-top: 24px;
+        }
+
+        .hub__flow-step {
+          display: grid;
+          gap: 8px;
+          padding: 16px;
+          border: 1px solid var(--border);
+          border-radius: var(--radius-lg);
+          background: var(--bg-card);
+        }
+
+        .hub__flow-icon {
+          font-size: 20px;
+          line-height: 1;
+        }
+
+        .hub__flow-text {
+          font-size: 13px;
+          font-weight: 600;
+          color: var(--text);
+          line-height: 1.3;
+        }
+
+        /* ── TECHNICAL LINKS ─────────────────────────────────── */
+        .hub__tech {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 10px;
+          margin-top: 24px;
+        }
+
+        .hub__tech-link {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          padding: 14px 16px;
+          border: 1px solid var(--border);
+          border-radius: var(--radius-lg);
+          background: var(--bg-card);
+          color: inherit;
+          text-decoration: none;
+          font-size: 14px;
+          font-weight: 600;
+          transition: border-color var(--dur-fast) var(--ease-out);
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+          .hub__tech-link:hover {
+            border-color: var(--border-bright);
+          }
+        }
+
+        .hub__tech-link small {
+          font-size: 10px;
+          font-weight: 700;
+          letter-spacing: 0.09em;
+          text-transform: uppercase;
+          color: var(--text-muted);
+        }
+
+        /* ── FOOTER ──────────────────────────────────────────── */
+        .hub__footer {
           display: flex;
           justify-content: space-between;
+          align-items: center;
           gap: 16px;
           flex-wrap: wrap;
-          padding-top: 36px;
+          padding-top: 32px;
           border-top: 1px solid var(--border);
-          color: var(--muted);
-          font-size: 13px;
+          font-size: 12px;
+          color: var(--text-muted);
         }
 
+        .hub__footer span {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        /* ── RESPONSIVE ──────────────────────────────────────── */
         @media (max-width: 900px) {
-          .kdd-hub__hero,
-          .kdd-hub__modules,
-          .kdd-hub__flow,
-          .kdd-hub__profiles,
-          .kdd-hub__technical {
+          .hub__hero {
+            grid-template-columns: 1fr;
+            padding: 40px 0 32px;
+          }
+
+          .hub__panel {
+            position: static;
+          }
+
+          .hub__thesis {
+            grid-template-columns: 1fr;
+          }
+
+          .hub-card--featured {
+            grid-column: auto;
+          }
+
+          .hub__modules,
+          .hub__flow,
+          .hub__profiles,
+          .hub__tech,
+          .hub__layers {
             grid-template-columns: 1fr;
           }
         }
       `}</style>
 
-      <div className="kdd-hub__shell">
-        <header className="kdd-hub__nav">
-          <a className="kdd-hub__brand" href="/hub" aria-label="KDD Hub home">
-            <small>KDD Hub by Keedio</small>
-            <strong>The Keedio Knowledge Circuit</strong>
+      <div className="hub__shell">
+        {/* ── NAV ──────────────────────────────────────────── */}
+        <header className="hub__nav">
+          <a className="hub__brand" href="/hub" aria-label="KDD Hub home">
+            <span className="hub__brand-icon">🏁</span>
+            <span className="hub__brand-text">
+              <small>KDD Hub by Keedio</small>
+              <strong>The Digital Pit Wall</strong>
+            </span>
           </a>
-          <nav className="kdd-hub__links" aria-label="KDD Hub navigation">
-            <a href="/hub">Hub</a>
-            <a href="/pitwall">PitWall OS</a>
-            <a href="/dashboard">Dashboard</a>
-            <a href="/copilot">Copilot</a>
-            <a href="/command">Command Center</a>
-            <a href="/research">Research Lab</a>
-            <a href="/admin">Admin</a>
+          <nav className="hub__links" aria-label="KDD Hub navigation">
+            <a href="/hub" aria-current="page">Hub</a>
+            <a href="/pit-wall/">PitWall OS</a>
+            <a href="/pit-wall/nodes">Nodes</a>
+            <a href="/pit-wall/federation">Federation</a>
+            <a href="/pit-wall/copilot">Copilot</a>
+            <a href="/pit-wall/research-lab">Research</a>
+            <a href="/pit-wall/platform">Platform</a>
           </nav>
         </header>
 
-        <section className="kdd-hub__hero">
+        {/* ── HERO ─────────────────────────────────────────── */}
+        <section className="hub__hero">
           <div>
-            <span className="kdd-hub__eyebrow">The Keedio Knowledge Circuit</span>
+            <span className="hub__eyebrow">KDD Hub by Keedio · The Digital Pit Wall</span>
             <h1>
-              KDD Hub <em>connects the circuit.</em>
+              Turn telemetry into <em>track decisions.</em>
             </h1>
-            <p className="kdd-hub__lead">
-              KDD Hub is the entry. PitWall decides. Nodes learn. Federation improves. Copilot explains.
+            <p className="hub__lead">
+              No sustituimos tu telemetría. La convertimos en conocimiento accionable.
             </p>
-            <p className="kdd-hub__support">
-              No sustituimos tu telemetría. La convertimos en conocimiento accionable: eventos, causas,
-              decisiones, misiones, validación y aprendizaje compuesto.
+            <p className="hub__support">
+              KDD se coloca por encima del logger: interpreta contexto, evidencia y aprendizaje de cada nodo para decidir qué probar en la próxima tanda.
             </p>
+            <div className="hub__thesis" aria-label="KDD operating model">
+              <div className="hub__thesis-item"><strong>PitWall decides.</strong><span>El cockpit convierte señales en acciones.</span></div>
+              <div className="hub__thesis-item"><strong>Nodes learn.</strong><span>Tu equipo conserva memoria privada.</span></div>
+              <div className="hub__thesis-item"><strong>Federation improves.</strong><span>Aprendizaje protegido, no datos crudos.</span></div>
+              <div className="hub__thesis-item"><strong>Copilot explains.</strong><span>La IA traduce evidencia en criterio.</span></div>
+              <div className="hub__thesis-item"><strong>Research validates.</strong><span>La credibilidad viene de prueba reproducible.</span></div>
+            </div>
             {autoRedirectTo ? (
-              <p className="kdd-hub__support">
-                Elegí un perfil para entrar directo. Si no seleccionás nada, abrimos el core en unos segundos.
+              <p className="hub__support">
+                Elegí un perfil para entrar directo. Si no seleccionás nada, abrimos PitWall en unos segundos.
               </p>
             ) : null}
-            <div className="kdd-hub__profiles" aria-label="Select operational profile">
+            <div className="hub__actions">
+              <a className="hub__btn hub__btn--primary" href="/pit-wall/">
+                Open PitWall OS
+                <ArrowRight size={14} />
+              </a>
+              <a className="hub__btn hub__btn--quiet" href="/pit-wall/nodes">Explore Knowledge Nodes</a>
+              <a className="hub__btn hub__btn--ghost" href="/pit-wall/federation">Review Federation</a>
+              <a className="hub__btn hub__btn--ghost" href="/pit-wall/research-lab">View Research Lab</a>
+              {RACE_COMMAND_CENTER_ENABLED && (
+                <a
+                  className="hub__btn hub__btn--ghost"
+                  href="/command-center/launch"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Open Race Command Center Preview
+                  <ExternalLink size={12} />
+                </a>
+              )}
+            </div>
+            <div className="hub__profiles" aria-label="Select operational profile">
               {PROFILE_OPTIONS.map(profile => (
-                <button key={profile.id} className="kdd-hub__profile" type="button" onClick={() => enterWithProfile(profile.id)}>
-                  <span>{profile.icon}</span>
-                  <strong>{profile.name}</strong>
-                  <p>{profile.detail}</p>
+                <button key={profile.id} className="hub__profile" type="button" onClick={() => enterWithProfile(profile.id)}>
+                  <span className="hub__profile-icon">{profile.icon}</span>
+                  <span className="hub__profile-name">{profile.name}</span>
+                  <p className="hub__profile-detail">{profile.detail}</p>
                 </button>
               ))}
             </div>
-            <div className="kdd-hub__actions">
-              <a className="kdd-hub__button kdd-hub__button--primary" href="/">
-                Open Core Tool
-                <ArrowRight size={16} />
-              </a>
-              <a className="kdd-hub__button kdd-hub__button--primary" href="/pitwall">
-                Open PitWall OS
-                <ArrowRight size={16} />
-              </a>
-              <a className="kdd-hub__button" href="/founding-nodes">Configure Knowledge Node</a>
-              <a className="kdd-hub__button" href="#federation">Review Federation Layer</a>
-            </div>
           </div>
 
-          <aside className="kdd-hub__panel" aria-label="Active node context">
-            <span className="kdd-hub__eyebrow">Active Node Context</span>
-            <div className="kdd-hub__node">
-              <div className="kdd-hub__node-row"><span>Entry</span><strong>KDD Hub</strong></div>
-              <div className="kdd-hub__node-row"><span>Operating cockpit</span><strong>PitWall OS</strong></div>
-              <div className="kdd-hub__node-row"><span>AI explanation</span><strong>Copilot</strong></div>
-              <div className="kdd-hub__node-row"><span>Learning mode</span><strong>Federated-ready</strong></div>
-              <div className="kdd-hub__node-row"><span>Public risk policy</span><strong>Plan-only for high risk</strong></div>
-            </div>
+          <aside className="hub__panel" aria-label="Active node context">
+            <span className="hub__panel-title">Active Node Context</span>
+            <p className="hub__panel-summary">Demo-ready path: start in PitWall, inspect why, then show how the node learns without leaking raw telemetry.</p>
+            <div className="hub__panel-row"><span>Entry</span><strong>KDD Hub</strong></div>
+            <div className="hub__panel-row"><span>Operating cockpit</span><strong>PitWall OS</strong></div>
+            <div className="hub__panel-row"><span>Node memory</span><strong>Private / Team / Academy</strong></div>
+            <div className="hub__panel-row"><span>AI explanation</span><strong>Copilot explains</strong></div>
+            <div className="hub__panel-row"><span>Learning mode</span><strong>Protected federation</strong></div>
+            <div className="hub__panel-row"><span>Risk policy</span><strong>Plan-only for high risk</strong></div>
           </aside>
         </section>
 
-        <section className="kdd-hub__section" id="layer-map">
-          <span className="kdd-hub__eyebrow">Layer Map</span>
-          <h2>Una entrada clara para un sistema complejo.</h2>
+        {/* ── LAYER MAP ────────────────────────────────────── */}
+        <section className="hub__section" id="layer-map">
+          <span className="hub__eyebrow">Layer Map</span>
+          <h2>Una plataforma, seis capas, una decisión siguiente.</h2>
           <p>
-            El Hub orienta. PitWall opera. Dashboard observa. Copilot explica. Command Center coordina.
-            Research Lab alimenta evidencia. Admin supervisa. Cada cosa en su capa, hermano: si mezclás
-            producto, arquitectura y status en la home, confundís al usuario antes de ayudarlo.
+            El Hub orienta. PitWall opera. Nodes aprenden. Federation mejora. Copilot explica.
+            Research valida. Platform coordina sin robar protagonismo al producto.
           </p>
+          <div className="hub__layers">
+            {LAYER_MAP.map(layer => (
+              <div key={layer.name} className="hub__layer">
+                <span className={`hub__layer-dot hub-accent--${layer.accent}`} />
+                <span className="hub__layer-name">{layer.name}</span>
+                <span className="hub__layer-label">{layer.label}</span>
+                <span className="hub__layer-desc">{layer.desc}</span>
+              </div>
+            ))}
+          </div>
         </section>
 
-        <section className="kdd-hub__section" id="modules">
-          <span className="kdd-hub__eyebrow">Connected Modules</span>
-          <h2>Módulos conectados al circuito de conocimiento.</h2>
-          <div className="kdd-hub__modules">
+        {/* ── MODULES ──────────────────────────────────────── */}
+        <section className="hub__section" id="modules">
+          <span className="hub__eyebrow">Connected Modules</span>
+          <h2>PitWall es el producto operativo; el resto explica, aprende y valida.</h2>
+          <p>
+            Esta no es una grilla de módulos iguales. La jerarquía importa: primero se decide, después se aprende, se explica y se audita.
+          </p>
+          <div className="hub__modules">
             {CONNECTED_MODULES.map(module => <ModuleCard key={module.title} {...module} />)}
           </div>
         </section>
 
-        <section className="kdd-hub__section" id="federation">
-          <span className="kdd-hub__eyebrow">Learning Signal Flow</span>
+        {/* ── SIGNAL FLOW ──────────────────────────────────── */}
+        <section className="hub__section" id="federation">
+          <span className="hub__eyebrow">Learning Signal Flow</span>
           <h2>Raw data protected. Learning travels.</h2>
           <p>
-            La federación no es mandar datos crudos por todos lados — eso sería una locura cósmica.
-            La regla es simple: el dato sensible queda en el nodo; lo que viaja es la señal validada.
+            Federation no es administración técnica ni sincronización ciega. Es aprendizaje protegido:
+            la telemetría sensible queda en el nodo; lo que viaja es la señal validada y útil.
           </p>
-          <ul className="kdd-hub__flow" aria-label="KDD learning signal flow">
-            {SIGNAL_FLOW.map(item => <li key={item}>{item}</li>)}
-          </ul>
+          <div className="hub__flow" aria-label="KDD learning signal flow">
+            {SIGNAL_FLOW.map(item => (
+              <div key={item.step} className="hub__flow-step">
+                <span className="hub__flow-icon">{item.icon}</span>
+                <span className="hub__flow-text">{item.step}</span>
+              </div>
+            ))}
+          </div>
         </section>
 
-        <section className="kdd-hub__section" id="founding-nodes">
-          <span className="kdd-hub__eyebrow">Founding Nodes</span>
-          <h2>Los primeros nodos definen el contrato de aprendizaje.</h2>
+        {/* ── TECHNICAL ────────────────────────────────────── */}
+        <section className="hub__section" id="technical-architecture">
+          <span className="hub__eyebrow">Technical Architecture</span>
+          <h2>La plataforma está disponible; la home no la confunde con el producto.</h2>
           <p>
-            Founding Nodes ayudan a definir reglas de validación, privacidad, misiones y gobernanza del
-            conocimiento. No es “early access” decorativo: es co-creación del circuito.
+            Route map, health, runtime status y detalles operativos viven fuera de la home.
+            La home orienta; arquitectura documenta; status diagnostica; admin supervisa.
           </p>
-          <div className="kdd-hub__actions">
-            <a className="kdd-hub__button kdd-hub__button--primary" href="/founding-nodes">
-              Become a founding node
-              <ArrowRight size={16} />
+          <div className="hub__tech">
+            <a className="hub__tech-link" href="/pit-wall/architecture">
+              <span>Architecture</span>
+              <small>Docs</small>
+              <ExternalLink size={14} />
+            </a>
+            <a className="hub__tech-link" href="/pit-wall/status">
+              <span>Status</span>
+              <small>Ops</small>
+              <RadioTower size={14} />
+            </a>
+            <a className="hub__tech-link" href="/pit-wall/admin">
+              <span>Admin</span>
+              <small>Control</small>
+              <ShieldCheck size={14} />
             </a>
           </div>
         </section>
 
-        <section className="kdd-hub__section" id="technical-architecture">
-          <span className="kdd-hub__eyebrow">Technical Architecture</span>
-          <h2>La técnica existe, pero no va adelante del producto.</h2>
-          <p>
-            Route map, health, runtime status y detalles operativos viven fuera de la home. La home orienta;
-            arquitectura documenta; status diagnostica; admin supervisa.
-          </p>
-          <div className="kdd-hub__technical">
-            <a href="/architecture"><span>Docs</span>Architecture <ExternalLink size={14} /></a>
-            <a href="/status"><span>Ops</span>Status <RadioTower size={14} /></a>
-            <a href="/admin"><span>Control</span>Admin <ShieldCheck size={14} /></a>
-          </div>
-        </section>
-
-        <footer className="kdd-hub__footer">
+        {/* ── FOOTER ────────────────────────────────────────── */}
+        <footer className="hub__footer">
           <span>KDD Hub by Keedio</span>
-          <span><Network size={14} /> Knowledge Circuit · PitWall OS · Federated Learning</span>
-          <span><Layers3 size={14} /> Product first. Architecture where it belongs.</span>
+          <span><Network size={12} /> Knowledge Circuit · PitWall OS · Federated Learning</span>
+          <span><Layers3 size={12} /> Product first. Architecture where it belongs.</span>
         </footer>
       </div>
     </main>
@@ -568,25 +993,25 @@ type PublicModulePageProps = {
 
 export function PublicModulePage({ title, eyebrow, body, primaryHref = '/hub', primaryLabel = 'Back to Hub' }: PublicModulePageProps) {
   return (
-    <main className="kdd-hub">
+    <main className="hub">
       <style>{`
-        .kdd-hub { min-height: 100vh; background: #f4f1ea; color: #0b0d0f; font-family: Inter, system-ui, sans-serif; }
-        .kdd-hub__module { width: min(860px, calc(100% - 40px)); margin: 0 auto; padding: 96px 0; }
-        .kdd-hub__module small { display: block; color: #62676d; font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
-        .kdd-hub__module h1 { margin: 14px 0; font-size: clamp(48px, 8vw, 88px); line-height: .9; letter-spacing: -.07em; }
-        .kdd-hub__module p { max-width: 720px; color: #62676d; font-size: 18px; line-height: 1.65; }
-        .kdd-hub__module-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
-        .kdd-hub__module-actions a { display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(11,13,15,.16); color: inherit; text-decoration: none; font-weight: 800; }
-        .kdd-hub__module-actions a:first-child { background: #0b0d0f; color: #f4f1ea; }
+        .hub { min-height: 100vh; background: var(--bg-base); color: var(--text); font-family: var(--font-sans); }
+        .hub__module { width: min(860px, calc(100% - 48px)); margin: 0 auto; padding: 96px 0; }
+        .hub__module small { display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); }
+        .hub__module h1 { margin: 14px 0; font-family: var(--font-display); font-size: clamp(40px, 7vw, 72px); line-height: 0.92; letter-spacing: -0.02em; }
+        .hub__module p { max-width: 720px; color: var(--text-muted); font-size: 16px; line-height: 1.65; }
+        .hub__module-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
+        .hub__module-actions a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: var(--radius); border: 1px solid var(--border-mid); color: inherit; text-decoration: none; font-size: 13px; font-weight: 600; transition: background 120ms, color 120ms; }
+        .hub__module-actions a:first-child { background: var(--accent); color: #fff; border-color: transparent; }
       `}</style>
-      <section className="kdd-hub__module">
+      <section className="hub__module">
         <small>{eyebrow}</small>
         <h1>{title}</h1>
         <p>{body}</p>
-        <div className="kdd-hub__module-actions">
-          <a href={primaryHref}>{primaryLabel}<ArrowRight size={16} /></a>
-          <a href="/architecture">Architecture</a>
-          <a href="/status">Status</a>
+        <div className="hub__module-actions">
+          <a href={primaryHref}>{primaryLabel}<ArrowRight size={14} /></a>
+          <a href="/pit-wall/architecture">Architecture</a>
+          <a href="/pit-wall/status">Status</a>
         </div>
       </section>
     </main>

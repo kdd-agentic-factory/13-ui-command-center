@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { insforge } from '../lib/insforge';
 
-export type TabId = 'cockpit' | 'overview' | 'raceday' | 'live' | 'telemetry' | 'circuit' | 'corners' | 'replay' | 'compare' | 'ghost-lap' | 'studio' | 'track-evo' | 'surface' | 'weather' | 'risk' | 'predict' | 'strategy' | 'rivals' | 'quali' | 'tires' | 'pressure' | 'setup' | 'advisor' | 'electronics' | 'aero' | 'fuel' | 'chassis' | 'gearing' | 'engctrl' | 'setup-lab' | 'parts' | 'brakes' | 'bike-compare' | 'twin' | 'sandbox' | 'sim-lab' | 'experiments' | 'events' | 'causal' | 'history' | 'pre-gp' | 'crew' | 'copilot' | 'learning-path' | 'human' | 'pit-radio' | 'team' | 'workbench' | 'orchestrator' | 'season' | 'stewards' | 'report' | 'debrief' | 'black-box' | 'knowledge' | 'patterns' | 'federated' | 'ai-crew' | 'style' | 'cube' | 'trust' | 'platform' | 'edge' | 'lakehouse' | 'devhub' | 'data' | 'settings';
+export type TabId = 'cockpit' | 'overview' | 'raceday' | 'live' | 'telemetry' | 'circuit' | 'corners' | 'replay' | 'compare' | 'ghost-lap' | 'studio' | 'track-evo' | 'surface' | 'weather' | 'risk' | 'predict' | 'strategy' | 'rivals' | 'quali' | 'tires' | 'pressure' | 'setup' | 'advisor' | 'electronics' | 'aero' | 'fuel' | 'chassis' | 'gearing' | 'engctrl' | 'setup-lab' | 'parts' | 'brakes' | 'bike-compare' | 'twin' | 'sandbox' | 'sim-lab' | 'experiments' | 'events' | 'causal' | 'history' | 'pre-gp' | 'crew' | 'copilot' | 'learning-path' | 'human' | 'pit-radio' | 'team' | 'workbench' | 'orchestrator' | 'season' | 'stewards' | 'report' | 'research' | 'debrief' | 'black-box' | 'knowledge' | 'patterns' | 'federated' | 'ai-crew' | 'style' | 'cube' | 'trust' | 'platform' | 'edge' | 'lakehouse' | 'devhub' | 'data' | 'settings';
 export type ProfileId = 'race-engineer' | 'team-principal' | 'data-analyst' | 'mechanic' | 'spectator' | 'founding-node';
 
 export interface Profile {
@@ -25,7 +25,7 @@ export const PROFILES: Profile[] = [
     color: 'var(--accent)',
     icon: '⚙™🏎️',
     accessCount: '23',
-    allowedTabs: ['cockpit','overview','live','telemetry','circuit','corners','replay','compare','ghost-lap','studio','track-evo','surface','weather','risk','predict','raceday','strategy','rivals','quali','tires','pressure','setup','advisor','electronics','aero','fuel','chassis','gearing','engctrl','setup-lab','parts','brakes','bike-compare','twin','sandbox','sim-lab','experiments','events','causal','history','pre-gp','crew','copilot','learning-path','human','pit-radio','team','workbench','orchestrator','season','stewards','report','ai-crew','style','cube','trust','platform','patterns','federated','edge','lakehouse','devhub','data','settings'],
+    allowedTabs: ['cockpit','overview','live','telemetry','circuit','corners','replay','compare','ghost-lap','studio','track-evo','surface','weather','risk','predict','raceday','strategy','rivals','quali','tires','pressure','setup','advisor','electronics','aero','fuel','chassis','gearing','engctrl','setup-lab','parts','brakes','bike-compare','twin','sandbox','sim-lab','experiments','events','causal','history','pre-gp','crew','copilot','learning-path','human','pit-radio','team','workbench','orchestrator','season','stewards','report','research','ai-crew','style','cube','trust','platform','patterns','federated','edge','lakehouse','devhub','data','settings'],
     defaultTab: 'overview',
     requiresAuth: true,
   },
@@ -47,7 +47,7 @@ export const PROFILES: Profile[] = [
     color: 'var(--blue)',
     icon: '📊',
     accessCount: '14',
-    allowedTabs: ['cockpit','telemetry','corners','replay','compare','ghost-lap','studio','track-evo','surface','weather','predict','raceday','strategy','rivals','quali','tires','pressure','circuit','twin','sandbox','sim-lab','experiments','events','causal','history','report','debrief','black-box','knowledge','patterns','learning-path','human','team','workbench','season','stewards','ai-crew','style','bike-compare','setup-lab','brakes','electronics','aero','fuel','chassis','gearing','engctrl','cube','trust','platform','federated','edge','lakehouse','devhub','data','settings'],
+    allowedTabs: ['cockpit','telemetry','corners','replay','compare','ghost-lap','studio','track-evo','surface','weather','predict','raceday','strategy','rivals','quali','tires','pressure','circuit','twin','sandbox','sim-lab','experiments','events','causal','history','report','research','debrief','black-box','knowledge','patterns','learning-path','human','team','workbench','season','stewards','ai-crew','style','bike-compare','setup-lab','brakes','electronics','aero','fuel','chassis','gearing','engctrl','cube','trust','platform','federated','edge','lakehouse','devhub','data','settings'],
     defaultTab: 'telemetry',
     requiresAuth: true,
   },
@@ -80,7 +80,7 @@ export const PROFILES: Profile[] = [
     color: 'var(--violet)',
     icon: '✨',
     accessCount: '23',
-    allowedTabs: ['cockpit','overview','raceday','live','telemetry','circuit','corners','replay','compare','ghost-lap','studio','track-evo','surface','weather','risk','predict','strategy','rivals','quali','tires','pressure','setup','advisor','electronics','aero','fuel','chassis','gearing','engctrl','setup-lab','parts','brakes','bike-compare','twin','sandbox','sim-lab','experiments','events','causal','history','pre-gp','crew','copilot','learning-path','human','pit-radio','team','workbench','orchestrator','season','stewards','report','debrief','black-box','knowledge','patterns','federated','ai-crew','style','cube','trust','platform','edge','lakehouse','devhub','data','settings'],
+    allowedTabs: ['cockpit','overview','raceday','live','telemetry','circuit','corners','replay','compare','ghost-lap','studio','track-evo','surface','weather','risk','predict','strategy','rivals','quali','tires','pressure','setup','advisor','electronics','aero','fuel','chassis','gearing','engctrl','setup-lab','parts','brakes','bike-compare','twin','sandbox','sim-lab','experiments','events','causal','history','pre-gp','crew','copilot','learning-path','human','pit-radio','team','workbench','orchestrator','season','stewards','report','research','debrief','black-box','knowledge','patterns','federated','ai-crew','style','cube','trust','platform','edge','lakehouse','devhub','data','settings'],
     defaultTab: 'overview',
     requiresAuth: false,
   },

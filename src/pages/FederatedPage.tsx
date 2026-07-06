@@ -12,8 +12,6 @@ import { useGarage } from '../hooks/useGarage';
 import { useSessionContext } from '../hooks/useSessionContext';
 import { buildFederated, percentileColor, vsColor, BENCHMARK_MODES, BenchmarkMode } from '../domain/federated';
 
-const MONO = 'JetBrains Mono, monospace';
-
 export function FederatedPage() {
   const garage = useGarage();
   const { ctx } = useSessionContext();
@@ -28,90 +26,98 @@ export function FederatedPage() {
           <h1 className="page-title flex items-center gap-2"><Network size={18} /> Federated Motorsport Intelligence</h1>
           <p className="page-subtitle">Collective racing intelligence, private by design — {f.combo}</p>
         </div>
-        <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Overall percentile —· conf {f.confidence}%</div>
-          <div style={{ fontSize: 26, fontWeight: 800, fontFamily: MONO, color: percentileColor(f.overallPercentile) }}>{comparing ? `${f.overallPercentile}th` : '—'}</div>
+        <div className="federated-percentile-header" style={{ '--pct-color': percentileColor(f.overallPercentile) }}>
+          <div className="federated-percentile-header-label">Overall percentile —· conf {f.confidence}%</div>
+          <div className="federated-percentile-header-value">{comparing ? `${f.overallPercentile}th` : '—'}</div>
         </div>
       </div>
 
       {/* mode selector */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
+      <div className="federated-modes">
         {BENCHMARK_MODES.map(m => (
           <button key={m.id} onClick={() => setMode(m.id)} title={m.desc}
-            style={{ fontSize: 10.5, fontFamily: MONO, padding: '4px 10px', borderRadius: 'var(--radius)', cursor: 'pointer',
-              background: mode === m.id ? 'rgba(0,183,255,0.12)' : 'transparent', border: `1px solid ${mode === m.id ? 'var(--cyan)' : 'var(--border)'}`, color: mode === m.id ? 'var(--cyan)' : 'var(--text-muted)' }}>{m.label}</button>
+            className={`federated-mode-btn${mode === m.id ? ' is-active' : ''}`}>{m.label}</button>
         ))}
-        <span style={{ fontSize: 10, color: 'var(--text-muted)', alignSelf: 'center', marginLeft: 4 }}>{BENCHMARK_MODES.find(m => m.id === mode)!.desc}</span>
+        <span className="federated-mode-desc">{BENCHMARK_MODES.find(m => m.id === mode)!.desc}</span>
       </div>
 
       {/* privacy status */}
-      <div className="card mb-4" style={{ padding: 12 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
-          <Lock size={13} style={{ color: 'var(--green)' }} />
-          <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Privacy status</span>
+      <div className="card federated-privacy mb-4">
+        <div className="federated-privacy-header">
+          <Lock size={13} />
+          <span className="federated-privacy-label">Privacy status</span>
         </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14 }}>
+        <div className="federated-privacy-items">
           {f.privacy.map(p => (
-            <span key={p.field} style={{ fontSize: 10.5, fontFamily: MONO }}>
-              <span style={{ color: 'var(--text-muted)' }}>{p.field}: </span>
-              <span style={{ color: p.private ? 'var(--green)' : 'var(--cyan)' }}>{p.status}</span>
+            <span key={p.field} className="federated-privacy-field">
+              <span className="federated-privacy-key">{p.field}: </span>
+              <span className={p.private ? 'federated-privacy-value--private' : 'federated-privacy-value--not-private'}>{p.status}</span>
             </span>
           ))}
         </div>
-        <div style={{ fontSize: 9.5, color: 'var(--text-muted)', marginTop: 6 }}>{f.cohortNote}</div>
+        <div className="federated-privacy-note">{f.cohortNote}</div>
       </div>
 
       {!comparing ? (
-        <div className="card" style={{ padding: 24, textAlign: 'center', color: 'var(--text-muted)' }}>
-          <Lock size={20} style={{ color: 'var(--green)' }} />
-          <div style={{ fontSize: 13, color: 'var(--text)', marginTop: 8 }}>Private mode — comparisons disabled.</div>
-          <div style={{ fontSize: 11, marginTop: 4 }}>KDD learns only from your own sessions. Switch to Team, Federated or Academy to benchmark against anonymous similar-rider patterns.</div>
+        <div className="card federated-private">
+          <Lock size={20} />
+          <div className="federated-private-title">Private mode — comparisons disabled.</div>
+          <div className="federated-private-desc">KDD learns only from your own sessions. Switch to Team, Federated or Academy to benchmark against anonymous similar-rider patterns.</div>
         </div>
       ) : (
         <>
           {/* summary */}
-          <div className="card mb-4" style={{ padding: 14 }}>
-            <div style={{ fontSize: 10.5, fontFamily: MONO, color: 'var(--text-muted)' }}>Benchmark group: <span style={{ color: 'var(--text)' }}>{f.group}</span></div>
-            <div style={{ display: 'flex', gap: 24, marginTop: 8, fontSize: 11.5, flexWrap: 'wrap' }}>
-              <span><span style={{ color: 'var(--text-muted)' }}>Strengths: </span><span style={{ color: 'var(--green)' }}>{f.strengths.join(', ')}</span></span>
-              <span><span style={{ color: 'var(--text-muted)' }}>Weaknesses: </span><span style={{ color: 'var(--accent)' }}>{f.weaknesses.join(', ')}</span></span>
+          <div className="card federated-summary mb-4">
+            <div className="federated-summary-group">Benchmark group: <span className="federated-summary-group-value">{f.group}</span></div>
+            <div className="federated-summary-stats">
+              <span><span className="federated-summary-stat-label">Strengths: </span><span className="federated-summary-stat-value--green">{f.strengths.join(', ')}</span></span>
+              <span><span className="federated-summary-stat-label">Weaknesses: </span><span className="federated-summary-stat-value--red">{f.weaknesses.join(', ')}</span></span>
             </div>
-            <div style={{ fontSize: 11.5, marginTop: 6 }}><span style={{ color: 'var(--text-muted)' }}>Main opportunity: </span><b style={{ color: 'var(--text)' }}>{f.mainOpportunity}</b> —· est. gain to top 20%: <span style={{ color: 'var(--green)', fontFamily: MONO }}>{f.gainToTop20}</span></div>
+            <div className="federated-summary-opportunity"><span className="federated-summary-opportunity-label">Main opportunity: </span><span className="federated-summary-opportunity-text">{f.mainOpportunity}</span> —· est. gain to top 20%: <span className="federated-summary-gain">{f.gainToTop20}</span></div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, alignItems: 'start' }}>
+          <div className="grid-2 gap-4 items-start">
             {/* percentiles */}
-            <div className="card" style={{ padding: 16 }}>
-              <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 12 }}>Performance percentiles</div>
+            <div className="card federated-percentiles">
+              <div className="federated-section-label">Performance percentiles</div>
               {f.percentiles.map(p => (
-                <div key={p.metric} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-                  <span style={{ width: 130, fontSize: 11, color: 'var(--text)' }}>{p.metric}</span>
-                  <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
-                    <div style={{ width: `${p.percentile}%`, height: '100%', background: percentileColor(p.percentile) }} />
+                <div key={p.metric} className="federated-percentile-row" style={{ '--bar-color': percentileColor(p.percentile), '--bar-fill-width': `${p.percentile}%` }}>
+                  <span className="federated-percentile-metric">{p.metric}</span>
+                  <div className="federated-percentile-bar-track">
+                    <div className="federated-percentile-bar-fill" />
                   </div>
-                  <span style={{ width: 34, textAlign: 'right', fontSize: 10.5, fontFamily: MONO, color: percentileColor(p.percentile) }}>{p.percentile}th</span>
+                  <span className="federated-percentile-value">{p.percentile}th</span>
                 </div>
               ))}
             </div>
 
             {/* technique + lap */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div className="card" style={{ padding: 16 }}>
-                <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 8 }}>Lap benchmark</div>
-                <div style={{ display: 'flex', gap: 18, fontSize: 12 }}>
-                  <span><div style={{ fontSize: 8.5, fontFamily: MONO, color: 'var(--text-muted)' }}>YOU</div><span style={{ fontFamily: MONO, color: 'var(--text)' }}>{f.lap.yourBest}</span></span>
-                  <span><div style={{ fontSize: 8.5, fontFamily: MONO, color: 'var(--text-muted)' }}>MEDIAN</div><span style={{ fontFamily: MONO, color: 'var(--text-muted)' }}>{f.lap.groupMedian}</span></span>
-                  <span><div style={{ fontSize: 8.5, fontFamily: MONO, color: 'var(--text-muted)' }}>TOP 20%</div><span style={{ fontFamily: MONO, color: 'var(--green)' }}>{f.lap.top20}</span></span>
+            <div className="flex-col gap-4">
+              <div className="card federated-lap">
+                <div className="federated-section-label">Lap benchmark</div>
+                <div className="federated-lap-grid">
+                  <span>
+                    <div className="federated-lap-col-label">YOU</div>
+                    <span className="federated-lap-col-value federated-lap-your-value">{f.lap.yourBest}</span>
+                  </span>
+                  <span>
+                    <div className="federated-lap-col-label">MEDIAN</div>
+                    <span className="federated-lap-col-value federated-lap-median-value">{f.lap.groupMedian}</span>
+                  </span>
+                  <span>
+                    <div className="federated-lap-col-label">TOP 20%</div>
+                    <span className="federated-lap-col-value federated-lap-top-value">{f.lap.top20}</span>
+                  </span>
                 </div>
-                <div style={{ fontSize: 10.5, color: 'var(--text-muted)', marginTop: 6 }}>Main difference: {f.lap.mainDiff}</div>
+                <div className="federated-lap-diff">Main difference: {f.lap.mainDiff}</div>
               </div>
-              <div className="card" style={{ padding: 16 }}>
-                <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 8 }}>Technique benchmark</div>
+              <div className="card federated-technique">
+                <div className="federated-section-label">Technique benchmark</div>
                 {f.technique.map(t => (
-                  <div key={t.skill} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, marginBottom: 4 }}>
-                    <span style={{ flex: 1, color: 'var(--text)' }}>{t.skill}</span>
-                    <span style={{ fontFamily: MONO, color: 'var(--text)' }}>{t.score}</span>
-                    <span style={{ fontSize: 9.5, fontFamily: MONO, color: vsColor(t.vs), width: 56, textAlign: 'right' }}>{t.vs}</span>
+                  <div key={t.skill} className="federated-technique-row" style={{ '--vs-color': vsColor(t.vs) }}>
+                    <span className="federated-technique-skill">{t.skill}</span>
+                    <span className="federated-technique-score">{t.score}</span>
+                    <span className="federated-technique-vs">{t.vs}</span>
                   </div>
                 ))}
               </div>
@@ -119,68 +125,67 @@ export function FederatedPage() {
           </div>
 
           {/* corner benchmark */}
-          <div className="card" style={{ padding: 16, marginTop: 14 }}>
-            <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 10 }}>Corner benchmark —· exit speed</div>
+          <div className="card federated-corners">
+            <div className="federated-section-label">Corner benchmark —· exit speed</div>
             {f.corners.map(c => {
               const span = Math.max(1, c.top20 - Math.min(c.yours, c.median) + 4);
               const at = (v: number) => `${((v - (Math.min(c.yours, c.median) - 2)) / span) * 100}%`;
               return (
-                <div key={c.corner} style={{ marginBottom: 10 }}>
-                  <div style={{ display: 'flex', gap: 8, fontSize: 11 }}>
-                    <span style={{ fontWeight: 700, color: 'var(--text)', flex: 1 }}>{c.corner}</span>
-                    <span style={{ fontFamily: MONO, color: 'var(--text)' }}>you {c.yours}</span>
-                    <span style={{ fontFamily: MONO, color: 'var(--text-muted)' }}>med {c.median}</span>
-                    <span style={{ fontFamily: MONO, color: 'var(--green)' }}>top {c.top20} {c.unit}</span>
+                <div key={c.corner} className="federated-corner-row">
+                  <div className="federated-corner-header">
+                    <span className="federated-corner-name">{c.corner}</span>
+                    <span className="federated-corner-value federated-corner-value--yours">you {c.yours}</span>
+                    <span className="federated-corner-value federated-corner-value--median">med {c.median}</span>
+                    <span className="federated-corner-value federated-corner-value--top">top {c.top20} {c.unit}</span>
                   </div>
-                  <div style={{ position: 'relative', height: 8, borderRadius: 4, background: 'rgba(255,255,255,0.06)', marginTop: 3 }}>
-                    <span style={{ position: 'absolute', left: at(c.median), top: -1, bottom: -1, width: 1, background: 'var(--text-muted)' }} />
-                    <span style={{ position: 'absolute', left: at(c.top20), top: -1, bottom: -1, width: 2, background: 'var(--green)' }} />
-                    <span style={{ position: 'absolute', left: at(c.yours), top: -2, width: 9, height: 9, borderRadius: 999, background: 'var(--cyan)', transform: 'translateX(-4px)' }} />
+                  <div className="federated-corner-bar">
+                    <span className="federated-corner-marker" style={{ left: at(c.median) }} />
+                    <span className="federated-corner-marker--top" style={{ left: at(c.top20) }} />
+                    <span className="federated-corner-dot" style={{ left: at(c.yours) }} />
                   </div>
-                  <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>{c.limiter}</div>
+                  <div className="federated-corner-limiter">{c.limiter}</div>
                 </div>
               );
             })}
           </div>
 
           {/* riders like you + learning */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginTop: 14 }}>
-            <div className="card" style={{ padding: 16,
- }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
-                <Users size={13} style={{ color: 'var(--green)' }} />
-                <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Riders like you improved by</span>
+          <div className="federated-insight-grid">
+            <div className="card federated-insight-card">
+              <div className="federated-insight-header federated-insight-header--green">
+                <Users size={13} />
+                <span className="federated-insight-label">Riders like you improved by</span>
               </div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{f.ridersLikeYou.action}</div>
-              <div style={{ display: 'flex', gap: 16, marginTop: 6, fontSize: 11 }}>
-                <span><span style={{ color: 'var(--text-muted)' }}>Avg gain: </span><span style={{ color: 'var(--green)', fontFamily: MONO }}>{f.ridersLikeYou.avgGain}</span></span>
-                <span><span style={{ color: 'var(--text-muted)' }}>Risk: </span><span style={{ color: 'var(--green)' }}>{f.ridersLikeYou.riskImpact}</span></span>
-                <span><span style={{ color: 'var(--text-muted)' }}>Conf: </span>{f.ridersLikeYou.confidence}</span>
+              <div className="federated-insight-value">{f.ridersLikeYou.action}</div>
+              <div className="federated-insight-stats">
+                <span><span className="federated-insight-stat-label">Avg gain: </span><span className="federated-insight-stat-num">{f.ridersLikeYou.avgGain}</span></span>
+                <span><span className="federated-insight-stat-label">Risk: </span><span className="federated-insight-stat-num">{f.ridersLikeYou.riskImpact}</span></span>
+                <span><span className="federated-insight-stat-label">Conf: </span><span className="federated-insight-stat-conf">{f.ridersLikeYou.confidence}</span></span>
               </div>
-              <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 4 }}>{f.ridersLikeYou.corners.join(' —· ')} —· based on anonymous aggregated sessions.</div>
+              <div className="federated-insight-corners">{f.ridersLikeYou.corners.join(' —· ')} —· based on anonymous aggregated sessions.</div>
             </div>
-            <div className="card" style={{ padding: 16 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
-                <TrendingUp size={13} style={{ color: 'var(--cyan)' }} />
-                <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Learning benchmark —· {f.learning.block}</span>
+            <div className="card federated-insight-card">
+              <div className="federated-insight-header federated-insight-header--cyan">
+                <TrendingUp size={13} />
+                <span className="federated-insight-label">Learning benchmark —· {f.learning.block}</span>
               </div>
-              <div style={{ display: 'flex', gap: 16, fontSize: 12 }}>
-                <span>you <b style={{ color: 'var(--green)' }}>{f.learning.yourProgress}</b></span>
-                <span style={{ color: 'var(--text-muted)' }}>similar {f.learning.similar}</span>
+              <div className="federated-learning-progress">
+                <span>you <span className="federated-learning-your">{f.learning.yourProgress}</span></span>
+                <span className="federated-learning-similar">similar {f.learning.similar}</span>
               </div>
-              <div style={{ fontSize: 11.5, color: 'var(--green)', marginTop: 4 }}>{f.learning.status}</div>
-              <div style={{ fontSize: 10.5, color: 'var(--text-muted)', marginTop: 4 }}>{f.learning.nextStep}</div>
+              <div className="federated-learning-status">{f.learning.status}</div>
+              <div className="federated-learning-next">{f.learning.nextStep}</div>
             </div>
           </div>
 
           {/* federated oracle */}
-          <div className="card" style={{ padding: 16, marginTop: 14, background: 'rgba(139,92,246,0.06)', border: '1px solid rgba(139,92,246,0.3)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 6 }}>
-              <Sparkles size={14} style={{ color: 'var(--violet)' }} />
-              <span style={{ fontSize: 9, fontFamily: MONO, color: 'var(--violet)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Oracle federated context —· {f.confidence}%</span>
+          <div className="card federated-oracle">
+            <div className="federated-oracle-header">
+              <Sparkles size={14} />
+              <span className="federated-oracle-label">Oracle federated context —· {f.confidence}%</span>
             </div>
-            <div style={{ fontSize: 12, color: 'var(--text)', lineHeight: 1.55 }}>{f.oracleContext}</div>
-            <div style={{ fontSize: 11.5, color: 'var(--green)', marginTop: 6 }}>Recommended mission: {f.recommendedMission}</div>
+            <div className="federated-oracle-body">{f.oracleContext}</div>
+            <div className="federated-oracle-mission">Recommended mission: {f.recommendedMission}</div>
           </div>
         </>
       )}
