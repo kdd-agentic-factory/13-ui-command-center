@@ -1,6 +1,10 @@
 app = "kdd-rjz-ui"
 primary_region = "fra"
 
+[env]
+  VITE_RACE_COMMAND_CENTER_URL = "https://kdd-rjz-race.fly.dev"
+  VITE_ENABLE_RACE_COMMAND_CENTER_PREVIEW = "true"
+
 [build]
   dockerfile = "Dockerfile"
 

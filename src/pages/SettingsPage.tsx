@@ -11,7 +11,15 @@ const INSFORGE_DOMAIN = import.meta.env.VITE_INSFORGE_DOMAIN ?? 'eu-central.insf
 const FLY_APP_DOMAIN = import.meta.env.VITE_FLY_APP_DOMAIN ?? 'fly.dev';
 const RACE_APP_PREFIX = import.meta.env.VITE_RACE_APP_PREFIX ?? 'kdd-rjz';
 
-const fly = (name: string) => `https://${name}-${INSFORGE_PROJECT_ID}.${FLY_APP_DOMAIN}`;
+// Compute service URL map — canonical kdd-rjz-* naming, NOT GUID-based
+const COMPUTE_URLS: Record<string, string> = {
+  'agent-orchestrator': `https://${RACE_APP_PREFIX}-orchestrator.${FLY_APP_DOMAIN}`,
+  'mcp-gateway':        `https://${RACE_APP_PREFIX}-mcp-gateway.${FLY_APP_DOMAIN}`,
+  'kdd-governance':     `https://${RACE_APP_PREFIX}-governance.${FLY_APP_DOMAIN}`,
+  'kdd-pipelines':      `https://${RACE_APP_PREFIX}-pipelines.${FLY_APP_DOMAIN}`,
+  'kdd-telemetry':      `https://${RACE_APP_PREFIX}-telemetry.${FLY_APP_DOMAIN}`,
+};
+const fly = (name: string) => COMPUTE_URLS[name] ?? `https://${RACE_APP_PREFIX}-${name}.${FLY_APP_DOMAIN}`;
 const RACE = (name: string) => `https://${RACE_APP_PREFIX}-${name}.${FLY_APP_DOMAIN}`;
 const insforge = (id: string, suffix: string = '') => `https://${id}${suffix ? '.' + suffix : ''}.${INSFORGE_DOMAIN.replace('eu-central.', '').replace('.', '.')}`;
 const INSFORGE_API_URL = import.meta.env.VITE_INSFORGE_API_URL ?? 'https://vdf553wq.eu-central.insforge.app';
