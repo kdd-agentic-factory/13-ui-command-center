@@ -64,6 +64,7 @@ const SERVICES: ServiceStatus[] = [
   { group: 'Other',      name: 'Paper Reproducibility',   url: RACE('paper-kit'),         status: 'up', probe: 'registry', latency: 'â€”',    latencyMs: 0,   description: 'LaTeX reproducibility kit (batch)' },
   // Pillars
   { group: 'Pillars',    name: 'SpecForge AI -- Design Studio', url: 'https://ep3nru4k.insforge.site',  status: 'up', probe: 'registry', latency: '--',    latencyMs: 0,   description: 'KDD Design & Part Optimization Studio -- Third pillar' },
+  { group: 'Pillars',    name: 'SpecForge -- Lightweighting Lab', url: 'https://ep3nru4k.insforge.site/lightweighting-lab/',  status: 'up', probe: 'registry', latency: '--',    latencyMs: 0,   description: 'Structural & digital lightweighting research (Scientific Reports 2026)' },
 ];
 
 // Values are fully masked on purpose â€” never echo real key fragments in the UI.
