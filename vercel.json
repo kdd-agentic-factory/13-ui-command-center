@@ -1,5 +1,7 @@
 {
   "rewrites": [
+    { "source": "/pit-wall/assets/:path*", "destination": "/assets/:path*" },
+    { "source": "/pit-wall/favicon.svg", "destination": "/favicon.svg" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
