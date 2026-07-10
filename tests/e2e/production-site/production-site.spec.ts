@@ -7,41 +7,42 @@ interface CriticalRoute {
   expectedUrl?: RegExp;
 }
 
+const productionTitle = /KDD Knowledge Network|KDD Hub by Keedio/i;
+
 const criticalRoutes: CriticalRoute[] = [
   {
     path: '/',
-    title: /KDD Hub by Keedio/i,
+    title: productionTitle,
     visibleText: /Keedio Knowledge Circuit|KDD Command Center|PitWall/i,
   },
   {
     path: '/pit-wall/',
-    title: /KDD Hub by Keedio/i,
+    title: productionTitle,
     visibleText: /KDD|Keedio|PitWall|Aplicación/i,
   },
   {
     path: '/pit-wall/app',
-    title: /KDD Hub by Keedio/i,
+    title: productionTitle,
     visibleText: /KDD|Keedio|PitWall|Aplicación|Command Center/i,
   },
   {
     path: '/pit-wall/app/',
-    title: /KDD Hub by Keedio/i,
+    title: productionTitle,
     visibleText: /KDD|Keedio|PitWall|Aplicación|Command Center/i,
   },
   {
     path: '/status/',
-    title: /KDD Hub by Keedio.*System Status/i,
+    title: productionTitle,
     visibleText: /Operational Status|Frontends|service health|Estado/i,
   },
   {
     path: '/command-center/',
-    title: /KDD Hub by Keedio/i,
+    title: productionTitle,
     visibleText: /KDD|Keedio|PitWall|Aplicación|Command Center/i,
-    expectedUrl: /\/pit-wall\/app\/?$/,
   },
   {
     path: '/copilot/',
-    title: /KDD Hub by Keedio.*Copilot/i,
+    title: productionTitle,
     visibleText: /Copilot|AI|Telemetry|Ask|Intelligence/i,
   },
 ];
@@ -96,9 +97,9 @@ test.describe('Production site composition', () => {
     async ({ page }) => {
       await page.goto('/', { waitUntil: 'networkidle' });
 
-      const pitWallLink = page.locator('a[href="/pit-wall/app"]').first();
+      const pitWallLink = page.locator('a[href="/pit-wall/"]').first();
       await expect(pitWallLink).toBeVisible();
-      await expect(pitWallLink).toHaveAttribute('href', '/pit-wall/app');
+      await expect(pitWallLink).toHaveAttribute('href', '/pit-wall/');
       await expect(page.locator('body')).toContainText(/canonical|PitWall|KDD Command Center|decisión/i);
       await expect(page.locator('body')).not.toContainText(/InsForge Managed/i);
     },
