@@ -43,7 +43,7 @@ const CONNECTED_MODULES: HubModule[] = [
     title: 'Knowledge Nodes',
     layer: 'Private/team/academy memory',
     body: 'Cada nodo conserva conocimiento propio: sesiones, pilotos, motos, validaciones y aprendizajes del equipo.',
-    href: '/pit-wall/nodes',
+    href: '/nodes',
     accent: 'yellow',
     intent: 'learning',
     cta: 'Explore nodes',
@@ -52,7 +52,7 @@ const CONNECTED_MODULES: HubModule[] = [
     title: 'Copilot',
     layer: 'Explanation layer',
     body: 'Explica eventos, riesgos y decisiones con lenguaje operativo. No reemplaza al equipo: acelera el razonamiento.',
-    href: '/pit-wall/copilot',
+    href: '/copilot',
     accent: 'purple',
     intent: 'intelligence',
     cta: 'Ask Copilot',
@@ -61,7 +61,7 @@ const CONNECTED_MODULES: HubModule[] = [
     title: 'Federation',
     layer: 'Protected learning network',
     body: 'La señal validada viaja entre nodos; el dato sensible queda protegido. La red mejora sin exponer telemetría cruda.',
-    href: '/pit-wall/federation',
+    href: '/federation',
     accent: 'orange',
     intent: 'learning',
     cta: 'Review federation',
@@ -70,7 +70,7 @@ const CONNECTED_MODULES: HubModule[] = [
     title: 'Research Lab',
     layer: 'Evidence and validation',
     body: 'Investigación reproducible que valida hipótesis, protocolos y modelos. Credibilidad, no documentación de relleno.',
-    href: '/pit-wall/research-lab',
+    href: '/research-lab',
     accent: 'green',
     intent: 'credibility',
     cta: 'View research lab',
@@ -79,7 +79,7 @@ const CONNECTED_MODULES: HubModule[] = [
     title: 'Dashboard',
     layer: 'Operational reporting',
     body: 'Reportes, workflows y señales activas conectadas al runtime. Observa el sistema sin competir con PitWall.',
-    href: '/pit-wall/platform',
+    href: '/platform',
     accent: 'blue',
     intent: 'platform',
     cta: 'Open dashboard',
@@ -88,7 +88,7 @@ const CONNECTED_MODULES: HubModule[] = [
     title: 'Command Center',
     layer: 'Service coordination',
     body: 'Coordina servicios, validaciones y módulos conectados. Es control operativo, no la entrada comercial principal.',
-    href: '/pit-wall/platform',
+    href: '/platform',
     accent: 'cyan',
     intent: 'platform',
     cta: 'Open command',
@@ -97,7 +97,7 @@ const CONNECTED_MODULES: HubModule[] = [
     title: 'Platform Admin',
     layer: 'Internal supervision',
     body: 'Auditoría, estado interno y supervisión para operadores. Intencionalmente secundario frente al producto.',
-    href: '/pit-wall/platform',
+    href: '/platform',
     accent: 'muted',
     intent: 'platform',
     cta: 'Open admin',
@@ -803,11 +803,11 @@ export function KddHubPage() {
           <nav className="hub__links" aria-label="KDD Hub navigation">
             <a href="/hub" aria-current="page">Hub</a>
             <a href="/pit-wall/app">PitWall OS</a>
-            <a href="/pit-wall/nodes">Nodes</a>
-            <a href="/pit-wall/federation">Federation</a>
-            <a href="/pit-wall/copilot">Copilot</a>
-            <a href="/pit-wall/research-lab">Research</a>
-            <a href="/pit-wall/platform">Platform</a>
+            <a href="/nodes">Nodes</a>
+            <a href="/federation">Federation</a>
+            <a href="/copilot">Copilot</a>
+            <a href="/research-lab">Research</a>
+            <a href="/platform">Platform</a>
           </nav>
         </header>
 
@@ -839,9 +839,9 @@ export function KddHubPage() {
                 Open PitWall OS
                 <ArrowRight size={14} />
               </a>
-              <a className="hub__btn hub__btn--quiet" href="/pit-wall/nodes">Explore Knowledge Nodes</a>
-              <a className="hub__btn hub__btn--ghost" href="/pit-wall/federation">Review Federation</a>
-              <a className="hub__btn hub__btn--ghost" href="/pit-wall/research-lab">View Research Lab</a>
+              <a className="hub__btn hub__btn--quiet" href="/nodes">Explore Knowledge Nodes</a>
+              <a className="hub__btn hub__btn--ghost" href="/federation">Review Federation</a>
+              <a className="hub__btn hub__btn--ghost" href="/research-lab">View Research Lab</a>
               {RACE_COMMAND_CENTER_ENABLED && (
                 <a
                   className="hub__btn hub__btn--ghost"

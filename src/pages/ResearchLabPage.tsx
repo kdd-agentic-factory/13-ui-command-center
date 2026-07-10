@@ -264,19 +264,19 @@ export default function ResearchLabPage() {
           Open PitWall OS
         </a>
         <a
-          href="/pit-wall/federation"
+          href="/federation"
           className="research-cta-secondary"
         >
           View Federation Layer
         </a>
         <a
-          href="/pit-wall/nodes"
+          href="/nodes"
           className="research-cta-secondary"
         >
           Explore Nodes
         </a>
         <a
-          href="/pit-wall/copilot"
+          href="/copilot"
           className="research-cta-secondary"
         >
           Ask Copilot

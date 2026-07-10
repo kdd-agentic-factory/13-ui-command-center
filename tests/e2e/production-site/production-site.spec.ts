@@ -31,6 +31,31 @@ const criticalRoutes: CriticalRoute[] = [
     visibleText: /KDD|Keedio|PitWall|Aplicación|Command Center/i,
   },
   {
+    path: '/nodes',
+    title: productionTitle,
+    visibleText: /KDD|Keedio|Nodes|PitWall|Aplicación|Command Center/i,
+  },
+  {
+    path: '/federation',
+    title: productionTitle,
+    visibleText: /KDD|Keedio|Federation|PitWall|Aplicación|Command Center/i,
+  },
+  {
+    path: '/copilot',
+    title: productionTitle,
+    visibleText: /KDD|Keedio|Copilot|PitWall|Aplicación|Command Center/i,
+  },
+  {
+    path: '/research-lab',
+    title: productionTitle,
+    visibleText: /KDD|Keedio|Research|PitWall|Aplicación|Command Center/i,
+  },
+  {
+    path: '/platform',
+    title: productionTitle,
+    visibleText: /KDD|Keedio|Platform|PitWall|Aplicación|Command Center/i,
+  },
+  {
     path: '/status/',
     title: productionTitle,
     visibleText: /Operational Status|Frontends|service health|Estado/i,
@@ -100,11 +125,11 @@ test.describe('Production site composition', () => {
       const pitWallLink = page.locator('a[href="/pit-wall/app"]').first();
       await expect(pitWallLink).toBeVisible();
       await expect(pitWallLink).toHaveAttribute('href', '/pit-wall/app');
-      await expect(page.locator('a[href="/pit-wall/nodes"]').first()).toBeVisible();
-      await expect(page.locator('a[href="/pit-wall/federation"]').first()).toBeVisible();
-      await expect(page.locator('a[href="/pit-wall/copilot"]').first()).toBeVisible();
-      await expect(page.locator('a[href="/pit-wall/research-lab"]').first()).toBeVisible();
-      await expect(page.locator('a[href="/pit-wall/platform"]').first()).toBeVisible();
+      await expect(page.locator('a[href="/nodes"]').first()).toBeVisible();
+      await expect(page.locator('a[href="/federation"]').first()).toBeVisible();
+      await expect(page.locator('a[href="/copilot"]').first()).toBeVisible();
+      await expect(page.locator('a[href="/research-lab"]').first()).toBeVisible();
+      await expect(page.locator('a[href="/platform"]').first()).toBeVisible();
       await page.waitForTimeout(5500);
       await expect(page).toHaveURL(/\/$/);
       await expect(page.locator('body')).toContainText(/canonical|PitWall|KDD Command Center|decisión/i);
