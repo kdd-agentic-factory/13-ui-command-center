@@ -1,6 +1,13 @@
 import { expect, test, type Page } from '@playwright/test';
 
-const criticalRoutes = [
+interface CriticalRoute {
+  path: string;
+  title: RegExp;
+  visibleText: RegExp;
+  expectedUrl?: RegExp;
+}
+
+const criticalRoutes: CriticalRoute[] = [
   {
     path: '/',
     title: /KDD Hub by Keedio/i,
@@ -69,7 +76,7 @@ test.describe('Production site composition', () => {
         const response = await page.goto(route.path, { waitUntil: 'load' });
 
         expect(response?.ok(), `${route.path} should return a successful HTTP response`).toBe(true);
-        if ('expectedUrl' in route) {
+        if (route.expectedUrl !== undefined) {
           await expect(page).toHaveURL(route.expectedUrl);
         }
         await expect(page).toHaveTitle(route.title);

@@ -1,5 +1,5 @@
 /**
- * KnowledgeGraphPage – Garage Knowledge Graph.
+ * KnowledgeGraphPage – Garage Nodes.
  *
  * What the platform has LEARNED across sessions: for the active rider+bike+
  * circuit, the recurring limiter, the best proven fix, the measured result,
@@ -7,7 +7,7 @@
  * starting setup for the next visit. The learning loop made visible.
  */
 import { useEffect, useState } from 'react';
-import { Network, ArrowRight, BookOpen, Loader2, Wifi, WifiOff } from 'lucide-react';
+import { Network, ArrowRight, BookOpen, Loader2, Wifi, WifiOff, AlertTriangle } from 'lucide-react';
 import { useNavigate } from '../context/NavContext';
 import { useGarage } from '../hooks/useGarage';
 import { useSessionContext } from '../hooks/useSessionContext';
@@ -27,6 +27,29 @@ const KNOWLEDGE_STATE = {
 } as const;
 
 type KnowledgeState = (typeof KNOWLEDGE_STATE)[keyof typeof KNOWLEDGE_STATE];
+
+const STATUS_META: Record<KnowledgeState, { label: string; className: string; message: string }> = {
+  loading: {
+    label: 'grounding nodes',
+    className: 'nodes-status nodes-status--loading',
+    message: 'Checking live retrieval before showing the session evidence layer.',
+  },
+  grounded: {
+    label: 'nodes grounded',
+    className: 'nodes-status nodes-status--grounded',
+    message: 'Live RAG/CAG evidence is attached to the validated node patterns below.',
+  },
+  reachable: {
+    label: 'nodes local',
+    className: 'nodes-status nodes-status--reachable',
+    message: 'Live retrieval is reachable but returned no evidence for this context. Showing validated local node memory.',
+  },
+  offline: {
+    label: 'nodes offline',
+    className: 'nodes-status nodes-status--offline',
+    message: 'Retrieval is unavailable. KDD keeps the tab useful with validated local node patterns.',
+  },
+};
 
 interface LiveKnowledgeEvidence {
   sourceId: string;
@@ -53,6 +76,7 @@ export function KnowledgeGraphPage() {
   const patterns = getKnowledgePatterns(garage.profile.rider.name, bike, ctx.circuitName);
   const [knowledgeState, setKnowledgeState] = useState<KnowledgeState>(KNOWLEDGE_STATE.LOADING);
   const [liveEvidence, setLiveEvidence] = useState<LiveKnowledgeEvidence[]>([]);
+  const status = STATUS_META[knowledgeState];
 
   useEffect(() => {
     let active = true;
@@ -84,26 +108,33 @@ export function KnowledgeGraphPage() {
     <div className="page">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="page-title flex items-center gap-2"><Network size={18} /> Garage Knowledge Graph</h1>
-          <p className="page-subtitle">What KDD has learned · {garage.profile.rider.name} · {garage.profile.bike.brand} {garage.profile.bike.model} · {ctx.circuitName}</p>
+          <h1 className="page-title flex items-center gap-2"><Network size={18} /> Nodes</h1>
+          <p className="page-subtitle">Validated learning nodes for {garage.profile.rider.name} · {garage.profile.bike.brand} {garage.profile.bike.model} · {ctx.circuitName}</p>
         </div>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 9.5, fontFamily: MONO, color: knowledgeState === KNOWLEDGE_STATE.GROUNDED ? 'var(--green)' : knowledgeState === KNOWLEDGE_STATE.REACHABLE ? 'var(--cyan)' : 'var(--text-muted)', border: `1px solid ${knowledgeState === KNOWLEDGE_STATE.GROUNDED ? 'rgba(0,230,118,0.4)' : knowledgeState === KNOWLEDGE_STATE.REACHABLE ? 'rgba(0,183,255,0.4)' : 'var(--border)'}`, borderRadius: 5, padding: '3px 8px', textTransform: 'uppercase' }}>
+        <span className={status.className}>
           {knowledgeState === KNOWLEDGE_STATE.LOADING ? <Loader2 size={11} className="spin" /> : knowledgeState === KNOWLEDGE_STATE.OFFLINE ? <WifiOff size={11} /> : <Wifi size={11} />}
-          {knowledgeState === KNOWLEDGE_STATE.GROUNDED ? 'KB grounded' : knowledgeState === KNOWLEDGE_STATE.REACHABLE ? 'KB reachable' : knowledgeState === KNOWLEDGE_STATE.LOADING ? 'grounding' : 'KB offline'}
+          {status.label}
         </span>
       </div>
 
+      {knowledgeState !== KNOWLEDGE_STATE.GROUNDED && (
+        <div className="card nodes-state-card mb-4" role={knowledgeState === KNOWLEDGE_STATE.OFFLINE ? 'status' : undefined}>
+          {knowledgeState === KNOWLEDGE_STATE.LOADING ? <Loader2 size={14} className="spin" /> : <AlertTriangle size={14} />}
+          <span>{status.message}</span>
+        </div>
+      )}
+
       {liveEvidence.length > 0 && (
-        <div className="card mb-4" style={{ padding: 14 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
-            <BookOpen size={13} style={{ color: 'var(--green)' }} />
-            <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Retrieved knowledge evidence · 03-rag-cag</span>
+        <div className="card nodes-evidence mb-4">
+          <div className="nodes-evidence__header">
+            <BookOpen size={13} />
+            <span>Retrieved node evidence · 03-rag-cag</span>
           </div>
           {liveEvidence.map((evidence) => (
-            <div key={`${evidence.sourceId}:${evidence.excerpt}`} style={{ display: 'flex', gap: 10, marginBottom: 7 }}>
-              <span style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--cyan)', flexShrink: 0, width: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={evidence.sourceId}>{evidence.sourceId}</span>
-              <span style={{ fontSize: 11.5, color: 'var(--text)', lineHeight: 1.45, flex: 1 }}>{evidence.excerpt}</span>
-              <span style={{ fontSize: 9.5, fontFamily: MONO, color: 'var(--text-muted)' }}>{(evidence.score * 100).toFixed(0)}%</span>
+            <div key={`${evidence.sourceId}:${evidence.excerpt}`} className="nodes-evidence__row">
+              <span className="nodes-evidence__source" title={evidence.sourceId}>{evidence.sourceId}</span>
+              <span className="nodes-evidence__excerpt">{evidence.excerpt}</span>
+              <span className="nodes-evidence__score">{(evidence.score * 100).toFixed(0)}%</span>
             </div>
           ))}
         </div>
@@ -120,7 +151,7 @@ export function KnowledgeGraphPage() {
               </span>
             </div>
 
-            {/* problem → fix → result chain */}
+            {/* limiter → fix → result chain */}
             <div style={{ display: 'flex', alignItems: 'stretch', gap: 10, flexWrap: 'wrap' }}>
               <div style={{ flex: 1, minWidth: 200 }}>
                 <div style={{ fontSize: 9, fontFamily: MONO, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Limiter</div>
@@ -150,7 +181,7 @@ export function KnowledgeGraphPage() {
       </div>
 
       <div style={{ marginTop: 12, padding: '10px 14px', borderRadius: 8, background: 'rgba(0,230,118,0.05)', border: '1px solid rgba(0,230,118,0.25)', fontSize: 11, color: 'var(--text)' }}>
-        The graph grows from the Black Box: every validated decision becomes a learned pattern, so each session makes the next one start smarter.
+        Nodes grow from the Black Box: every validated decision becomes a learned pattern, so each session makes the next one start smarter.
       </div>
     </div>
   );

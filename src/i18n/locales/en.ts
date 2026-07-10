@@ -217,7 +217,7 @@ const en = {
     report: 'Session Report',
     research: 'Research Lab',
     blackBox: 'Black Box',
-    knowledge: 'Knowledge Graph',
+    knowledge: 'Nodes',
     patterns: 'Pattern Miner',
     federated: 'Federated Intelligence',
     debrief: 'Debrief Room',

@@ -40,6 +40,22 @@ export interface ServiceStatusResult {
 
 const DEFAULT_TIMEOUT_MS = 2500;
 
+function getHealthCheckErrorMessage(error: unknown): string {
+  if (error instanceof DOMException && error.name === 'AbortError') {
+    return 'Health check timed out';
+  }
+
+  if (error instanceof TypeError) {
+    return 'Connection failed — may be CORS or service unavailable';
+  }
+
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return 'Network error';
+}
+
 /**
  * Resolve the URL(s) to probe for service health.
  *
@@ -119,13 +135,7 @@ export function useServiceStatus(
         } catch (err) {
           if (controller.signal.aborted) return { failed: true, message: 'Aborted' };
           // TypeError = network/CORS failure — try next URL
-          const msg =
-            err?.name === 'AbortError'
-              ? 'Health check timed out'
-              : err instanceof TypeError
-                ? 'Connection failed — may be CORS or service unavailable'
-                : err?.message || 'Network error';
-          lastError = msg;
+          lastError = getHealthCheckErrorMessage(err);
         }
       }
       return { failed: true, message: lastError };

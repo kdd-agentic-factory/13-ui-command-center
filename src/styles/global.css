@@ -4323,6 +4323,108 @@ textarea:focus-visible {
 /* ── Grid alignment utility ────────────────────────────────────────────────── */
 .items-start { align-items: start; }
 
+/* ── Product tabs: Nodes + Platform production states ─────────────────────── */
+.nodes-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.nodes-status--grounded { color: var(--green); border-color: rgba(34,197,94,0.4); }
+.nodes-status--reachable { color: var(--cyan); border-color: rgba(0,183,255,0.4); }
+.nodes-status--loading,
+.nodes-status--offline { color: var(--text-muted); }
+
+.nodes-state-card,
+.platform-degraded {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  color: var(--text-dim);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.nodes-state-card svg { color: var(--yellow); }
+.platform-degraded { color: var(--yellow); }
+
+.nodes-evidence {
+  padding: 14px;
+}
+
+.nodes-evidence__header,
+.nodes-evidence__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nodes-evidence__header {
+  gap: 7px;
+  margin-bottom: 8px;
+  color: var(--green);
+}
+
+.nodes-evidence__header span {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.nodes-evidence__row {
+  margin-bottom: 7px;
+}
+
+.nodes-evidence__source,
+.nodes-evidence__score {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.nodes-evidence__source {
+  width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--cyan);
+}
+
+.nodes-evidence__excerpt {
+  flex: 1;
+  color: var(--text);
+  font-size: 11.5px;
+  line-height: 1.45;
+}
+
+.nodes-evidence__score,
+.platform-empty {
+  color: var(--text-muted);
+}
+
+.platform-empty,
+.platform-route-error {
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.platform-route-error {
+  margin-top: 8px;
+  color: var(--yellow);
+}
+
 /* ════════════════════════════════════════════════════════════════════════════
    RESEARCH LAB PAGE
    Applied Research Layer — KDD Research Lab

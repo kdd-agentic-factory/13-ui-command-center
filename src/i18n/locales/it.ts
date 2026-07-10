@@ -10,6 +10,7 @@ const it = {
     preGp: 'Pre Gran Premio',
     crew: 'Capo Meccanici',
     copilot: 'Copilota IA',
+    knowledge: 'Nodi',
     settings: 'Impostazioni',
     sections: {
       missionControl: 'CENTRO DI COMANDO',

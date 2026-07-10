@@ -10,6 +10,7 @@ const fr = {
     preGp: 'Pré Grand Prix',
     crew: 'Chef Mécanicien',
     copilot: 'Copilote IA',
+    knowledge: 'Nœuds',
     settings: 'Paramètres',
     sections: {
       missionControl: 'CENTRE DE COMMANDE',

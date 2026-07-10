@@ -34,7 +34,7 @@ const CONNECTED_MODULES: HubModule[] = [
     title: 'PitWall OS',
     layer: 'Main operational product',
     body: 'Cockpit operativo principal: transforma telemetría, contexto y aprendizaje en la próxima decisión de pista.',
-    href: '/pitwall',
+    href: '/pit-wall/',
     accent: 'red',
     intent: 'operational',
     cta: 'Open PitWall OS',
@@ -44,7 +44,7 @@ const CONNECTED_MODULES: HubModule[] = [
     title: 'Knowledge Nodes',
     layer: 'Private/team/academy memory',
     body: 'Cada nodo conserva conocimiento propio: sesiones, pilotos, motos, validaciones y aprendizajes del equipo.',
-    href: '/founding-nodes',
+    href: '/pit-wall/nodes',
     accent: 'yellow',
     intent: 'learning',
     cta: 'Explore nodes',
@@ -53,7 +53,7 @@ const CONNECTED_MODULES: HubModule[] = [
     title: 'Copilot',
     layer: 'Explanation layer',
     body: 'Explica eventos, riesgos y decisiones con lenguaje operativo. No reemplaza al equipo: acelera el razonamiento.',
-    href: '/copilot',
+    href: '/pit-wall/copilot',
     accent: 'purple',
     intent: 'intelligence',
     cta: 'Ask Copilot',
@@ -62,7 +62,7 @@ const CONNECTED_MODULES: HubModule[] = [
     title: 'Federation',
     layer: 'Protected learning network',
     body: 'La señal validada viaja entre nodos; el dato sensible queda protegido. La red mejora sin exponer telemetría cruda.',
-    href: '#federation',
+    href: '/pit-wall/federation',
     accent: 'orange',
     intent: 'learning',
     cta: 'Review federation',
@@ -71,7 +71,7 @@ const CONNECTED_MODULES: HubModule[] = [
     title: 'Research Lab',
     layer: 'Evidence and validation',
     body: 'Investigación reproducible que valida hipótesis, protocolos y modelos. Credibilidad, no documentación de relleno.',
-    href: '/research',
+    href: '/pit-wall/research-lab',
     accent: 'green',
     intent: 'credibility',
     cta: 'View research lab',
@@ -80,7 +80,7 @@ const CONNECTED_MODULES: HubModule[] = [
     title: 'Dashboard',
     layer: 'Operational reporting',
     body: 'Reportes, workflows y señales activas conectadas al runtime. Observa el sistema sin competir con PitWall.',
-    href: '/dashboard',
+    href: '/pit-wall/platform',
     accent: 'blue',
     intent: 'platform',
     cta: 'Open dashboard',
@@ -89,7 +89,7 @@ const CONNECTED_MODULES: HubModule[] = [
     title: 'Command Center',
     layer: 'Service coordination',
     body: 'Coordina servicios, validaciones y módulos conectados. Es control operativo, no la entrada comercial principal.',
-    href: '/command',
+    href: '/pit-wall/platform',
     accent: 'cyan',
     intent: 'platform',
     cta: 'Open command',
@@ -98,7 +98,7 @@ const CONNECTED_MODULES: HubModule[] = [
     title: 'Platform Admin',
     layer: 'Internal supervision',
     body: 'Auditoría, estado interno y supervisión para operadores. Intencionalmente secundario frente al producto.',
-    href: '/admin',
+    href: '/pit-wall/platform',
     accent: 'muted',
     intent: 'platform',
     cta: 'Open admin',
@@ -156,7 +156,7 @@ export function KddHubPage({ autoRedirectTo, redirectDelayMs = 5000 }: KddHubPag
 
   function enterWithProfile(profileId: string) {
     window.localStorage.setItem('kdd-profile', profileId);
-    window.location.assign(autoRedirectTo ?? '/pitwall');
+    window.location.assign(autoRedirectTo ?? '/pit-wall/');
   }
 
   return (
@@ -954,17 +954,17 @@ export function KddHubPage({ autoRedirectTo, redirectDelayMs = 5000 }: KddHubPag
             La home orienta; arquitectura documenta; status diagnostica; admin supervisa.
           </p>
           <div className="hub__tech">
-            <a className="hub__tech-link" href="/pit-wall/architecture">
+            <a className="hub__tech-link" href="/architecture">
               <span>Architecture</span>
               <small>Docs</small>
               <ExternalLink size={14} />
             </a>
-            <a className="hub__tech-link" href="/pit-wall/status">
+            <a className="hub__tech-link" href="/status">
               <span>Status</span>
               <small>Ops</small>
               <RadioTower size={14} />
             </a>
-            <a className="hub__tech-link" href="/pit-wall/admin">
+            <a className="hub__tech-link" href="/admin">
               <span>Admin</span>
               <small>Control</small>
               <ShieldCheck size={14} />
@@ -1010,8 +1010,8 @@ export function PublicModulePage({ title, eyebrow, body, primaryHref = '/hub', p
         <p>{body}</p>
         <div className="hub__module-actions">
           <a href={primaryHref}>{primaryLabel}<ArrowRight size={14} /></a>
-          <a href="/pit-wall/architecture">Architecture</a>
-          <a href="/pit-wall/status">Status</a>
+          <a href="/architecture">Architecture</a>
+          <a href="/status">Status</a>
         </div>
       </section>
     </main>

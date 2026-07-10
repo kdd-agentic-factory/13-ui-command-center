@@ -5,9 +5,9 @@
  * layer for the KDD decision loop: Telemetry → Event → Cause → Recommendation →
  * Mission → Validation.
  */
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bot, ChevronDown, ChevronUp, ClipboardList, FileText, Send, ShieldAlert, Target, Trash2, Zap } from 'lucide-react';
+import { Bot, ChevronDown, ChevronUp, ClipboardList, FileText, Loader2, Send, ShieldAlert, Target, Trash2, Zap } from 'lucide-react';
 import { useAIChat } from '../hooks/useAIChat';
 import { useLiveTelemetry } from '../hooks/useLiveTelemetry';
 import { RiderCoachInsight } from '../components/RiderCoachInsight';
@@ -301,18 +301,22 @@ Telemetry → Event → Cause → Recommendation → Mission → Validation.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleSubmit = useCallback((e: React.FormEvent) => {
-    e.preventDefault();
+  function submitInput() {
     const text = input.trim();
     if (!text || isStreaming) return;
     setInput('');
     sendMessage(text);
-  }, [input, isStreaming, sendMessage]);
+  }
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    submitInput();
+  }
+
+  function handleKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSubmit(e as unknown as React.FormEvent);
+      submitInput();
     }
   }
 
@@ -365,9 +369,9 @@ Telemetry → Event → Cause → Recommendation → Mission → Validation.
             {isEmpty ? (
               <section className="copilot-empty" aria-labelledby="copilot-empty-title">
                 <span className="copilot-empty-icon" aria-hidden="true"><Bot size={42} /></span>
-                <h2 id="copilot-empty-title" className="copilot-empty-title">Decision assistant, not generic chat.</h2>
+                <h2 id="copilot-empty-title" className="copilot-empty-title">KDD Copilot is standing by.</h2>
                 <p className="copilot-empty-sub">
-                  Ask the Copilot to explain the PitWall call, expose the evidence chain, generate a validation mission, or translate the session into coach-ready feedback.
+                  Ask for a decision explanation, the evidence chain, a validation mission, or coach-ready feedback. Every answer should connect telemetry to an action.
                 </p>
 
                 <div className="copilot-decision-loop" aria-label="KDD decision loop">
@@ -454,8 +458,8 @@ Telemetry → Event → Cause → Recommendation → Mission → Validation.
                 rows={2}
                 disabled={isStreaming}
               />
-              <button className="copilot-send" type="submit" disabled={!input.trim() || isStreaming} aria-label="Send message">
-                <Send size={16} aria-hidden="true" />
+              <button className="copilot-send" type="submit" disabled={!input.trim() || isStreaming} aria-label={isStreaming ? 'Copilot is generating' : 'Send message'}>
+                {isStreaming ? <Loader2 size={16} className="spin" aria-hidden="true" /> : <Send size={16} aria-hidden="true" />}
               </button>
             </div>
           </form>

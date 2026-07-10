@@ -53,18 +53,16 @@ export default function ResearchLabPage() {
       <section className="research-hero">
         <h1 className="page-title research-hero-title">KDD Research Lab</h1>
         <p className="page-subtitle research-hero-subtitle">
-          Applied Research Layer
+          Validation layer for product decisions
         </p>
         <p className="research-hero-claim">
-          Research validates the Keedio Knowledge Circuit.
+          Research validates what KDD turns into track decisions.
         </p>
         <p className="research-hero-copy">
-          ORCID-backed applied research powering decision intelligence for
-          motorcycle performance.
+          ORCID-backed applied research mapped to product modules, evidence flows and federated learning.
         </p>
         <p className="research-hero-arch">
-          PitWall decides. Nodes learn. Federation improves. Copilot explains.
-          Research validates.
+          PitWall decides · Nodes learn · Federation improves · Copilot explains · Research validates.
         </p>
       </section>
 
@@ -190,7 +188,7 @@ export default function ResearchLabPage() {
           </div>
         </div>
         <p className="research-flow-note">
-          KDD transforms research into product features.
+          KDD transforms research into product capabilities, then validates them through node learning and federated evidence.
         </p>
       </section>
 
@@ -244,13 +242,13 @@ export default function ResearchLabPage() {
 
       {/* ── F. Product Credibility Panel ──────────────────────────────── */}
       <section className="research-credibility">
-        <h2 className="research-section-label">Product Credibility</h2>
+        <h2 className="research-section-label">Production credibility</h2>
         <div className="card research-credibility-card">
           <div className="research-credibility-header">
             <BookMarked size={20} />
           </div>
           <p className="research-credibility-message">
-            KDD is not only an AI telemetry interface. It is grounded in applied
+            KDD is not a generic AI telemetry interface. It is grounded in applied
             research across neuro-adaptive systems, edge telemetry, visual
             anomaly detection and trusted federated learning.
           </p>
@@ -275,7 +273,7 @@ export default function ResearchLabPage() {
           href="/pit-wall/nodes"
           className="research-cta-secondary"
         >
-          Explore Knowledge Nodes
+          Explore Nodes
         </a>
         <a
           href="/pit-wall/copilot"

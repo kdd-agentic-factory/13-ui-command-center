@@ -6,7 +6,7 @@
  * by—…", a learning benchmark and the federated Oracle context. In Private mode
  * comparisons are disabled (your data only); raw data is never exposed.
  */
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { Network, Lock, Users, Sparkles, TrendingUp } from 'lucide-react';
 import { useGarage } from '../hooks/useGarage';
 import { useSessionContext } from '../hooks/useSessionContext';
@@ -18,16 +18,18 @@ export function FederatedPage() {
   const f = buildFederated(garage.profile.rider.name, `${garage.profile.bike.brand} ${garage.profile.bike.model}`, ctx.circuitName);
   const [mode, setMode] = useState<BenchmarkMode>('federated');
   const comparing = mode !== 'private';
+  const activeMode = BENCHMARK_MODES.find((candidate) => candidate.id === mode) ?? BENCHMARK_MODES[0];
+  const percentileHeaderStyle = { '--pct-color': percentileColor(f.overallPercentile) } as CSSProperties;
 
   return (
     <div className="page">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="page-title flex items-center gap-2"><Network size={18} /> Federated Motorsport Intelligence</h1>
-          <p className="page-subtitle">Collective racing intelligence, private by design — {f.combo}</p>
+          <h1 className="page-title flex items-center gap-2"><Network size={18} /> Federation</h1>
+          <p className="page-subtitle">Anonymous benchmark layer for rider, bike and circuit decisions — {f.combo}</p>
         </div>
-        <div className="federated-percentile-header" style={{ '--pct-color': percentileColor(f.overallPercentile) }}>
-          <div className="federated-percentile-header-label">Overall percentile —· conf {f.confidence}%</div>
+        <div className="federated-percentile-header" style={percentileHeaderStyle}>
+          <div className="federated-percentile-header-label">Overall percentile · conf {f.confidence}%</div>
           <div className="federated-percentile-header-value">{comparing ? `${f.overallPercentile}th` : '—'}</div>
         </div>
       </div>
@@ -35,10 +37,10 @@ export function FederatedPage() {
       {/* mode selector */}
       <div className="federated-modes">
         {BENCHMARK_MODES.map(m => (
-          <button key={m.id} onClick={() => setMode(m.id)} title={m.desc}
+          <button key={m.id} onClick={() => setMode(m.id)} title={m.desc} type="button" aria-pressed={mode === m.id}
             className={`federated-mode-btn${mode === m.id ? ' is-active' : ''}`}>{m.label}</button>
         ))}
-        <span className="federated-mode-desc">{BENCHMARK_MODES.find(m => m.id === mode)!.desc}</span>
+        <span className="federated-mode-desc">{activeMode.desc}</span>
       </div>
 
       {/* privacy status */}
@@ -62,7 +64,7 @@ export function FederatedPage() {
         <div className="card federated-private">
           <Lock size={20} />
           <div className="federated-private-title">Private mode — comparisons disabled.</div>
-          <div className="federated-private-desc">KDD learns only from your own sessions. Switch to Team, Federated or Academy to benchmark against anonymous similar-rider patterns.</div>
+          <div className="federated-private-desc">KDD learns only from your own sessions. Choose Team, Federated or Academy above to unlock anonymous benchmark decisions without exposing raw data.</div>
         </div>
       ) : (
         <>
@@ -81,7 +83,7 @@ export function FederatedPage() {
             <div className="card federated-percentiles">
               <div className="federated-section-label">Performance percentiles</div>
               {f.percentiles.map(p => (
-                <div key={p.metric} className="federated-percentile-row" style={{ '--bar-color': percentileColor(p.percentile), '--bar-fill-width': `${p.percentile}%` }}>
+                <div key={p.metric} className="federated-percentile-row" style={{ '--bar-color': percentileColor(p.percentile), '--bar-fill-width': `${p.percentile}%` } as CSSProperties}>
                   <span className="federated-percentile-metric">{p.metric}</span>
                   <div className="federated-percentile-bar-track">
                     <div className="federated-percentile-bar-fill" />
@@ -114,7 +116,7 @@ export function FederatedPage() {
               <div className="card federated-technique">
                 <div className="federated-section-label">Technique benchmark</div>
                 {f.technique.map(t => (
-                  <div key={t.skill} className="federated-technique-row" style={{ '--vs-color': vsColor(t.vs) }}>
+                  <div key={t.skill} className="federated-technique-row" style={{ '--vs-color': vsColor(t.vs) } as CSSProperties}>
                     <span className="federated-technique-skill">{t.skill}</span>
                     <span className="federated-technique-score">{t.score}</span>
                     <span className="federated-technique-vs">{t.vs}</span>
@@ -139,9 +141,9 @@ export function FederatedPage() {
                     <span className="federated-corner-value federated-corner-value--top">top {c.top20} {c.unit}</span>
                   </div>
                   <div className="federated-corner-bar">
-                    <span className="federated-corner-marker" style={{ left: at(c.median) }} />
-                    <span className="federated-corner-marker--top" style={{ left: at(c.top20) }} />
-                    <span className="federated-corner-dot" style={{ left: at(c.yours) }} />
+                    <span className="federated-corner-marker" style={{ left: at(c.median) }} aria-label="Median marker" />
+                    <span className="federated-corner-marker--top" style={{ left: at(c.top20) }} aria-label="Top 20 percent marker" />
+                    <span className="federated-corner-dot" style={{ left: at(c.yours) }} aria-label="Your exit speed" />
                   </div>
                   <div className="federated-corner-limiter">{c.limiter}</div>
                 </div>

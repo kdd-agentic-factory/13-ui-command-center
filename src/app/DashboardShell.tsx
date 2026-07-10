@@ -215,6 +215,27 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
 
 const ALL_TAB_IDS: TabId[] = ALL_NAV_SECTIONS.flatMap(section => section.items.map(item => item.id));
 
+const PUBLIC_ROUTE_PREFIXES = new Set(['app', 'pit-wall', 'pitwall']);
+
+const PUBLIC_ROUTE_TAB_BY_SLUG: Record<string, TabId> = {
+  nodes: 'knowledge',
+  federation: 'federated',
+  copilot: 'copilot',
+  research: 'research',
+  'research-lab': 'research',
+  platform: 'platform',
+  dashboard: 'overview',
+};
+
+export function resolveTabFromPublicPath(pathname: string, baseUrl = import.meta.env.BASE_URL): TabId | null {
+  const basePath = baseUrl.replace(/\/$/, '');
+  const subPath = basePath && pathname.startsWith(basePath) ? pathname.slice(basePath.length) : pathname;
+  const segments = subPath.split('/').filter(Boolean);
+  const slug = segments.length === 2 && PUBLIC_ROUTE_PREFIXES.has(segments[0]) ? segments[1] : segments[0];
+
+  return slug ? PUBLIC_ROUTE_TAB_BY_SLUG[slug] ?? null : null;
+}
+
 const PRIMARY_TAB_IDS_BY_MODE: Record<SessionMode, readonly TabId[]> = {
   // Race: Mission Control + PitWall OS + AI Layer (12 items)
   race: ['overview', 'raceday', 'live', 'cockpit', 'telemetry', 'tires', 'crew', 'copilot', 'strategy', 'weather', 'risk', 'debrief'],
@@ -399,19 +420,7 @@ function DashboardShellContent() {
   // When the user enters the SPA via /pit-wall/{section}, auto-select the
   // corresponding dashboard tab so direct Hub CTAs land on the right section.
   useEffect(() => {
-    const path = window.location.pathname;
-    const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
-    const subPath = path.startsWith(basePath) ? path.slice(basePath.length) : path;
-
-    const urlTabMap: Record<string, TabId> = {
-      '/nodes': 'knowledge',
-      '/federation': 'federated',
-      '/research-lab': 'research',
-      '/dashboard': 'overview',
-      '/platform': 'platform',
-    };
-
-    const target = urlTabMap[subPath];
+    const target = resolveTabFromPublicPath(window.location.pathname);
     if (target && allowedTabIds.includes(target) && target !== activeTab) {
       // Small delay to let the dashboard settle before switching
       window.setTimeout(() => setTab(target), 200);

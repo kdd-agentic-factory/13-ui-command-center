@@ -217,7 +217,7 @@ const es = {
     report: 'Informe de Sesión',
     research: 'Research Lab',
     blackBox: 'Caja Negra',
-    knowledge: 'Grafo de Conocimiento',
+    knowledge: 'Nodos',
     patterns: 'Minería de Patrones',
     federated: 'Inteligencia Federada',
     debrief: 'Sala de Debrief',

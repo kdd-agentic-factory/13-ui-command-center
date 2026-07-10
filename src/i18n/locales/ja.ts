@@ -10,6 +10,7 @@ const ja = {
     preGp: 'プレGP',
     crew: 'クルーチーフ',
     copilot: 'AIコパイロット',
+    knowledge: 'ノード',
     settings: '設定',
     sections: {
       missionControl: 'ミッションコントロール',

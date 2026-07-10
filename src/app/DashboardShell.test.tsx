@@ -71,7 +71,7 @@ vi.mock('../pages/OverviewPage', () => ({
   OverviewPage: () => <div>Overview Dashboard</div>,
 }));
 
-import { DashboardShell } from './DashboardShell';
+import { DashboardShell, resolveTabFromPublicPath } from './DashboardShell';
 
 beforeEach(() => {
   mockUseProfile.mockReset();
@@ -80,6 +80,40 @@ beforeEach(() => {
 });
 
 describe('DashboardShell dashboard tab restore', () => {
+  it('maps public production routes to dashboard tabs', () => {
+    const routeCases = [
+      ['/nodes', 'knowledge'],
+      ['/pit-wall/nodes', 'knowledge'],
+      ['/pitwall/nodes', 'knowledge'],
+      ['/app/nodes', 'knowledge'],
+      ['/federation', 'federated'],
+      ['/pit-wall/federation', 'federated'],
+      ['/pitwall/federation', 'federated'],
+      ['/app/federation', 'federated'],
+      ['/copilot', 'copilot'],
+      ['/pit-wall/copilot', 'copilot'],
+      ['/pitwall/copilot', 'copilot'],
+      ['/app/copilot', 'copilot'],
+      ['/research', 'research'],
+      ['/research-lab', 'research'],
+      ['/pit-wall/research', 'research'],
+      ['/pit-wall/research-lab', 'research'],
+      ['/pitwall/research', 'research'],
+      ['/pitwall/research-lab', 'research'],
+      ['/app/research', 'research'],
+      ['/app/research-lab', 'research'],
+      ['/platform', 'platform'],
+      ['/pit-wall/platform', 'platform'],
+      ['/pitwall/platform', 'platform'],
+      ['/app/platform', 'platform'],
+      ['/dashboard', 'overview'],
+    ] as const;
+
+    routeCases.forEach(([path, expectedTab]) => {
+      expect(resolveTabFromPublicPath(path, '/')).toBe(expectedTab);
+    });
+  });
+
   it('restores the persisted dashboard tab when it is allowed', async () => {
     mockUseProfile.mockReturnValue({
       profile: {

@@ -37,7 +37,7 @@ function Panel({ icon: Icon, title, count, online, children }: {
           {online ? `LIVE —· ${count}` : 'OFFLINE'}
         </span>
       </div>
-      {online ? children : <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Service asleep / unreachable — no live data.</div>}
+      {online ? children : <div className="platform-empty">Service asleep or unreachable. Last-known registry context remains visible elsewhere on this page.</div>}
     </div>
   );
 }
@@ -113,7 +113,7 @@ function HealthMatrix({ entries, loading }: { entries: ServiceRegistryHealthEntr
 }
 
 function Chips({ items }: { items: string[] }) {
-  if (!items.length) return <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>No records returned.</div>;
+  if (!items.length) return <div className="platform-empty">No live records returned yet.</div>;
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
       {items.map((x, i) => (
@@ -187,8 +187,14 @@ export function PlatformConsolePage() {
   const runIntent = async () => {
     if (!intent.trim()) return;
     setRouting(true); setRouted(null);
-    const r = await orchestrate(intent.trim());
-    setRouted(r ?? 'fail'); setRouting(false);
+    try {
+      const r = await orchestrate(intent.trim());
+      setRouted(r ?? 'fail');
+    } catch {
+      setRouted('fail');
+    } finally {
+      setRouting(false);
+    }
   };
 
   const h = live.health;
@@ -196,13 +202,19 @@ export function PlatformConsolePage() {
     <div className="page">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="page-title flex items-center gap-2"><Server size={18} /> Platform Console</h1>
-          <p className="page-subtitle">Live data from the KDD backend services — not just health</p>
+          <h1 className="page-title flex items-center gap-2"><Server size={18} /> Platform</h1>
+          <p className="page-subtitle">Operational console for service health, orchestration, workflows and external modules</p>
         </div>
         <span style={{ fontSize: 10, fontFamily: MONO, color: live.servicesUp > 0 ? 'var(--green)' : 'var(--accent)' }}>
           {live.loading ? 'syncing—…' : `${live.servicesUp}/${live.servicesTotal} services online`}
         </span>
       </div>
+
+      {!live.loading && live.servicesUp === 0 && (
+        <div className="card platform-degraded mb-4" role="status">
+          No backend services are reporting online from the browser probe. You can still review the registry, external service map and degraded operational state.
+        </div>
+      )}
 
       <HealthMatrix entries={registryHealth} loading={registryLoading} />
 
@@ -267,7 +279,7 @@ export function PlatformConsolePage() {
             {routed.execution_status && <> —· <span style={{ color: 'var(--text-muted)' }}>execution </span><b style={{ color: 'var(--text)' }}>{routed.execution_status}</b></>}
           </div>
         )}
-        {routed === 'fail' && <div style={{ marginTop: 8, fontSize: 11, color: 'var(--text-muted)' }}>Orchestrator unavailable — try again when the service is awake.</div>}
+        {routed === 'fail' && <div className="platform-route-error">Orchestrator unavailable — try again when the service is awake. The intent was not executed.</div>}
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
