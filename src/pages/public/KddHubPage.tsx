@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { ArrowRight, ExternalLink, Layers3, Network, RadioTower, ShieldCheck } from 'lucide-react';
 import { RACE_COMMAND_CENTER_ENABLED } from '../../config/serviceRegistry';
 
@@ -138,25 +137,10 @@ function ModuleCard({ title, layer, body, href, accent, intent, cta, featured }:
   );
 }
 
-type KddHubPageProps = {
-  autoRedirectTo?: string;
-  redirectDelayMs?: number;
-};
-
-export function KddHubPage({ autoRedirectTo, redirectDelayMs = 5000 }: KddHubPageProps) {
-  useEffect(() => {
-    if (!autoRedirectTo) return;
-
-    const timeout = window.setTimeout(() => {
-      window.location.assign(autoRedirectTo);
-    }, redirectDelayMs);
-
-    return () => window.clearTimeout(timeout);
-  }, [autoRedirectTo, redirectDelayMs]);
-
+export function KddHubPage() {
   function enterWithProfile(profileId: string) {
     window.localStorage.setItem('kdd-profile', profileId);
-    window.location.assign(autoRedirectTo ?? '/pit-wall/');
+    window.location.assign('/pit-wall/');
   }
 
   return (
@@ -847,11 +831,9 @@ export function KddHubPage({ autoRedirectTo, redirectDelayMs = 5000 }: KddHubPag
               <div className="hub__thesis-item"><strong>Copilot explains.</strong><span>La IA traduce evidencia en criterio.</span></div>
               <div className="hub__thesis-item"><strong>Research validates.</strong><span>La credibilidad viene de prueba reproducible.</span></div>
             </div>
-            {autoRedirectTo ? (
-              <p className="hub__support">
-                Elegí un perfil para entrar directo. Si no seleccionás nada, abrimos PitWall en unos segundos.
-              </p>
-            ) : null}
+            <p className="hub__support">
+              Elegí un perfil para entrar al cockpit, o explorá Nodes, Federation, Copilot, Research y Platform desde el Hub sin redirecciones automáticas.
+            </p>
             <div className="hub__actions">
               <a className="hub__btn hub__btn--primary" href="/pit-wall/">
                 Open PitWall OS

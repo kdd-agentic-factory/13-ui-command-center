@@ -100,6 +100,8 @@ test.describe('Production site composition', () => {
       const pitWallLink = page.locator('a[href="/pit-wall/"]').first();
       await expect(pitWallLink).toBeVisible();
       await expect(pitWallLink).toHaveAttribute('href', '/pit-wall/');
+      await page.waitForTimeout(5500);
+      await expect(page).toHaveURL(/\/$/);
       await expect(page.locator('body')).toContainText(/canonical|PitWall|KDD Command Center|decisión/i);
       await expect(page.locator('body')).not.toContainText(/InsForge Managed/i);
     },
