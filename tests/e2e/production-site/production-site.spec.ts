@@ -97,9 +97,14 @@ test.describe('Production site composition', () => {
     async ({ page }) => {
       await page.goto('/', { waitUntil: 'networkidle' });
 
-      const pitWallLink = page.locator('a[href="/pit-wall/"]').first();
+      const pitWallLink = page.locator('a[href="/pit-wall/app"]').first();
       await expect(pitWallLink).toBeVisible();
-      await expect(pitWallLink).toHaveAttribute('href', '/pit-wall/');
+      await expect(pitWallLink).toHaveAttribute('href', '/pit-wall/app');
+      await expect(page.locator('a[href="/pit-wall/nodes"]').first()).toBeVisible();
+      await expect(page.locator('a[href="/pit-wall/federation"]').first()).toBeVisible();
+      await expect(page.locator('a[href="/pit-wall/copilot"]').first()).toBeVisible();
+      await expect(page.locator('a[href="/pit-wall/research-lab"]').first()).toBeVisible();
+      await expect(page.locator('a[href="/pit-wall/platform"]').first()).toBeVisible();
       await page.waitForTimeout(5500);
       await expect(page).toHaveURL(/\/$/);
       await expect(page.locator('body')).toContainText(/canonical|PitWall|KDD Command Center|decisión/i);

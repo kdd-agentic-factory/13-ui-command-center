@@ -33,7 +33,7 @@ const CONNECTED_MODULES: HubModule[] = [
     title: 'PitWall OS',
     layer: 'Main operational product',
     body: 'Cockpit operativo principal: transforma telemetría, contexto y aprendizaje en la próxima decisión de pista.',
-    href: '/pit-wall/',
+    href: '/pit-wall/app',
     accent: 'red',
     intent: 'operational',
     cta: 'Open PitWall OS',
@@ -140,7 +140,7 @@ function ModuleCard({ title, layer, body, href, accent, intent, cta, featured }:
 export function KddHubPage() {
   function enterWithProfile(profileId: string) {
     window.localStorage.setItem('kdd-profile', profileId);
-    window.location.assign('/pit-wall/');
+    window.location.assign('/pit-wall/app');
   }
 
   return (
@@ -802,7 +802,7 @@ export function KddHubPage() {
           </a>
           <nav className="hub__links" aria-label="KDD Hub navigation">
             <a href="/hub" aria-current="page">Hub</a>
-            <a href="/pit-wall/">PitWall OS</a>
+            <a href="/pit-wall/app">PitWall OS</a>
             <a href="/pit-wall/nodes">Nodes</a>
             <a href="/pit-wall/federation">Federation</a>
             <a href="/pit-wall/copilot">Copilot</a>
@@ -835,7 +835,7 @@ export function KddHubPage() {
               Elegí un perfil para entrar al cockpit, o explorá Nodes, Federation, Copilot, Research y Platform desde el Hub sin redirecciones automáticas.
             </p>
             <div className="hub__actions">
-              <a className="hub__btn hub__btn--primary" href="/pit-wall/">
+              <a className="hub__btn hub__btn--primary" href="/pit-wall/app">
                 Open PitWall OS
                 <ArrowRight size={14} />
               </a>
