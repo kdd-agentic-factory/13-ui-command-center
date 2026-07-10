@@ -33,27 +33,27 @@ const criticalRoutes: CriticalRoute[] = [
   {
     path: '/nodes',
     title: productionTitle,
-    visibleText: /KDD|Keedio|Nodes|PitWall|Aplicación|Command Center/i,
+    visibleText: /Knowledge Nodes|Private, team and academy nodes|Open nodes in PitWall OS/i,
   },
   {
     path: '/federation',
     title: productionTitle,
-    visibleText: /KDD|Keedio|Federation|PitWall|Aplicación|Command Center/i,
+    visibleText: /Federation|validated learning between nodes|Open federation cockpit/i,
   },
   {
     path: '/copilot',
     title: productionTitle,
-    visibleText: /KDD|Keedio|Copilot|PitWall|Aplicación|Command Center/i,
+    visibleText: /KDD Copilot|not generic chat|Open Copilot in PitWall OS/i,
   },
   {
     path: '/research-lab',
     title: productionTitle,
-    visibleText: /KDD|Keedio|Research|PitWall|Aplicación|Command Center/i,
+    visibleText: /KDD Research Lab|reproducible protocols|Open research cockpit/i,
   },
   {
     path: '/platform',
     title: productionTitle,
-    visibleText: /KDD|Keedio|Platform|PitWall|Aplicación|Command Center/i,
+    visibleText: /Platform|coordinates services|Open platform cockpit/i,
   },
   {
     path: '/status/',
@@ -68,7 +68,7 @@ const criticalRoutes: CriticalRoute[] = [
   {
     path: '/copilot/',
     title: productionTitle,
-    visibleText: /Copilot|AI|Telemetry|Ask|Intelligence/i,
+    visibleText: /KDD Copilot|not generic chat|Open Copilot in PitWall OS/i,
   },
 ];
 

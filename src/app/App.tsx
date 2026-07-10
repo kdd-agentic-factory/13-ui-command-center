@@ -57,6 +57,11 @@ type AppRoute =
   | 'thanks'
   | 'founding-nodes'
   | 'app'
+  | 'nodes'
+  | 'federation'
+  | 'copilot'
+  | 'research-lab'
+  | 'platform'
   | 'research'
   | 'architecture'
   | 'status'
@@ -85,16 +90,6 @@ function getAppRoute(pathname: string): AppRoute {
     pathname.startsWith('/pit-wall/app/') ||
     pathname === '/dashboard' ||
     pathname.startsWith('/dashboard/') ||
-    pathname === '/copilot' ||
-    pathname.startsWith('/copilot/') ||
-    pathname === '/nodes' ||
-    pathname.startsWith('/nodes/') ||
-    pathname === '/federation' ||
-    pathname.startsWith('/federation/') ||
-    pathname === '/research-lab' ||
-    pathname.startsWith('/research-lab/') ||
-    pathname === '/platform' ||
-    pathname.startsWith('/platform/') ||
     pathname === '/command' ||
     pathname.startsWith('/command/') ||
     pathname === '/command-center' ||
@@ -104,6 +99,11 @@ function getAppRoute(pathname: string): AppRoute {
   if (pathname === '/trial' || pathname.startsWith('/trial/')) return 'trial';
   if (pathname === '/founding-node-thanks') return 'thanks';
   if (pathname === '/founding-nodes') return 'founding-nodes';
+  if (pathname === '/nodes' || pathname.startsWith('/nodes/')) return 'nodes';
+  if (pathname === '/federation' || pathname.startsWith('/federation/')) return 'federation';
+  if (pathname === '/copilot' || pathname.startsWith('/copilot/')) return 'copilot';
+  if (pathname === '/research-lab' || pathname.startsWith('/research-lab/')) return 'research-lab';
+  if (pathname === '/platform' || pathname.startsWith('/platform/')) return 'platform';
   if (pathname === '/research' || pathname.startsWith('/research/')) return 'research';
   if (pathname === '/architecture' || pathname.startsWith('/architecture/')) return 'architecture';
   if (pathname === '/status' || pathname.startsWith('/status/')) return 'status';
@@ -392,6 +392,56 @@ function AppRouter() {
       return <KddHubPage />;
     case 'core':
       return <AppEntryFlow autoLaunchDemo={false} />;
+    case 'nodes':
+      return (
+        <PublicModulePage
+          eyebrow="Knowledge Memory Layer"
+          title="Knowledge Nodes"
+          body="Private, team and academy nodes preserve the learning loop behind every stint: sessions, riders, bikes, validated fixes, confidence and evidence. The public page explains the node model without launching the cockpit automatically."
+          primaryHref="/pit-wall/nodes"
+          primaryLabel="Open nodes in PitWall OS"
+        />
+      );
+    case 'federation':
+      return (
+        <PublicModulePage
+          eyebrow="Protected Learning Network"
+          title="Federation"
+          body="Federation moves validated learning between nodes while raw telemetry stays protected. It is the benchmark and improvement layer for teams that need shared signal without leaking sensitive data."
+          primaryHref="/pit-wall/federation"
+          primaryLabel="Open federation cockpit"
+        />
+      );
+    case 'copilot':
+      return (
+        <PublicModulePage
+          eyebrow="AI Explanation Layer"
+          title="KDD Copilot"
+          body="Copilot turns telemetry events, uncertainty and PitWall recommendations into operational explanations. It is not generic chat: it helps the team understand why, what to test next and which risk gates matter."
+          primaryHref="/pit-wall/copilot"
+          primaryLabel="Open Copilot in PitWall OS"
+        />
+      );
+    case 'research-lab':
+      return (
+        <PublicModulePage
+          eyebrow="Evidence and Validation Layer"
+          title="KDD Research Lab"
+          body="The Research Lab connects applied motorsport research with product evidence: reproducible protocols, validation loops, ORCID-backed credibility and transfer from hypothesis to cockpit decision."
+          primaryHref="/pit-wall/research-lab"
+          primaryLabel="Open research cockpit"
+        />
+      );
+    case 'platform':
+      return (
+        <PublicModulePage
+          eyebrow="Platform Coordination Layer"
+          title="Platform"
+          body="Platform coordinates services, runtime health, data trust and operator controls around PitWall OS. It supports the product without replacing the cockpit as the primary operational surface."
+          primaryHref="/pit-wall/platform"
+          primaryLabel="Open platform cockpit"
+        />
+      );
     case 'research':
       return (
         <PublicModulePage

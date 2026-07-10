@@ -80,29 +80,23 @@ beforeEach(() => {
 });
 
 describe('DashboardShell dashboard tab restore', () => {
-  it('maps public production routes to dashboard tabs', () => {
+  it('maps deep cockpit routes to dashboard tabs while leaving top-level modules public', () => {
     const routeCases = [
-      ['/nodes', 'knowledge'],
       ['/pit-wall/nodes', 'knowledge'],
       ['/pitwall/nodes', 'knowledge'],
       ['/app/nodes', 'knowledge'],
-      ['/federation', 'federated'],
       ['/pit-wall/federation', 'federated'],
       ['/pitwall/federation', 'federated'],
       ['/app/federation', 'federated'],
-      ['/copilot', 'copilot'],
       ['/pit-wall/copilot', 'copilot'],
       ['/pitwall/copilot', 'copilot'],
       ['/app/copilot', 'copilot'],
-      ['/research', 'research'],
-      ['/research-lab', 'research'],
       ['/pit-wall/research', 'research'],
       ['/pit-wall/research-lab', 'research'],
       ['/pitwall/research', 'research'],
       ['/pitwall/research-lab', 'research'],
       ['/app/research', 'research'],
       ['/app/research-lab', 'research'],
-      ['/platform', 'platform'],
       ['/pit-wall/platform', 'platform'],
       ['/pitwall/platform', 'platform'],
       ['/app/platform', 'platform'],
@@ -111,6 +105,10 @@ describe('DashboardShell dashboard tab restore', () => {
 
     routeCases.forEach(([path, expectedTab]) => {
       expect(resolveTabFromPublicPath(path, '/')).toBe(expectedTab);
+    });
+
+    ['/nodes', '/federation', '/copilot', '/research-lab', '/platform', '/research'].forEach((path) => {
+      expect(resolveTabFromPublicPath(path, '/')).toBeNull();
     });
   });
 

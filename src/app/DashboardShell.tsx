@@ -231,7 +231,8 @@ export function resolveTabFromPublicPath(pathname: string, baseUrl = import.meta
   const basePath = baseUrl.replace(/\/$/, '');
   const subPath = basePath && pathname.startsWith(basePath) ? pathname.slice(basePath.length) : pathname;
   const segments = subPath.split('/').filter(Boolean);
-  const slug = segments.length === 2 && PUBLIC_ROUTE_PREFIXES.has(segments[0]) ? segments[1] : segments[0];
+  const isDeepCockpitRoute = segments.length === 2 && PUBLIC_ROUTE_PREFIXES.has(segments[0]);
+  const slug = isDeepCockpitRoute ? segments[1] : segments[0] === 'dashboard' ? 'dashboard' : null;
 
   return slug ? PUBLIC_ROUTE_TAB_BY_SLUG[slug] ?? null : null;
 }
