@@ -36,8 +36,7 @@ def test_complete_isolated_evidence_never_authorizes_publication():
 
 def scan_fixture(tmp_path):
     import hashlib
-    import io
-    import tarfile
+    from test_scan_binding import archive as write_archive
     from datetime import datetime
 
     images = {
@@ -49,16 +48,7 @@ def scan_fixture(tmp_path):
         folder = tmp_path / name
         folder.mkdir()
         archive = folder / "image.tar"
-        with tarfile.open(archive, "w") as stream:
-            for file, value in [
-                ("index.json", {"manifests": [{"digest": image["digest"]}]}),
-                ("manifest.json", [{"Config": "blobs/sha256/" + "b" * 64}]),
-            ]:
-                raw = json.dumps(value).encode()
-                entry = tarfile.TarInfo(file)
-                entry.size = len(raw)
-                stream.addfile(entry, io.BytesIO(raw))
-        config = "sha256:" + "b" * 64
+        image["digest"], config = write_archive(archive)
         (folder / "scan.json").write_text(
             json.dumps(
                 {

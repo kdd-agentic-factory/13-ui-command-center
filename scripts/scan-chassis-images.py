@@ -15,26 +15,44 @@ HELPER = "ubuntu:24.04@sha256:24737cef17f4e22b1977df7d9a05e77c4e28b7da5b8911f8d8
 
 
 def archive_config_id(path, expected):
+    """Bind both classic Docker config IDs and containerd manifest IDs."""
     with tarfile.open(path) as stream:
+        names = stream.getnames()
 
-        def read(name):
-            item = stream.getmember(name)
-            if not item.isfile() or item.size > 1048576:
+        def raw(name):
+            if names.count(name) != 1:
                 raise ValueError("Invalid image archive metadata")
-            return json.load(stream.extractfile(item))
+            item = stream.getmember(name)
+            if not item.isfile() or not 0 < item.size <= 1048576:
+                raise ValueError("Invalid image archive metadata")
+            return stream.extractfile(item).read()
 
-        index = read("index.json")
-        manifest = read("manifest.json")
-    if (
-        len(index["manifests"]) != 1
-        or index["manifests"][0]["digest"] != expected
-        or len(manifest) != 1
-    ):
-        raise ValueError("Archive does not contain the exact requested image")
-    config = manifest[0]["Config"]
-    if not re.fullmatch(r"blobs/sha256/[a-f0-9]{64}", config):
-        raise ValueError("Unknown image config identity")
-    return "sha256:" + config.rsplit("/", 1)[-1]
+        manifest = json.loads(raw("manifest.json"))
+        if not isinstance(manifest, list) or len(manifest) != 1:
+            raise ValueError("Archive does not contain the exact requested image")
+        config = manifest[0]["Config"]
+        match = re.fullmatch(r"(?:blobs/sha256/([a-f0-9]{64})|([a-f0-9]{64})\.json)", config)
+        if not match:
+            raise ValueError("Unknown image config identity")
+        config_id = "sha256:" + (match[1] or match[2])
+        if "sha256:" + hashlib.sha256(raw(config)).hexdigest() != config_id:
+            raise ValueError("Image configuration digest drift")
+        accepted = {config_id}
+        if "index.json" in names:
+            index = json.loads(raw("index.json"))
+            descriptors = index["manifests"]
+            if len(descriptors) != 1 or not re.fullmatch(r"sha256:[a-f0-9]{64}", descriptors[0]["digest"]):
+                raise ValueError("Archive does not contain the exact requested image")
+            manifest_id = descriptors[0]["digest"]
+            content = raw("blobs/sha256/" + manifest_id[7:])
+            if "sha256:" + hashlib.sha256(content).hexdigest() != manifest_id:
+                raise ValueError("Image manifest digest drift")
+            if json.loads(content)["config"]["digest"] != config_id:
+                raise ValueError("Image configuration digest drift")
+            accepted.add(manifest_id)
+        if expected not in accepted:
+            raise ValueError("Archive does not contain the exact requested image")
+        return config_id
 
 
 def verify_report(report, config_id):
@@ -251,8 +269,19 @@ def main():
         subprocess.SubprocessError,
         KeyError,
         json.JSONDecodeError,
-    ):
-        print("Image acceptance blocked; inspect private scan evidence")
+    ) as error:
+        reasons = {
+            "Archive does not contain the exact requested image": "archive_identity_mismatch",
+            "Invalid image archive metadata": "archive_metadata_invalid",
+            "Image configuration digest drift": "config_digest_mismatch",
+            "Image manifest digest drift": "manifest_digest_mismatch",
+            "Scanner did not pass": "scanner_policy_or_runtime_failure",
+            "Vulnerability database is stale or incompatible": "database_not_fresh",
+        }
+        reason = reasons.get(str(error), "scanner_execution_failed")
+        if args.output.is_dir():
+            (args.output / "failure.json").write_text(json.dumps({"status": "failed", "reason": reason, "error_type": type(error).__name__}), encoding="utf-8")
+        print("Image acceptance blocked (" + reason + "); inspect scan evidence")
         return 2
 
 

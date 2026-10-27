@@ -177,4 +177,5 @@ jobs:
             candidate-images/built-images.json
             candidate-images/frontend-build-identity.json
             candidate-scans/result.json
+            candidate-scans/failure.json
           if-no-files-found: error
