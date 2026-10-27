@@ -47,7 +47,40 @@ def archive_config_id(path, expected):
             content = raw("blobs/sha256/" + manifest_id[7:])
             if "sha256:" + hashlib.sha256(content).hexdigest() != manifest_id:
                 raise ValueError("Image manifest digest drift")
-            if json.loads(content)["config"]["digest"] != config_id:
+            document = json.loads(content)
+            if document.get("mediaType") == "application/vnd.oci.image.index.v1+json":
+                children = document.get("manifests")
+                if not isinstance(children, list) or not 1 <= len(children) <= 8:
+                    raise ValueError("Invalid image archive metadata")
+                images = []
+                attestations = []
+                for child in children:
+                    if not isinstance(child, dict) or not re.fullmatch(
+                        r"sha256:[a-f0-9]{64}", str(child.get("digest", ""))
+                    ):
+                        raise ValueError("Invalid image archive metadata")
+                    payload = raw("blobs/sha256/" + child["digest"][7:])
+                    if (child.get("size") != len(payload) or
+                            "sha256:" + hashlib.sha256(payload).hexdigest() != child["digest"]):
+                        raise ValueError("Image manifest digest drift")
+                    leaf = json.loads(payload)
+                    if not isinstance(leaf, dict) or "config" not in leaf:
+                        raise ValueError("Invalid image archive metadata")
+                    if child.get("platform") == {"os": "linux", "architecture": "amd64"}:
+                        images.append((child, leaf))
+                    elif child.get("platform") == {"os": "unknown", "architecture": "unknown"}:
+                        attestations.append(child)
+                    else:
+                        raise ValueError("Unsupported image platform")
+                if len(images) != 1:
+                    raise ValueError("Archive does not contain the exact requested image")
+                selected, document = images[0]
+                for attestation in attestations:
+                    annotations = attestation.get("annotations", {})
+                    if (annotations.get("vnd.docker.reference.type") != "attestation-manifest" or
+                            annotations.get("vnd.docker.reference.digest") != selected["digest"]):
+                        raise ValueError("Unbound image attestation")
+            if document.get("config", {}).get("digest") != config_id:
                 raise ValueError("Image configuration digest drift")
             accepted.add(manifest_id)
         if expected not in accepted:
