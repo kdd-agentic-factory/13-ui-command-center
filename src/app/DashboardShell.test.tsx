@@ -70,7 +70,7 @@ vi.mock('../pages/LiveTelemetryPage', () => ({
 vi.mock('../pages/OverviewPage', () => ({
   OverviewPage: () => <div>Overview Dashboard</div>,
 }));
-vi.mock('../pages/ChassisPage', async () => { const {useWorkspaceDraft}=await import('../context/WorkspaceDraftContext');const {useNavigate}=await import('../context/NavContext');return { default: () => {const {markDirty}=useWorkspaceDraft();const navigate=useNavigate();return <div>Measured Chassis Workspace<button onClick={()=>navigate("data")}>QA open library</button><button onClick={()=>markDirty(true)}>QA dirty draft</button></div>;} };});
+vi.mock('../pages/ChassisPage', async () => { const {useWorkspaceDraft}=await import('../context/WorkspaceDraftContext');const {useNavigate}=await import('../context/NavContext');return { default: function ChassisPageStub() {const {markDirty}=useWorkspaceDraft();const navigate=useNavigate();return <div>Measured Chassis Workspace<button onClick={()=>navigate("data")}>QA open library</button><button onClick={()=>markDirty(true)}>QA dirty draft</button></div>;} };});
 
 import { DashboardShell, resolveTabFromPublicPath } from './DashboardShell';
 vi.mock('../pages/ConnectDataPage',()=>({default:()=> <div>QA permitted library route</div>}));

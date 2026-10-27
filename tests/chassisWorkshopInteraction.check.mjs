@@ -78,7 +78,7 @@ test('changing workshop tabs keeps an unsaved curve scenario',async()=>{
 });
 
 test('late preview after editing B and changing context cannot replace current state',async()=>{
- const pending=[];globalThis.fetch=async(url,init)=>{if(String(url).endsWith('/preview'))return new Promise(resolve=>pending.push(resolve));return new Response('[]',{headers:{'content-type':'application/json'}});};
+ const pending=[];globalThis.fetch=async(url)=>{if(String(url).endsWith('/preview'))return new Promise(resolve=>pending.push(resolve));return new Response('[]',{headers:{'content-type':'application/json'}});};
  const {useChassisWorkspace}=await import('../src/hooks/useChassisWorkspace.ts');
  let state;
  function App(){const [bike,setBike]=useState('bike');state=useChassisWorkspace({bike,recordingId:null});return createElement('div',{},createElement('button',{onClick:()=>state.calculate({mode:'static'})},'request'),createElement('button',{onClick:()=>state.setB({values:{offset_m:'31'},assumed:{}})},'edit'),createElement('button',{onClick:()=>setBike('other')},'context'));}
