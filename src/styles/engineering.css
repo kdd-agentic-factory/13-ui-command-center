@@ -1,0 +1,74 @@
+.engineering-preparation { margin-bottom: 20px; padding: 16px 0; border-block: 1px solid var(--border); }
+.engineering-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.engineering-header h2 { margin: 0 0 6px; font-size: 17px; }
+.engineering-header p, .engineering-association p { margin: 0 0 10px; color: var(--text-dim); font-size: 13px; max-width: 72ch; }
+.engineering-summary { display: grid; gap: 4px; font-size: 12px; text-align: right; overflow-wrap: anywhere; }
+.engineering-summary span:first-child { color: var(--cyan); }
+.engineering-session-actions { display: flex; flex-wrap: wrap; align-items: end; gap: 8px; margin-block: 12px; }
+.engineering-session-actions label, .engineering-fields label, .engineering-notes { display: grid; gap: 6px; font-size: 13px; }
+.engineering-session-actions select { min-width: 230px; max-width: 100%; }
+.engineering-form summary, .engineering-catalog-editor summary { cursor: pointer; padding-block: 10px; font-size: 13px; }
+.engineering-form fieldset { padding: 0; margin: 0; border: 0; min-width: 0; }
+.engineering-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.engineering-preparation input, .engineering-preparation select, .engineering-preparation textarea { width: 100%; min-width: 0; border: 1px solid var(--border); border-radius: 4px; padding: 8px 10px; background: var(--bg-surface); color: var(--text); font: inherit; }
+.engineering-preparation input:focus-visible, .engineering-preparation select:focus-visible, .engineering-preparation textarea:focus-visible, .engineering-preparation summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.engineering-preparation :disabled { opacity: .6; cursor: not-allowed; }
+.engineering-preparation .btn:hover:enabled { border-color: var(--accent); }
+.engineering-notes { margin-top: 12px; }
+.engineering-save { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-block: 12px; font-size: 12px; }
+.engineering-field-hint { color: var(--text-muted); font-size: 12px; line-height: 1.5; margin-block: 6px 10px; max-width: 72ch; }
+.engineering-error { color: var(--accent); font-size: 13px; }
+.engineering-association { padding-top: 12px; }
+.engineering-catalog-editor .btn { margin-top: 8px; }
+.engineering-analysis, .engineering-settings { padding-block: 20px; border-block: 1px solid var(--border); margin-bottom: 20px; font-size: 13px; line-height: 1.5; }
+.engineering-analysis h2, .engineering-settings h2 { font-size: 17px; margin: 0 0 8px; }
+.engineering-analysis h3 { font-size: 16px; margin: 24px 0 8px; }
+.engineering-analysis h4 { font-size: 14px; margin: 18px 0 8px; }
+.engineering-analysis p, .engineering-settings p { max-width: 74ch; margin-block: 8px; }
+.engineering-analysis code, .engineering-settings code, .engineering-identity { overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.engineering-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-block: 12px; }
+.engineering-analysis label { display: grid; gap: 6px; max-width: 70ch; margin-block: 12px; }
+.engineering-analysis input, .engineering-analysis textarea, .engineering-analysis select, .engineering-settings select { width: 100%; min-width: 0; padding: 8px 10px; border: 1px solid var(--border); border-radius: 4px; color: var(--text); background: var(--bg-surface); font: inherit; }
+.engineering-analysis :is(button,input,textarea,select,summary,a):focus-visible, .engineering-settings :is(button,select):focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+.engineering-analysis :disabled, .engineering-settings :disabled { opacity: .6; cursor: not-allowed; }
+.engineering-analysis .btn:hover:enabled, .engineering-settings .btn:hover:enabled { border-color: var(--cyan); }
+.engineering-analysis details { padding-block: 6px; }
+.engineering-analysis summary { cursor: pointer; overflow-wrap: anywhere; }
+.engineering-analysis pre { max-height: 440px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px; }
+.engineering-analysis [role="alert"], .engineering-settings [role="alert"] { color: var(--accent); }
+.engineering-sections { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; }
+.engineering-sections > section { min-width: 0; border-top: 1px solid var(--border); }
+.engineering-table-scroll { width: 100%; overflow: auto; }
+.engineering-table-scroll table { width: 100%; border-collapse: collapse; text-align: left; font-size: 12px; font-variant-numeric: tabular-nums; }
+.engineering-table-scroll :is(th,td) { padding: 8px; border-bottom: 1px solid var(--border); vertical-align: top; min-width: 100px; max-width: 240px; overflow-wrap: anywhere; }
+.engineering-table-scroll caption { text-align: left; color: var(--text-dim); padding-block: 8px; }
+.engineering-gates { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; }
+.engineering-gates > div { border-bottom: 1px solid var(--border); padding-block: 8px; }
+.engineering-analysis dt { color: var(--text-dim); }
+.engineering-analysis dd { margin: 2px 0 8px; overflow-wrap: anywhere; }
+.engineering-proposal-item { border-block-start: 1px solid var(--border); padding-block: 8px; }
+.engineering-reference { display: block; color: var(--cyan); overflow-wrap: anywhere; text-underline-offset: 3px; margin-block: 4px; }
+.engineering-analysis ::selection, .engineering-settings ::selection { background: var(--cyan); color: var(--bg-surface); }
+.engineering-print-frame { position: fixed; width: 1px; height: 1px; opacity: 0; pointer-events: none; border: 0; }
+@media (max-width: 760px) {
+  .engineering-sections { grid-template-columns: 1fr; }
+  .engineering-gates { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+  .engineering-gates > div { padding-block: 4px; }
+  .engineering-actions .btn { min-height: 40px; }
+}
+@media print {
+  .engineering-saved-report { break-before: page; }
+  .engineering-saved-report button { display: none; }
+  .engineering-saved-report pre { max-height: none; overflow: visible; }
+}
+@media (max-width: 760px) {
+  .engineering-header { flex-direction: column; gap: 8px; }
+  .engineering-summary { text-align: left; }
+  .engineering-fields { grid-template-columns: 1fr; }
+  .engineering-session-actions label { width: 100%; }
+  .engineering-session-actions select { min-width: 0; }
+}
+
+.engineering-analysis .engineering-identifier { padding-block: 2px; }
+.engineering-identifier summary { color: var(--text-dim); font-size: 12px; }
+.engineering-identifier[open] code { display: block; margin-block: 6px; }

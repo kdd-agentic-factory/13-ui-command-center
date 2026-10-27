@@ -1,0 +1,10 @@
+import {readdir,stat} from 'node:fs/promises';
+import {join} from 'node:path';
+import assert from 'node:assert/strict';
+const root=process.argv[2]??'dist';
+const assets=join(root,'assets');
+const chunks=await Promise.all((await readdir(assets)).filter(n=>n.endsWith('.js')).map(async name=>({name,bytes:(await stat(join(assets,name))).size})));
+assert(chunks.length>0,'No compiled JavaScript chunks found');
+const oversized=chunks.filter(c=>c.bytes>1_600_000);
+assert.deepEqual(oversized,[],`Compiled JavaScript exceeds the existing 1600kB warning budget: ${JSON.stringify(oversized)}`);
+console.log(`PASS: ${chunks.length} JavaScript chunks within 1600kB; largest ${Math.max(...chunks.map(c=>c.bytes))} bytes`);

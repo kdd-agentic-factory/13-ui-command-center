@@ -89,6 +89,7 @@ export function useLiveTelemetry(): TelemetryFrame {
   const [frame, setFrame] = useState<TelemetryFrame>(() => computeFrame(0, FUEL_CAPACITY, 0, 105.203, 104.847, 0, false));
 
   useEffect(() => {
+    if (!demo || localStorage.getItem('kdd-recorded-session-id')) return;
     const interval = setInterval(() => {
       if (demo) {
         const p = demoFrameParams(demo, demoTick.current++);

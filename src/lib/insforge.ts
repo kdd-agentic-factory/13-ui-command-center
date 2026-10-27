@@ -15,6 +15,7 @@
  *   insforge.functions — Serverless function invocation
  */
 import { createClient } from '@insforge/sdk';
+import {guardProviderClient,productProfile} from '../domain/productProfile';
 
 const baseUrl = import.meta.env.VITE_INSFORGE_URL ?? '';
 const anonKey = import.meta.env.VITE_INSFORGE_ANON_KEY ?? '';
@@ -26,4 +27,4 @@ if (!baseUrl || !anonKey) {
   );
 }
 
-export const insforge = createClient({ baseUrl, anonKey });
+export const insforge = guardProviderClient(createClient({ baseUrl, anonKey }),productProfile);

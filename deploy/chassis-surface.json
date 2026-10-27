@@ -1,0 +1,396 @@
+{
+  "version": "1.0",
+  "routes": [
+    {
+      "method": "DELETE",
+      "pattern": "/api/v1/engineering/catalog/(circuit|bike|rider)/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/chassis/comparisons/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/report",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/chassis/domain-evidence/packets",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/chassis/domain-evidence/packets/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/chassis/domain-evidence/readiness",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/chassis/domain-evidence/readiness/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/chassis/sessions/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/state",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/chassis/setups/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/chassis/status",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/chassis/suspension-lab/acquisitions",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/chassis/suspension-lab/acquisitions/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/chassis/suspension-lab/analyses",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/chassis/suspension-lab/analyses/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/chassis/suspension-lab/analyses/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/evidence",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/chassis/suspension-lab/recordings/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/chassis/workshop/annexes",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/chassis/workshop/annexes/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/chassis/workshop/cornering/scenarios",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/chassis/workshop/orders",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/chassis/workshop/orders/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/chassis/workshop/specifications",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/chassis/workshop/specifications/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/engineering/catalog/(circuit|bike|rider)",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/engineering/catalog/(circuit|bike|rider)/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/engineering/proposals/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/engineering/proposals/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/authority",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/engineering/reports/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/engineering/runs/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/engineering/runs/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/synthesis",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/engineering/sessions",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/engineering/sessions/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/engineering/sessions/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/authority",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/engineering/sessions/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/events",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/engineering/sessions/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/runs/current",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/engineering/settings/crew-chief",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/engineering/settings/crew-chief/candidates",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/engineering/snapshots/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/health",
+      "access": "public"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/identity/mode",
+      "access": "public"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/recorded",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/recorded/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/recorded/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/channels/[0-9]+",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/recorded/capabilities",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/teams",
+      "access": "identity"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/chassis/(setups|bindings|comparisons)",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/chassis/domain-evidence/packets",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/chassis/domain-evidence/packets/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/attestations",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/chassis/domain-evidence/packets/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/revisions",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/chassis/domain-evidence/packets/from-recording",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/chassis/domain-evidence/packets/imports",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/chassis/domain-evidence/readiness",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/chassis/suspension-lab/analyses",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/chassis/suspension-lab/bench-imports",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/chassis/workshop/annexes",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/chassis/workshop/cornering/(preview|scenarios)",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/chassis/workshop/orders",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/chassis/workshop/orders/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/transitions",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/chassis/workshop/preview",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/chassis/workshop/specifications",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/chassis/workshop/specifications/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/revisions",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/chassis/workshop/specifications/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/verify",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/chassis/workshop/target-lock",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/engineering/applications/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/validations",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/engineering/catalog/(circuit|bike|rider)",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/engineering/proposals/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/applications",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/engineering/proposals/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/decisions",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/engineering/proposals/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/resolve-conflicts",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/engineering/runs/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/cancel",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/engineering/sessions",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/engineering/sessions/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/reports",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/engineering/sessions/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/runs",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/engineering/sessions/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/runs/reconcile",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/engineering/sessions/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/snapshots",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/recorded/(import|inspect-2d)",
+      "access": "team"
+    },
+    {
+      "method": "PUT",
+      "pattern": "/api/v1/engineering/catalog/(circuit|bike|rider)/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+      "access": "team"
+    },
+    {
+      "method": "PUT",
+      "pattern": "/api/v1/engineering/sessions/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+      "access": "team"
+    },
+    {
+      "method": "PUT",
+      "pattern": "/api/v1/engineering/settings/crew-chief",
+      "access": "team"
+    },
+    {
+      "method": "PUT",
+      "pattern": "/api/v1/recorded/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/geometry",
+      "access": "team"
+    }
+  ],
+  "sha256": "e4d9f9f1b13acc0ea876183a92f13333a8f5e6720995edcf43e030ee4ffcf459"
+}

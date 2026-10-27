@@ -484,12 +484,14 @@ a { color: inherit; text-decoration: none; }
 
 /* ── Header ─────────────────────────────────────────────────────────────── */
 .app-header {
-  height: var(--header-h);
+  min-height: var(--header-h);
+  height: auto;
+  flex-wrap: wrap;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 0 20px;
+  padding: 10px 20px;
   background: var(--bg-surface);
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
@@ -507,6 +509,9 @@ a { color: inherit; text-decoration: none; }
 }
 
 .header-gp-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-size: 14px;
   font-weight: 700;
   color: var(--text);
@@ -521,6 +526,7 @@ a { color: inherit; text-decoration: none; }
 
 /* Centre: live stats strip */
 .header-stats {
+  max-width: 100%;
   display: flex;
   align-items: center;
   gap: 0;
@@ -1894,6 +1900,27 @@ button:hover .mini-track path {
 }
 
 @media (max-width: 768px) {
+  /* Session identity and acquisition truth remain separate readable rows. */
+  .app-header {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 8px 12px;
+    padding: 10px 16px;
+  }
+  .app-header > .hamburger-btn { grid-column: 1; grid-row: 1; }
+  .app-header > .header-gp { grid-column: 2; grid-row: 1; }
+  .app-header > .header-stats {
+    grid-column: 1 / -1;
+    min-width: 0;
+    padding: 6px 10px;
+    overflow-wrap: anywhere;
+  }
+  .app-header > .header-right {
+    grid-column: 1 / -1;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  .header-gp > .badge { flex-shrink: 0; }
   .hamburger-btn {
     display: flex;
   }

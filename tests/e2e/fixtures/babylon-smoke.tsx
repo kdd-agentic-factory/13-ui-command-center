@@ -1,0 +1,11 @@
+import React from 'react';
+import {createRoot} from 'react-dom/client';
+import {EngineStore} from '@babylonjs/core/Engines/engineStore';
+import {TrackMap3D} from '../../../src/components/babylon/TrackMap3D';
+import {DigitalTwinViewer3D} from '../../../src/components/babylon/DigitalTwinViewer3D';
+import {TireModel3D} from '../../../src/components/babylon/TireModel3D';
+import {PartViewer3D} from '../../../src/components/babylon/PartViewer3D';
+const root=createRoot(document.getElementById('root')!);
+(window as any).__babylonQA=()=>EngineStore.Instances.map(e=>e.scenes.map(s=>({meshes:s.meshes.length,ready:s.isReady()})));
+(window as any).__disposeBabylonQA=()=>root.unmount();
+root.render(<main style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,color:'#fff',background:'#111'}}><h1>Controles sintéticos del renderizador</h1><TrackMap3D trackPos={0.25}/><DigitalTwinViewer3D leanAngle={15}/><TireModel3D temperature={80} compound="MEDIUM" label="CONTROL"/><PartViewer3D partName="SYNTHETIC CONTROL" materialColor="#48b6d0"/></main>);

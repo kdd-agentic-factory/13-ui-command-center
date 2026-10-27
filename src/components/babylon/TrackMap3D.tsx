@@ -1,9 +1,14 @@
 import { useEffect, useRef } from 'react';
-import {
-  Engine, Scene, ArcRotateCamera, HemisphericLight, Vector3,
-  MeshBuilder, StandardMaterial, Color3, Color4, PointLight,
-  Mesh,
-} from '@babylonjs/core';
+import { Engine } from '@babylonjs/core/Engines/engine';
+import { Scene } from '@babylonjs/core/scene';
+import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
+import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
+import { Vector3 } from '@babylonjs/core/Maths/math.vector';
+import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
+import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
+import { Color3, Color4 } from '@babylonjs/core/Maths/math.color';
+import { PointLight } from '@babylonjs/core/Lights/pointLight';
+import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { createSafeEngine } from './safeEngine';
 import { sampleOutline } from '../../domain/circuitDatasets';
 

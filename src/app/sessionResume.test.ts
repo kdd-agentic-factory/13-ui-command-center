@@ -29,7 +29,7 @@ describe('buildSessionResumeSnapshot', () => {
     expect(snapshot.garageProfile?.bike.brand).toBe('Yamaha');
   });
 
-  it('keeps the session context even when the circuit is unknown', () => {
+  it('keeps unknown circuit context in mission control until a valid circuit is selected', () => {
     const snapshot = buildSessionResumeSnapshot({
       circuit_id: 'unknown-track',
       session_mode: 'demo',
@@ -40,7 +40,7 @@ describe('buildSessionResumeSnapshot', () => {
       setup: { demoId: 'trackday' },
     });
 
-    expect(snapshot.stage).toBe('dashboard');
+    expect(snapshot.stage).toBe('mission');
     expect(snapshot.sessionCtx.selectedCircuit).toBe('unknown-track');
     expect(snapshot.sessionCtx.circuitName).toBe('unknown-track');
     expect(snapshot.gateCircuit).toBeNull();

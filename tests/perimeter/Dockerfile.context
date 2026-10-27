@@ -1,0 +1,9 @@
+# Build-context control only: no runtime, network, dependencies or product execution.
+FROM scratch
+COPY public/favicon.svg /controls/favicon.svg
+COPY public/kdd-application-manual.md /controls/kdd-application-manual.md
+COPY public/paper-kit/experimental-design.pdf /controls/experimental-design.pdf
+COPY scripts/render-chassis-surface.mjs /controls/render-chassis-surface.mjs
+COPY deploy/chassis-surface.json /controls/chassis-surface.json
+COPY deploy/chassis-surface.map.conf /controls/chassis-surface.map.conf
+COPY docker/15-validate-chassis-env.envsh /controls/bootstrap.envsh

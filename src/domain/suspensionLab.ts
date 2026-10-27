@@ -1,0 +1,7 @@
+export interface LabReference {id:string;revision:number;digest:string}
+export interface LabChannel {index:number;name?:string;sensor_id?:string;quantity?:string;unit:string;sample_count:number;start_s:number;end_s:number}
+export interface LabAcquisition extends LabReference {kind:'recording'|'suspension_bench';channel_catalog:LabChannel[];metadata?:Record<string,unknown>;validation_status?:string}
+export interface LabAnalysis extends LabReference {status:'complete'|'blocked';observation_eligibility:'exploratory'|'eligible_for_review'|'blocked';reasons:string[];algorithm_version:string;request:{method:string;comparison_id?:string|null};source_manifest:Record<string,unknown>;result:Record<string,unknown>}
+export interface LabPage<T> {items:T[];next_cursor:string|null}
+export interface LabCalibration {scale:number;zero:number;sign:1|-1;reference:string;measurement_location:'fork'|'shock'|'wheel'|'chassis';derivative_window?:number;max_gap_s:number}
+export interface LabAnalysisInput {schema_version:'1.0.0';operation_id:string;source:{kind:'recording'|'suspension_bench';id:string;digest:string};channel_index:number;interval_s:[number,number];method:'movement'|'bench'|'welch'|'stft';nperseg:number;band_hz:[number,number];calibrated_bandwidth_hz?:number;antialias_reference:string;comparison_id?:string;calibration?:LabCalibration;velocity_channel_index?:number;velocity_calibration?:LabCalibration;bench_derivative_window?:number}

@@ -1,3 +1,4 @@
+import {productProfile} from '../domain/productProfile';
 /**
  * useGatewayServiceStatus — Live service status for the KDD ecosystem gateway.
  *
@@ -80,25 +81,25 @@ const ECOSYSTEM_SERVICES: Record<ServiceId, { name: string; healthUrl: string }>
     name: 'Race AI Copilot',
     healthUrl: import.meta.env.VITE_COPILOT_URL
       ? `${import.meta.env.VITE_COPILOT_URL}/health`
-      : 'https://kdd-rjz-copilot.fly.dev/health',
+      : (import.meta.env.VITE_PRODUCT_PROFILE==='chassis'?'':'https://kdd-rjz-copilot.fly.dev/health'),
   },
   'security-gateway': {
     name: 'Security Gateway',
     healthUrl: import.meta.env.VITE_SECURITY_GATEWAY_URL
       ? `${import.meta.env.VITE_SECURITY_GATEWAY_URL}/health`
-      : 'https://kdd-rjz-security.fly.dev/health',
+      : (import.meta.env.VITE_PRODUCT_PROFILE==='chassis'?'':'https://kdd-rjz-security.fly.dev/health'),
   },
   'knowledge-layer': {
     name: 'Knowledge Layer',
     healthUrl: import.meta.env.VITE_KNOWLEDGE_LAYER_URL
       ? `${import.meta.env.VITE_KNOWLEDGE_LAYER_URL}/health`
-      : 'https://kdd-rjz-knowledge.fly.dev/health',
+      : (import.meta.env.VITE_PRODUCT_PROFILE==='chassis'?'':'https://kdd-rjz-knowledge.fly.dev/health'),
   },
   'telemetry-dataset': {
     name: 'Telemetry Dataset',
     healthUrl: import.meta.env.VITE_TELEMETRY_DATASET_URL
       ? `${import.meta.env.VITE_TELEMETRY_DATASET_URL}/api/v1/health`
-      : 'https://kdd-rjz-telemetry.fly.dev/api/v1/health',
+      : (import.meta.env.VITE_PRODUCT_PROFILE==='chassis'?'':'https://kdd-rjz-telemetry.fly.dev/api/v1/health'),
   },
 };
 
@@ -199,6 +200,7 @@ export function useGatewayServiceStatus(
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const pollAllServices = useCallback(async () => {
+    if(productProfile==='chassis')return;
     const serviceIds = Object.keys(ECOSYSTEM_SERVICES) as ServiceId[];
 
     // Set all to checking
@@ -237,7 +239,7 @@ export function useGatewayServiceStatus(
 
   // Initial poll + interval
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled || productProfile==='chassis') return;
 
     pollAllServices();
     intervalRef.current = setInterval(pollAllServices, pollIntervalMs);
@@ -258,7 +260,7 @@ export function useGatewayServiceStatus(
     lastPollAt,
     transport: 'polling',
     refresh: pollAllServices,
-    connectionStatus: enabled ? 'polling' : 'disconnected',
+    connectionStatus: enabled && productProfile!=='chassis' ? 'polling' : 'disconnected',
   };
 }
 

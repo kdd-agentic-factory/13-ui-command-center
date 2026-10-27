@@ -1,3 +1,4 @@
+import {requireProviderCapability} from '../domain/productProfile';
 /**
  * insforgeStorage.ts — Thin client for InsForge Storage + PostgREST.
  *
@@ -171,6 +172,7 @@ export interface PartSavePayload {
  * Returns the part_id.
  */
 export async function saveGeneratedPart(p: PartSavePayload): Promise<string> {
+  requireProviderCapability('database');
   const now  = new Date().toISOString();
   const meta: SavedPartMeta = {
     part_id:            p.partId,
@@ -246,6 +248,7 @@ export async function saveGeneratedPart(p: PartSavePayload): Promise<string> {
  * Load saved parts: merge localStorage + InsForge DB, dedup by part_id.
  */
 export async function loadSavedParts(): Promise<SavedPartMeta[]> {
+  requireProviderCapability('database');
   // Always start with localStorage (instant)
   const local = localLoad();
   const localMap = new Map(local.map(p => [p.part_id, p]));

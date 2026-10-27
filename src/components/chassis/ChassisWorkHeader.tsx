@@ -1,0 +1,6 @@
+import {workViews,type WorkView,type WorkStep} from '../../domain/chassisWorkViews';
+interface Props {view:WorkView;onView:(view:WorkView)=>void;contextLabel:string;nextStep:WorkStep;onNext:(target:string)=>void;dirty:boolean}
+export function ChassisWorkHeader({view,onView,contextLabel,nextStep,onNext,dirty}:Props){
+ const current=workViews.find(v=>v.id===view)!;
+ return <section className="chassis-work-header" aria-label="Espacio de trabajo de Chassis"><div className="chassis-work-context"><h2>{contextLabel}</h2><button type="button" className="btn" onClick={()=>onNext("context")}>Revisar contexto</button><label>Vista de trabajo<select aria-label="Vista de trabajo" value={view} onChange={e=>onView(e.target.value as WorkView)}>{workViews.map(v=><option key={v.id} value={v.id}>{v.label}</option>)}</select></label></div><p>{current.purpose}</p><div className="chassis-work-next"><span>Siguiente paso</span><button type="button" className="btn" onClick={()=>onNext(nextStep.target)}>{nextStep.label}</button></div>{nextStep.blockers.length>0&&<ul>{nextStep.blockers.map(b=><li key={b}>{b}</li>)}</ul>}{dirty&&<p role="status">Hay cambios sin guardar. Se conservan al cambiar de vista.</p>}<p className="workshop-caption">La vista organiza las tareas. Los permisos y la aprobación se verifican en el servidor.</p></section>;
+}

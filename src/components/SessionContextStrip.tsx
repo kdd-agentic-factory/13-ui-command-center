@@ -63,7 +63,7 @@ export function SessionContextStrip() {
           <strong style={{ color: 'var(--yellow)', fontFamily: MONO }}>DATA INTEGRITY</strong>
           <span>
             Selected circuit <strong>{ctx.circuitName}</strong> has no telemetry dataset yet — modules render the
-            {` ${ctx.circuitName} `} reference sample until a validation stint or upload populates it.
+            {' Mugello reference sample '}until a validation stint or upload populates it.
           </span>
         </div>
       )}

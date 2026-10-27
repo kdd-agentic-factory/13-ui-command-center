@@ -1,0 +1,71 @@
+{
+  "format": "1.0",
+  "status": "candidate",
+  "platform": "linux/amd64",
+  "sources": {
+    "01": {
+      "git_ref": "ae7faa8e5b21945095cace10de00bc469db213f8",
+      "tree_sha256": "b6f906e303d0ccaf4342cc33e0dd6c929a5354cdd96f40905939883e1e03bd18",
+      "dirty": true
+    },
+    "02": {
+      "git_ref": "be2eedb6f4bee1818a15b003bcf071f09e5ee189",
+      "tree_sha256": "c7efe5e8d2b790c6bcf4417c29f910a87451b0afe8a1027a899157230b07b684",
+      "dirty": true
+    },
+    "13": {
+      "git_ref": "8b47fc28c144f7ab293be6ed171ec639cfdd53c3",
+      "tree_sha256": "be566505dea680b7edcfa678d7eeb85fe1af402f3176b965c15c535f2371c6bb",
+      "dirty": true
+    },
+    "17": {
+      "git_ref": "235931f1182c3819776f679a2eacb2f47b71b7ff",
+      "tree_sha256": "046810f0a9e6584272acb88a071b63bacae0782140aa54946abb6c8fb54ef506",
+      "dirty": true
+    },
+    "18": {
+      "git_ref": "2f19d4968a9f70717de7cdaa0abb5d39c4ff4f46",
+      "tree_sha256": "192015cf665cfbde181419bf1857200dc3e1984363f8176a6708c386aa4e84d1",
+      "dirty": true
+    }
+  },
+  "bases": {
+    "python": {
+      "reference": "ubuntu:24.04",
+      "digest": "sha256:24737cef17f4e22b1977df7d9a05e77c4e28b7da5b8911f8d8ccda136bf3573c"
+    },
+    "node": {
+      "reference": "node:24-bookworm-slim",
+      "digest": "sha256:55fb5f5a527ea2c5c4a95f963e48ef90aa38c7b346054fdc8ee9957a2b55d205"
+    },
+    "nginx": {
+      "reference": "nginx:1.30.6-alpine",
+      "digest": "sha256:47928bf67eb62a1863cb08d9ecb52d3e704304ba614eaee17884204677702951"
+    },
+    "browser": {
+      "reference": "mcr.microsoft.com/playwright:v1.61.1-noble",
+      "digest": "sha256:5b8f294aff9041b7191c34a4bab3ac270157a28774d4b0660e9743297b697e48"
+    }
+  },
+  "runtime_lock_sha256": "c1af414f294c7d343ec658bba73837af753c31671060fd9495e99e2bf97c353e",
+  "images": {
+    "api": {
+      "reference": "kdd-chassis-api:162fcc653ace6fdd698634352058d6f89181541050d55b4317eee175443bb968",
+      "digest": "sha256:a252acaaa59c4b1e34d2f59b749e04f8deacf2d8e795a0fe22d106feb66c6943"
+    },
+    "gateway": {
+      "reference": "kdd-chassis-gateway:162fcc653ace6fdd698634352058d6f89181541050d55b4317eee175443bb968",
+      "digest": "sha256:1b04a9f71045873d704e144e10a3455681a5ec3c158f02432ab1a14d938108fa"
+    },
+    "worker": {
+      "reference": "kdd-chassis-worker:162fcc653ace6fdd698634352058d6f89181541050d55b4317eee175443bb968",
+      "digest": "sha256:5046b28d36518e98c9bec25761b16b8e51794cc9d06bdf2e31c4e0086bdce9d1"
+    },
+    "frontend": {
+      "reference": "kdd-chassis-frontend:cc9ed6ddd6a03e618cd3bca8fa2552fd24eab5c816737bf73845bff5a72b4c42",
+      "digest": "sha256:c32e5d07393c3b6d2cacd26ffcb161225a02fc7d318baa9f85078dbb9d0e66ac"
+    }
+  },
+  "acceptance": "pending",
+  "publishable": false
+}

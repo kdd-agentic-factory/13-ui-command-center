@@ -1,0 +1,26 @@
+.product-coverage { margin: 24px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.product-coverage > summary { padding: 18px 0; cursor: pointer; font-size: 14px; font-weight: 600; }
+.product-coverage__body { padding: 0 0 20px; }
+.product-coverage h3 { margin: 28px 0 12px; font-size: 15px; }
+.product-coverage__context { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 28px; }
+.product-coverage__context > div { border-top: 1px solid var(--border); padding: 14px 0; }
+.product-coverage dt { font-size: 14px; font-weight: 600; }
+.product-coverage dd { margin: 8px 0 0; font-size: 12px; color: var(--text-dim); }
+.product-coverage dd strong { font-weight: 500; color: var(--text); }
+.product-coverage__filters { display: flex; flex-wrap: wrap; gap: 16px; }
+.product-coverage__filters label { display: grid; gap: 6px; min-width: min(100%, 230px); }
+.product-coverage__filters select { min-height: 44px; width: 100%; }
+.product-coverage__requirements article { border-top: 1px solid var(--border); padding: 16px 0; }
+.product-coverage__requirements header { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px 20px; }
+.product-coverage__requirements h4 { font-size: 14px; line-height: 1.5; margin: 0; }
+.product-coverage__requirements header span { font-size: 12px; color: var(--text-dim); }
+.product-coverage__requirements details summary { cursor: pointer; padding: 8px 0; font-size: 13px; }
+.product-coverage :is(select, summary):focus-visible { outline: 2px solid var(--cyan, #63d5dc); outline-offset: 3px; }
+@media (max-width: 640px) { .product-coverage__context { grid-template-columns: minmax(0, 1fr); } .product-coverage__filters { display: grid; } }
+.product-compatibility__scroll { overflow-x:auto; }
+.product-compatibility table { width:100%; border-collapse:collapse; font-size:14px; line-height:1.6; }
+.product-compatibility caption { text-align:left; margin:16px 0; color:var(--text-dim); }
+.product-compatibility th,.product-compatibility td { text-align:left; vertical-align:top; border-bottom:1px solid var(--border); padding:16px 12px 16px 0; }
+.product-compatibility td { color:var(--text-dim); }
+.product-compatibility th { color:var(--text); font-weight:600; }
+@media (max-width:640px) { .product-compatibility table { min-width:560px; } }

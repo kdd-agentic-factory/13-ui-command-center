@@ -1,8 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  Scene, ArcRotateCamera, HemisphericLight, DirectionalLight, Vector3,
-  MeshBuilder, StandardMaterial, Color3, Color4, VertexBuffer, VertexData, Mesh,
-} from '@babylonjs/core';
+import { Scene } from '@babylonjs/core/scene';
+import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
+import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
+import { DirectionalLight } from '@babylonjs/core/Lights/directionalLight';
+import { Vector3 } from '@babylonjs/core/Maths/math.vector';
+import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
+import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
+import { Color3, Color4 } from '@babylonjs/core/Maths/math.color';
+import { VertexBuffer } from '@babylonjs/core/Buffers/buffer';
+import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData';
+import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { createSafeEngine } from './safeEngine';
 import { parseStl, meshBounds } from '../../lib/stl';
 

@@ -1,233 +1,56 @@
-# nginx BFF for the KDD UI on Fly.io.
-# Proxies /api/<service>/ to each Fly service over HTTPS and injects the internal
-# API key server-side (X-API-Key), so the browser never sees it and there is no
-# cross-origin CORS. ${KDD_INTERNAL_API_KEY} is filled by envsubst at container
-# start (NGINX_ENVSUBST_FILTER restricts substitution to KDD_* — nginx $vars are
-# left intact).
-
+# Generated allowlist is evaluated inside nginx's http context.
+include /etc/nginx/chassis-surface.map.conf;
+map $request_uri $chassis_ambiguous_path {
+    default 0;
+    "~^[^?]*(%|//|/\\.\\.?(/|\\?|$))" 1;
+}
+map "$http_x_internal_api_key$http_x_principal_id$http_x_principal_role$http_x_execution_grant$http_x_coordinator_capability" $chassis_service_credential {
+    "" 0;
+    default 1;
+}
+map $http_authorization $chassis_has_bearer {
+    default 0;
+    "~^Bearer .+$" 1;
+}
+map "$chassis_access:$chassis_has_bearer" $chassis_missing_human {
+    default 0;
+    "identity:0" 1;
+    "team:0" 1;
+}
 server {
     listen 3000;
-    # Relative redirects — the absolute form leaks the internal port 3000 and
-    # http scheme behind Fly/Docker, making `/` → /pit-wall-os/ unreachable.
     absolute_redirect off;
     root /usr/share/nginx/html;
     index index.html;
-
-    # ── CORS for the public frontend(s) (browser → this BFF) ──────────────────
-    # The internal API key is still injected server-side below; the browser only
-    # receives JSON. Allow the currently deployed frontend origin(s) explicitly.
-    set $cors_origin "";
-    if ($http_origin = "https://vdf553wq.insforge.site") { set $cors_origin $http_origin; }
-    if ($http_origin = "https://kdd-agentic-factory.insforge.site") { set $cors_origin $http_origin; }
-    if ($http_origin = "https://ky94kv62.insforge.site") { set $cors_origin $http_origin; }
-    if ($http_origin = "https://kdd-rjz-ui.fly.dev") { set $cors_origin $http_origin; }
-    add_header Access-Control-Allow-Origin $cors_origin always;
-    add_header Access-Control-Allow-Methods "GET, POST, OPTIONS" always;
-    add_header Access-Control-Allow-Headers "Content-Type, Authorization" always;
-    add_header Vary "Origin" always;
-    # Upstream services emit their own Access-Control-* (often "*"); duplicated
-    # ACAO headers make browsers reject the response — keep only the BFF's.
-    proxy_hide_header Access-Control-Allow-Origin;
-    proxy_hide_header Access-Control-Allow-Methods;
-    proxy_hide_header Access-Control-Allow-Headers;
-    proxy_hide_header Access-Control-Allow-Credentials;
-    if ($request_method = OPTIONS) { return 204; }
-
+    client_max_body_size 102m;
+    large_client_header_buffers 4 32k;
     location = /health {
         default_type application/json;
-        return 200 '{"status":"ok","service":"ui-command-center","version":"0.1.0"}';
-    }
-
-    # ── Backend proxies → Fly services (key injected server-side) ─────────────
-    location /api/governance/ {
-        proxy_pass https://kdd-rjz-governance.fly.dev/;
-        proxy_ssl_server_name on;
-        proxy_set_header Host kdd-rjz-governance.fly.dev;
-        proxy_set_header X-API-Key "${KDD_INTERNAL_API_KEY}";
-        proxy_connect_timeout 15s;
-        proxy_read_timeout 60s;
-    }
-    location /api/orchestrator/ {
-        proxy_pass https://kdd-rjz-orchestrator.fly.dev/;
-        proxy_ssl_server_name on;
-        proxy_set_header Host kdd-rjz-orchestrator.fly.dev;
-        proxy_set_header X-API-Key "${KDD_INTERNAL_API_KEY}";
-        proxy_connect_timeout 15s;
-        proxy_read_timeout 60s;
-    }
-    location /api/skills/ {
-        proxy_pass https://kdd-rjz-skills.fly.dev/;
-        proxy_ssl_server_name on;
-        proxy_set_header Host kdd-rjz-skills.fly.dev;
-        proxy_set_header X-API-Key "${KDD_INTERNAL_API_KEY}";
-        proxy_connect_timeout 15s;
-        proxy_read_timeout 60s;
-    }
-    location /api/workflows/ {
-        proxy_pass https://kdd-rjz-workflows.fly.dev/;
-        proxy_ssl_server_name on;
-        proxy_set_header Host kdd-rjz-workflows.fly.dev;
-        proxy_set_header X-API-Key "${KDD_INTERNAL_API_KEY}";
-        proxy_connect_timeout 15s;
-        proxy_read_timeout 60s;
-    }
-    location /api/experiments/ {
-        proxy_pass https://kdd-rjz-experiments.fly.dev/;
-        proxy_ssl_server_name on;
-        proxy_set_header Host kdd-rjz-experiments.fly.dev;
-        proxy_set_header X-API-Key "${KDD_INTERNAL_API_KEY}";
-        proxy_connect_timeout 15s;
-        proxy_read_timeout 60s;
-    }
-
-    # InsForge browser-facing proxy: auth, PostgREST, storage and AI gateway.
-    # The browser sends its own public anon key; the BFF only relays it.
-    location /api/auth/ {
-        proxy_pass https://vdf553wq.eu-central.insforge.app/api/auth/;
-        proxy_ssl_server_name on;
-        proxy_set_header Host vdf553wq.eu-central.insforge.app;
-        proxy_connect_timeout 15s;
-        proxy_read_timeout 60s;
-    }
-    location /rest/ {
-        proxy_pass https://vdf553wq.eu-central.insforge.app/rest/;
-        proxy_ssl_server_name on;
-        proxy_set_header Host vdf553wq.eu-central.insforge.app;
-        proxy_connect_timeout 15s;
-        proxy_read_timeout 60s;
-    }
-    location /storage/ {
-        proxy_pass https://vdf553wq.eu-central.insforge.app/storage/;
-        proxy_ssl_server_name on;
-        proxy_set_header Host vdf553wq.eu-central.insforge.app;
-        proxy_connect_timeout 15s;
-        proxy_read_timeout 60s;
-    }
-    location /api/storage/ {
-        proxy_pass https://vdf553wq.eu-central.insforge.app/api/storage/;
-        proxy_ssl_server_name on;
-        proxy_set_header Host vdf553wq.eu-central.insforge.app;
-        proxy_connect_timeout 15s;
-        proxy_read_timeout 60s;
-    }
-    location /api/database/ {
-        proxy_pass https://vdf553wq.eu-central.insforge.app/api/database/;
-        proxy_ssl_server_name on;
-        proxy_set_header Host vdf553wq.eu-central.insforge.app;
-        proxy_connect_timeout 15s;
-        proxy_read_timeout 60s;
-    }
-    location /api/ai/ {
-        proxy_pass https://vdf553wq.eu-central.insforge.app/api/ai/;
-        proxy_ssl_server_name on;
-        proxy_set_header Host vdf553wq.eu-central.insforge.app;
-        proxy_connect_timeout 15s;
-        proxy_read_timeout 60s;
-    }
-    location /api/functions/ {
-        proxy_pass https://vdf553wq.eu-central.insforge.app/api/functions/;
-        proxy_ssl_server_name on;
-        proxy_set_header Host vdf553wq.eu-central.insforge.app;
-        proxy_connect_timeout 15s;
-        proxy_read_timeout 60s;
+        return 200 '{"status":"ok","service":"ui-liveness"}';
     }
     location /api/telemetry/ {
-        proxy_pass https://kdd-rjz-telemetry.fly.dev/;
+        if ($chassis_ambiguous_path) { return 404; }
+        if ($chassis_service_credential) { return 403; }
+        if ($chassis_access = denied) { return 404; }
+        if ($chassis_missing_human) { return 401; }
+        proxy_pass https://${KDD_TELEMETRY_HOST}:${KDD_TELEMETRY_PORT}/;
         proxy_ssl_server_name on;
-        proxy_set_header Host kdd-rjz-telemetry.fly.dev;
-        proxy_set_header X-API-Key "${KDD_INTERNAL_API_KEY}";
-        proxy_connect_timeout 15s;
-        proxy_read_timeout 60s;
+        proxy_ssl_name ${KDD_TELEMETRY_HOST};
+        proxy_ssl_verify on;
+        proxy_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
+        proxy_set_header Host ${KDD_TELEMETRY_HOST};
+        proxy_set_header Authorization $http_authorization;
+        proxy_set_header X-Team-ID $http_x_team_id;
+        proxy_set_header X-API-Key "${KDD_TELEMETRY_API_KEY}";
+        proxy_set_header Cookie "";
+        proxy_connect_timeout 10s;
+        proxy_read_timeout 180s;
+        proxy_send_timeout 180s;
     }
-    location /api/digital-twin/ {
-        proxy_pass https://kdd-rjz-digital-twin.fly.dev/;
-        proxy_ssl_server_name on;
-        proxy_set_header Host kdd-rjz-digital-twin.fly.dev;
-        proxy_set_header X-API-Key "${KDD_INTERNAL_API_KEY}";
-        proxy_connect_timeout 15s;
-        proxy_read_timeout 60s;
-    }
-    location /api/mcp-gateway/ {
-        proxy_pass https://kdd-rjz-mcp-gateway.fly.dev/;
-        proxy_ssl_server_name on;
-        proxy_set_header Host kdd-rjz-mcp-gateway.fly.dev;
-        # The gateway requires an authenticated principal (06-09 hardening):
-        # X-Internal-API-Key + X-Principal-Id + X-Principal-Role.
-        proxy_set_header X-Internal-API-Key "${KDD_INTERNAL_API_KEY}";
-        proxy_set_header X-Principal-Id "ui-command-center";
-        proxy_set_header X-Principal-Role "viewer";
-        proxy_set_header X-API-Key "${KDD_INTERNAL_API_KEY}";
-        proxy_connect_timeout 15s;
-        proxy_read_timeout 60s;
-    }
-
-    # RAG/CAG knowledge layer — grounds the AI Debrief (X-API-Key injected).
-    location /api/rag/ {
-        proxy_pass https://kdd-rjz-rag.fly.dev/;
-        proxy_ssl_server_name on;
-        proxy_set_header Host kdd-rjz-rag.fly.dev;
-        proxy_set_header X-API-Key "${KDD_INTERNAL_API_KEY}";
-        proxy_connect_timeout 15s;
-        proxy_read_timeout 60s;
-    }
-    # Documentation agent — evidence-backed reports and paper sections.
-    location /api/documentation/ {
-        proxy_pass https://kdd-rjz-docs.fly.dev/;
-        proxy_ssl_server_name on;
-        proxy_set_header Host kdd-rjz-docs.fly.dev;
-        proxy_set_header X-API-Key "${KDD_INTERNAL_API_KEY}";
-        proxy_connect_timeout 15s;
-        proxy_read_timeout 90s;
-    }
-    # Race AI Copilot — external AI service for the KDD Command Center.
-    location /api/copilot/ {
-        proxy_pass https://kdd-rjz-copilot.fly.dev/;
-        proxy_ssl_server_name on;
-        proxy_set_header Host kdd-rjz-copilot.fly.dev;
-        proxy_set_header X-API-Key "${KDD_INTERNAL_API_KEY}";
-        proxy_set_header X-Tenant-ID "kdd-demo";
-        proxy_set_header X-Principal-ID "ui-command-center";
-        proxy_set_header X-Principal-Role "race_engineer";
-        proxy_set_header X-Approval-Scope "propose";
-        proxy_connect_timeout 15s;
-        proxy_read_timeout 90s;
-    }
-    # KDD data pipelines — backs the Data Trust lineage (X-API-Key injected).
-    location /api/pipelines/ {
-        proxy_pass https://kdd-rjz-pipelines.fly.dev/;
-        proxy_ssl_server_name on;
-        proxy_set_header Host kdd-rjz-pipelines.fly.dev;
-        proxy_set_header X-API-Key "${KDD_INTERNAL_API_KEY}";
-        proxy_connect_timeout 15s;
-        proxy_read_timeout 60s;
-    }
-    # Security/governance policy engine — gates the Decision Center. Internal
-    # service auth: X-Internal-API-Key + authenticated principal (race engineer).
-    location /api/security/ {
-        proxy_pass https://kdd-rjz-security.fly.dev/;
-        proxy_ssl_server_name on;
-        proxy_set_header Host kdd-rjz-security.fly.dev;
-        proxy_set_header X-Internal-API-Key "${KDD_INTERNAL_API_KEY}";
-        proxy_set_header X-Principal-Id "ui-command-center";
-        proxy_set_header X-Principal-Role "race_engineer";
-        proxy_connect_timeout 15s;
-        proxy_read_timeout 60s;
-    }
-
+    location /api/ { return 404; }
     location /pit-wall/ {
         alias /usr/share/nginx/html/;
         try_files $uri $uri/ /pit-wall/index.html;
     }
-
-    location /pit-wall-os/ {
-        alias /usr/share/nginx/html/pit-wall-os/;
-        index index.html;
-        try_files $uri $uri/ /pit-wall-os/index.html;
-    }
-
-    # Root serves the React SPA public surface
-
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
+    location / { try_files $uri $uri/ /index.html; }
 }

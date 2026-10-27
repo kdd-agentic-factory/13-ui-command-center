@@ -1,3 +1,4 @@
+import {productProfile} from '../domain/productProfile';
 /**
  * useServiceStatus — lightweight health probe for external KDD services.
  *
@@ -97,6 +98,7 @@ export function useServiceStatus(
   const abortRef = useRef<AbortController | null>(null);
 
   const refresh = useCallback(() => {
+    if(productProfile==='chassis'){setStatus('not-configured');setSource('disabled');return;}
     const probeUrls = resolveProbeUrls(baseUrl, healthPath, explicitStatusUrl);
     if (probeUrls.length === 0) {
       setStatus('not-configured');

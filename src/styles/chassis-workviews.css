@@ -1,0 +1,24 @@
+.chassis-work-header{border-block:1px solid var(--border);padding:20px 0;margin-bottom:24px}
+.chassis-work-context,.chassis-work-next{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.chassis-work-context h2{font-size:18px;margin:0;overflow-wrap:anywhere}
+.chassis-work-context label{display:flex;align-items:center;gap:12px}
+.chassis-work-context select{min-height:44px;max-width:100%;background:var(--bg-card);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:8px 12px}
+.chassis-work-next{justify-content:flex-start;margin-block:16px}
+.chassis-work-next>span{font-size:12px;color:var(--text-dim)}
+.chassis-work-header li{margin-block:6px;max-width:75ch}
+.chassis-work-layout{display:flex;flex-direction:column;gap:20px}
+.chassis-work-area{min-width:0}
+.chassis-work-area:focus{outline:2px solid var(--cyan);outline-offset:6px}
+.chassis-work-layout[data-view=analyst] .chassis-work-area[data-area=signals]{order:-3}
+.chassis-work-layout[data-view=analyst] .chassis-work-area[data-area=source]{order:-4}
+.chassis-work-layout[data-view=mechanic] .chassis-work-area[data-area=comparison]{order:-3}
+.chassis-work-layout[data-view=rider] .chassis-work-area[data-area=analysis],.chassis-work-layout[data-view=crew-chief] .chassis-work-area[data-area=analysis],.chassis-work-layout[data-view=management] .chassis-work-area[data-area=analysis]{order:-3}
+.chassis-work-layout[data-view=engineer] .chassis-work-area[data-area=comparison]{order:-2}
+.chassis-work-layout [hidden],.chassis-comparison [hidden],.engineering-analysis [hidden]{display:none!important}
+.chassis-workshop.workshop-for-mechanic{display:flex;flex-direction:column}
+.workshop-for-mechanic .workshop-heading{order:-3}
+.workshop-for-mechanic .workshop-order{order:-2}
+@media(max-width:600px){.chassis-work-context{align-items:stretch;flex-direction:column}.chassis-work-context label{align-items:stretch;flex-direction:column;gap:6px}.chassis-work-next{align-items:stretch;flex-direction:column}.chassis-work-next button{white-space:normal;text-align:left;min-height:44px}}
+.chassis-columns[data-editing=false]{grid-template-columns:1fr}
+.chassis-work-layout .chassis-source-warning{order:-5}
+.chassis-work-layout[data-context-ready=false] .chassis-work-area[data-area=context]{order:-6}

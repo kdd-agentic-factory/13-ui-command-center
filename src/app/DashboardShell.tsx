@@ -1,3 +1,7 @@
+import { activeRecording } from '../domain/recordedSession';
+import { WorkspaceDraftProvider, useWorkspaceDraft } from '../context/WorkspaceDraftContext';
+import { EngineeringSessionProvider } from '../context/EngineeringSessionContext';
+import { ChassisSessionPage } from '../pages/ChassisSessionPage';
 import React, { Suspense, useState, useEffect, useRef, useCallback, type CSSProperties, type ElementType } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -128,6 +132,8 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
   ]},
   // ── 2. PITWALL OS — primary operational product ────────────────────
   { section: 'nav.sections.pitwall', items: [
+    { id: 'chassis', labelKey: 'nav.chassis', icon: Bike },
+    { id: 'data', labelKey: 'nav.data', icon: Plug },
     { id: 'cockpit', labelKey: 'nav.cockpit', icon: LayoutGrid, badge: 'AI', badgeColor: 'blue' },
     { id: 'telemetry', labelKey: 'nav.telemetry', icon: Activity, badge: '10Hz', badgeColor: 'green' },
     { id: 'circuit', labelKey: 'nav.circuit', icon: Map },
@@ -180,7 +186,6 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'lakehouse', labelKey: 'nav.lakehouse', icon: Database, badge: 'AI', badgeColor: 'blue' },
     { id: 'devhub', labelKey: 'nav.devhub', icon: Plug, badge: 'AI', badgeColor: 'blue' },
     { id: 'trust', labelKey: 'nav.trust', icon: ShieldCheck },
-    { id: 'data', labelKey: 'nav.data', icon: Database },
   ]},
   // ── DEMOTED — secondary tools, hidden from primary nav ─────────────
   { section: 'nav.sections.tools', items: [
@@ -197,7 +202,6 @@ const ALL_NAV_SECTIONS: NavSectionDef[] = [
     { id: 'electronics', labelKey: 'nav.electronics', icon: CircuitBoard, badge: 'AI', badgeColor: 'blue' },
     { id: 'aero', labelKey: 'nav.aero', icon: Wind, badge: 'AI', badgeColor: 'blue' },
     { id: 'fuel', labelKey: 'nav.fuel', icon: Fuel, badge: 'AI', badgeColor: 'blue' },
-    { id: 'chassis', labelKey: 'nav.chassis', icon: Bike, badge: 'AI', badgeColor: 'blue' },
     { id: 'gearing', labelKey: 'nav.gearing', icon: Cog, badge: 'AI', badgeColor: 'blue' },
     { id: 'setup-lab', labelKey: 'nav.setupLab', icon: GitBranch },
     { id: 'brakes', labelKey: 'nav.brakes', icon: Disc, badge: 'AI', badgeColor: 'blue' },
@@ -262,7 +266,8 @@ function filterSectionsByIds(sections: NavSectionDef[], ids: readonly TabId[]): 
       ...section,
       items: section.items.filter(item => ids.includes(item.id)),
     }))
-    .filter(section => section.items.length > 0);
+    .filter(section => section.items.length > 0)
+    .sort((a, b) => Number(b.items.some(i => i.id === 'chassis')) - Number(a.items.some(i => i.id === 'chassis')));
 }
 
 function useClock(): string {
@@ -275,6 +280,10 @@ function useClock(): string {
 }
 
 function PageContent({ tab }: { tab: TabId }) {
+  if ((!getSessionContext().demoMode || activeRecording()) && (tab === 'setup' || tab === 'report')) return <ChassisSessionPage view={tab==='setup'?'setups':'report'}/>;
+  if ((!getSessionContext().demoMode || activeRecording()) && !['chassis', 'data', 'settings'].includes(tab)) {
+    return <div className="page"><h1 className="page-title">Módulo pendiente de conectar</h1><p>Las señales importadas están disponibles en Chassis Tool. Este módulo todavía no consume esa sesión; no se mostrarán valores simulados como datos reales.</p></div>;
+  }
   switch (tab) {
     case 'overview': return <OverviewPage />;
     case 'raceday': return <RaceDayControlPage />;
@@ -349,9 +358,16 @@ function PageContent({ tab }: { tab: TabId }) {
 }
 
 function DashboardShellContent() {
+  const {requestLeave}=useWorkspaceDraft();
   const { profile, logout } = useProfile();
   const { t } = useTranslation();
   const [transitioning, setTransitioning] = useState(false);
+  const [, refreshRecording] = useState(0);
+  useEffect(() => {
+    const refresh = () => refreshRecording(value => value + 1);
+    window.addEventListener('recorded-session-changed', refresh);
+    return () => window.removeEventListener('recorded-session-changed', refresh);
+  }, []);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const drawerRef = useRef<HTMLElement>(null);
   const hamburgerRef = useRef<HTMLButtonElement>(null);
@@ -373,7 +389,8 @@ function DashboardShellContent() {
     : [];
 
   const allowedTabIds = profileAllowedSections.flatMap(section => section.items.map(item => item.id));
-  const configuredPrimaryTabIds = PRIMARY_TAB_IDS_BY_MODE[sessionCtx.sessionMode].filter(id => !modeSecondaryTabIds.includes(id));
+  const realWorkspace = !sessionCtx.demoMode || Boolean(activeRecording());
+  const configuredPrimaryTabIds = (realWorkspace ? ['chassis', 'data', 'setup', 'report', 'settings'] as TabId[] : ['chassis', 'data', ...PRIMARY_TAB_IDS_BY_MODE[sessionCtx.sessionMode]] as TabId[]).filter(id => realWorkspace || !modeSecondaryTabIds.includes(id));
   const configuredAllowedPrimaryTabIds = configuredPrimaryTabIds.filter(id => allowedTabIds.includes(id));
   const primaryTabIds = configuredAllowedPrimaryTabIds.length > 0
     ? configuredAllowedPrimaryTabIds
@@ -382,7 +399,7 @@ function DashboardShellContent() {
   const primarySections = filterSectionsByIds(profileAllowedSections, primaryTabIds);
   const secondarySections = filterSectionsByIds(profileAllowedSections, secondaryTabIds);
   const secondaryItemCount = secondaryTabIds.length;
-  const modeDefaultTab = (sessionCtx.sessionMode === 'demo' ? getActiveDemoSession()?.focusTab : null) ?? defaultTabForMode(sessionCtx.sessionMode);
+  const modeDefaultTab = allowedTabIds.includes('chassis') ? 'chassis' : defaultTabForMode(sessionCtx.sessionMode);
   const initialTab = resolveDashboardTab(
     sessionCtx.setup[DASHBOARD_TAB_SETUP_KEY],
     allowedTabIds,
@@ -403,13 +420,13 @@ function DashboardShellContent() {
   const navigateTo = useCallback((newTab: TabId) => {
     if (!allowedTabIds.includes(newTab)) return;
     if (newTab === activeTab) return;
-    setTransitioning(true);
+    requestLeave(()=>{setTransitioning(true);
     window.setTimeout(() => {
       prevTabRef.current = newTab;
       setTab(newTab);
       setTransitioning(false);
-    }, 100);
-  }, [activeTab, allowedTabIds]);
+    }, 100);});
+  }, [activeTab, allowedTabIds,requestLeave]);
 
   function navigate(newTab: TabId, seed?: string) {
     if (seed) sessionStorage.setItem(COPILOT_SEED_KEY, seed);
@@ -421,7 +438,8 @@ function DashboardShellContent() {
   // When the user enters the SPA via /pit-wall/{section}, auto-select the
   // corresponding dashboard tab so direct Hub CTAs land on the right section.
   useEffect(() => {
-    const target = resolveTabFromPublicPath(window.location.pathname);
+    const workspace=new URLSearchParams(window.location.search).get('workspace');
+    const target = workspace==='recorded-sessions'?'data':resolveTabFromPublicPath(window.location.pathname);
     if (target && allowedTabIds.includes(target) && target !== activeTab) {
       // Small delay to let the dashboard settle before switching
       window.setTimeout(() => setTab(target), 200);
@@ -598,14 +616,14 @@ function DashboardShellContent() {
 
         <div className="sidebar-footer">
           <LanguageSwitcher />
-          <button className="btn btn-ghost btn-sm sidebar-logout" onClick={logout} title="Switch Profile">
+          <button className="btn btn-ghost btn-sm sidebar-logout" onClick={()=>requestLeave(()=>void logout())} title="Switch Profile">
             <LogOut size={12} /> {t('common.switchProfile', 'Switch Profile')}
           </button>
           <div className="sidebar-footer-line" style={{ color: 'var(--text-muted)', fontSize: 9, letterSpacing: '0.06em' }}>
             ← → arrows to navigate tabs
           </div>
           <div className="sidebar-footer-line" style={{ fontWeight: 700, color: live.loading ? 'var(--text-muted)' : (live.servicesUp > 0 ? 'var(--green)' : 'var(--accent)') }}>
-            {live.loading ? 'Platform · checking…' : `Platform · ${live.servicesUp}/${live.servicesTotal} services online`}
+            {realWorkspace ? 'Estado del producto dentro de Chassis' : live.loading ? 'Platform · checking…' : `Platform · ${live.servicesUp}/${live.servicesTotal} services online`}
           </div>
         </div>
       </aside>
@@ -624,11 +642,11 @@ function DashboardShellContent() {
             {drawerOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
           <div className="header-gp">
-            <span className={`badge ${sessionState.badgeClass}`} style={{ fontSize: 10, letterSpacing: '0.1em' }}>{sessionState.badgeLabel}</span>
-            <span className="header-gp-name">{sessionCtx.circuitName}</span>
-            <span className="header-gp-round" style={{ color: 'var(--text-muted)', fontSize: 12 }}>{sessionCtx.sessionMode.toUpperCase()} MODE</span>
+            <span className={`badge ${sessionState.badgeClass}`} style={{ fontSize: 10, letterSpacing: '0.1em' }}>{activeRecording() ? 'RECORDED' : sessionCtx.demoMode ? 'DEMO' : 'SIN DATOS'}</span>
+            <span className="header-gp-name" title={activeRecording() ? 'Sesión importada' : sessionCtx.circuitName}>{activeRecording() ? 'Sesión importada' : sessionCtx.circuitName}</span>
+            <span className="header-gp-round" style={{ color: 'var(--text-muted)', fontSize: 12 }}>{activeRecording() ? 'RECORDED' : sessionCtx.sessionMode.toUpperCase()} MODE</span>
           </div>
-          <div className="header-stats">
+          {sessionCtx.demoMode && !activeRecording() ? <><div className="header-stats">
             <div className="header-stat">
               <span className="header-stat-label">{sessionState.lapLabel}</span>
               <span className="header-stat-val">{sessionState.lapValue}</span>
@@ -678,7 +696,7 @@ function DashboardShellContent() {
             <DecisionCenter lap={telem.lapCount} />
             <GlobalContextBar telem={telem} />
             <span className="header-clock">{clock}</span>
-          </div>
+          </div></> : <div className="header-stats">{activeRecording() ? 'SESIÓN GRABADA · sin hardware conectado' : 'SIN DATOS · sin hardware conectado'}</div>}
         </header>
 
         <main className={`app-main${isFullBleed ? ' app-main-fullbleed' : ''}`}>
@@ -692,7 +710,7 @@ function DashboardShellContent() {
                 items={profileAllowedSections.flatMap(section => section.items.map(item => ({ id: item.id, label: t(item.labelKey), section: t(section.section) })))}
                 onNavigate={navigateTo}
               />
-              <SessionContextStrip />
+              {sessionCtx.demoMode && !activeRecording() && <SessionContextStrip />}
               <Suspense fallback={<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', color: 'var(--text-muted)', fontSize: 13 }}>Loading…</div>}>
                 <PageContent tab={activeTab} />
               </Suspense>
@@ -707,7 +725,7 @@ function DashboardShellContent() {
 export function DashboardShell() {
   return (
     <ErrorBoundary>
-      <DashboardShellContent />
+      <WorkspaceDraftProvider><EngineeringSessionProvider><DashboardShellContent /></EngineeringSessionProvider></WorkspaceDraftProvider>
     </ErrorBoundary>
   );
 }

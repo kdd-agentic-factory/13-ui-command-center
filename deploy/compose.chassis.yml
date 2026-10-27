@@ -1,0 +1,160 @@
+{
+  "name": "chassis-commercial",
+  "services": {
+    "api": {
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 128,
+      "mem_limit": "1g",
+      "memswap_limit": "1g",
+      "cpus": 2,
+      "user": "1000:1000",
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=256m,uid=1000,gid=1000,mode=0700"
+      ],
+      "restart": "no",
+      "image": "${CHASSIS_API_IMAGE:?verified image digest required}",
+      "environment": {
+        "TDS_PRODUCT_PROFILE": "chassis",
+        "TDS_APP_ENV": "production",
+        "TDS_IDENTITY_MODE": "authenticated",
+        "TDS_IDENTITY_URL": "${IDENTITY_URL:?HTTPS identity required}",
+        "TDS_IDENTITY_ANON_KEY": "${IDENTITY_ANON_KEY:?public identity configuration required}",
+        "TDS_CORS_ORIGINS": "${APP_ORIGIN:?explicit origin required}",
+        "TDS_STATE_ROOT": "/var/lib/chassis",
+        "TDS_HOST": "0.0.0.0",
+        "TDS_PORT": "8180",
+        "TDS_TLS_CERT_FILE": "/run/secrets/api_cert",
+        "TDS_TLS_KEY_FILE": "/run/secrets/api_key",
+        "TDS_OPERATIONS_PROBE_KEY_FILE": "/run/secrets/probe_key",
+        "TDS_ENGINEERING_INTERNAL_API_KEY_FILE": "/run/secrets/backend_key",
+        "TDS_ENGINEERING_SIGNING_KEY_FILE": "/run/secrets/signing_key",
+        "TDS_ENGINEERING_CONTROL_KEY_FILE": "/run/secrets/control_key",
+        "TDS_ENGINEERING_AUTHORITY_MODE": "insforge",
+        "TDS_ENGINEERING_AUTHORITY_URL": "${AUTHORITY_URL:?HTTPS authority required}",
+        "TDS_ENGINEERING_AUTHORITY_SERVICE_KEY_FILE": "/run/secrets/authority_key",
+        "TDS_IDENTITY_CA_FILE": "/run/secrets/identity_ca",
+        "TDS_ENGINEERING_MODEL_NAME": "${ENGINEERING_MODEL_NAME:?verified local model required}",
+        "TDS_ENGINEERING_MODEL_URL": "${ENGINEERING_MODEL_URL:?explicit private model endpoint required}",
+        "TDS_ENGINEERING_MODEL_DIGEST": "${ENGINEERING_MODEL_DIGEST:-}"
+      },
+      "volumes": [
+        "state:/var/lib/chassis",
+        "${API_CERT_FILE:?absolute private file required}:/run/secrets/api_cert:ro",
+        "${API_KEY_FILE:?absolute private file required}:/run/secrets/api_key:ro",
+        "${PROBE_KEY_FILE:?absolute private file required}:/run/secrets/probe_key:ro",
+        "${BACKEND_KEY_FILE:?absolute private file required}:/run/secrets/backend_key:ro",
+        "${SIGNING_KEY_FILE:?absolute private file required}:/run/secrets/signing_key:ro",
+        "${CONTROL_KEY_FILE:?absolute private file required}:/run/secrets/control_key:ro",
+        "${AUTHORITY_KEY_FILE:?absolute private authority key required}:/run/secrets/authority_key:ro",
+        "${IDENTITY_CA_FILE:?explicit identity trust bundle required}:/run/secrets/identity_ca:ro"
+      ]
+    },
+    "gateway": {
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 128,
+      "mem_limit": "1g",
+      "memswap_limit": "1g",
+      "cpus": 2,
+      "user": "1000:1000",
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=256m,uid=1000,gid=1000,mode=0700"
+      ],
+      "restart": "no",
+      "image": "${CHASSIS_GATEWAY_IMAGE:?verified image digest required}",
+      "network_mode": "service:api",
+      "environment": {
+        "ENGINEERING_BACKEND_URL": "https://127.0.0.1:8180",
+        "ENGINEERING_BACKEND_CA_FILE": "/run/secrets/api_ca",
+        "MCP_INTERNAL_API_KEY_FILE": "/run/secrets/gateway_key",
+        "ENGINEERING_INTERNAL_API_KEY_FILE": "/run/secrets/backend_key",
+        "ENGINEERING_SIGNING_KEY_FILE": "/run/secrets/signing_key",
+        "ENGINEERING_CONTROL_KEY_FILE": "/run/secrets/control_key"
+      },
+      "volumes": [
+        "${API_CA_FILE:?absolute private file required}:/run/secrets/api_ca:ro",
+        "${GATEWAY_KEY_FILE:?absolute private file required}:/run/secrets/gateway_key:ro",
+        "${BACKEND_KEY_FILE:?absolute private file required}:/run/secrets/backend_key:ro",
+        "${SIGNING_KEY_FILE:?absolute private file required}:/run/secrets/signing_key:ro",
+        "${CONTROL_KEY_FILE:?absolute private file required}:/run/secrets/control_key:ro"
+      ]
+    },
+    "worker": {
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 128,
+      "mem_limit": "1g",
+      "memswap_limit": "1g",
+      "cpus": 2,
+      "user": "1000:1000",
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=256m,uid=1000,gid=1000,mode=0700"
+      ],
+      "restart": "no",
+      "image": "${CHASSIS_WORKER_IMAGE:?verified image digest required}",
+      "network_mode": "service:api",
+      "environment": {
+        "MCP_GATEWAY_URL": "http://127.0.0.1:8010",
+        "MCP_INTERNAL_API_KEY_FILE": "/run/secrets/gateway_key",
+        "ENGINEERING_CONTROL_KEY_FILE": "/run/secrets/control_key"
+      },
+      "volumes": [
+        "${GATEWAY_KEY_FILE:?absolute private file required}:/run/secrets/gateway_key:ro",
+        "${CONTROL_KEY_FILE:?absolute private file required}:/run/secrets/control_key:ro"
+      ]
+    },
+    "frontend": {
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 128,
+      "mem_limit": "256m",
+      "memswap_limit": "256m",
+      "cpus": 2,
+      "user": "101:101",
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=256m,uid=101,gid=101,mode=0700",
+        "/etc/nginx/conf.d:rw,noexec,nosuid,size=1m,uid=101,gid=101,mode=0700"
+      ],
+      "restart": "no",
+      "image": "${CHASSIS_FRONTEND_IMAGE:?verified image digest required}",
+      "ports": [
+        "${CHASSIS_BIND_ADDRESS:?explicit bind address required}:3000:3000"
+      ],
+      "environment": {
+        "KDD_TELEMETRY_HOST": "api",
+        "KDD_TELEMETRY_PORT": "8180",
+        "KDD_TELEMETRY_API_KEY": ""
+      },
+      "volumes": [
+        "${API_CA_FILE:?absolute CA required}:/etc/ssl/certs/ca-certificates.crt:ro"
+      ]
+    }
+  },
+  "volumes": {
+    "state": {
+      "external": true,
+      "name": "${CHASSIS_STATE_VOLUME:?explicit persistent volume required}"
+    }
+  }
+}

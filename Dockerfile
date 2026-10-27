@@ -1,4 +1,6 @@
-FROM node:20.18.0-slim AS build
+ARG NODE_IMAGE
+ARG NGINX_IMAGE
+FROM ${NODE_IMAGE} AS build
 
 WORKDIR /app
 
@@ -6,36 +8,39 @@ COPY package*.json ./
 RUN npm ci --quiet
 
 COPY . .
-# Bake the live telemetry-dataset service URL so the Data Cube reads real
-# sessions (CORS is open on the service). Overridable at build time.
-ARG VITE_TELEMETRY_URL=https://kdd-rjz-telemetry.fly.dev
-ENV VITE_TELEMETRY_URL=$VITE_TELEMETRY_URL
-ARG VITE_TWIN_URL=https://kdd-rjz-digital-twin.fly.dev
-ENV VITE_TWIN_URL=$VITE_TWIN_URL
-ARG VITE_RACE_COMMAND_CENTER_URL=https://kdd-rjz-race.fly.dev
-ENV VITE_RACE_COMMAND_CENTER_URL=$VITE_RACE_COMMAND_CENTER_URL
-ARG VITE_ENABLE_RACE_COMMAND_CENTER_PREVIEW=true
-ENV VITE_ENABLE_RACE_COMMAND_CENTER_PREVIEW=$VITE_ENABLE_RACE_COMMAND_CENTER_PREVIEW
-# RAG / pipelines / security are API-key/credentialed: they are NOT baked to a
-# direct URL here. They default to the same-origin BFF paths (/api/rag,
-# /api/pipelines, /api/security) which the nginx BFF below proxies to the Fly
-# services while injecting the internal key + principal server-side. This is how
-# the credentialed integrations go fully live without any secret in the browser.
-RUN npm run build
+# Commercial delivery never defaults to direct historical service URLs.
+ARG VITE_PRODUCT_PROFILE=chassis
+ENV VITE_PRODUCT_PROFILE=$VITE_PRODUCT_PROFILE
+ENV VITE_TELEMETRY_URL=/api/telemetry
+ENV VITE_ENABLE_RACE_COMMAND_CENTER_PREVIEW=false
+ARG VITE_INSFORGE_URL
+ARG VITE_INSFORGE_ANON_KEY
+ENV VITE_INSFORGE_URL=$VITE_INSFORGE_URL
+ENV VITE_INSFORGE_ANON_KEY=$VITE_INSFORGE_ANON_KEY
+RUN node scripts/render-chassis-surface.mjs --check && npm run build
 
 # ── Serving stage ──────────────────────────────────────────────────────────────
 
-FROM nginx:1.27.3-alpine
+FROM ${NGINX_IMAGE}
 
+# Alpine3.24 fixes for CVE-2026-111497 and CVE-2026-92392.
+# Exact versions fail closed if the selected base/repository is incompatible.
+RUN apk add --no-cache brotli-libs=1.2.1-r0 curl=8.23.0-r0 libcurl=8.23.0-r0
+
+COPY docker/nginx-commercial.conf /etc/nginx/nginx.conf
 COPY --from=build /app/dist /usr/share/nginx/html
 # Template is envsubst'd → /etc/nginx/conf.d/default.conf at container start.
 # Filter to KDD_* only so nginx's own $vars (e.g. $uri) are left untouched.
 COPY default.conf.template /etc/nginx/templates/default.conf.template
+COPY deploy/chassis-surface.map.conf /etc/nginx/chassis-surface.map.conf
+COPY docker/15-validate-chassis-env.envsh /docker-entrypoint.d/15-validate-chassis-env.envsh
+RUN chmod +x /docker-entrypoint.d/15-validate-chassis-env.envsh
 ENV NGINX_ENVSUBST_FILTER=KDD_
 
+USER 101:101
 EXPOSE 3000
 
 HEALTHCHECK --interval=15s --timeout=5s --start-period=5s --retries=3 \
-  CMD wget -qO- http://localhost:3000/health || exit 1
+  CMD wget -qO- http://127.0.0.1:3000/health || exit 1
 
 CMD ["nginx", "-g", "daemon off;"]

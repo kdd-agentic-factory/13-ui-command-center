@@ -1,0 +1,18 @@
+{
+  "python": {
+    "reference": "ubuntu:24.04",
+    "digest": "sha256:24737cef17f4e22b1977df7d9a05e77c4e28b7da5b8911f8d8ccda136bf3573c"
+  },
+  "node": {
+    "reference": "node:24-bookworm-slim",
+    "digest": "sha256:55fb5f5a527ea2c5c4a95f963e48ef90aa38c7b346054fdc8ee9957a2b55d205"
+  },
+  "nginx": {
+    "reference": "nginx:1.30.6-alpine",
+    "digest": "sha256:47928bf67eb62a1863cb08d9ecb52d3e704304ba614eaee17884204677702951"
+  },
+  "browser": {
+    "reference": "mcr.microsoft.com/playwright:v1.61.1-noble",
+    "digest": "sha256:5b8f294aff9041b7191c34a4bab3ac270157a28774d4b0660e9743297b697e48"
+  }
+}
