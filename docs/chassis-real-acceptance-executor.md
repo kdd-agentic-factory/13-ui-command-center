@@ -64,7 +64,12 @@ comprueban la denegación al ingeniero no designado y la aprobación con las cue
 de ensayo del titular y suplente de equipos distintos.
 
 Antes de autenticar o crear datos se comprueba la resolución de las dos dependencias
-JavaScript montadas y el arranque real de Chromium con sandbox.
+JavaScript montadas y el arranque real de Chromium con sandbox. También se valida
+el login y la recarga en frío de un lector real antes de generar análisis.
+Ese control previo no concede los gates de aprobación: las dos firmas y su
+persistencia se comprueban posteriormente con los operadores designados.
+En caso de fallo solo se conservan etapas, estados HTTP y banderas de contrato
+y de interfaz; nunca cuerpos, tokens, cookies o texto libre de errores.
 El navegador usa Chromium con sandbox y certificados verificados. Hace login
 real y envía las dos aprobaciones mediante el botón de la aplicación, comprobando
 el actor del evento remoto. Comprueba sesiones propias/ajenas, permisos de lectura y repite el acceso

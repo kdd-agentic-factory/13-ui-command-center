@@ -191,6 +191,16 @@ def run(config, anon_key):
             report['gates']['browser_runtime_preflight'] = 'blocked'
             raise ValueError('Browser runtime preflight failed')
         report['gates']['browser_runtime_preflight'] = 'passed'
+        # Real cold-load identity must work before expensive inference or seeding.
+        identity_probe = docker(['exec', browser_name, 'node', '/acceptance/real_acceptance_browser.cjs',
+                                 '--identity-preflight'], timeout=140, check=False)
+        identity_report = json.loads(identity_probe.stdout)
+        report['gates'].update(identity_report['gates'])
+        if identity_report.get('status') != 'passed':
+            report['browser_phase'] = identity_report.get('phase', 'unavailable')
+            report['browser_http_statuses'] = identity_report.get('http_statuses', [])
+            report['browser_ui_flags'] = identity_report.get('ui_flags')
+            raise ValueError('Real browser cold identity preflight failed')
         name = start('qa-http', specs['api']['image'], 'container:' + api,
                      qa_args + ['--entrypoint', 'python'], ['-c', 'import time;time.sleep(1400)'])
         result = docker(['exec', name, 'python', '/acceptance/real_acceptance_qa.py'], timeout=1100, check=False)
@@ -217,6 +227,7 @@ def run(config, anon_key):
         if browser_report.get('status') != 'passed':
             report['browser_phase'] = browser_report.get('phase', 'unavailable')
             report['browser_failure_type'] = browser_report.get('error_type', 'unavailable')
+            report['browser_http_statuses'] = browser_report.get('http_statuses', [])
         verify_inputs()
         report['gates']['private_input_identity'] = 'passed'
         report['status'] = 'passed' if all(v == 'passed' for v in report['gates'].values()) else 'blocked'

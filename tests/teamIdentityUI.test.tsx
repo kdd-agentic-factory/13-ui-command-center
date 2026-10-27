@@ -41,3 +41,15 @@ it('clears the visible identity when initial credential renewal fails',async()=>
 });
 
 it('never dispatches a cached-token mutation across a synchronous team switch',async()=>{const f=vi.fn(async()=>new Response('{}'));vi.stubGlobal('fetch',f);await telemetryFetch('/api/telemetry/api/v1/chassis/setups');f.mockClear();const pending=telemetryFetch('/api/telemetry/api/v1/chassis/setups',{method:'POST',body:'team A'});setActiveTeam('teamB','engineer');await expect(pending).rejects.toThrow('equipo');expect(f).not.toHaveBeenCalled();});
+
+
+it('rejects pre-identity requests without cancelling cold identity restoration',async()=>{
+ setTelemetryUser(null);
+ const expired=vi.fn();window.addEventListener('telemetry-auth-expired',expired);
+ const network=vi.fn();vi.stubGlobal('fetch',network);
+ try{
+  await expect(telemetryFetch('/api/telemetry/api/v1/engineering/sessions')).rejects.toThrow('sesión');
+  expect(network).not.toHaveBeenCalled();
+  expect(expired).not.toHaveBeenCalled();
+ }finally{window.removeEventListener('telemetry-auth-expired',expired);}
+});

@@ -8,11 +8,11 @@ const input={teams:{A:'team-a',B:'team-b'},accounts:[
  {team:'A',role:'chief',id:'chief-a',email:'a@example.test',password:'sentinel'},
  {team:'B',role:'substitute',id:'sub-b',email:'b@example.test',password:'sentinel'},
  {team:'A',role:'reader',id:'reader-a',email:'r@example.test',password:'sentinel'}]};
-let contexts=0,reloads=0,approvals=0;const messages=[];const valid=process.argv[3]==='valid';
+let contexts=0,reloads=0,approvals=0;const messages=[];const valid=process.argv[3]==='valid';const preflight=process.argv[4]==='identity';
 const chromium={launch:async options=>{
  if(options.chromiumSandbox!==true)throw Error('Sandbox disabled');
  return {close:async()=>{},newContext:async()=>{
-  const index=contexts++;let team='A',reloaded=false;
+  const index=preflight?2:contexts++;let team='A',reloaded=false;
   const generic={waitFor:async()=>{},click:async()=>{},fill:async()=>{},
    selectOption:async id=>{team=id==='team-b'?'B':'A';},
    innerText:async()=>expected.prefix+' SYNTHETIC QA '+team,
@@ -35,6 +35,6 @@ const mockRequire=name=>{
 };
 (async()=>{
  await vm.runInNewContext(fs.readFileSync(process.argv[2],'utf8'),{
-  require:mockRequire,process:{env:{},exitCode:0},setTimeout:callback=>callback(),console:{log:value=>messages.push(JSON.parse(value))}});
+  require:mockRequire,process:{env:{},exitCode:0,argv:preflight?['node','browser','--identity-preflight']:['node','browser']},setTimeout:callback=>callback(),console:{log:value=>messages.push(JSON.parse(value))}});
  process.stdout.write(JSON.stringify({...messages.at(-1),reloads,approvals}));
 })().catch(()=>{process.exitCode=1;});

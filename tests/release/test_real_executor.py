@@ -169,3 +169,14 @@ def test_insufficient_model_capacity_is_rejected_before_acceptance(tmp_path, mon
     else:
         with pytest.raises(ValueError, match='capacity'):
             module.model_cpu_budget(info)
+
+
+@pytest.mark.skipif(shutil.which('node') is None, reason='Node browser contract probe')
+def test_readonly_identity_preflight_cannot_mark_human_approval_complete():
+    result = subprocess.run(['node', 'tests/release/browser_reload_probe.cjs',
+                             'tests/delivery/real_acceptance_browser.cjs', 'valid', 'identity'],
+                            check=True, capture_output=True, text=True, timeout=15)
+    report = json.loads(result.stdout)
+    assert report['status'] == 'passed'
+    assert report['gates'] == {'real_browser_identity_preflight': 'passed'}
+    assert report['reloads'] == 1 and report['approvals'] == 0

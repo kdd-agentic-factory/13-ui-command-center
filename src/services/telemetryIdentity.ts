@@ -35,7 +35,8 @@ export async function telemetryFetch(url:string,init:RequestInit={}):Promise<Res
  }
 
  if(mode==='authenticated'){
-  try{headers.set('Authorization','Bearer '+await bearer());}catch(error){if(g===generation){setTelemetryUser(null);window.dispatchEvent(new Event('telemetry-auth-expired'));}throw error;}
+  // An anonymous startup read is denied, but must not invalidate a pending cookie rehydration.
+  try{headers.set('Authorization','Bearer '+await bearer());}catch(error){if(user&&g===generation){setTelemetryUser(null);window.dispatchEvent(new Event('telemetry-auth-expired'));}throw error;}
   if(g!==generation)throw new Error('El equipo o la sesión cambió; petición descartada');
   if(intendedTeam)headers.set('X-Team-ID',intendedTeam);
  }
