@@ -19,6 +19,8 @@ def check(path, *, source_root=None):
     data = json.loads(path.read_text(encoding="utf-8"))
     if data.get("status") != "accepted" or data.get("publishable") is not True:
         raise ValueError("Release acceptance incomplete")
+    if data.get("fixture_only", False) is not False or data.get("scope") == "isolated_fixture_acceptance":
+        raise ValueError("Synthetic fixture acceptance cannot be promoted")
     release_inputs.validate_release(data, statuses=("accepted",))
     source_root = (
         Path(source_root)
@@ -73,6 +75,9 @@ def check(path, *, source_root=None):
         "recovery",
         "roles_and_human_authority",
         "image_scan",
+        "aim_independent_reference",
+        "two_d_independent_reference",
+        "historical_key_revocation",
     }
     if any(data.get("gates", {}).get(key) != "passed" for key in required):
         raise ValueError("Required release gate not passed")

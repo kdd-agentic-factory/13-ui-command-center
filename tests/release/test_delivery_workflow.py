@@ -87,6 +87,9 @@ def test_promotion_rejects_missing_source_identity(monkeypatch, tmp_path, missin
                 "recovery",
                 "roles_and_human_authority",
                 "image_scan",
+                "aim_independent_reference",
+                "two_d_independent_reference",
+                "historical_key_revocation",
             ]
         },
     }
@@ -96,7 +99,8 @@ def test_promotion_rejects_missing_source_identity(monkeypatch, tmp_path, missin
         module.check(file)
 
 
-@pytest.mark.parametrize("case", ["match", "tree_drift", "dirty_checkout"])
+@pytest.mark.parametrize("case", ["match", "tree_drift", "dirty_checkout",
+    "missing_aim", "missing_two_d", "missing_revocation", "pending_revocation", "fixture_only", "fixture_scope"])
 def test_promotion_compares_current_checkout_and_sanitized_tree(
     monkeypatch, tmp_path, case
 ):
@@ -138,6 +142,9 @@ def test_promotion_compares_current_checkout_and_sanitized_tree(
                 "recovery",
                 "roles_and_human_authority",
                 "image_scan",
+                "aim_independent_reference",
+                "two_d_independent_reference",
+                "historical_key_revocation",
             ]
         },
     }
@@ -154,6 +161,16 @@ def test_promotion_compares_current_checkout_and_sanitized_tree(
     if case == "tree_drift":
         observed["17"]["tree_sha256"] = "e" * 64
     monkeypatch.setattr(module.release_inputs, "assemble_contexts", lambda *a: observed)
+    if case == "fixture_only":
+        data["fixture_only"] = True
+    if case == "fixture_scope":
+        data["scope"] = "isolated_fixture_acceptance"
+    missing_gates = {"missing_aim": "aim_independent_reference", "missing_two_d": "two_d_independent_reference",
+                     "missing_revocation": "historical_key_revocation"}
+    if case in missing_gates:
+        data["gates"].pop(missing_gates[case])
+    if case == "pending_revocation":
+        data["gates"]["historical_key_revocation"] = "pending"
     file = tmp_path / "release.json"
     file.write_text(json.dumps(data))
     if case == "match":

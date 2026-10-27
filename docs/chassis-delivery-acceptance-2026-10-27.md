@@ -1,5 +1,31 @@
 # Aceptación de entrega Chassis — 27 octubre2026
 
+## Estado actual consolidado — 27 de octubre
+
+La aceptación integrada del destino Chassis-Preproduction ha pasado con identidad
+real de ocho cuentas de dos equipos, modelo local real y datos de ingeniería
+explícitamente sintéticos. Pasan los especialistas y revisores con datos disponibles,
+las dos síntesis del Chief (16 llamadas en total), el aislamiento y las aprobaciones
+desde Chromium con sandbox del titular del equipo A y del suplente del equipo B.
+Se verifican la identidad y la vigencia después de recargar y el perfil lector.
+Físico/neuro permanecen indisponibles por falta de adquisición.
+
+Las cuatro imágenes coordinadas superan el escaneo HIGH/CRITICAL. La comprobación
+final confirma que no quedan contenedores ni redes del ensayo. Pasan 495 pruebas
+de interfaz y la comprobación de tipos. Se corrigieron capacidad de CPU de la IA,
+resolución de dependencias del navegador y una carrera de recuperación de identidad.
+
+El candidato **sigue sin autorización de publicación**: faltan los contrastes
+independientes de AiM y 2D y sigue pendiente la revocación de la clave histórica.
+El control de promoción exige estos tres estados, además de los gates técnicos,
+y rechaza declaraciones explícitas de fixture. Ninguna prueba sintética acredita
+precisión de adquisición ni valida recomendaciones físicas.
+
+Las secciones siguientes conservan la cronología de ensayos anteriores; sus
+bloqueos concretos de identidad, modelo y navegador quedan sustituidos únicamente
+por los resultados descritos aquí. No se ha desplegado en producción ni modificado ARGOS.
+
+
 Candidato de instancia única. No desplegado. No aplicar migraciones cloud ni promover estas imágenes de fixture.
 
 ## Continuación: candidato coordinado 13

@@ -37,4 +37,17 @@ Las fuentes con cambios locales son válidas únicamente para diagnóstico local
 
 Compose exige ahora autoridad InsForge, clave de servicio mediante archivo privado montado sólo en API, bundle de confianza explícito de identidad y nombre/URL del modelo local. Evita arrancar un paquete comercial con autoridad deshabilitada por omisión. `AUTHORITY_URL` debe ser HTTPS y corresponder al proveedor autorizado. El bundle se utiliza también para la autoridad; no desactiva TLS.
 
-El modelo debe existir y ser accesible desde la red privada del contenedor API. `localhost` dentro del contenedor no identifica Ollama del host. No hay descarga, instalación ni apertura de puertos de modelos automática. Un digest opcional fija el modelo observado; verificar esa identidad y su aceptación antes de promover. La configuración sólo prepara los mounts y variables: el ensayo con emisor/modelo controlados no acredita por sí mismo la conexión operativa real.
+El modelo debe existir y ser accesible desde la red privada del contenedor API. `localhost` dentro del contenedor no identifica Ollama del host. No hay descarga, instalación ni apertura de puertos de modelos automática. El digest del modelo se comprueba como identidad observada del runtime; no constituye un pin autenticado del protocolo de inferencia. Verificar esa identidad y la aceptación del modelo antes de promover. La configuración sólo prepara los mounts y variables: el ensayo con emisor/modelo controlados no acredita por sí mismo la conexión operativa real.
+
+## Bloqueos independientes de publicación
+
+El control de promoción exige también `aim_independent_reference`,
+`two_d_independent_reference` y `historical_key_revocation` con estado `passed`.
+Su ausencia, estado pendiente o fallo bloquea aunque el resto de pruebas pase.
+La aceptación con datos sintéticos no satisface los contrastes de adquisición.
+Estas etiquetas registran una revisión del operador; no autentican por sí mismas
+la procedencia de una exportación ni prueban una revocación. Conservar evidencia
+revisada antes de declararlas superadas. No marcar la clave como revocada hasta
+comprobar la actuación autorizada en el proveedor.
+
+Un manifiesto que conserva `fixture_only: true` o `scope: isolated_fixture_acceptance` se rechaza incluso si declara `status: accepted` y `publishable: true`. Cambiar esas etiquetas no transforma un ensayo sintético en aceptación comercial.
