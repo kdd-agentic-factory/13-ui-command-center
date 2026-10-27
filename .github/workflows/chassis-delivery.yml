@@ -1,0 +1,167 @@
+name: Chassis coordinated delivery
+on:
+  workflow_dispatch:
+    inputs:
+      ref_01:
+        description: Exact orchestrator commit SHA
+        required: true
+      ref_02:
+        description: Exact gateway commit SHA
+        required: true
+      ref_13:
+        description: Exact UI commit SHA with resolved release manifest
+        required: true
+      ref_17:
+        description: Exact physical engine commit SHA
+        required: true
+      ref_18:
+        description: Exact dataset commit SHA
+        required: true
+      public_inputs_run_id:
+        description: Run containing chassis-public-build-inputs (bases.json, wheels, os-packages)
+        required: true
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Validate immutable source inputs
+        env:
+          REF_01: ${{ inputs.ref_01 }}
+          REF_02: ${{ inputs.ref_02 }}
+          REF_13: ${{ inputs.ref_13 }}
+          REF_17: ${{ inputs.ref_17 }}
+          REF_18: ${{ inputs.ref_18 }}
+          INPUT_RUN: ${{ inputs.public_inputs_run_id }}
+        run: |
+          python - <<'PY'
+          import os,re
+          assert all(re.fullmatch('[a-f0-9]{40}',os.environ['REF_'+key]) for key in ('01','02','13','17','18'))
+          assert re.fullmatch('[0-9]+',os.environ['INPUT_RUN'])
+          PY
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref_13 }}
+          path: 13-ui-command-center
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kdd-agentic-factory/01-agent-orchestrator
+          ref: ${{ inputs.ref_01 }}
+          token: ${{ secrets.CHASSIS_REPOSITORIES_READ_TOKEN }}
+          path: 01-agent-orchestrator
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kdd-agentic-factory/02-mcp-gateway
+          ref: ${{ inputs.ref_02 }}
+          token: ${{ secrets.CHASSIS_REPOSITORIES_READ_TOKEN }}
+          path: 02-mcp-gateway
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kdd-agentic-factory/17-digital-twin-simulation-lab
+          ref: ${{ inputs.ref_17 }}
+          token: ${{ secrets.CHASSIS_REPOSITORIES_READ_TOKEN }}
+          path: 17-digital-twin-simulation-lab
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kdd-agentic-factory/18-telemetry-dataset
+          ref: ${{ inputs.ref_18 }}
+          token: ${{ secrets.CHASSIS_REPOSITORIES_READ_TOKEN }}
+          path: 18-telemetry-dataset
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/data/
+            !/catalog/
+      - name: Check source worktrees before generating candidate evidence
+        run: |
+          python - <<'PY'
+          import subprocess
+          for repository in ('01-agent-orchestrator','02-mcp-gateway','13-ui-command-center','17-digital-twin-simulation-lab','18-telemetry-dataset'):
+              assert not subprocess.check_output(['git','status','--porcelain'],cwd=repository,text=True).strip()
+          PY
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Frontend regression gates
+        working-directory: 13-ui-command-center
+        run: |
+          npm ci
+          npm run typecheck
+          npm test -- --run
+          npm run build
+      - uses: actions/download-artifact@v4
+        with:
+          name: chassis-public-build-inputs
+          run-id: ${{ inputs.public_inputs_run_id }}
+          github-token: ${{ github.token }}
+          path: public-inputs
+      - name: Build all four services from verified source contexts
+        run: |
+          python - <<'PY'
+          import json,subprocess
+          bases=json.load(open('public-inputs/bases.json'))
+          assert bases==json.load(open('13-ui-command-center/deploy/chassis-bases.lock.json'))
+          for base in bases.values():
+              subprocess.run(['docker','pull',base['reference']+'@'+base['digest']],check=True)
+          PY
+          python 13-ui-command-center/scripts/resolve-chassis-release.py --resolve --bases public-inputs/bases.json --wheel-dir public-inputs/wheels --output candidate-sources
+          printf '%s\n' '{"target":"isolated-fixture","identity_url":"https://127.0.0.1:9443","anon_key":"public-fixture-only"}' > fixture-public-config.json
+          python 13-ui-command-center/scripts/build-chassis-images.py --release candidate-sources/release.json --wheel-dir public-inputs/wheels --os-package-dir public-inputs/os-packages --frontend-config fixture-public-config.json --output candidate-images
+      - name: Create isolated synthetic TLS and browser runtime
+        run: |
+          docker pull postgres:16-alpine@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea
+          mkdir fixture-tls
+          openssl req -x509 -newkey rsa:2048 -nodes -keyout fixture-tls/key.pem -out fixture-tls/cert.pem -days 2 -subj /CN=localhost -addext subjectAltName=DNS:localhost,IP:127.0.0.1
+          sudo chown 1000:1000 fixture-tls/key.pem
+          sudo chmod 0400 fixture-tls/key.pem
+          docker build --pull=false -f 13-ui-command-center/tests/delivery/Dockerfile.browser -t chassis-browser-qa 13-ui-command-center/tests/delivery
+          docker inspect chassis-browser-qa --format '{{.Id}}' > browser-image-id.txt
+      - name: Release contracts against the installed runtime
+        run: |
+          API_ID=$(python -c "import json; print(json.load(open('candidate-images/built-images.json'))['api']['digest'])")
+          docker run --rm --network none --read-only --user 1000:1000 --cap-drop ALL --security-opt no-new-privileges --tmpfs /tmp:rw,nosuid,size=256m --mount "type=bind,source=$GITHUB_WORKSPACE,target=/workspace,readonly" --workdir /workspace/13-ui-command-center --entrypoint python "$API_ID" -m pytest -p no:cacheprovider -q tests/release
+      - name: Scan exact image archives with a fresh vulnerability database
+        run: |
+          docker pull aquasec/trivy:0.76.1@sha256:790fd66d1697395d8693d1acaa1ea702406a20f109b6fc7bac8db623eca6c06c
+          docker volume create chassis-ci-vulndb
+          docker run --rm --cap-drop ALL --security-opt no-new-privileges --mount type=volume,source=chassis-ci-vulndb,target=/cache aquasec/trivy:0.76.1@sha256:790fd66d1697395d8693d1acaa1ea702406a20f109b6fc7bac8db623eca6c06c image --cache-dir /cache --download-db-only
+          python 13-ui-command-center/scripts/scan-chassis-images.py --images candidate-images/built-images.json --output candidate-scans --db-volume chassis-ci-vulndb
+      - name: Require complete isolated acceptance
+        run: |
+          API_ID=$(python -c "import json; print(json.load(open('candidate-images/built-images.json'))['api']['digest'])")
+          python 13-ui-command-center/tests/delivery/check_fixture_permissions.py --image "$API_ID" --output candidate-permissions.json
+          python - <<'PY'
+          import json
+          data=json.load(open('candidate-sources/release.json'))
+          data['images']=json.load(open('candidate-images/built-images.json'))
+          data['fixture_only']=True
+          json.dump(data,open('candidate-stack.json','w'))
+          PY
+          python 13-ui-command-center/tests/delivery/run_stack.py --release candidate-stack.json --output candidate-acceptance --fixture-tls "$PWD/fixture-tls" --browser-image-id "$(cat browser-image-id.txt)" --engineering-fixture --scan-report candidate-scans/result.json
+      - name: Preserve public delivery evidence only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chassis-public-gates
+          path: |
+            13-ui-command-center/deploy/chassis-release.json
+            13-ui-command-center/deploy/chassis-release.schema.json
+            candidate-acceptance/result.json
+            candidate-acceptance/browser-result.json
+            candidate-acceptance/human-sql-result.json
+            candidate-acceptance/pending-recovery-result.json
+            candidate-acceptance/bad-proxy-result.json
+            candidate-acceptance/scan-binding-result.json
+            candidate-permissions.json
+            candidate-images/built-images.json
+            candidate-images/frontend-build-identity.json
+            candidate-scans/result.json
+          if-no-files-found: error
