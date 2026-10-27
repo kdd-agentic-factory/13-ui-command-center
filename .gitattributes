@@ -1,2 +1,4 @@
 tests/delivery/sql-contracts/*.sql text eol=lf
 deploy/chassis-surface.map.conf text eol=lf
+*.envsh text eol=lf
+*.sh text eol=lf
