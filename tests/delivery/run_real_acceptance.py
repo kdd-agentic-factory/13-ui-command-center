@@ -61,6 +61,14 @@ def role_specs(config, anon_key):
     } for role, item in blueprint['services'].items()}
 
 
+def model_cpu_budget(info):
+    # Measured frozen Chief request exceeds 60s at 2 CPUs, completes at 6.
+    # Reserve capacity for API, worker, TLS relay and sandboxed browser as well.
+    if info.get('NCPU', 0) < 8 or info.get('MemTotal', 0) < 12 * 1024 ** 3:
+        raise ValueError('Insufficient real acceptance capacity')
+    return 6
+
+
 def run(config, anon_key):
     if os.name != 'posix' or os.getuid() != 1000:
         raise ValueError('Dedicated Linux operator UID1000 required')
@@ -104,14 +112,14 @@ def run(config, anon_key):
         return ['--mount', 'type=bind,source=' + str(source) + ',target=' + target +
                 (',readonly' if readonly else '')]
 
-    def start(role, image, network, extra=(), command=(), user='1000:1000', memory='1g'):
+    def start(role, image, network, extra=(), command=(), user='1000:1000', memory='1g', cpus=2):
         verify_inputs()
         name = prefix + '-' + role
         owned.append(name)  # Cleanup also covers partially created resources.
         docker(['run', '-d', '--name', name, '--label', 'kdd.real-qa=' + prefix,
                 '--pull', 'never', '--network', network, '--user', user, '--read-only',
                 '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges',
-                '--memory', memory, '--memory-swap', memory, '--cpus', '2', '--pids-limit', '128',
+                '--memory', memory, '--memory-swap', memory, '--cpus', str(cpus), '--pids-limit', '128',
                 '--tmpfs', '/tmp:rw,nosuid,nodev,size=256m,uid=' + user.split(':')[0] + ',mode=0700',
                 *extra, image, *command])
         return name
@@ -120,6 +128,8 @@ def run(config, anon_key):
         info = json.loads(docker(['info', '--format', '{{json .}}']).stdout)
         if info['Name'] != 'chassis-preproduction' or info['DockerRootDir'] != '/var/lib/chassis-preproduction/docker':
             raise ValueError('Wrong Docker destination')
+        model_cpus = model_cpu_budget(info)
+        report['gates']['runtime_capacity'] = 'passed'
         for role, spec in specs.items():
             image = json.loads(docker(['image', 'inspect', spec['image']]).stdout)[0]
             if (image['Id'] != spec['image'] or image['Config'].get('User') != spec['user'] or
@@ -161,7 +171,7 @@ def run(config, anon_key):
                       'OLLAMA_VULKAN=false', 'OLLAMA_NUM_PARALLEL=1'):
             model_args += ['--env', value]
         start('local-model', specs['api']['image'], 'container:' + api,
-              model_args + ['--entrypoint', '/opt/ollama/bin/ollama'], ['serve'], memory='3g')
+              model_args + ['--entrypoint', '/opt/ollama/bin/ollama'], ['serve'], memory='3g', cpus=model_cpus)
         qa = specs['qa']; qa_args = mount(HERE, '/acceptance') + mount(expected, '/expected.json')
         for credential in qa['credentials']:
             qa_args += mount(credential['source'], credential['target'])

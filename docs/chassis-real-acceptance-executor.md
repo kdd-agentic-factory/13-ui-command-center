@@ -44,6 +44,10 @@ producto mantiene su restricción de loopback. Binarios y pesos/índices del mod
 se montan en solo lectura, HOME es tmpfs y la nube de Ollama queda desactivada.
 Se verifica el digest observado de qwen3:0.6b antes del ensayo; no se presenta esa
 observación como un pin autenticado del protocolo de inferencia.
+El nodo debe disponer de al menos8 CPU y12GiB; el modelo recibe un máximo de6 CPU
+con3GiB y los demás servicios conservan sus límites. La petición congelada del
+Chief se midió en28,3s con6 CPU y agotó60s con2 CPU. Es una referencia de capacidad,
+no una garantía temporal universal; el producto mantiene su plazo de60s.
 
 ## Alcance de los controles
 

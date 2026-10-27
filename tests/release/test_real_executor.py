@@ -146,3 +146,26 @@ def test_browser_gate_requires_primary_and_substitute_approval_interactions():
     assert report['status'] == 'passed' and report['reloads'] == 3
     assert report['approvals'] == 2
     assert report['gates']['real_primary_and_substitute'] == 'passed'
+
+
+def test_failed_chief_preserves_bounded_agent_diagnostics_without_payloads():
+    qa = load(Path('tests/delivery/real_acceptance_qa.py'), 'real_qa_diagnostics')
+    final = {'model_calls': 8, 'tasks': [{'agent_id': 'chassis', 'status': 'succeeded',
+        'result': {'private': 'sentinel'}, 'contract': 'secret-sentinel'}]}
+    result = qa.agent_run_summary('A', final, {'status': 'failed', 'cause': 'model_deadline_exceeded'})
+    assert result == {'team': 'A', 'model_calls': 8, 'tasks': {'chassis': 'succeeded'},
+                      'synthesis': 'failed', 'cause': 'model_deadline_exceeded'}
+    assert 'sentinel' not in json.dumps(result)
+    result = qa.agent_run_summary('B', final, {'status': 'failed', 'cause': 'secret-sentinel'})
+    assert result['cause'] == 'unrecognized'
+
+
+@pytest.mark.parametrize('cpus,memory,accepted', [(16,16,True),(8,12,True),(4,16,False),(8,8,False)])
+def test_insufficient_model_capacity_is_rejected_before_acceptance(tmp_path, monkeypatch, cpus, memory, accepted):
+    module, _ = fixtures(tmp_path, monkeypatch)
+    info = {'NCPU': cpus, 'MemTotal': memory * 1024 ** 3}
+    if accepted:
+        assert module.model_cpu_budget(info) == 6
+    else:
+        with pytest.raises(ValueError, match='capacity'):
+            module.model_cpu_budget(info)

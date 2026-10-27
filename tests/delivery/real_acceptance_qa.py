@@ -17,6 +17,16 @@ def proposal_input(stored):
     return stored['proposal'], stored['proposal_digest']
 
 
+def agent_run_summary(team, final, progress):
+    # Fixed codes only; never serialize model output, contracts, grants or exceptions.
+    cause = progress.get('cause')
+    safe_cause = cause if cause in {None, 'model_deadline_exceeded', 'invalid_synthesis_output',
+        'sealed_context_unavailable', 'model_slots_busy', 'synthesis_in_progress'} else 'unrecognized'
+    return {'team': team, 'model_calls': final['model_calls'],
+            'tasks': {task['agent_id']: task['status'] for task in final['tasks']},
+            'synthesis': progress['status'], 'cause': safe_cause}
+
+
 def validate_accounts(data, expected):
     if set(data) != {'accounts', 'teams'} or set(data['teams']) != {'A', 'B'}:
         raise ValueError('Explicit two-team credentials required')
@@ -203,8 +213,9 @@ def main():
                 if progress['status'] in ('succeeded', 'failed', 'unavailable', 'timed_out'):
                     break
                 time.sleep(2)
-            check('real_chief_synthesis_' + team, progress['status'] == 'succeeded')
             final = call('GET', f"engineering/runs/{run['run_id']}", engineer)
+            agent_runs.append(agent_run_summary(team, final, progress))
+            check('real_chief_synthesis_' + team, progress['status'] == 'succeeded')
             tasks = {t['agent_id']: t for t in final['tasks']}
             check('independent_branches_' + team, final['status'] == 'sealed' and len(tasks) == 9 and final['review_mode'] == 'blind_review')
             check('real_model_calls_' + team, final['model_calls'] > 0)
@@ -213,9 +224,6 @@ def main():
             check('specialists_and_reviewers_' + team,
                   all(tasks[r]['status'] == 'succeeded' for r in ('chassis', 'track', 'weather', 'tires-powertrain',
                                                                  'mechanical-check', 'evidence-quality', 'alternative-hypotheses')))
-            agent_runs.append({'team': team, 'model_calls': final['model_calls'],
-                               'tasks': {role: task['status'] for role, task in tasks.items()},
-                               'synthesis': progress['status']})
             stored = call('GET', 'engineering/proposals/' + progress['proposal_id'], engineer)
             proposal, proposal_digest = proposal_input(stored)
             check('no_unvalidated_physical_prescription_' + team,
