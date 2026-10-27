@@ -205,3 +205,12 @@ def test_standalone_policy_job_does_not_require_sibling_repositories():
     assert 'tests/test_*.py' in command
     assert 'tests/release/test_sql_fixture_contract.py' in command
     assert 'tests/' not in command.split()
+
+
+def test_cross_repository_contracts_are_mandatory_in_coordinated_ci():
+    import yaml
+    steps = yaml.safe_load(Path('.github/workflows/chassis-delivery.yml').read_text())['jobs']['source-contract']['steps']
+    run = next(s['run'] for s in steps if s.get('name') == 'Cross-repository source contracts')
+    assert '01-agent-orchestrator' in run and '02-mcp-gateway' in run
+    assert "'-m', 'cross_repository'" in run
+    assert 'check=True' in run

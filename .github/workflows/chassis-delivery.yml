@@ -97,6 +97,17 @@ jobs:
           npm run typecheck
           npm test -- --run
           npm run build
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Cross-repository source contracts
+        run: |
+          python -m pip install -e './01-agent-orchestrator[dev]' -e './02-mcp-gateway[dev]'
+          python - <<'PY'
+          import subprocess, sys
+          for repository in ('01-agent-orchestrator', '02-mcp-gateway'):
+              subprocess.run([sys.executable, '-m', 'pytest', '-q', '-m', 'cross_repository', '-p', 'no:cacheprovider'], cwd=repository, check=True)
+          PY
       - uses: actions/download-artifact@v4
         with:
           name: chassis-public-build-inputs
