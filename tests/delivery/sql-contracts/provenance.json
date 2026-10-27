@@ -2,7 +2,8 @@
   "purpose": "isolated QA only; never a cloud migration command",
   "source_repository": "21-agentic-backend-insforge",
   "files": {
-    "012_chassis_teams.sql": "2460323b1edd5a49cc0028358ed2b532ea8ef74e175882826c060b30c0592d20",
-    "013_chassis_crew_chief_authority.sql": "8258dd9d443962aea63b03b214a4f0b3e716ab03d80f804f91ad1db998fec629"
-  }
+    "012_chassis_teams.sql": "e153ddb35bf60269927a4bc83208fe6a5deb10a9f9eaffca146e710a54adea48",
+    "013_chassis_crew_chief_authority.sql": "93d5b8b7bbb5788920e4ba23a1a0134017fca27496a3c68fd2352dc76d6049ad"
+  },
+  "canonical_encoding": "UTF-8 with LF line endings; SQL statements unchanged"
 }

@@ -196,3 +196,12 @@ def test_coordinated_checkout_excludes_restricted_data_and_runs_release_contract
     assert '!/data/' in dataset['with'].get('sparse-checkout','')
     assert dataset['with']['sparse-checkout-cone-mode'] is False
     assert any('pytest' in s.get('run','') and 'tests/release' in s.get('run','') for s in steps)
+
+
+def test_standalone_policy_job_does_not_require_sibling_repositories():
+    import yaml
+    steps = yaml.safe_load(Path('.github/workflows/run-policy-tests.yml').read_text())['jobs']['test']['steps']
+    command = next(step['run'] for step in steps if step.get('name') == 'Run tests')
+    assert 'tests/test_*.py' in command
+    assert 'tests/release/test_sql_fixture_contract.py' in command
+    assert 'tests/' not in command.split()

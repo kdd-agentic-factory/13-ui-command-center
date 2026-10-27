@@ -14,7 +14,9 @@ def test_frozen_authority_sql_matches_recorded_hashes():
     provenance=json.loads((root/'provenance.json').read_text())
     assert set(provenance['files'])=={'012_chassis_teams.sql','013_chassis_crew_chief_authority.sql'}
     for name,expected in provenance['files'].items():
-        assert hashlib.sha256((root/name).read_bytes()).hexdigest()==expected
+        raw = (root/name).read_bytes()
+        assert b'\r\n' not in raw, 'Frozen SQL must have canonical LF bytes on every OS'
+        assert hashlib.sha256(raw).hexdigest()==expected
 
 
 def load_verifier():
