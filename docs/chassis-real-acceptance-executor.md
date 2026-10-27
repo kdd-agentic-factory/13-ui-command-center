@@ -63,6 +63,8 @@ un plan de mediciones, sin prescripciones físicas ni aplicación de taller. Se
 comprueban la denegación al ingeniero no designado y la aprobación con las cuentas
 de ensayo del titular y suplente de equipos distintos.
 
+Antes de autenticar o crear datos se comprueba la resolución de las dos dependencias
+JavaScript montadas y el arranque real de Chromium con sandbox.
 El navegador usa Chromium con sandbox y certificados verificados. Hace login
 real y envía las dos aprobaciones mediante el botón de la aplicación, comprobando
 el actor del evento remoto. Comprueba sesiones propias/ajenas, permisos de lectura y repite el acceso

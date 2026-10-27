@@ -175,6 +175,22 @@ def run(config, anon_key):
         qa = specs['qa']; qa_args = mount(HERE, '/acceptance') + mount(expected, '/expected.json')
         for credential in qa['credentials']:
             qa_args += mount(credential['source'], credential['target'])
+        browser_args = list(qa_args)
+        for package in ('playwright', 'playwright-core'):
+            browser_args += mount(ROOT / 'qa-deps' / package, '/deps/' + package)
+        browser_args += ['--security-opt', 'seccomp=' + str(HERE / 'browser-seccomp.json'),
+                         '--env', 'NODE_PATH=/deps', '--env', 'HOME=/tmp', '--entrypoint', 'node']
+        browser_name = start('qa-browser', qa['image'], 'container:' + api,
+                             browser_args, ['-e', 'setInterval(()=>{},1000)'], memory='2g')
+        # Fail before real login or synthetic API writes if JS dependencies,
+        # Chromium binary or the unprivileged sandbox cannot start.
+        probe = docker(['exec', browser_name, 'node', '-e',
+            "const {chromium}=require('/deps/playwright');(async()=>{const b=await chromium.launch({headless:true,chromiumSandbox:true});await b.close();console.log('browser-ready')})().catch(()=>process.exitCode=2)"],
+            timeout=40, check=False)
+        if probe.returncode or probe.stdout.strip() != 'browser-ready':
+            report['gates']['browser_runtime_preflight'] = 'blocked'
+            raise ValueError('Browser runtime preflight failed')
+        report['gates']['browser_runtime_preflight'] = 'passed'
         name = start('qa-http', specs['api']['image'], 'container:' + api,
                      qa_args + ['--entrypoint', 'python'], ['-c', 'import time;time.sleep(1400)'])
         result = docker(['exec', name, 'python', '/acceptance/real_acceptance_qa.py'], timeout=1100, check=False)
@@ -194,13 +210,6 @@ def run(config, anon_key):
                 raise ValueError('Canonical owned approval references required')
         browser_expected['pending_approvals'] = pending
         expected.write_text(json.dumps(browser_expected))
-        browser_args = list(qa_args)
-        for package in ('playwright', 'playwright-core'):
-            browser_args += mount(ROOT / 'qa-deps' / package, '/deps/' + package)
-        browser_args += ['--security-opt', 'seccomp=' + str(HERE / 'browser-seccomp.json'),
-                         '--entrypoint', 'node']
-        browser_name = start('qa-browser', qa['image'], 'container:' + api,
-                             browser_args, ['-e', 'setInterval(()=>{},1000)'], memory='2g')
         browser = docker(['exec', browser_name, 'node', '/acceptance/real_acceptance_browser.cjs'], timeout=420, check=False)
         browser_report = json.loads(browser.stdout)
         report['gates'].update(browser_report['gates'])
