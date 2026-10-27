@@ -35,3 +35,7 @@ data/
 .insforge/
 .env.production
 .env.*.local
+
+# Generated Python delivery tooling caches
+__pycache__/
+*.py[cod]
