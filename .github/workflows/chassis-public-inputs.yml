@@ -1,0 +1,75 @@
+name: Chassis public build inputs
+on:
+  workflow_dispatch:
+    inputs:
+      ref_13:
+        description: Exact UI source SHA containing reviewed base and OS locks
+        required: true
+      ref_18:
+        description: Exact dataset source SHA containing reviewed Linux wheel lock
+        required: true
+permissions:
+  contents: read
+jobs:
+  inputs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Require immutable source references
+        env:
+          REF_13: ${{ inputs.ref_13 }}
+          REF_18: ${{ inputs.ref_18 }}
+        run: |
+          python - <<'PY'
+          import os,re
+          assert all(re.fullmatch('[a-f0-9]{40}',os.environ[key]) for key in ('REF_13','REF_18'))
+          PY
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref_13 }}
+          path: 13-ui-command-center
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kdd-agentic-factory/18-telemetry-dataset
+          ref: ${{ inputs.ref_18 }}
+          token: ${{ secrets.CHASSIS_REPOSITORIES_READ_TOKEN }}
+          path: 18-telemetry-dataset
+          persist-credentials: false
+          sparse-checkout: requirements
+      - name: Fetch public OS packages in the pinned Ubuntu container
+        run: |
+          mkdir -p public-inputs/os-packages public-inputs/wheels
+          cp 13-ui-command-center/deploy/chassis-bases.lock.json public-inputs/bases.json
+          python - <<'PY'
+          import json,re,subprocess
+          from pathlib import Path
+          from urllib.parse import unquote
+          base=json.load(open('public-inputs/bases.json'))['python']
+          image=base['reference']+'@'+base['digest']
+          assert re.fullmatch(r'sha256:[a-f0-9]{64}',base['digest'])
+          specs=[]
+          for row in Path('13-ui-command-center/deploy/python-runtime/packages.sha256').read_text().splitlines():
+              match=re.fullmatch(r'[a-f0-9]{64}  ([A-Za-z0-9+._%:~-]+)\.deb',row)
+              assert match
+              package,version,arch=match[1].rsplit('_',2)
+              assert arch in ('amd64','all')
+              specs.append(package+'='+unquote(version))
+          subprocess.run(['docker','pull',image],check=True)
+          subprocess.run(['docker','run','--rm','--mount','type=bind,source='+str(Path('public-inputs/os-packages').resolve())+',target=/out','--workdir','/out',image,'sh','-ec','apt-get update -qq; apt-get download "$@"','locked-download',*specs],check=True)
+          PY
+          cp 13-ui-command-center/deploy/python-runtime/packages.sha256 public-inputs/os-packages/packages.sha256
+          (cd public-inputs/os-packages && sha256sum --strict -c packages.sha256)
+      - name: Build offline public Python runtime and fetch exact wheels
+        run: |
+          UBUNTU_IMAGE=$(python -c "import json;b=json.load(open('public-inputs/bases.json'))['python'];print(b['reference']+'@'+b['digest'])")
+          docker build --network none --pull=false --build-arg "UBUNTU_IMAGE=$UBUNTU_IMAGE" -f 13-ui-command-center/deploy/python-runtime/Dockerfile -t chassis-public-wheel-fetch public-inputs
+          docker run --rm --mount "type=bind,source=$PWD/18-telemetry-dataset/requirements,target=/locks,readonly" --mount "type=bind,source=$PWD/public-inputs/wheels,target=/out" --entrypoint python chassis-public-wheel-fetch -m pip download --only-binary=:all: --no-deps --require-hashes -r /locks/chassis-runtime.lock --dest /out
+          rm public-inputs/os-packages/packages.sha256
+      - name: Preserve only locked public dependency inputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: chassis-public-build-inputs
+          path: public-inputs/
+          if-no-files-found: error
+          retention-days: 7

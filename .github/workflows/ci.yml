@@ -23,7 +23,7 @@ jobs:
         run: npm ci
 
       - name: Type check
-        run: npx tsc --noEmit
+        run: npm run typecheck
 
       - name: Lint
         run: npm run lint
@@ -34,10 +34,15 @@ jobs:
       - name: Build
         run: npm run build
 
+  security:
+    uses: kdd-agentic-factory/12-ci-cd-security/.github/workflows/reusable-security-scan.yml@main
+
   docker:
+    # Commercial images require the coordinated, evidence-gated workflow.
+    if: ${{ false }}
     uses: kdd-agentic-factory/12-ci-cd-security/.github/workflows/reusable-docker-build.yml@main
     with:
       image-name: ui-command-center
-      push: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+      push: false
     secrets:
       registry-token: ${{ secrets.GITHUB_TOKEN }}
