@@ -23,6 +23,8 @@ on:
 permissions:
   contents: read
   actions: read
+env:
+  PYTHONDONTWRITEBYTECODE: '1'
 jobs:
   source-contract:
     runs-on: ubuntu-latest
