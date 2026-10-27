@@ -90,3 +90,35 @@ def test_scan_failure_reports_do_not_expose_arbitrary_exception_text(tmp_path, m
     report = (output / 'failure.json').read_text()
     assert 'SENSITIVE_SENTINEL' not in report + capsys.readouterr().out
     assert json.loads(report)['reason'] == 'scanner_execution_failed'
+
+
+@pytest.mark.skipif(__import__("os").name == "nt", reason="POSIX archive permissions")
+def test_saved_archive_is_readable_by_unprivileged_scanner(tmp_path, monkeypatch):
+    import subprocess
+    from datetime import UTC, datetime
+    m = scanner()
+    digest = "sha256:" + "b" * 64
+    images = {name: {"reference": name, "digest": digest}
+              for name in ("api", "gateway", "worker", "frontend")}
+
+    def run(command, **kwargs):
+        args = command[1:]
+        if args[0] == "save":
+            path = Path(args[2])
+            path.write_bytes(b"fixture")
+            path.chmod(0o600)  # docker save uses os.CreateTemp on Linux.
+        if args[0] == "cp":
+            mode = Path(args[1]).stat().st_mode
+            assert mode & 0o044 == 0o044, "scanner UID differs from archive owner"
+            raise RuntimeError("readable archive reached isolated staging")
+        output = ""
+        if args[:2] == ["image", "inspect"]:
+            output = json.dumps([{"Id": digest}])
+        if "/public-db/db/metadata.json" in args:
+            output = json.dumps({"Version": 2, "UpdatedAt": datetime.now(UTC).isoformat()})
+        return subprocess.CompletedProcess(command, 0, stdout=output, stderr="")
+
+    monkeypatch.setattr(m.subprocess, "run", run)
+    monkeypatch.setattr(m, "archive_config_id", lambda *args: digest)
+    with pytest.raises(RuntimeError, match="readable archive reached"):
+        m.scan(images, tmp_path / "scan", "fixture-db")

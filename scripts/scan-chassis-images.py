@@ -132,6 +132,9 @@ def scan(images, output, db_volume):
         archive = folder / "image.tar"
         docker(["save", "--output", str(archive), image["reference"]])
         config_id = archive_config_id(archive, image["digest"])
+        # Docker save creates mode 0600 on Linux; docker cp preserves that mode.
+        # The isolated scanner has another UID and mounts this volume read-only.
+        archive.chmod(0o644)
         owner = "chassis-scan-" + uuid.uuid4().hex
         volume = owner + "-input"
         helper = owner + "-stage"
