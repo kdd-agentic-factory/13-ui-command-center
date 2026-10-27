@@ -4,6 +4,7 @@ const fs=require('node:fs');
 const os=require('node:os');
 const path=require('node:path');
 const {execFileSync}=require('node:child_process');
+let phase='initialize';
 (async()=>{
  const input=JSON.parse(fs.readFileSync('/qa-private/accounts.json','utf8'));
  const expected=JSON.parse(fs.readFileSync('/expected.json','utf8'));
@@ -17,8 +18,11 @@ const {execFileSync}=require('node:child_process');
  try{
   browser=await chromium.launch({headless:true,chromiumSandbox:true});
   for(const [team,role] of [['A','chief'],['B','substitute'],['A','reader']]){
+   // Keep the deployed human quota unchanged between scripted operators.
+   if(role!=='reader')await new Promise(resolve=>setTimeout(resolve,61000));
    const account=input.accounts.find(a=>a.team===team&&a.role===role);
    const context=await browser.newContext({viewport:{width:1366,height:900}});
+   phase=team+'_'+role+'_login';
    const page=await context.newPage();const errors=[];
    page.on('pageerror',error=>errors.push(error.name));
    await page.goto('http://127.0.0.1:3000/pit-wall/app',{waitUntil:'networkidle'});
@@ -41,13 +45,33 @@ const {execFileSync}=require('node:child_process');
     if(!text.includes(own)||text.includes(foreign))throw Error('Team session scope failed');
     if(role==='reader'&&!(await page.getByRole('textbox',{name:'Nombre de sesión',exact:true}).isDisabled()))throw Error('Reader form not locked');
    };
+   phase=team+'_'+role+'_workspace';
    await authorizedWorkspace();
+   if(role!=='reader'){
+    phase=team+'_'+role+'_approval';
+    const pending=expected.pending_approvals[team];
+    await page.getByRole('combobox',{name:'Reabrir sesión',exact:true}).selectOption(pending.session_id);
+    await page.getByRole('textbox',{name:'Nota de decisión',exact:true}).fill('SYNTHETIC QA measurement-plan approval; no workshop application');
+    await page.waitForFunction(()=>[...document.querySelectorAll('button')].some(button=>button.textContent==='Aprobar propuesta'&&!button.disabled));
+    const decision=page.waitForResponse(response=>new URL(response.url()).pathname.endsWith('/engineering/proposals/'+pending.proposal_id+'/decisions')&&response.request().method()==='POST');
+    await page.getByRole('button',{name:'Aprobar propuesta',exact:true}).click();
+    const response=await decision;const event=await response.json();
+    if(response.status()!==200||event.action!=='approve'||event.actor_id!==account.id)throw Error('Actual designated approval failed');
+    await page.getByText('Estado: Aprobada y vigente.',{exact:true}).waitFor();
+    checks.push(team+'_'+role+'_approves_via_real_UI_and_remote_authority');
+   }
+   phase=team+'_'+role+'_reload';
    await page.reload({waitUntil:'networkidle'});
    await authorizedWorkspace();
+   if(role!=='reader'){
+    await page.getByRole('combobox',{name:'Reabrir sesión',exact:true}).selectOption(expected.pending_approvals[team].session_id);
+    await page.getByText('Estado: Aprobada y vigente.',{exact:true}).waitFor();
+   }
    if(errors.length)throw Error('Browser runtime error');
    checks.push(team+'_'+role+'_real_login_scope_and_reload');
    await context.close();
   }
-  console.log(JSON.stringify({status:'passed',gates:{authenticated_browser:'passed'},checks}));
+  console.log(JSON.stringify({status:'passed',gates:{authenticated_browser:'passed',real_primary_and_substitute:'passed'},checks}));
  }finally{if(browser)await browser.close();}
-})().catch(()=>{console.log(JSON.stringify({status:'blocked',gates:{authenticated_browser:'blocked'}}));process.exitCode=2;});
+})().catch(error=>{console.log(JSON.stringify({status:'blocked',phase,error_type:error.name,
+ gates:{authenticated_browser:'blocked'}}));process.exitCode=2;});

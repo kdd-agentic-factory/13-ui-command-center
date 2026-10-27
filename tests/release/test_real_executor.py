@@ -133,3 +133,16 @@ def test_browser_reload_does_not_accept_cached_user_without_team_membership():
     report = json.loads(result.stdout)
     assert report['status'] == 'blocked'
     assert report['gates']['authenticated_browser'] == 'blocked'
+    assert report['reloads'] == 1
+    assert report['approvals'] == 1
+
+
+@pytest.mark.skipif(shutil.which('node') is None, reason='Node browser contract probe')
+def test_browser_gate_requires_primary_and_substitute_approval_interactions():
+    result = subprocess.run(['node', 'tests/release/browser_reload_probe.cjs',
+                             'tests/delivery/real_acceptance_browser.cjs', 'valid'],
+                            check=True, capture_output=True, text=True, timeout=15)
+    report = json.loads(result.stdout)
+    assert report['status'] == 'passed' and report['reloads'] == 3
+    assert report['approvals'] == 2
+    assert report['gates']['real_primary_and_substitute'] == 'passed'

@@ -60,7 +60,8 @@ comprueban la denegación al ingeniero no designado y la aprobación con las cue
 de ensayo del titular y suplente de equipos distintos.
 
 El navegador usa Chromium con sandbox y certificados verificados. Hace login
-real, comprueba sesiones propias/ajenas, permisos de lectura y repite el acceso
+real y envía las dos aprobaciones mediante el botón de la aplicación, comprobando
+el actor del evento remoto. Comprueba sesiones propias/ajenas, permisos de lectura y repite el acceso
 verificado después de recargar; un usuario en caché no basta para pasar.
 
 ## Evidencia y limpieza

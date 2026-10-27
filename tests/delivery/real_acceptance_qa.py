@@ -50,7 +50,7 @@ def main():
     credentials = json.loads(raw.read_text())
     accounts = validate_accounts(credentials, expected)
     context = ssl.create_default_context(cafile='/run/secrets/api_ca')
-    checks = []; owned = []; sessions = {}; tokens = {}; agent_runs = []
+    checks = []; owned = []; sessions = {}; tokens = {}; agent_runs = []; pending_approvals = {}
     client = httpx.Client(verify=context, trust_env=False, follow_redirects=False, timeout=25)
     identity = httpx.Client(trust_env=False, follow_redirects=False, timeout=20)
     api = 'https://127.0.0.1:8180/api/v1/'
@@ -232,18 +232,17 @@ def main():
             call('POST', 'engineering/proposals/' + progress['proposal_id'] + '/decisions', engineer,
                  {'operation_id': str(uuid4()), 'body': body}, codes=(403,))
             check('undesignated_engineer_approval_denied_' + team, True)
-            event = call('POST', 'engineering/proposals/' + progress['proposal_id'] + '/decisions', human,
-                         {'operation_id': str(uuid4()), 'body': body})
-            check('real_' + approver + '_approval_' + team, event['actor_id'] == human['id'] and event['action'] == 'approve')
-            after = call('GET', 'engineering/proposals/' + progress['proposal_id'] + '/authority', human)
-            check('remote_approval_current_' + team, after['approved_current'] is True)
+            # Positive decisions are made through the real browser UI, not
+            # substituted by a successful HTTP-only authorization test.
+            pending_approvals[team] = {'session_id': session['id'], 'proposal_id': progress['proposal_id']}
             owned.append({'team': team, 'kind': 'proposal', 'id': progress['proposal_id']})
             # Keep the production quota intact between the two scripted operators.
             if team == 'A':
                 time.sleep(61)
         report = {'status': 'passed', 'gates': {'real_identity': 'passed', 'two_team_isolation': 'passed',
-                  'real_agent_pipeline': 'passed', 'real_primary_and_substitute': 'passed',
+                  'real_agent_pipeline': 'passed', 'real_designated_approval_preconditions': 'passed',
                   'physical_guardrails': 'passed'}, 'checks': checks, 'owned_objects': owned, 'agent_runs': agent_runs,
+                  'pending_approvals': pending_approvals,
                   'input_scope': 'synthetic CSV and assumed setups; no AiM/2D certification',
                   'cloud_audit': 'owned synthetic authority events retained; no accounts or permissions modified'}
     except Exception as error:

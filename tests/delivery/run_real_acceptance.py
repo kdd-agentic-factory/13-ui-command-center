@@ -6,7 +6,7 @@ from pathlib import Path
 import re
 import subprocess
 import time
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 from prepare_real_acceptance import ORIGIN, prepare, safe_path
 
@@ -175,6 +175,15 @@ def run(config, anon_key):
         report['agent_runs'] = qa_report.get('agent_runs', [])
         if qa_report.get('status') != 'passed':
             raise ValueError('Real HTTP acceptance did not pass')
+        browser_expected = json.loads(expected.read_text())
+        pending = qa_report['pending_approvals']
+        if set(pending) != {'A', 'B'}:
+            raise ValueError('Both designated human approvals required')
+        for entry in pending.values():
+            if set(entry) != {'session_id', 'proposal_id'} or any(str(UUID(v)) != v for v in entry.values()):
+                raise ValueError('Canonical owned approval references required')
+        browser_expected['pending_approvals'] = pending
+        expected.write_text(json.dumps(browser_expected))
         browser_args = list(qa_args)
         for package in ('playwright', 'playwright-core'):
             browser_args += mount(ROOT / 'qa-deps' / package, '/deps/' + package)
@@ -182,8 +191,13 @@ def run(config, anon_key):
                          '--entrypoint', 'node']
         browser_name = start('qa-browser', qa['image'], 'container:' + api,
                              browser_args, ['-e', 'setInterval(()=>{},1000)'], memory='2g')
-        browser = docker(['exec', browser_name, 'node', '/acceptance/real_acceptance_browser.cjs'], timeout=300, check=False)
-        report['gates'].update(json.loads(browser.stdout)['gates'])
+        browser = docker(['exec', browser_name, 'node', '/acceptance/real_acceptance_browser.cjs'], timeout=420, check=False)
+        browser_report = json.loads(browser.stdout)
+        report['gates'].update(browser_report['gates'])
+        report['browser_checks'] = browser_report.get('checks', [])
+        if browser_report.get('status') != 'passed':
+            report['browser_phase'] = browser_report.get('phase', 'unavailable')
+            report['browser_failure_type'] = browser_report.get('error_type', 'unavailable')
         verify_inputs()
         report['gates']['private_input_identity'] = 'passed'
         report['status'] = 'passed' if all(v == 'passed' for v in report['gates'].values()) else 'blocked'
