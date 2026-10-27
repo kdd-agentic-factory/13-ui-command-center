@@ -1,3 +1,4 @@
+import {allowsProviderCapability,productProfile} from '../domain/productProfile';
 /**
  * useInsForgeData — fetches live data from InsForge cloud (PostgreSQL + realtime).
  *
@@ -82,6 +83,7 @@ export function useInsForgeData(): InsForgeData {
 // ──── Initial DB fetch ────
 
   useEffect(() => {
+    if(!allowsProviderCapability(productProfile,'database')){setState({...EMPTY,isLoading:false,error:'Integración histórica fuera de la entrega comercial.'});return;}
     let cancelled = false;
 
     async function fetchAll() {
@@ -141,6 +143,7 @@ export function useInsForgeData(): InsForgeData {
 // ──── Realtime subscriptions ────
 
   useEffect(() => {
+    if(!allowsProviderCapability(productProfile,'realtime'))return;
     if (realtimeRef.current) return;
     realtimeRef.current = true;
 

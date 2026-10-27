@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --host 0.0.0.0",
+    "dev": "vite --host 127.0.0.1",
     "build": "vite build",
     "typecheck": "tsc -b --noEmit",
     "preview": "vite preview --host 0.0.0.0",
@@ -12,7 +12,10 @@
     "test:e2e": "playwright test",
     "test:e2e:production": "playwright test --config playwright.production.config.ts",
     "test:e2e:ui": "playwright test --ui",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "perimeter:check": "node scripts/render-chassis-surface.mjs --check",
+    "perimeter:test": "python tests/perimeter/run_local_perimeter.py",
+    "test:e2e:perimeter": "playwright test --config playwright.perimeter.config.ts"
   },
   "dependencies": {
     "@babylonjs/core": "^7.35.0",

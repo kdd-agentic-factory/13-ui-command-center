@@ -18,17 +18,17 @@ interface Props {
 const MONO = 'JetBrains Mono, monospace';
 
 const LIVE_SOURCES: Array<[string, boolean]> = [
-  ['GPS', true], ['IMU', true], ['ECU', true], ['Logger', true], ['Tyre model', true], ['Video', false],
+  ['GPS', false], ['IMU', false], ['ECU', false], ['Logger', false], ['Tyre model', false], ['Video', false],
 ];
 const IMPORT_FORMATS = ['AiM export', '2D datalogger', 'CSV', 'GPX', 'Video onboard'];
 
 export function DataSourceGatePage({ ctx, onBack, onContinue }: Props) {
   // Demo and simulation modes pre-select their natural source.
-  const initial = ctx.demoMode ? 'demo' : ctx.sessionMode === 'simulation' ? 'simulation' : 'live';
+  const initial = ctx.demoMode ? 'demo' : ctx.sessionMode === 'simulation' ? 'simulation' : 'upload';
   const [choice, setChoice] = useState<'live' | 'upload' | 'demo' | 'simulation'>(initial);
 
   const OPTIONS = [
-    { id: 'live' as const, icon: Wifi, label: 'Continue with live data', desc: 'GPS · IMU · ECU streaming at 10 Hz' },
+    { id: 'live' as const, icon: Wifi, label: 'Continue with live data', desc: 'No configurado: no hay conexión con hardware' },
     { id: 'upload' as const, icon: Upload, label: 'Upload session files', desc: IMPORT_FORMATS.join(' · ') },
     { id: 'demo' as const, icon: PlayCircle, label: 'Use demo data', desc: 'Reproducible scripted sample session' },
     { id: 'simulation' as const, icon: FlaskConical, label: 'Simulation only', desc: 'AI-generated baseline, no sensors' },
@@ -54,7 +54,7 @@ export function DataSourceGatePage({ ctx, onBack, onContinue }: Props) {
             {OPTIONS.map(o => {
               const on = choice === o.id;
               return (
-                <button key={o.id} onClick={() => setChoice(o.id)}
+                <button key={o.id} disabled={o.id === 'live'} onClick={() => setChoice(o.id)}
                   style={{
                     display: 'flex', gap: 12, alignItems: 'center', textAlign: 'left', cursor: 'pointer',
                     padding: '14px 16px', borderRadius: 'var(--radius-lg)',

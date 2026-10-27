@@ -1,0 +1,18 @@
+#!/bin/sh
+# Sourced before envsubst by the official nginx entrypoint; never echo values.
+fail_chassis_env() { echo 'Invalid commercial proxy configuration' >&2; exit 1; }
+: "${KDD_TELEMETRY_HOST:=}"
+case "$KDD_TELEMETRY_HOST" in ""|*[!A-Za-z0-9.-]*) fail_chassis_env;; esac
+printf '%s' "$KDD_TELEMETRY_HOST" | LC_ALL=C grep -Eq '^[A-Za-z0-9]([A-Za-z0-9.-]{0,251}[A-Za-z0-9])?$' || fail_chassis_env
+printf '%s' "$KDD_TELEMETRY_HOST" | LC_ALL=C awk -F. '{for(i=1;i<=NF;i++) if(length($i)>63 || $i !~ /^[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?$/) exit 1}' || fail_chassis_env
+: "${KDD_TELEMETRY_PORT:=443}"
+case "$KDD_TELEMETRY_PORT" in *[!0-9]*) fail_chassis_env;; esac
+printf '%s' "$KDD_TELEMETRY_PORT" | LC_ALL=C grep -Eq '^[1-9][0-9]{0,4}$' || fail_chassis_env
+[ "$KDD_TELEMETRY_PORT" -le 65535 ] || fail_chassis_env
+: "${KDD_TELEMETRY_API_KEY:=}"
+if [ -n "$KDD_TELEMETRY_API_KEY" ]; then
+ case "$KDD_TELEMETRY_API_KEY" in *[!A-Za-z0-9._~+/=-]*) fail_chassis_env;; esac
+ [ "${#KDD_TELEMETRY_API_KEY}" -le 4096 ] || fail_chassis_env
+ printf '%s' "$KDD_TELEMETRY_API_KEY" | LC_ALL=C grep -Eq '^[A-Za-z0-9._~+/=-]+$' || fail_chassis_env
+fi
+export KDD_TELEMETRY_HOST KDD_TELEMETRY_PORT KDD_TELEMETRY_API_KEY

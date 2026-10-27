@@ -1,3 +1,4 @@
+import {productProfile} from './productProfile';
 /**
  * decisions.ts — the Decision Center domain: the platform as the pit-wall's
  * deciding assistant.
@@ -102,6 +103,7 @@ export function pendingCount(profile: ProfileId | null): number {
 }
 
 export function decide(id: string, optionIdx: number, lap: number): void {
+  if(productProfile==='chassis')throw new Error('Decisiones históricas fuera de la entrega Chassis');
   const target = decisions.find(d => d.id === id);
   decisions = decisions.map(d => d.id === id
     ? { ...d, status: 'decided', decidedOption: optionIdx, decidedAt: new Date().toISOString(), decidedLap: lap }
@@ -116,6 +118,7 @@ export function decide(id: string, optionIdx: number, lap: number): void {
 // ── Persistence: decision_log table (accountability trail) ──────────────────
 
 async function persistDecisionLog(d: Decision, optionIdx: number, lap: number): Promise<void> {
+  if(productProfile==='chassis')return;
   try {
     const { insforge } = await import('../lib/insforge');
     const { data: user } = await insforge.auth.getCurrentUser();
@@ -169,6 +172,7 @@ function approvalToDecision(a: BackendApproval): Decision {
 /** Pull pending approvals from the orchestrator (through the BFF) into the
  *  queue. Silent no-op when the backend is unreachable. */
 export async function syncDecisionsFromBackend(): Promise<void> {
+  if(productProfile==='chassis')return;
   try {
     const res = await fetch(`${ORCH_BASE}/api/v1/approvals`, { signal: AbortSignal.timeout(8000) });
     if (!res.ok) return;
@@ -183,6 +187,7 @@ export async function syncDecisionsFromBackend(): Promise<void> {
 
 /** Write the verdict back to the orchestrator for backend-fed approvals. */
 async function pushApprovalDecision(d: Decision, optionIdx: number): Promise<void> {
+  if(productProfile==='chassis')return;
   try {
     await fetch(`${ORCH_BASE}/api/v1/approvals/${encodeURIComponent(d.id)}/decision`, {
       method: 'POST',

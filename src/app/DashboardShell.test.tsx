@@ -1,7 +1,7 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { TabId } from '../context/AuthContext';
+import {PROFILES,type TabId} from '../context/AuthContext';
 import { buildSessionContext, DASHBOARD_TAB_SETUP_KEY } from '../domain/sessionContext';
 
 const { mockUseProfile, mockGetSessionContext, mockSetSessionContext } = vi.hoisted(() => ({
@@ -70,8 +70,10 @@ vi.mock('../pages/LiveTelemetryPage', () => ({
 vi.mock('../pages/OverviewPage', () => ({
   OverviewPage: () => <div>Overview Dashboard</div>,
 }));
+vi.mock('../pages/ChassisPage', async () => { const {useWorkspaceDraft}=await import('../context/WorkspaceDraftContext');const {useNavigate}=await import('../context/NavContext');return { default: () => {const {markDirty}=useWorkspaceDraft();const navigate=useNavigate();return <div>Measured Chassis Workspace<button onClick={()=>navigate("data")}>QA open library</button><button onClick={()=>markDirty(true)}>QA dirty draft</button></div>;} };});
 
 import { DashboardShell, resolveTabFromPublicPath } from './DashboardShell';
+vi.mock('../pages/ConnectDataPage',()=>({default:()=> <div>QA permitted library route</div>}));
 
 beforeEach(() => {
   mockUseProfile.mockReset();
@@ -80,6 +82,34 @@ beforeEach(() => {
 });
 
 describe('DashboardShell dashboard tab restore', () => {
+  it.each(['team-principal','spectator'])('opens the shared data route from Chassis for %s',async(id)=>{
+    mockUseProfile.mockReturnValue({profile:{...PROFILES.find(p=>p.id===id)!,defaultTab:'chassis'},logout:vi.fn()});
+    mockGetSessionContext.mockReturnValue({...buildSessionContext('mugello','Mugello','replay',{}),demoMode:false});
+    render(<DashboardShell/>);
+    fireEvent.click(await screen.findByRole('button',{name:'QA open library'}));
+    expect(await screen.findByText('QA permitted library route')).toBeVisible();
+  });
+  it('protects the draft before voluntary Switch Profile',async()=>{
+    const logout=vi.fn();
+    mockUseProfile.mockReturnValue({profile:{defaultTab:'chassis',allowedTabs:['chassis','data'],color:'var(--accent)',icon:'',nameKey:'operator'},logout});
+    mockGetSessionContext.mockReturnValue({...buildSessionContext('mugello','Mugello','replay',{}),demoMode:false});
+    render(<DashboardShell/>);
+    fireEvent.click(await screen.findByText('QA dirty draft'));
+    fireEvent.click(screen.getByTitle('Switch Profile'));
+    expect(screen.getByRole('alertdialog')).toBeInTheDocument();
+    expect(logout).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByText('Descartar cambios y continuar'));
+    expect(logout).toHaveBeenCalledTimes(1);
+  });
+  it('centers real operation on chassis and import while keeping unconnected modules secondary', async () => {
+    mockUseProfile.mockReturnValue({ profile: { defaultTab: 'overview', allowedTabs: ['chassis', 'data', 'telemetry', 'overview'], color: 'var(--accent)', icon: '', nameKey: 'operator' }, logout: vi.fn() });
+    mockGetSessionContext.mockReturnValue({ ...buildSessionContext('mugello', 'Mugello', 'replay', {}), demoMode: false });
+    render(<DashboardShell />);
+    expect(await screen.findByText('Measured Chassis Workspace')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'nav.chassis' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'nav.data' })).toBeVisible();
+    expect(screen.queryByRole('button', { name: /nav.telemetry/ })).not.toBeInTheDocument();
+  });
   it('maps deep cockpit routes to dashboard tabs while leaving top-level modules public', () => {
     const routeCases = [
       ['/pit-wall/nodes', 'knowledge'],
@@ -123,9 +153,9 @@ describe('DashboardShell dashboard tab restore', () => {
       },
       logout: vi.fn(),
     });
-    mockGetSessionContext.mockReturnValue(buildSessionContext('mugello', 'Mugello', 'race', {
+    mockGetSessionContext.mockReturnValue({ ...buildSessionContext('mugello', 'Mugello', 'race', {
       [DASHBOARD_TAB_SETUP_KEY]: 'telemetry',
-    }));
+    }), demoMode: true });
 
     render(<DashboardShell />);
 
@@ -148,9 +178,9 @@ describe('DashboardShell dashboard tab restore', () => {
       },
       logout: vi.fn(),
     });
-    mockGetSessionContext.mockReturnValue(buildSessionContext('mugello', 'Mugello', 'race', {
+    mockGetSessionContext.mockReturnValue({ ...buildSessionContext('mugello', 'Mugello', 'race', {
       [DASHBOARD_TAB_SETUP_KEY]: 'bogus',
-    }));
+    }), demoMode: true });
 
     render(<DashboardShell />);
 

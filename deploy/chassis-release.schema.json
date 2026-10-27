@@ -1,0 +1,231 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "status",
+    "platform",
+    "sources",
+    "bases",
+    "runtime_lock_sha256"
+  ],
+  "properties": {
+    "format": {
+      "const": "1.0"
+    },
+    "status": {
+      "const": "resolved"
+    },
+    "platform": {
+      "const": "linux/amd64"
+    },
+    "runtime_lock_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "sources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "01",
+        "02",
+        "13",
+        "17",
+        "18"
+      ],
+      "properties": {
+        "01": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "git_ref",
+            "tree_sha256",
+            "dirty"
+          ],
+          "properties": {
+            "git_ref": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40}$"
+            },
+            "tree_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "dirty": {
+              "type": "boolean"
+            }
+          }
+        },
+        "02": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "git_ref",
+            "tree_sha256",
+            "dirty"
+          ],
+          "properties": {
+            "git_ref": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40}$"
+            },
+            "tree_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "dirty": {
+              "type": "boolean"
+            }
+          }
+        },
+        "13": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "git_ref",
+            "tree_sha256",
+            "dirty"
+          ],
+          "properties": {
+            "git_ref": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40}$"
+            },
+            "tree_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "dirty": {
+              "type": "boolean"
+            }
+          }
+        },
+        "17": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "git_ref",
+            "tree_sha256",
+            "dirty"
+          ],
+          "properties": {
+            "git_ref": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40}$"
+            },
+            "tree_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "dirty": {
+              "type": "boolean"
+            }
+          }
+        },
+        "18": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "git_ref",
+            "tree_sha256",
+            "dirty"
+          ],
+          "properties": {
+            "git_ref": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40}$"
+            },
+            "tree_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "dirty": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "bases": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "python",
+        "node",
+        "nginx",
+        "browser"
+      ],
+      "properties": {
+        "python": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "reference",
+            "digest"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[a-f0-9]{64}$"
+            }
+          }
+        },
+        "node": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "reference",
+            "digest"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[a-f0-9]{64}$"
+            }
+          }
+        },
+        "nginx": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "reference",
+            "digest"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[a-f0-9]{64}$"
+            }
+          }
+        },
+        "browser": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "reference",
+            "digest"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[a-f0-9]{64}$"
+            }
+          }
+        }
+      }
+    }
+  }
+}

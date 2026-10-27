@@ -2,8 +2,10 @@
  * Platform Console — orchestrator intent routing (live with fallback) + the
  * RAG 5xx→reachable labelling fix. Pure-function coverage.
  */
-import { describe, it, expect, vi } from 'vitest';
+import { afterEach, describe, it, expect, vi } from 'vitest';
 import { groundDebrief } from '../src/domain/debrief';
+
+afterEach(() => vi.unstubAllGlobals());
 
 describe('rag grounding state labelling', () => {
   it('treats a 5xx (reached + authenticated, no index) as reachable, not offline', async () => {
@@ -17,7 +19,7 @@ describe('rag grounding state labelling', () => {
 });
 
 describe('orchestrator intent routing', () => {
-  it('orchestrate posts user_input and returns the routed agent', async () => {
+  it('orchestrate posts the workflow request and preserves governed planning context', async () => {
     let sentBody = '';
     const fetchMock = vi.fn(async (_url: string, init?: RequestInit) => {
       sentBody = String(init?.body ?? '');
@@ -28,7 +30,11 @@ describe('orchestrator intent routing', () => {
     const r = await orchestrate('compare rear setup for Mugello');
     expect(r?.status).toBe('completed');
     expect(r?.agent_used).toBe('setup-optimizer');
-    expect(JSON.parse(sentBody).user_input).toContain('Mugello');
+    expect(JSON.parse(sentBody)).toMatchObject({
+      request: 'compare rear setup for Mugello',
+      context: { source: 'ui-command-center', mode: 'plan_only', risk_level: 'high' },
+    });
+    expect(fetchMock.mock.calls[0][0]).toMatch(/\/api\/v1\/workflows$/);
     vi.unstubAllGlobals();
   });
 

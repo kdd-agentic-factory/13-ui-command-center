@@ -125,11 +125,11 @@ function DataLinkStatus({ showWifi, onToggleWifi }: {
   showWifi: boolean; onToggleWifi: () => void;
 }) {
   const links = [
-    { label: 'ECU OK',     color: 'var(--green)' },
-    { label: 'IMU active', color: 'var(--green)' },
-    { label: 'GPS 12 SAT', color: 'var(--green)' },
-    { label: 'Logger 99%', color: 'var(--green)' },
-    { label: 'Data 94%',   color: 'var(--yellow)' },
+    { label: 'ECU: no conectado',     color: 'var(--green)' },
+    { label: 'IMU: no conectado', color: 'var(--green)' },
+    { label: 'GPS: no conectado', color: 'var(--green)' },
+    { label: 'Logger: no conectado', color: 'var(--green)' },
+    { label: 'Datos: demostración',   color: 'var(--yellow)' },
   ];
 
   return (
@@ -151,7 +151,7 @@ function DataLinkStatus({ showWifi, onToggleWifi }: {
             color: l.color, background: `color-mix(in srgb, ${l.color} 14%, transparent)`,
           }}>{l.label}</span>
         ))}
-        <span className="badge badge-green ml-auto">—● LIVE</span>
+        <span className="badge badge-green ml-auto">DEMO · sin hardware</span>
       </div>
     </div>
   );

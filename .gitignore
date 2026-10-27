@@ -28,3 +28,10 @@ test-results/
 .roo
 .trae
 .windsurf
+
+# Local evidence and operational state are never release source.
+.superpowers/
+data/
+.insforge/
+.env.production
+.env.*.local

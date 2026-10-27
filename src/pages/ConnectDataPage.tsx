@@ -1,140 +1,55 @@
-import { useState } from 'react';
-import { Satellite, Gauge, Cpu, HardDrive, Video, Smartphone, UploadCloud, Check, Plus, ArrowRight, FileText } from 'lucide-react';
+import { canWriteTelemetry } from '../services/telemetryIdentity';
+import { TelemetryGate } from '../components/auth/TeamSelector';
+import { RecordedSessionLibrary } from '../components/recorded/RecordedSessionLibrary';
+import { selectRecording } from '../domain/recordedSession';
+import { useRef, useState } from 'react';
+import '../styles/recorded.css';
 import { useNavigate } from '../context/NavContext';
-import { useToast } from '../components/ToastProvider';
-import { MUGELLO_CIRCUIT } from '../domain/sessionTruth';
-
-/**
- * Connect your bike data (engineer feedback #16) – makes it unambiguous where the
- * telemetry comes from and how to bring your own: upload files, sync GPS/IMU
- * traces or connect supported dataloggers. Answers "is this real / where's the
- * data from?" and leads into the tangible output (Session Report).
- */
-
-type SourceState = 'connected' | 'available';
-
-interface Source {
-  icon: React.ElementType;
-  name: string;
-  detail: string;
-  feeds: string;
-  state: SourceState;
-}
-
-const SOURCES: Source[] = [
-  { icon: Satellite, name: 'GPS', detail: '2027 open feed · 10 Hz', feeds: 'Position · racing line · sector splits', state: 'connected' },
-  { icon: Gauge, name: 'IMU', detail: '6-axis · lean / accel / gyro', feeds: 'Lean angle · pitch · g-forces', state: 'connected' },
-  { icon: Cpu, name: 'OBD / ECU', detail: 'CAN bus', feeds: 'RPM · throttle · gear · engine maps', state: 'connected' },
-  { icon: HardDrive, name: '2D / AiM datalogger', detail: '.drk / .xrk', feeds: 'Full session channels', state: 'available' },
-  { icon: Video, name: 'Onboard video', detail: 'GoPro · synced overlay', feeds: 'Lap replay overlay', state: 'available' },
-  { icon: Smartphone, name: 'Mobile app', detail: 'phone GPS + IMU', feeds: 'Track-day quick capture', state: 'available' },
-];
+import { importRecording,inspectTwoD,type TwoDMeasurement } from '../services/recordedTelemetry';
+import type { RecordedSession } from '../domain/recordedSession';
 
 export function ConnectDataPage() {
+  const [libraryOpen,setLibraryOpen]=useState(false);
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const [file, setFile] = useState<string | null>(null);
-  const [stage, setStage] = useState<'idle' | 'parsing' | 'ready'>('idle');
-
-  function onPick(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0];
-    if (!f) return;
-    setFile(f.name);
-    setStage('parsing');
-    setTimeout(() => setStage('ready'), 1400);
+  const [source, setSource] = useState<'aim' | '2d'>('aim');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const [session, setSession] = useState<RecordedSession | null>(null);
+  const input = useRef<HTMLInputElement>(null);
+  const [archive,setArchive]=useState<File|null>(null),[measurements,setMeasurements]=useState<TwoDMeasurement[]>([]),[measurement,setMeasurement]=useState(''),[ack,setAck]=useState(false);
+  async function upload(file?: File) {
+    if (!file || busy || !canWriteTelemetry()) return;
+    setBusy(true); setError(''); setSession(null);
+    setArchive(null);setMeasurements([]);setMeasurement('');setAck(false);
+    try { if(source==='2d'&&file.name.toLowerCase().endsWith('.zip')){setArchive(file);setMeasurement('');setAck(false);setMeasurements((await inspectTwoD(file)).measurements);} else {setArchive(null);setMeasurements([]);setSession(await importRecording(file, source));} }
+    catch (e) { setError(e instanceof Error ? e.message : 'No se pudo importar el archivo'); }
+    finally { setBusy(false); if (input.current) input.current.value = ''; }
   }
-
-  return (
-    <div className="page">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="page-title">Connect your bike data</h1>
-          <p className="page-subtitle">Upload telemetry files, sync GPS/IMU traces or connect supported dataloggers – KDD turns them into faster, safer laps.</p>
-        </div>
-        <span className="badge badge-green">3 sources connected</span>
-      </div>
-
-      {/* Upload dropzone */}
-      <div className="card mb-4">
-        <label
-          htmlFor="telemetry-upload"
-          style={{
-            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-            gap: 10, padding: '34px 20px', borderRadius: 'var(--radius-lg)', cursor: 'pointer',
-            border: '1.5px dashed color-mix(in srgb, var(--accent) 45%, transparent)',
-            background: stage === 'ready' ? 'var(--green-dim)' : 'rgba(255,255,255,0.02)',
-            textAlign: 'center', transition: 'background 0.2s',
-          }}
-        >
-          {stage === 'idle' && <>
-            <UploadCloud size={34} style={{ color: 'var(--accent)' }} />
-            <div style={{ fontSize: 15, fontWeight: 700 }}>Drop a telemetry file or click to upload</div>
-            <div style={{ fontSize: 12, color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }}>.csv · .xrk (AiM) · .drk (2D) · GPX</div>
-          </>}
-          {stage === 'parsing' && <>
-            <div className="spinner" style={{ width: 30, height: 30, border: '3px solid rgba(255,255,255,0.15)', borderTopColor: 'var(--accent)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-            <div style={{ fontSize: 14, fontWeight: 700 }}>Parsing {file}→</div>
-            <div style={{ fontSize: 12, color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }}>decoding channels · detecting laps · aligning GPS</div>
-          </>}
-          {stage === 'ready' && <>
-            <Check size={34} style={{ color: 'var(--green)' }} />
-            <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--green)' }}>{file} ready · {MUGELLO_CIRCUIT.raceLaps} laps · 142 channels</div>
-            <div style={{ fontSize: 12, color: 'var(--text-dim)' }}>Best lap 1:57.842 detected – open the Session Report to analyse it.</div>
-          </>}
-          <input id="telemetry-upload" type="file" accept=".csv,.xrk,.drk,.gpx" style={{ display: 'none' }} onChange={onPick} />
-        </label>
-        {stage === 'ready' && (
-          <div style={{ display: 'flex', gap: 8, marginTop: 12, justifyContent: 'center' }}>
-            <button className="btn btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }} onClick={() => navigate('report')}><FileText size={12} /> Open Session Report</button>
-            <button className="btn btn-ghost btn-sm" onClick={() => { setFile(null); setStage('idle'); }}>Upload another</button>
-          </div>
-        )}
-      </div>
-
-      {/* Source connectors */}
-      <div className="grid-2" style={{ gap: 12 }}>
-        {SOURCES.map(s => {
-          const I = s.icon;
-          const on = s.state === 'connected';
-          return (
-            <div key={s.name} className="card" style={{ borderColor: on ? 'color-mix(in srgb, var(--green) 30%, transparent)' : undefined }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ width: 40, height: 40, borderRadius: 'var(--radius-lg)', flex: 'none', display: 'grid', placeItems: 'center', color: on ? 'var(--green)' : 'var(--blue)', background: on ? 'var(--green-dim)' : 'var(--blue-dim)', border: `1px solid ${on ? 'color-mix(in srgb, var(--green) 35%, transparent)' : 'color-mix(in srgb, var(--blue) 30%, transparent)'}` }}>
-                  <I size={19} />
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
-                    {s.name}
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.06em', color: 'var(--text-muted)' }}>{s.detail}</span>
-                  </div>
-                  <div style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 2 }}>{s.feeds}</div>
-                </div>
-                {on ? (
-                  <span className="badge badge-green" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><Check size={11} /> Connected</span>
-                ) : (
-                  <button className="btn btn-ghost btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}
-                    onClick={() => toast({ type: 'success', title: `${s.name} connected`, message: `Now ingesting ${s.feeds.toLowerCase()}.` })}><Plus size={12} /> Connect</button>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* What you get */}
-      <div className="card mt-4" style={{ marginTop: 16, background: 'linear-gradient(135deg, rgba(59,130,246,0.08), rgba(255,255,255,0.02))' }}>
-        <div className="card-header"><span className="card-title">What you get back</span></div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', fontSize: 13, color: 'var(--text-dim)', marginTop: 6 }}>
-          {['Corner-by-corner analysis', 'Lap Replay', 'Tyre & setup advice', 'Safety alerts', 'Session Report (PDF)'].map((x, i) => (
-            <span key={x} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-              {i > 0 && <ArrowRight size={12} style={{ color: 'var(--text-muted)' }} />}
-              <span style={{ color: 'var(--text)' }}>{x}</span>
-            </span>
-          ))}
-        </div>
-      </div>
+  async function importSelected(){if(!archive||!measurement||!ack||busy)return;setBusy(true);setError('');try{setSession(await importRecording(archive,'2d',measurement));}catch(e){setError(e instanceof Error?e.message:'No se pudo importar la medición');}finally{setBusy(false);}}
+  return <div className="page recorded-workspace">
+    <h1 className="page-title">Importar telemetría</h1>{!canWriteTelemetry()&&<p role="status">Acceso de lectura: importa y guarda un ingeniero o administrador del equipo.</p>}
+    <details className="recorded-library-toggle" onToggle={event=>setLibraryOpen(event.currentTarget.open)}><summary>Abrir una sesión guardada</summary>{libraryOpen&&<RecordedSessionLibrary onOpen={recording=>{selectRecording(recording);navigate('chassis');}}/>}</details>
+    <p className="page-subtitle">Sesiones grabadas para Chassis Tool · sin conexión activa a GPS, IMU o ECU.</p>
+    <div className="card">
+      <label>Origen <select aria-label="Origen de telemetría" value={source} disabled={busy || !canWriteTelemetry()} onChange={e => { setSource(e.target.value as 'aim' | '2d'); setSession(null); setError('');setArchive(null);setMeasurements([]);setMeasurement(''); }}>
+        <option value="aim">AiM / Race Studio</option><option value="2d">2D / WinARace</option>
+      </select></label>
+      <p>AiM: XRK/XRZ con el lector oficial instalado, o exportación CSV con unidades.</p>
+      <p>2D: exportación CSV/TSV o ZIP con mediciones MES. El lector nativo de variantes observadas es experimental: requiere contraste de escala y tiempo con 2D Analyzer.</p>
+      <p>Incluye una columna Time, una fila de unidades (s o ms para el tiempo) y las muestras. No se inventan frecuencias ni canales ausentes.</p>
+      <label htmlFor="telemetry-upload">Archivo de sesión </label>
+      <input ref={input} id="telemetry-upload" aria-label="Archivo de telemetría" type="file" accept={source === 'aim' ? '.csv,.tsv,.txt,.xrk,.xrz,.drk' : '.csv,.tsv,.txt,.zip'} disabled={busy || !canWriteTelemetry()} onChange={e => void upload(e.target.files?.[0])} />
+      {archive&&measurements.length>0&&!session&&<div className="recorded-measurement-select"><label>Medición 2D <select aria-label="Medición 2D" value={measurement} disabled={busy || !canWriteTelemetry()} onChange={e=>setMeasurement(e.target.value)}><option value="">Selecciona una medición del paquete</option>{measurements.map(m=><option key={m.path} value={m.path}>{m.path} · {m.channels.filter(c=>c.numeric_supported).length}/{m.channels.length} canales candidatos</option>)}</select></label><p>No se importan automáticamente todas las mediciones. Los relojes nativos se reconstruyen a partir de metadatos; no están contrastados con el fabricante.</p><label><input type="checkbox" checked={ack} disabled={busy || !canWriteTelemetry()} onChange={e=>setAck(e.target.checked)}/> Entiendo que esta lectura 2D es experimental y requiere contraste</label><button className="btn" disabled={busy||!measurement||!ack||!canWriteTelemetry()} onClick={()=>void importSelected()}>Importar medición seleccionada</button></div>}
+      {busy && <p role="status">Leyendo y validando las muestras…</p>}
+      {error && <p role="alert">{error}</p>}
+      {session && <div role="status">
+        <p>{session.filename}: {session.channels.length} canales con muestras · {session.laps.length ? `${session.laps.length} vueltas registradas` : 'Sin marcadores de vuelta en la exportación'}.</p>
+        <p>Lector: {session.reader} · datos restringidos guardados en el backend local.</p>
+        {session.validation?.status==='experimental'&&<p>Lectura experimental: escala, signo y reloj pendientes de contrastar. {session.excluded_channels?.length??0} canales excluidos; consulta sus causas en Chassis.</p>}
+        <button className="btn" onClick={() => navigate('chassis')}>Abrir Chassis Tool</button>
+      </div>}
     </div>
-  );
+    <p>Conexiones en directo: no configuradas. Importar un archivo no conecta dispositivos.</p>
+  </div>;
 }
-
-export default ConnectDataPage;
+export default function ProtectedConnectDataPage(){ return <TelemetryGate><ConnectDataPage/></TelemetryGate>; }

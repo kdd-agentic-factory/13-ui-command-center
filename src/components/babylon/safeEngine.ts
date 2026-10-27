@@ -7,7 +7,7 @@
  * impossible. Every 3D component must create its engine through here and
  * degrade to a blank canvas instead of killing the page.
  */
-import { Engine } from '@babylonjs/core';
+import { Engine } from '@babylonjs/core/Engines/engine';
 
 export function createSafeEngine(
   canvas: HTMLCanvasElement,
@@ -15,6 +15,12 @@ export function createSafeEngine(
   options?: ConstructorParameters<typeof Engine>[2],
 ): Engine | null {
   try {
+    // Probe before construction: Babylon registers an instance before a failed
+    // WebGL constructor returns, leaving no usable object for React to dispose.
+    if (!Engine.IsSupported) {
+      console.warn('[3D] WebGL unavailable — rendering static fallback');
+      return null;
+    }
     return new Engine(canvas, antialias, options);
   } catch (err) {
     console.warn('[3D] WebGL unavailable — rendering static fallback', err);

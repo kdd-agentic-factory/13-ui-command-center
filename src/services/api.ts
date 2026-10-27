@@ -1,3 +1,4 @@
+import {productProfile} from '../domain/productProfile';
 /**
  * HTTP client for KDD backend services (deployed on Fly.io).
  * Each service has its own base URL (overridable via VITE_<SVC>_URL); data
@@ -47,9 +48,14 @@ const V1 = '/api/v1';
 
 type ServiceKey = keyof typeof BASE;
 
+async function legacyFetch(input:RequestInfo|URL,init?:RequestInit):Promise<Response>{
+  if(productProfile==='chassis')throw new Error('Servicio histórico fuera de la entrega comercial.');
+  return fetch(input,init);
+}
+
 async function safeFetch<T>(url: string): Promise<T | null> {
   try {
-    const r = await fetch(url, { signal: AbortSignal.timeout(5000) });
+    const r = await legacyFetch(url, { signal: AbortSignal.timeout(5000) });
     if (!r.ok) return null;
     return r.json() as Promise<T>;
   } catch {
@@ -388,7 +394,7 @@ export async function fetchAllServiceHealth(): Promise<HealthMap> {
 export async function fetchServiceRegistryHealth(): Promise<ServiceRegistryHealthEntry[]> {
   const results = await Promise.all(
     SERVICE_REGISTRY.map(async (entry) => {
-      const configured = Boolean(entry.baseUrl && entry.healthPath);
+      const configured = productProfile!=='chassis'&&Boolean(entry.baseUrl && entry.healthPath);
       const payload = configured ? await safeFetch<object>(`${entry.baseUrl}${entry.healthPath}`) : null;
       const status = getHealthStatus(payload, configured);
       return {
@@ -516,7 +522,7 @@ export interface OrchestrationResult {
 }
 export async function orchestrate(userInput: string): Promise<OrchestrationResult | null> {
   try {
-    const r = await fetch(`${BASE.orchestrator}${V1}/workflows`, {
+    const r = await legacyFetch(`${BASE.orchestrator}${V1}/workflows`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -606,7 +612,7 @@ export interface WhatIfResult {
 
 export async function runWhatIf(req: WhatIfRequest): Promise<WhatIfResult | null> {
   try {
-    const r = await fetch(`${TWIN_BASE}${V1}/what-if`, {
+    const r = await legacyFetch(`${TWIN_BASE}${V1}/what-if`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(req),
@@ -655,7 +661,7 @@ export interface DocumentGenerateResult {
 
 export async function generateDocument(req: DocumentGenerateRequest): Promise<DocumentGenerateResult | null> {
   try {
-    const r = await fetch(`${DOCUMENTATION_BASE}${V1}/generate`, {
+    const r = await legacyFetch(`${DOCUMENTATION_BASE}${V1}/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(req),
@@ -821,7 +827,7 @@ function createCopilotEnvelope(input: RaceCopilotChatInput): RaceCopilotRequestE
 
 export async function askRaceCopilot(input: RaceCopilotChatInput): Promise<RaceCopilotResponseEnvelope | null> {
   try {
-    const r = await fetch(`${COPILOT_BASE}${V1}/integrations/race-command-center/chat`, {
+    const r = await legacyFetch(`${COPILOT_BASE}${V1}/integrations/race-command-center/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(createCopilotEnvelope(input)),
@@ -861,7 +867,7 @@ export async function ragSearch(query: string, topK = 4): Promise<RagOutcome> {
   try {
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (RAG_KEY) headers['X-API-Key'] = RAG_KEY;
-    const r = await fetch(`${RAG_BASE}${V1}/search`, {
+    const r = await legacyFetch(`${RAG_BASE}${V1}/search`, {
       method: 'POST',
       headers,
       body: JSON.stringify({ query, top_k: topK, include_evidence: true }),
@@ -894,7 +900,7 @@ export type PolicyOutcome =
 
 export async function evaluatePolicy(action: string, context: Record<string, unknown> = {}): Promise<PolicyOutcome> {
   try {
-    const r = await fetch(`${SECURITY_BASE}${V1}/policies/evaluate`, {
+    const r = await legacyFetch(`${SECURITY_BASE}${V1}/policies/evaluate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action, context }),
@@ -935,7 +941,7 @@ export type PipelineEvidenceOutcome =
 
 export async function fetchPipelines(): Promise<PipelinesOutcome> {
   try {
-    const r = await fetch(`${PIPELINES_BASE}${V1}/pipelines/`, { signal: AbortSignal.timeout(8000) });
+    const r = await legacyFetch(`${PIPELINES_BASE}${V1}/pipelines/`, { signal: AbortSignal.timeout(8000) });
     if (r.status === 401 || r.status === 403) return { ok: false, reason: 'unauthorized' };
     if (!r.ok) return { ok: false, reason: 'unreachable' };
     return { ok: true, data: (await r.json()) as PipelinesList };
@@ -946,7 +952,7 @@ export async function fetchPipelines(): Promise<PipelinesOutcome> {
 
 export async function fetchPipelineEvidence(): Promise<PipelineEvidenceOutcome> {
   try {
-    const r = await fetch(`${PIPELINES_BASE}${V1}/evidence/`, { signal: AbortSignal.timeout(8000) });
+    const r = await legacyFetch(`${PIPELINES_BASE}${V1}/evidence/`, { signal: AbortSignal.timeout(8000) });
     if (r.status === 401 || r.status === 403) return { ok: false, reason: 'unauthorized' };
     if (!r.ok) return { ok: false, reason: 'unreachable' };
     return { ok: true, data: (await r.json()) as PipelineEvidenceList };

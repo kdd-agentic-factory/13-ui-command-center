@@ -1,8 +1,5 @@
-/**
- * Landing → profile selection regression lock.
- * Keeps the intro flow safe in JSDOM and verifies public vs auth-gated roles.
- */
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+/** Role selection lives at /core; /app opens the chassis workspace directly. */
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 vi.mock('../src/components/babylon/lazy', () => ({
   DigitalTwinViewer3D: () => null,
@@ -12,38 +9,35 @@ import { App } from '../src/app/App';
 beforeEach(() => {
   sessionStorage.clear();
   localStorage.clear();
-  window.history.pushState({}, '', '/app');
+  sessionStorage.setItem('kdd-intro-seen', '1');
+  window.history.pushState({}, '', '/core');
 });
 
-describe('landing profile selection (no-WebGL environment)', () => {
-  it('renders all role cards and lets public roles reach Mission Control', async () => {
-    sessionStorage.setItem('kdd-intro-seen', '1');
+describe('core profile selection (no-WebGL environment)', () => {
+  it.each([
+    ['Founding Node', 'founding-node'],
+    ['Spectator', 'spectator'],
+  ])('lets the public %s role reach Mission Control without login', async (label, profileId) => {
     render(<App />);
 
-    await waitFor(() => expect(document.querySelectorAll('.intro-role-card').length).toBe(6));
-
-    const cards = document.querySelectorAll('.intro-role-card');
-
-    const foundingNode = Array.from(cards).find(c => /founding|fundador/i.test(c.textContent ?? ''));
-    expect(foundingNode).toBeTruthy();
-    fireEvent.click(foundingNode!);
-    fireEvent.click(document.querySelector('.intro-enter.compact')!);
+    fireEvent.click((await screen.findAllByRole('button', { name: new RegExp(label, 'i') }))[0]);
+    fireEvent.click(screen.getByRole('button', { name: /enter now|entrar ahora/i }));
 
     expect(await screen.findByText('SYSTEM READY')).toBeInTheDocument();
+    expect(localStorage.getItem('kdd-profile')).toBe(profileId);
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
-  it('auth-gated roles open the login modal instead of crashing', async () => {
-    sessionStorage.setItem('kdd-intro-seen', '1');
+  it.each(['Race Engineer', 'Team Principal', 'Data Analyst', 'Mechanic'])('requires login before granting the %s role', async (label) => {
     render(<App />);
 
-    await waitFor(() => expect(document.querySelectorAll('.intro-role-card').length).toBe(6));
+    fireEvent.click((await screen.findAllByRole('button', { name: new RegExp(label, 'i') }))[0]);
+    fireEvent.click(screen.getByRole('button', { name: /enter now|entrar ahora/i }));
 
-    const cards = document.querySelectorAll('.intro-role-card');
-    const engineer = Array.from(cards).find(c => /engineer|ingenier/i.test(c.textContent ?? ''));
-    expect(engineer).toBeTruthy();
-    fireEvent.click(engineer!);
-    fireEvent.click(document.querySelector('.intro-enter.compact')!);
-
-    expect(await screen.findByRole('dialog')).toBeInTheDocument();
+    const dialog = await screen.findByRole('dialog');
+    expect(dialog).toHaveAttribute('aria-modal', 'true');
+    expect(within(dialog).getByRole('textbox', { name: /email/i })).toBeInTheDocument();
+    expect(localStorage.getItem('kdd-profile')).toBeNull();
+    expect(screen.queryByText('SYSTEM READY')).not.toBeInTheDocument();
   });
 });

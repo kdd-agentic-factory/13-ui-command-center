@@ -1,5 +1,6 @@
 import { ArrowRight, ExternalLink, Layers3, Network, RadioTower, ShieldCheck } from 'lucide-react';
 import { RACE_COMMAND_CENTER_ENABLED } from '../../config/serviceRegistry';
+import { ChassisCompatibility } from '../../components/public/ChassisCompatibility';
 
 type HubModule = {
   title: string;
@@ -30,9 +31,9 @@ const PROFILE_OPTIONS: ProfileOption[] = [
 
 const CONNECTED_MODULES: HubModule[] = [
   {
-    title: 'PitWall OS',
+    title: 'Chassis Tool · PitWall OS',
     layer: 'Main operational product',
-    body: 'Cockpit operativo principal: transforma telemetría, contexto y aprendizaje en la próxima decisión de pista.',
+    body: 'Compara geometrías y setups con señales grabadas y evidencia trazable. Circuito y piloto amplían el contexto del mismo trabajo.',
     href: '/pit-wall/app',
     accent: 'red',
     intent: 'operational',
@@ -816,10 +817,10 @@ export function KddHubPage() {
           <div>
             <span className="hub__eyebrow">KDD Hub by Keedio · The Digital Pit Wall</span>
             <h1>
-              Turn telemetry into <em>track decisions.</em>
+              Chassis Tool: geometría, <em>telemetría y criterio.</em>
             </h1>
             <p className="hub__lead">
-              No sustituimos tu telemetría. La convertimos en conocimiento accionable.
+                Compara setups de tu moto con datos grabados y evidencia que puedas revisar.
             </p>
             <p className="hub__support">
               KDD se coloca por encima del logger: interpreta contexto, evidencia y aprendizaje de cada nodo para decidir qué probar en la próxima tanda.
@@ -878,6 +879,7 @@ export function KddHubPage() {
         </section>
 
         {/* ── LAYER MAP ────────────────────────────────────── */}
+        <ChassisCompatibility />
         <section className="hub__section" id="layer-map">
           <span className="hub__eyebrow">Layer Map</span>
           <h2>Una plataforma, seis capas, una decisión siguiente.</h2>

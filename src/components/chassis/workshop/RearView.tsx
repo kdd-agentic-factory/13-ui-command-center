@@ -1,0 +1,8 @@
+import type {PartId} from '../../../domain/chassisWorkshop';
+export const rearParts:{id:PartId;label:string}[]=[{id:'rear_shock',label:'Amortiguador y ajustes'},{id:'rear_spring',label:'Muelle trasero'},{id:'rear_linkage',label:'Bieletas'},{id:'swingarm_pivot',label:'Pivote de basculante'},{id:'rear_drive',label:'Cadena y transmisión'}];
+export function RearView({explosion,selected,onSelect}:{explosion:number;selected:PartId;onSelect:(p:PartId)=>void}){
+ return <div className="workshop-drawing"><svg viewBox="0 0 640 430" role="img" aria-label="Despiece esquemático del tren trasero"><title>Tren trasero genérico · sin dimensiones CAD</title>{rearParts.map((p,i)=><g key={p.id} transform={`translate(${100+i*100},${100+(i%2)*90+(i-2)*explosion*.2})`} className={selected===p.id?'workshop-part selected':'workshop-part'} onClick={()=>onSelect(p.id)} role="button" aria-label={`Inspeccionar ${p.label}`} tabIndex={0} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onSelect(p.id);}}}>
+ <rect className="workshop-hitbox" x="-45" y="-68" width="90" height="168"/>{i===0?<><rect x="-13" y="-45" width="26" height="90" rx="5"/><line x1="0" y1="-65" x2="0" y2="-45"/><circle cx="0" cy="55" r="10"/></>:i===1?<path d="M-26 -55 L26 -40 -26 -25 26 -10 -26 5 26 20 -26 35 26 50"/>:i===2?<><path d="M-35 0 L10 -30 35 30 Z"/><circle cx="10" cy="-30" r="6"/><circle cx="35" cy="30" r="6"/></>:i===3?<><circle r="35"/><circle cx="8" cy="-5" r="12"/></>:<><circle r="38"/><circle r="15"/><path d="M-35 -40 L50 -25 M-35 40 L50 25"/></>}
+ <text x="0" y="90" textAnchor="middle">{p.label}</text></g>)}</svg><p className="workshop-caption">La animación de despiece no modifica medidas, posición de ejes ni longitud de cadena.</p></div>;
+}
+

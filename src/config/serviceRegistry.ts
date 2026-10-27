@@ -1,3 +1,4 @@
+import {productProfile} from '../domain/productProfile';
 /**
  * serviceRegistry.ts — KDD service registry.
  * Central configuration for all external KDD services.
@@ -43,7 +44,7 @@ export const RACE_COMMAND_CENTER: ServiceDef = {
   id: 'race-command-center',
   label: 'Race Command Center',
   description: 'Dedicated operational preview for PitWall OS, AI Copilot, telemetry, strategy, simulation and debrief.',
-  baseUrl: import.meta.env.VITE_RACE_COMMAND_CENTER_URL ?? "https://czdpamk9.insforge.site",
+  baseUrl: productProfile==='chassis'?'':(import.meta.env.VITE_PRODUCT_PROFILE==='chassis'?'':import.meta.env.VITE_RACE_COMMAND_CENTER_URL ?? "https://czdpamk9.insforge.site"),
   status: 'preview',
   defaultParams: {
     node: 'demo-ruben',
@@ -97,4 +98,4 @@ export function getServiceDef(id: string): ServiceDef | undefined {
  * Defaults to true (enabled) — set VITE_ENABLE_RACE_COMMAND_CENTER_PREVIEW=false to disable.
  */
 export const RACE_COMMAND_CENTER_ENABLED =
-  import.meta.env.VITE_ENABLE_RACE_COMMAND_CENTER_PREVIEW !== 'false';
+  productProfile!=='chassis' && import.meta.env.VITE_ENABLE_RACE_COMMAND_CENTER_PREVIEW !== 'false';

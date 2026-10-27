@@ -31,3 +31,9 @@ secure-sdlc/
 threat-models/
 tooling/
 
+
+# Local acceptance artifacts include synthetic TLS material and build snapshots.
+.superpowers/
+
+# Required commercial documentation asset; keep all other Markdown excluded.
+!public/kdd-application-manual.md

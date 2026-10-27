@@ -1,0 +1,8 @@
+{
+  "source": "https://raw.githubusercontent.com/microsoft/playwright/v1.61.1/utils/docker/seccomp_profile.json",
+  "downloaded_profile_sha256": "17e2d449ab7c2c6fefc5b9f978224a49929864eb1d5a42f4f9002266c9300de2",
+  "profile_sha256": "db6fc12b635ab6e8f826c36a5dab5615a58e0d6f444fada2f21c7ef6ac623716",
+  "change": "Allow chroot for Chromium user-namespace sandbox with container UID1000, cap-drop ALL, no-new-privileges. No host namespace sharing or privileged mode.",
+  "license": "Apache-2.0",
+  "scope": "acceptance browser only"
+}

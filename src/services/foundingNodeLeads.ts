@@ -1,3 +1,4 @@
+import {productProfile} from '../domain/productProfile';
 import { posthog } from '../lib/analytics';
 
 export type LeadSource = 'home' | 'trial' | 'login';
@@ -22,9 +23,10 @@ export interface LeadCaptureResponse {
 }
 
 const DEFAULT_ENDPOINT = 'https://vdf553wq.functions.insforge.app/founding-node-leads';
-const CAPTURE_ENDPOINT = import.meta.env.VITE_LEAD_CAPTURE_URL ?? DEFAULT_ENDPOINT;
+const CAPTURE_ENDPOINT = import.meta.env.VITE_LEAD_CAPTURE_URL ?? (productProfile==='chassis'?'':DEFAULT_ENDPOINT);
 
 export async function submitLeadCapture(input: LeadCaptureInput): Promise<LeadCaptureResponse> {
+  if(!CAPTURE_ENDPOINT)throw new Error('Captación no disponible en esta entrega; utiliza el contacto del equipo.');
   const response = await fetch(CAPTURE_ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

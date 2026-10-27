@@ -1,4 +1,6 @@
+import { TeamProvider } from '../context/TeamContext';
 import '../i18n'; // must be first — initialises i18next before any component renders
+import { clearRecording } from '../domain/recordedSession';
 import { useEffect, useRef, useState } from 'react';
 
 import { AuthProvider, useProfile, PROFILES, type ProfileId } from '../context/AuthContext';
@@ -111,7 +113,7 @@ function getAppRoute(pathname: string): AppRoute {
   return 'home';
 }
 
-function AppEntryFlowContent({ autoLaunchDemo = true }: { autoLaunchDemo?: boolean }) {
+function AppEntryFlowContent({ autoEnterWorkspace = true }: { autoEnterWorkspace?: boolean }) {
   const { profile, login, user, authLoading } = useProfile();
   const [pendingProfile, setPendingProfile] = useState<ProfileId | null>(null);
   type Stage = 'restoring' | 'mission' | 'circuit' | 'garage' | 'mode' | 'data' | 'launch' | 'booting' | 'dashboard';
@@ -122,7 +124,7 @@ function AppEntryFlowContent({ autoLaunchDemo = true }: { autoLaunchDemo?: boole
   const [resumeSnapshot, setResumeSnapshot] = useState<import('./sessionResume').SessionResumeSnapshot | null>(null);
 
   /** Tracks whether we auto-launched the demo for first-time visitors (pit-wall mode). */
-  const autoDemoLaunched = useRef(false);
+  const autoWorkspaceOpened = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -131,8 +133,8 @@ function AppEntryFlowContent({ autoLaunchDemo = true }: { autoLaunchDemo?: boole
       if (authLoading) return;
       if (!profile) return;
 
-      // Auto-demo launched — don't override the stage to 'mission'
-      if (autoDemoLaunched.current) return;
+      // Direct workspace entry must not be overridden by session restoration.
+      if (autoWorkspaceOpened.current) return;
 
       if (!user) {
         setStage('mission');
@@ -149,6 +151,7 @@ function AppEntryFlowContent({ autoLaunchDemo = true }: { autoLaunchDemo?: boole
       }
 
       const snapshot = buildSessionResumeSnapshot(row);
+      if (snapshot.sessionCtx.demoMode) clearRecording();
       if (snapshot.gateCircuit) {
         setActiveCircuit(snapshot.gateCircuit);
         setGateCircuit(snapshot.gateCircuit);
@@ -166,15 +169,18 @@ function AppEntryFlowContent({ autoLaunchDemo = true }: { autoLaunchDemo?: boole
     return () => { cancelled = true; };
   }, [authLoading, profile?.id, user?.id]);
 
-  // ── Auto-demo for hub entry (opens PitWall OS in demo mode) ──
+  // Direct hub entry opens the chassis workspace without fabricated session data.
   useEffect(() => {
-    if (!autoLaunchDemo) return;
-    if (autoDemoLaunched.current) return;
+    if (!autoEnterWorkspace) return;
+    if (autoWorkspaceOpened.current) return;
 
-    autoDemoLaunched.current = true;
+    autoWorkspaceOpened.current = true;
     login('founding-node');
-    presetGuidedDemo(); // jump to LaunchBriefPage → BootSequence → DashboardShell
-  }, [autoLaunchDemo, login]);
+    const ctx = buildSessionContext('', 'Sin circuito asignado', 'replay', { dashboardTab: 'chassis', dataSource: 'none' });
+    setSessionContext(ctx);
+    setSessionCtx(ctx);
+    setStage('dashboard');
+  }, [autoEnterWorkspace, login]);
 
   function presetLatestSession() {
     const mugello = getCircuitLibrary().find(c => c.id === 'mugello')!;
@@ -195,6 +201,7 @@ function AppEntryFlowContent({ autoLaunchDemo = true }: { autoLaunchDemo?: boole
   }
 
   function presetGuidedDemo() {
+    clearRecording();
     const mugello = getCircuitLibrary().find(c => c.id === 'mugello')!;
     setActiveCircuit(mugello);
     setGateCircuit(mugello);
@@ -295,6 +302,8 @@ function AppEntryFlowContent({ autoLaunchDemo = true }: { autoLaunchDemo?: boole
     );
   }
 
+  if (stage === 'dashboard') return <DashboardShell />;
+
   if (stage === 'circuit' || !gateCircuit) {
     return (
       <CircuitGatePage
@@ -321,6 +330,7 @@ function AppEntryFlowContent({ autoLaunchDemo = true }: { autoLaunchDemo?: boole
         circuit={gateCircuit}
         onBack={() => { clearSessionContext(); setSessionCtx(null); setStage('garage'); }}
         onOpen={(ctx) => {
+          if (ctx.demoMode) clearRecording();
           const gp = getGarageProfile();
           const merged = gp
             ? { ...ctx, setup: { rider: gp.rider.name, bike: `${gp.bike.brand} ${gp.bike.model}`, ...ctx.setup } }
@@ -366,11 +376,11 @@ function AppEntryFlowContent({ autoLaunchDemo = true }: { autoLaunchDemo?: boole
   return <DashboardShell />;
 }
 
-function AppEntryFlow({ autoLaunchDemo = true }: { autoLaunchDemo?: boolean }) {
+function AppEntryFlow({ autoEnterWorkspace = true }: { autoEnterWorkspace?: boolean }) {
   return (
     <AuthProvider>
       <ToastProvider>
-        <AppEntryFlowContent autoLaunchDemo={autoLaunchDemo} />
+        <TeamProvider><AppEntryFlowContent autoEnterWorkspace={autoEnterWorkspace} /></TeamProvider>
       </ToastProvider>
     </AuthProvider>
   );
@@ -391,7 +401,7 @@ function AppRouter() {
     case 'hub':
       return <KddHubPage />;
     case 'core':
-      return <AppEntryFlow autoLaunchDemo={false} />;
+      return <AppEntryFlow autoEnterWorkspace={false} />;
     case 'nodes':
       return (
         <PublicModulePage

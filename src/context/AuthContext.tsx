@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import { setTelemetryUser } from '../services/telemetryIdentity';
+import { createContext, useContext, useState, useRef, useEffect, useCallback, ReactNode } from 'react';
 import { insforge } from '../lib/insforge';
 
 export type TabId = 'cockpit' | 'overview' | 'raceday' | 'live' | 'telemetry' | 'circuit' | 'corners' | 'replay' | 'compare' | 'ghost-lap' | 'studio' | 'track-evo' | 'surface' | 'weather' | 'risk' | 'predict' | 'strategy' | 'rivals' | 'quali' | 'tires' | 'pressure' | 'setup' | 'advisor' | 'electronics' | 'aero' | 'fuel' | 'chassis' | 'gearing' | 'engctrl' | 'setup-lab' | 'parts' | 'brakes' | 'bike-compare' | 'twin' | 'sandbox' | 'sim-lab' | 'experiments' | 'events' | 'causal' | 'history' | 'pre-gp' | 'crew' | 'copilot' | 'learning-path' | 'human' | 'pit-radio' | 'team' | 'workbench' | 'orchestrator' | 'season' | 'stewards' | 'report' | 'research' | 'debrief' | 'black-box' | 'knowledge' | 'patterns' | 'federated' | 'ai-crew' | 'style' | 'cube' | 'trust' | 'platform' | 'edge' | 'lakehouse' | 'devhub' | 'data' | 'settings';
@@ -36,7 +37,7 @@ export const PROFILES: Profile[] = [
     color: 'var(--yellow)',
     icon: '👤',
     accessCount: '14',
-    allowedTabs: ['cockpit','overview','live','corners','compare','ghost-lap','track-evo','surface','weather','risk','predict','raceday','strategy','rivals','quali','report','debrief','black-box','experiments','history','pre-gp','copilot','learning-path','human','pit-radio','team','orchestrator','season','stewards','ai-crew','circuit','tires','cube','trust','settings'],
+    allowedTabs: ['data','chassis','cockpit','overview','live','corners','compare','ghost-lap','track-evo','surface','weather','risk','predict','raceday','strategy','rivals','quali','report','debrief','black-box','experiments','history','pre-gp','copilot','learning-path','human','pit-radio','team','orchestrator','season','stewards','ai-crew','circuit','tires','cube','trust','settings'],
     defaultTab: 'overview',
     requiresAuth: true,
   },
@@ -69,7 +70,7 @@ export const PROFILES: Profile[] = [
     color: 'var(--purple)',
     icon: '👁️',
     accessCount: '2',
-    allowedTabs: ['overview','live'],
+    allowedTabs: ['data','chassis','overview','live'],
     defaultTab: 'overview',
     requiresAuth: false, // public read-only showcase – no login required
   },
@@ -127,20 +128,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const profile = profileId ? PROFILES.find(p => p.id === profileId) ?? null : null;
 
+  const requestEpoch = useRef(0);
   const refreshUser = useCallback(async () => {
+    const epoch=++requestEpoch.current;
     try {
       const { data, error } = await insforge.auth.getCurrentUser();
+      if(epoch!==requestEpoch.current)return;
       const u = !error ? (data?.user ?? null) : null;
+      setTelemetryUser(u?.id ?? null);
       setUser(u ? { id: u.id, email: u.email, name: getProfileName(u.profile) } : null);
     } catch {
+      if(epoch!==requestEpoch.current)return;
+      setTelemetryUser(null);
       setUser(null);
     } finally {
-      setAuthLoading(false);
+      if(epoch===requestEpoch.current)setAuthLoading(false);
     }
   }, []);
 
   // Rehydrate the InsForge session on cold load (uses the httpOnly refresh cookie).
   useEffect(() => { void refreshUser(); }, [refreshUser]);
+
+  useEffect(()=>{const expired=()=>{requestEpoch.current++;setUser(null);setTelemetryUser(null);setAuthLoading(false);};window.addEventListener('telemetry-auth-expired',expired);return()=>{requestEpoch.current++;window.removeEventListener('telemetry-auth-expired',expired);};},[]);
 
   function login(id: ProfileId) {
     localStorage.setItem('kdd-profile', id);
@@ -148,10 +157,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function logout() {
+    requestEpoch.current++;
     localStorage.removeItem('kdd-profile');
     setProfileId(null);
-    try { await insforge.auth.signOut(); } catch { /* ignore */ }
+    setTelemetryUser(null);
     setUser(null);
+    try { await insforge.auth.signOut(); } catch { /* ignore */ }
   }
 
   return (

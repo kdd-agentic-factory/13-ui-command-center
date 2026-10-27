@@ -1,0 +1,9 @@
+import type {PartId} from '../../../domain/chassisWorkshop';
+export const forkParts:{id:PartId;label:string}[]=[{id:'fork_cap',label:'Tapón y ajustes'},{id:'fork_outer',label:'Botella y retén'},{id:'fork_spring',label:'Muelle y cámara de aire'},{id:'fork_cartridge',label:'Cartucho y arandelas'}];
+export function ForkView({explosion,cutaway,selected,onSelect}:{explosion:number;cutaway:boolean;selected:PartId;onSelect:(p:PartId)=>void}){
+ const gap=explosion*.4;
+ return <div className="workshop-drawing"><svg viewBox="0 0 640 430" role="img" aria-label="Despiece esquemático de horquilla"><title>Horquilla genérica · sin dimensiones CAD</title>{forkParts.map((p,i)=><g key={p.id} className={selected===p.id?'workshop-part selected':'workshop-part'} onClick={()=>onSelect(p.id)} role="button" aria-label={`Inspeccionar ${p.label}`} tabIndex={0} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onSelect(p.id);}}} transform={`translate(${160+i*70},${35+i*(72+gap*.3)})`}>
+ <rect className="workshop-hitbox" x="-45" y="-12" width="245" height="145"/>{i===0?<><rect x="-40" y="0" width="80" height="22" rx="4"/><line x1="-20" y1="-9" x2="-20" y2="0"/><line x1="20" y1="-9" x2="20" y2="0"/></>:i===1?<><rect x="-30" y="0" width="60" height="110" rx="5"/>{cutaway&&<rect className="workshop-cutaway" x="-18" y="12" width="36" height="87"/>}</>:i===2?<><path d="M-20 0 L20 10 -20 20 20 30 -20 40 20 50 -20 60 20 70 -20 80 20 90"/><line className="workshop-dashed" x1="0" y1="-10" x2="0" y2="100"/></>:<><rect x="-14" y="0" width="28" height="80" rx="3"/>{[0,1,2,3].map(j=><line key={j} x1={-30+j*4} y1={88+j*7} x2={30-j*4} y2={88+j*7}/>)}</>}
+ <text x="52" y="16">{p.label}</text></g>)}</svg><p className="workshop-caption">Despiece funcional esquemático · el corte no representa un circuito hidráulico identificado.</p></div>;
+}
+
