@@ -9,6 +9,27 @@ function Probe(){const ctx=useEngineeringSession();const draft=useWorkspaceDraft
 function view(){return render(<WorkspaceDraftProvider><EngineeringSessionProvider><Probe/></EngineeringSessionProvider></WorkspaceDraftProvider>);}
 beforeEach(()=>{localStorage.clear();vi.restoreAllMocks();});
 describe('scope-aware engineering context',()=>{
+  it('preserves the revision operation when a committed reply is lost',async()=>{
+    const {state,fetch}=transport();state.sessions=[session()];
+    const normal=fetch.getMockImplementation()!;let first=true;let saved:unknown;const attempts:Record<string,unknown>[]=[];
+    fetch.mockImplementation(async(input,init)=>{
+      if(init?.method==='PUT'){
+        attempts.push(JSON.parse(String(init.body)));
+        if(first){first=false;const reply=await normal(input,init);saved=await reply.json();throw new TypeError('Revision reply lost');}
+        return new Response(JSON.stringify(saved));
+      }
+      return normal(input,init);
+    });
+    function Save(){const ctx=useEngineeringSession();return <button onClick={()=>ctx.session&&void ctx.save({...sessionInput(ctx.session),name:'Revision recuperada'})}>Guardar revision</button>;}
+    render(<WorkspaceDraftProvider><EngineeringSessionProvider><Probe/><Save/></EngineeringSessionProvider></WorkspaceDraftProvider>);
+    fireEvent.click(screen.getByText('Primera'));await screen.findByText('Tanda guardada');
+    fireEvent.click(screen.getByText('Guardar revision'));await screen.findByText('Revision reply lost');
+    fireEvent.click(screen.getByText('Guardar revision'));await screen.findByText('Revision recuperada');
+    expect(attempts).toHaveLength(2);
+    expect(attempts[0].operation_id).toMatch(/^[a-f0-9-]{36}$/);
+    expect(attempts[1].operation_id).toBe(attempts[0].operation_id);
+  });
+
   it('keeps one operation for an ambiguous retry of the same create attempt',async()=>{
     const {state,fetch}=transport();const normal=fetch.getMockImplementation()!;let loseReply=true;
     fetch.mockImplementation(async(input,init)=>{const reply=await normal(input,init);if(init?.method==='POST'&&String(input).endsWith('/sessions')&&loseReply){loseReply=false;throw new TypeError('Reply lost after commit');}return reply;});

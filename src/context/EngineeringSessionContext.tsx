@@ -93,9 +93,9 @@ export function EngineeringSessionProvider({children}:{children:ReactNode}) {
   async function performSave(body:EngineeringSessionInput) {
     const g=epoch.current,s=selectionEpoch.current,value=current.current,c=selectedController();setBusy(true);setError('');setConflict(false);
     try {
-      const fingerprint=JSON.stringify(body);
-      if(!value&&createAttempt.current?.fingerprint!==fingerprint)createAttempt.current={fingerprint,operation_id:crypto.randomUUID()};
-      const saved=value?await api.reviseEngineeringSession(value.id,body,value.revision,c.signal):await api.createEngineeringSession(body,createAttempt.current!.operation_id,c.signal);
+      const fingerprint=JSON.stringify({id:value?.id,revision:value?.revision,body});
+      if(createAttempt.current?.fingerprint!==fingerprint)createAttempt.current={fingerprint,operation_id:crypto.randomUUID()};
+      const saved=value?await api.reviseEngineeringSession(value.id,body,value.revision,c.signal,createAttempt.current!.operation_id):await api.createEngineeringSession(body,createAttempt.current!.operation_id,c.signal);
       if(epoch.current!==g||selectionEpoch.current!==s)return null;
       createAttempt.current=null;clearAssociation();setCurrent(saved);setSessions(old=>[saved,...old.filter(item=>item.id!==saved.id)]);localStorage.setItem(selectedKey(telemetryScope()),saved.id);return saved;
     }catch(e){if(epoch.current===g&&selectionEpoch.current===s&&!c.signal.aborted)report(e);return null;}

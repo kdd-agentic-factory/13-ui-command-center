@@ -41,14 +41,14 @@ export async function getEngineeringSession(id:string, signal?:AbortSignal) {
   return value;
 }
 export const createEngineeringSession = async (body:EngineeringSessionInput, operation_id:string, signal?:AbortSignal) => owned(await request<EngineeringSession>('/sessions',{method:'POST',body:JSON.stringify({operation_id,body}),signal}));
-export const reviseEngineeringSession = async (id:string,body:EngineeringSessionInput,expected_revision:number,signal?:AbortSignal) => owned(await request<EngineeringSession>(`/sessions/${encodeURIComponent(id)}`,{method:'PUT',body:JSON.stringify({expected_revision,body}),signal}));
+export const reviseEngineeringSession = async (id:string,body:EngineeringSessionInput,expected_revision:number,signal?:AbortSignal,operation_id:string=crypto.randomUUID()) => owned(await request<EngineeringSession>(`/sessions/${encodeURIComponent(id)}`,{method:'PUT',body:JSON.stringify({operation_id,expected_revision,body}),signal}));
 export const listCatalog = async (kind:CatalogKind,{cursor,signal}:PageOptions = {}) => page(await request<EngineeringPage<CatalogRevision>>(`/catalog/${kind}`+pageQuery(cursor),{signal}));
 export async function getCatalogEntity(kind:CatalogKind,ref:EngineeringReference,signal?:AbortSignal) {
   const value=owned(await request<CatalogRevision>(`/catalog/${kind}/${encodeURIComponent(ref.id)}?revision=${ref.revision}`,{signal}));
   if(value.id!==ref.id||value.revision!==ref.revision||value.kind!==kind)throw new Error('El catálogo no corresponde a la revisión solicitada');
   return value;
 }
-export const saveCatalogEntity = async (kind:CatalogKind,body:CatalogInput,options:{id:string;expected_revision:number}|{operation_id:string},signal?:AbortSignal) => owned(await request<CatalogRevision>(`/catalog/${kind}`+('id' in options?`/${encodeURIComponent(options.id)}`:''),{method:'id' in options?'PUT':'POST',body:JSON.stringify('id' in options?{expected_revision:options.expected_revision,body}:{operation_id:options.operation_id,body}),signal}));
+export const saveCatalogEntity = async (kind:CatalogKind,body:CatalogInput,options:{id:string;expected_revision:number;operation_id:string}|{operation_id:string},signal?:AbortSignal) => owned(await request<CatalogRevision>(`/catalog/${kind}`+('id' in options?`/${encodeURIComponent(options.id)}`:''),{method:'id' in options?'PUT':'POST',body:JSON.stringify('id' in options?{operation_id:options.operation_id,expected_revision:options.expected_revision,body}:{operation_id:options.operation_id,body}),signal}));
 
 const routeId=(id:string)=>{if(!canonical(id))throw new Error('Identificador persistido incompatible');return encodeURIComponent(id);};
 const post=<T,>(path:string,body:unknown,signal?:AbortSignal)=>request<T>(path,{method:'POST',body:JSON.stringify(body),signal});

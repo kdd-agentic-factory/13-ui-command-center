@@ -25,9 +25,9 @@ export function transport() {
     if (method === 'GET' && path.startsWith('/catalog/')) { const kind=path.split('/')[2] as keyof typeof state.catalog; return reply(entity(kind, Number(url.searchParams.get('revision')??1))); }
     if (['POST','PUT'].includes(method)) {
       const body = JSON.parse(String(init?.body)); state.writes.push({path,body});
-      const envelope=method==='POST'?['operation_id','body']:['expected_revision','body'];
+      const envelope=method==='POST'?['operation_id','body']:['operation_id','expected_revision','body'];
       if(Object.keys(body).sort().join()!==envelope.sort().join()) return reply({detail:'Unexpected envelope'},422);
-      if(method==='POST'&&!/^[0-9a-f-]{36}$/.test(body.operation_id)) return reply({detail:'Canonical UUID required'},422);
+      if(!/^[0-9a-f-]{36}$/.test(body.operation_id)) return reply({detail:'Canonical UUID required'},422);
       if (path.startsWith('/sessions')) {
         const allowed=['name','session_type','other_label','provenance','circuit','bike','rider','notes'];
         if(Object.keys(body.body).some(k=>!allowed.includes(k)) || !body.body.name || (body.body.session_type==='other'&&!body.body.other_label?.trim())) return reply({detail:'Strict SessionInput'},422);
