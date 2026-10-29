@@ -16,6 +16,7 @@ import { ProductCoverage } from '../components/chassis/ProductCoverage';
 import { ChassisProductStatus } from '../components/chassis/ChassisProductStatus';
 import { useWorkspaceDraft } from '../context/WorkspaceDraftContext';
 import { useEngineeringSession } from '../context/EngineeringSessionContext';
+import {BrainMemoryPanel} from '../components/chassis/BrainMemoryPanel';
 import { SessionPreparation } from '../components/engineering/SessionPreparation';
 import { AnalysisRunPanel } from '../components/engineering/AnalysisRunPanel';
 import {SuspensionLabPanel} from '../components/chassis/suspension/SuspensionLabPanel';
@@ -83,7 +84,7 @@ export function ChassisPage() {
   return <div className="page recorded-workspace">
     <div className="flex items-center justify-between mb-4"><h1 className="page-title">Chassis Tool</h1><div>{activeRecording() && <button className="btn" disabled={saving} onClick={() => requestLeave(() => { clearRecording(); setSession(null); setSelected(null); setSignal(null); setError(''); setSaved(''); setDimensions({ radius: '', rake: '', offset: '' }); })}>Cerrar sesión grabada</button>} <button className="btn" onClick={() => navigate('data')}>Importar AiM / 2D</button></div></div>
     <ChassisProductStatus /><ChassisWorkHeader view={view} onView={v=>{setView(v);setRevealed(null);}} contextLabel={contextLabel} nextStep={nextStep} onNext={next} dirty={isDirty}/><div className="chassis-work-layout" data-view={view} data-context-ready={!!engineering.session}>
-    <section className="chassis-work-area" data-area="context" ref={e=>{areas.current.context=e;}} tabIndex={-1} hidden={!visible("context")}><SessionPreparation recordingId={session?.id ?? null} /></section>
+    <section className="chassis-work-area" data-area="context" ref={e=>{areas.current.context=e;}} tabIndex={-1} hidden={!visible("context")}><SessionPreparation recordingId={session?.id ?? null} /><BrainMemoryPanel session={engineering.session}/></section>
     <div className="chassis-work-area" data-area="domains" ref={e=>{areas.current.domains=e;}} tabIndex={-1}><DomainEvidencePanel contextKey={contextKey} session={engineering.session} recordingId={session?.id??null} setup={engineering.association?.selection.setup_b??engineering.association?.selection.setup_a??undefined} selection={domainAttachment?.context===contextKey?domainAttachment.references:[]} onSelection={references=>setDomainAttachment({context:contextKey,references})}/></div>
     <div className="chassis-work-area" data-area="lab" ref={e=>{areas.current.lab=e;}} tabIndex={-1}><SuspensionLabPanel contextKey={contextKey} recordingId={session?.id??null} comparisonId={comparisonPresentation?.contextKey===contextKey&&!comparisonPresentation.dirty?comparisonPresentation.comparisonId??undefined:undefined} onEvidenceSaved={reference=>requestLeave(()=>setLabAttachment({context:contextKey,reference}))}/></div>
     {labAttachment?.context===contextKey&&<p role="status">Anexo seleccionado para el próximo snapshot: {labAttachment.reference.id.slice(-8)}. No modifica snapshots anteriores. <button type="button" onClick={()=>requestLeave(()=>setLabAttachment(null))}>Retirar anexo del próximo snapshot</button></p>}

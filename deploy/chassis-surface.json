@@ -113,6 +113,16 @@
     },
     {
       "method": "GET",
+      "pattern": "/api/v1/engineering/brain/notes",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/engineering/brain/notes/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+      "access": "team"
+    },
+    {
+      "method": "GET",
       "pattern": "/api/v1/engineering/catalog/(circuit|bike|rider|championship)",
       "access": "team"
     },
@@ -338,6 +348,11 @@
     },
     {
       "method": "POST",
+      "pattern": "/api/v1/engineering/brain/notes",
+      "access": "team"
+    },
+    {
+      "method": "POST",
       "pattern": "/api/v1/engineering/catalog/(circuit|bike|rider|championship)",
       "access": "team"
     },
@@ -422,5 +437,5 @@
       "access": "team"
     }
   ],
-  "sha256": "dba96809505eb9baf97abf725da557428f267045e716928b916e0f4887159a14"
+  "sha256": "bebfc89e904ac5353d12a873f1370292dcc85efcf2694a17774fb1a4a8aa4bee"
 }

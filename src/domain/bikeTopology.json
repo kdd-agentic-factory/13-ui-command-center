@@ -1,0 +1,168 @@
+{
+  "schema_version": "1.0.0",
+  "sections": [
+    {
+      "schema_version": "1.0.0",
+      "id": "suspension",
+      "parent_factory": "bike",
+      "leader": "suspension-section-lead",
+      "specialists": [
+        "front-fork",
+        "rear-shock",
+        "linkage-kinematics",
+        "damping-evidence"
+      ],
+      "required_evidence": [
+        "reviewed_manual",
+        "component_configuration",
+        "measured_telemetry"
+      ],
+      "execution_status": "planned",
+      "human_approval_required": true
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "engine",
+      "parent_factory": "bike",
+      "leader": "engine-section-lead",
+      "specialists": [
+        "combustion-mapping",
+        "cooling-lubrication",
+        "engine-evidence"
+      ],
+      "required_evidence": [
+        "reviewed_manual",
+        "component_configuration",
+        "measured_telemetry"
+      ],
+      "execution_status": "planned",
+      "human_approval_required": true
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "electronics",
+      "parent_factory": "bike",
+      "leader": "electronics-section-lead",
+      "specialists": [
+        "ecu-controls",
+        "sensors-wiring",
+        "acquisition-quality"
+      ],
+      "required_evidence": [
+        "reviewed_manual",
+        "component_configuration",
+        "measured_telemetry"
+      ],
+      "execution_status": "planned",
+      "human_approval_required": true
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "chassis",
+      "parent_factory": "bike",
+      "leader": "chassis-section-lead",
+      "specialists": [
+        "geometry",
+        "mass-balance",
+        "structural-setup"
+      ],
+      "required_evidence": [
+        "reviewed_manual",
+        "component_configuration",
+        "measured_telemetry"
+      ],
+      "execution_status": "planned",
+      "human_approval_required": true
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "aerodynamics",
+      "parent_factory": "bike",
+      "leader": "aerodynamics-section-lead",
+      "specialists": [
+        "aero-configuration",
+        "aero-load-evidence",
+        "aero-balance"
+      ],
+      "required_evidence": [
+        "reviewed_manual",
+        "component_configuration",
+        "measured_telemetry"
+      ],
+      "execution_status": "planned",
+      "human_approval_required": true
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "tires",
+      "parent_factory": "bike",
+      "leader": "tires-section-lead",
+      "specialists": [
+        "tire-configuration",
+        "pressure-temperature",
+        "wear-evidence"
+      ],
+      "required_evidence": [
+        "reviewed_manual",
+        "component_configuration",
+        "measured_telemetry"
+      ],
+      "execution_status": "planned",
+      "human_approval_required": true
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "brakes",
+      "parent_factory": "bike",
+      "leader": "brakes-section-lead",
+      "specialists": [
+        "hydraulic-system",
+        "friction-thermal",
+        "braking-evidence"
+      ],
+      "required_evidence": [
+        "reviewed_manual",
+        "component_configuration",
+        "measured_telemetry"
+      ],
+      "execution_status": "planned",
+      "human_approval_required": true
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "clutch",
+      "parent_factory": "bike",
+      "leader": "clutch-section-lead",
+      "specialists": [
+        "slipper-mechanism",
+        "engine-brake-coupling",
+        "clutch-evidence"
+      ],
+      "required_evidence": [
+        "reviewed_manual",
+        "component_configuration",
+        "measured_telemetry"
+      ],
+      "execution_status": "planned",
+      "human_approval_required": true
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "ergonomics",
+      "parent_factory": "bike",
+      "leader": "ergonomics-section-lead",
+      "specialists": [
+        "rider-triangle",
+        "controls-fit",
+        "posture-evidence"
+      ],
+      "required_evidence": [
+        "reviewed_manual",
+        "component_configuration",
+        "measured_telemetry"
+      ],
+      "execution_status": "planned",
+      "human_approval_required": true
+    }
+  ]
+}
