@@ -1,5 +1,9 @@
 {
+  "functions": {
+    "api/chassis-proxy.js": { "maxDuration": 30, "memory": 1024 }
+  },
   "rewrites": [
+    { "source": "/api/telemetry/:path*", "destination": "/api/chassis-proxy?__chassis_path=:path*" },
     { "source": "/pit-wall/assets/:path*", "destination": "/assets/:path*" },
     { "source": "/pit-wall/favicon.svg", "destination": "/favicon.svg" },
     { "source": "/(.*)", "destination": "/index.html" }
