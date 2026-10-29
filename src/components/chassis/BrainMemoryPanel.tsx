@@ -1,4 +1,4 @@
-import {useEffect,useId,useRef,useState,useSyncExternalStore} from 'react';
+import {useEffect,useId,useRef,useState,useSyncExternalStore,useMemo} from 'react';
 import type {EngineeringSession} from '../../domain/engineeringSession';
 import topology from '../../domain/bikeTopology.json';
 import {createBrainNote,listBrainNotes,type BrainContext,type BrainNote} from '../../services/brainMemory';
@@ -23,11 +23,14 @@ function BrainEditor({session,writable}:{session:EngineeringSession;writable:boo
  const [reload,setReload]=useState(0);
  const operation=useRef<string|null>(null),epoch=useRef(0),draftBinding=useRef<string|null>(null);const selected=topology.sections.find(s=>s.id===section);
  const ref=factory==='network'?null:session[factory];
- const context:BrainContext|null=ref?{subject_key:factory+':catalog-'+ref.id+':r'+ref.revision,...(factory==='championship'?{season:session.championship_season,category:session.championship_category}:{})}:null;
- const scope=factory==='network'?['network']:factory==='bike'?[factory,...(section?[section]:[]),...(specialist?[specialist]:[])]:[factory];
+ const refId=ref?.id??null,refRevision=ref?.revision??null;
+ const season=factory==='championship'?(session.championship_season??null):null;
+ const category=factory==='championship'?(session.championship_category??null):null;
+ const context=useMemo<BrainContext|null>(()=>refId?{subject_key:factory+':catalog-'+refId+':r'+refRevision,...(factory==='championship'?{season,category}:{})}:null,[factory,refId,refRevision,season,category]);
+ const scope=useMemo(()=>factory==='network'?['network']:factory==='bike'?[factory,...(section?[section]:[]),...(specialist?[specialist]:[])]:[factory],[factory,section,specialist]);
  const binding=JSON.stringify([scope,context]);const staleDraft=!!text.trim()&&draftBinding.current!==binding;const available=factory==='network'||!!ref;
  useEffect(()=>{markDirty(!!text.trim(),'brain-note');return()=>markDirty(false,'brain-note');},[text,markDirty]);
- useEffect(()=>{const abort=new AbortController();const current=++epoch.current;setItems([]);setCursor(null);setError('');setSaved('');setLoading(available);if(available){listBrainNotes(scope,context,{includeAncestors:true,signal:abort.signal}).then(page=>{if(current===epoch.current){setItems(page.items);setCursor(page.next_cursor);}}).catch(e=>{if(!abort.signal.aborted&&current===epoch.current)setError(e instanceof Error?e.message:'No se pudo cargar Brain');}).finally(()=>{if(current===epoch.current)setLoading(false);});}return()=>{abort.abort();epoch.current++;};},[binding,available,reload]);
+ useEffect(()=>{const abort=new AbortController();const current=++epoch.current;setItems([]);setCursor(null);setError('');setSaved('');setSaving(false);setLoading(available);if(available){listBrainNotes(scope,context,{includeAncestors:true,signal:abort.signal}).then(page=>{if(current===epoch.current){setItems(page.items);setCursor(page.next_cursor);}}).catch(e=>{if(!abort.signal.aborted&&current===epoch.current)setError(e instanceof Error?e.message:'No se pudo cargar Brain');}).finally(()=>{if(current===epoch.current)setLoading(false);});}return()=>{abort.abort();epoch.current=current+1;};},[scope,context,available,reload]);
  function change(action:()=>void){requestLeave(()=>{setText('');operation.current=null;setSaved('');action();});}
  async function loadMore(){const current=epoch.current;setLoading(true);setError('');try{const page=await listBrainNotes(scope,context,{includeAncestors:true,...(cursor?{cursor}:{})});if(current===epoch.current){setItems(old=>[...old,...page.items.filter(n=>!old.some(o=>o.id===n.id))]);setCursor(page.next_cursor);}}catch(e){if(current===epoch.current)setError(e instanceof Error?e.message:'No se pudo cargar Brain');}finally{if(current===epoch.current)setLoading(false);}}
  async function save(){if(!text.trim()||saving||staleDraft||!available)return;const current=epoch.current;operation.current??=crypto.randomUUID();setSaving(true);setError('');setSaved('');try{const note=await createBrainNote({scope:{path:scope},context,text,related_entries:[]},operation.current);if(current===epoch.current){setItems(old=>[note,...old.filter(n=>n.id!==note.id)]);setText('');operation.current=null;setSaved('Nota guardada en Brain.');}}catch(e){if(current===epoch.current)setError(e instanceof Error?e.message:'No se pudo guardar la nota');}finally{if(current===epoch.current)setSaving(false);}}
