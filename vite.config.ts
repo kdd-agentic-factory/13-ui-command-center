@@ -4,9 +4,11 @@ import {readFileSync} from 'node:fs';
 import {resolve} from 'node:path';
 import react from '@vitejs/plugin-react';
 import {applyCommercialCsp} from './scripts/commercial-csp.mjs';
+import {telemetryProxyTarget} from './scripts/telemetry-proxy.mjs';
 
 export default defineConfig(({ mode, command }) => {
   const env=loadEnv(mode,process.cwd(),'VITE_');
+  const serverEnv=loadEnv(mode,process.cwd(),'TDS_');
   const profile=env.VITE_PRODUCT_PROFILE??(command==='build'?'chassis':'local-development');
   if(!['chassis','local-development'].includes(profile))throw new Error('Unknown product delivery profile');
   if(profile==='chassis'&&env.VITE_TELEMETRY_URL&&env.VITE_TELEMETRY_URL!=='/api/telemetry')throw new Error('Commercial telemetry must use the same-origin perimeter');
@@ -25,8 +27,8 @@ export default defineConfig(({ mode, command }) => {
   base: '/pit-wall/',
   server: {
     proxy: {
-      '/api/telemetry': { target: 'http://127.0.0.1:8180', changeOrigin: true,
-        headers: { 'X-API-Key': loadEnv(mode, process.cwd(), 'TDS_').TDS_API_KEY ?? '' },
+      '/api/telemetry': { target: telemetryProxyTarget(serverEnv), changeOrigin: true, secure: true,
+        headers: { 'X-API-Key': serverEnv.TDS_API_KEY ?? '' },
         rewrite: path => path.replace(/^\/api\/telemetry/, '') },
     },
   },
