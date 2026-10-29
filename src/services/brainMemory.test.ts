@@ -11,3 +11,5 @@ describe('Brain team/context transport',()=>{
  it('discards a response after identity changes',async()=>{mock.fetch.mockImplementation(async()=>{mock.identity.generation++;return new Response(JSON.stringify({items:[],next_cursor:null}));});await expect(listBrainNotes(scope,context)).rejects.toThrow();});
  it('keeps deliberate operation on save and refuses mismatched text',async()=>{mock.fetch.mockResolvedValue(new Response(JSON.stringify(record())));await createBrainNote({scope:{path:scope},context:{...context},text:'Synthetic note.',related_entries:[]},'55555555-5555-4555-8555-555555555555');const request=JSON.parse(mock.fetch.mock.calls[0][1].body);expect(request.operation_id).toBe('55555555-5555-4555-8555-555555555555');});
 });
+
+it('discards a body whose identity changes while JSON is read',async()=>{const response=new Response(JSON.stringify({items:[],next_cursor:null}));vi.spyOn(response,'json').mockImplementation(async()=>{mock.identity.generation++;return {items:[],next_cursor:null};});mock.fetch.mockResolvedValue(response);await expect(listBrainNotes(scope,context)).rejects.toThrow(/Cambió/);});
