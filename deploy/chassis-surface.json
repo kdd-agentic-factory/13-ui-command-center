@@ -123,6 +123,26 @@
     },
     {
       "method": "GET",
+      "pattern": "/api/v1/engineering/knowledge/documents",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/engineering/knowledge/documents/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/engineering/knowledge/documents/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/excerpts",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/engineering/knowledge/documents/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/source",
+      "access": "team"
+    },
+    {
+      "method": "GET",
       "pattern": "/api/v1/engineering/proposals/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
       "access": "team"
     },
@@ -323,6 +343,16 @@
     },
     {
       "method": "POST",
+      "pattern": "/api/v1/engineering/knowledge/documents",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/engineering/knowledge/documents/reconcile",
+      "access": "team"
+    },
+    {
+      "method": "POST",
       "pattern": "/api/v1/engineering/proposals/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/applications",
       "access": "team"
     },
@@ -392,5 +422,5 @@
       "access": "team"
     }
   ],
-  "sha256": "5cd29ead062eb497c068ac989d9ea6a537b247d4f4797d04c3032b150c295273"
+  "sha256": "dba96809505eb9baf97abf725da557428f267045e716928b916e0f4887159a14"
 }
