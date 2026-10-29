@@ -3,6 +3,15 @@ import {readFileSync} from 'node:fs';
 import {applyCommercialCsp} from '../scripts/commercial-csp.mjs';
 
 describe('commercial identity CSP',()=>{
+ it('hosted CSP permits current identity and removes obsolete destinations',()=>{
+  const config=JSON.parse(readFileSync('vercel.json','utf8'));
+  const csp=config.headers.flatMap((entry: {headers: {key:string;value:string}[]})=>entry.headers).find((entry: {key:string})=>entry.key==='Content-Security-Policy').value;
+  const connections=csp.split(';').map((part:string)=>part.trim()).find((part:string)=>part.startsWith('connect-src '));
+  expect(connections).toBe("connect-src 'self' https://czdpamk9.eu-central.insforge.app");
+  expect(csp).not.toContain('vdf553wq');
+  expect(csp).not.toContain('kdd-rjz');
+  expect(csp).not.toContain('https://*.posthog.com');
+ });
  it('uses configured identity and removes historical service permissions',()=>{
   const html=applyCommercialCsp(readFileSync('index.html','utf8'),{VITE_INSFORGE_URL:'https://czdpamk9.eu-central.insforge.app'});
   expect(html).toContain("connect-src 'self' https://czdpamk9.eu-central.insforge.app;");
