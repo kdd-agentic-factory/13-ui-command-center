@@ -45,7 +45,7 @@ describe('engineering preparation over strict human transport',()=>{
     expect(screen.getByText(/Sin grabación asociada/)).toBeInTheDocument();
   });
   it('keeps race independent from recorded provenance and allows blank catalogs',async()=>{
-    const {state}=transport();state.catalog={circuit:[],bike:[],rider:[]};view();
+    const {state}=transport();state.catalog={circuit:[],bike:[],rider:[],championship:[]};view();
     await screen.findByText(/Catálogo de circuito vacío/);
     fireEvent.change(screen.getByLabelText('Nombre de sesión'),{target:{value:'Carrera grabada'}});
     fireEvent.change(screen.getByLabelText('Tipo de sesión'),{target:{value:'race'}});
@@ -78,4 +78,36 @@ describe('engineering preparation over strict human transport',()=>{
     expect(screen.getByRole('option',{name:/Circuito medido · r1/})).toBeInTheDocument();
     expect(screen.queryByRole('option',{name:'Circuito medido · r3'})).not.toBeInTheDocument();
   });
+});
+
+it('saves championship season and category together', async()=>{
+ const {state}=transport();const id=ids.championship;
+ state.catalog.championship=[entity('championship')];view();
+ await screen.findByRole('option',{name:/WorldSBK/});
+ fireEvent.change(screen.getByLabelText(/Nombre de sesi/),{target:{value:'Carrera campeonato'}});
+ fireEvent.change(screen.getByLabelText('Campeonato'),{target:{value:`${id}:1`}});
+ expect(screen.getByRole('button',{name:'Guardar sesi\u00f3n'})).toBeDisabled();
+ fireEvent.change(screen.getByLabelText('Temporada'),{target:{value:'2026'}});
+ fireEvent.change(screen.getByLabelText('Categor\u00eda'),{target:{value:'WorldSBK'}});
+ fireEvent.click(screen.getByRole('button',{name:'Guardar sesi\u00f3n'}));
+ await waitFor(()=>expect(state.sessions).toHaveLength(1));
+ expect(state.sessions[0]).toMatchObject({championship:{id,revision:1},championship_season:2026,championship_category:'WorldSBK'});
+ expect(await screen.findByText('Temporada 2026 \u00b7 WorldSBK')).toBeInTheDocument();
+});
+
+it('clears competition fields and preserves legacy payload when championship is removed', async()=>{
+ const {state}=transport();state.catalog.championship=[entity('championship')];view();
+ await screen.findByRole('option',{name:/WorldSBK/});
+ fireEvent.change(screen.getByLabelText(/Nombre de sesi/),{target:{value:'Entreno libre'}});
+ fireEvent.change(screen.getByLabelText('Campeonato'),{target:{value:`${ids.championship}:1`}});
+ fireEvent.change(screen.getByLabelText('Temporada'),{target:{value:'2026'}});
+ fireEvent.change(screen.getByLabelText('Categor\u00eda'),{target:{value:'WorldSBK'}});
+ fireEvent.change(screen.getByLabelText('Campeonato'),{target:{value:''}});
+ expect(screen.queryByLabelText('Temporada')).not.toBeInTheDocument();
+ fireEvent.click(screen.getByRole('button',{name:'Guardar sesi\u00f3n'}));
+ await waitFor(()=>expect(state.sessions).toHaveLength(1));
+ const payload=state.writes.find(item=>item.path==='/sessions')!.body.body;
+ expect(payload).not.toHaveProperty('championship');
+ expect(payload).not.toHaveProperty('championship_season');
+ expect(payload).not.toHaveProperty('championship_category');
 });

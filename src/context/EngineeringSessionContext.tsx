@@ -5,10 +5,10 @@ import { telemetryScope } from '../services/telemetryIdentity';
 import * as api from '../services/engineeringSession';
 import { useWorkspaceDraft } from './WorkspaceDraftContext';
 
-const kinds:CatalogKind[]=['circuit','bike','rider'];
+const kinds:CatalogKind[]=['circuit','bike','rider','championship'];
 type Catalog = Record<CatalogKind,CatalogRevision[]>;
 type CreateAttempt = { fingerprint:string; operation_id:string };
-const blankCatalog=():Catalog=>({circuit:[],bike:[],rider:[]});
+const blankCatalog=():Catalog=>({circuit:[],bike:[],rider:[],championship:[]});
 interface SessionContext {
   scope:string; workspaceEpoch:number; session:EngineeringSession|null; sessions:EngineeringSession[]; catalog:Catalog; historical:Partial<Record<CatalogKind,CatalogRevision>>;
   loading:boolean; busy:boolean; error:string; conflict:boolean; sessionCursor:string|null; catalogCursors:Record<CatalogKind,string|null>;
@@ -26,7 +26,7 @@ export function EngineeringSessionProvider({children}:{children:ReactNode}) {
   const [scope,setScope]=useState(telemetryScope),[session,setSession]=useState<EngineeringSession|null>(null),[sessions,setSessions]=useState<EngineeringSession[]>([]),[catalog,setCatalog]=useState<Catalog>(blankCatalog),[historical,setHistorical]=useState<SessionContext['historical']>({});
   const [loading,setLoading]=useState(true),[busy,setBusy]=useState(false),[error,setError]=useState(''),[conflict,setConflict]=useState(false),[association,setAssociation]=useState<WorkspaceAssociation|null>(null),[bridgeLoading,setBridgeLoading]=useState(false);
   const [workspaceEpoch,setWorkspaceEpoch]=useState(0);
-  const [sessionCursor,setSessionCursor]=useState<string|null>(null),[catalogCursors,setCatalogCursors]=useState<Record<CatalogKind,string|null>>({circuit:null,bike:null,rider:null});
+  const [sessionCursor,setSessionCursor]=useState<string|null>(null),[catalogCursors,setCatalogCursors]=useState<Record<CatalogKind,string|null>>({circuit:null,bike:null,rider:null,championship:null});
   const epoch=useRef(0),selectionEpoch=useRef(0),sourceEpoch=useRef(0),current=useRef<EngineeringSession|null>(null),controllers=useRef(new Set<AbortController>()),bridgeController=useRef<AbortController|null>(null);
   const selectionControllers=useRef(new Set<AbortController>());
   const createAttempt=useRef<CreateAttempt|null>(null),catalogAttempts=useRef(new Map<CatalogKind,CreateAttempt>());

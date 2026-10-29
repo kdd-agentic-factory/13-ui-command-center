@@ -3,7 +3,7 @@
   "routes": [
     {
       "method": "DELETE",
-      "pattern": "/api/v1/engineering/catalog/(circuit|bike|rider)/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+      "pattern": "/api/v1/engineering/catalog/(circuit|bike|rider|championship)/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
       "access": "team"
     },
     {
@@ -113,12 +113,12 @@
     },
     {
       "method": "GET",
-      "pattern": "/api/v1/engineering/catalog/(circuit|bike|rider)",
+      "pattern": "/api/v1/engineering/catalog/(circuit|bike|rider|championship)",
       "access": "team"
     },
     {
       "method": "GET",
-      "pattern": "/api/v1/engineering/catalog/(circuit|bike|rider)/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+      "pattern": "/api/v1/engineering/catalog/(circuit|bike|rider|championship)/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
       "access": "team"
     },
     {
@@ -318,7 +318,7 @@
     },
     {
       "method": "POST",
-      "pattern": "/api/v1/engineering/catalog/(circuit|bike|rider)",
+      "pattern": "/api/v1/engineering/catalog/(circuit|bike|rider|championship)",
       "access": "team"
     },
     {
@@ -373,7 +373,7 @@
     },
     {
       "method": "PUT",
-      "pattern": "/api/v1/engineering/catalog/(circuit|bike|rider)/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+      "pattern": "/api/v1/engineering/catalog/(circuit|bike|rider|championship)/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
       "access": "team"
     },
     {
@@ -392,5 +392,5 @@
       "access": "team"
     }
   ],
-  "sha256": "e4d9f9f1b13acc0ea876183a92f13333a8f5e6720995edcf43e030ee4ffcf459"
+  "sha256": "5cd29ead062eb497c068ac989d9ea6a537b247d4f4797d04c3032b150c295273"
 }

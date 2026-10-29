@@ -1,4 +1,4 @@
-export type CatalogKind = 'circuit' | 'bike' | 'rider';
+export type CatalogKind = 'circuit' | 'bike' | 'rider' | 'championship';
 export interface EngineeringReference { id: string; revision: number }
 export interface CatalogInput { name: string; notes: string }
 export interface CatalogRevision extends CatalogInput, EngineeringReference {
@@ -10,6 +10,7 @@ export interface EngineeringSessionInput {
   name: string; session_type: keyof typeof sessionTypes; other_label: string | null;
   provenance: 'live' | 'recorded' | 'sample' | 'synthetic';
   circuit: EngineeringReference | null; bike: EngineeringReference | null; rider: EngineeringReference | null; notes: string;
+  championship?: EngineeringReference | null; championship_season?: number | null; championship_category?: string | null;
 }
 export interface EngineeringSession extends EngineeringSessionInput, EngineeringReference {
   schema_version: '1.0.0'; team_id: string | null; created_by: string | null; created_at: string;
@@ -32,9 +33,9 @@ export interface WorkspaceAssociation {
 export const emptySession = (): EngineeringSessionInput => ({ name: '', session_type: 'practice', other_label: null, provenance: 'recorded', circuit: null, bike: null, rider: null, notes: '' });
 export function sessionInput(session: EngineeringSession): EngineeringSessionInput {
   const { name, session_type, other_label, provenance, circuit, bike, rider, notes } = session;
-  return { name, session_type, other_label, provenance, circuit, bike, rider, notes };
+  return { name, session_type, other_label, provenance, circuit, bike, rider, notes, ...(session.championship ? {championship:session.championship,championship_season:session.championship_season,championship_category:session.championship_category} : {}) };
 }
-export const referenceValue = (ref: EngineeringReference | null) => ref ? `${ref.id}:${ref.revision}` : '';
+export const referenceValue = (ref: EngineeringReference | null | undefined) => ref ? `${ref.id}:${ref.revision}` : '';
 
 export type AnalysisTaskState='queued'|'running'|'succeeded'|'blocked_missing_inputs'|'unavailable'|'failed'|'timed_out'|'cancelled';
 export type AnalysisRunState='running'|'sealed'|'cancelled'|'failed';

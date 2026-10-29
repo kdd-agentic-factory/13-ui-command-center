@@ -57,3 +57,15 @@ describe('hosted telemetry perimeter',()=>{
   const output=response();await handle(request('/api/telemetry/api/v1/chassis/status'),output);expect(output.code).toBe(502);
  });
 });
+
+it('allows the reviewed championship catalog route without opening private worker routes',async()=>{
+ const fetcher=vi.fn(async()=>new Response('{}'));
+ const handle=createHostedTelemetry(manifest,'https://api.example.test',fetcher);
+ const res=response();
+ await handle(request('/api/telemetry/api/v1/engineering/catalog/championship','POST','{}'),res);
+ expect(res.code).toBe(200);
+ expect((fetcher.mock.calls[0] as unknown as [string,RequestInit])[0]).toBe('https://api.example.test/api/v1/engineering/catalog/championship');
+ const denied=response();
+ await handle(request('/api/telemetry/api/v1/engineering/internal/championship','POST','{}'),denied);
+ expect(denied.code).toBe(404);expect(fetcher).toHaveBeenCalledTimes(1);
+});
