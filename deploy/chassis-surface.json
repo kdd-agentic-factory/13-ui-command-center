@@ -148,6 +148,11 @@
     },
     {
       "method": "GET",
+      "pattern": "/api/v1/engineering/knowledge/documents/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/review",
+      "access": "team"
+    },
+    {
+      "method": "GET",
       "pattern": "/api/v1/engineering/knowledge/documents/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/source",
       "access": "team"
     },
@@ -368,6 +373,11 @@
     },
     {
       "method": "POST",
+      "pattern": "/api/v1/engineering/knowledge/reviews",
+      "access": "team"
+    },
+    {
+      "method": "POST",
       "pattern": "/api/v1/engineering/proposals/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/applications",
       "access": "team"
     },
@@ -437,5 +447,5 @@
       "access": "team"
     }
   ],
-  "sha256": "bebfc89e904ac5353d12a873f1370292dcc85efcf2694a17774fb1a4a8aa4bee"
+  "sha256": "071411c705fc126b352e0f61b01ac874090764b828b2c40103a4f657333f3f62"
 }
