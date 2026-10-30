@@ -164,3 +164,18 @@ def test_v2_alias_is_allowed_only_to_its_exact_content_blob(tmp_path,external):
         with pytest.raises(ValueError):m.verify_model_artifacts(root,model)
     else:
         assert m.verify_model_artifacts(root,model)['manifest_sha256']==checksum
+
+def test_model_runtime_layout_requires_precreated_readonly_mount_directories(tmp_path):
+    m=module();root=tmp_path/'model-runtime';root.mkdir()
+    (root/'blobs').mkdir();(root/'manifests-v2').mkdir()
+    with pytest.raises((ValueError,OSError)):m.verify_model_runtime_layout(root)
+    assert not (root/'manifests').exists()
+    (root/'manifests').mkdir()
+    assert m.verify_model_runtime_layout(root)=={'scope':'model_runtime_directory_layout','directories':['blobs','manifests','manifests-v2'],'verified':True}
+
+
+def test_model_runtime_layout_rejects_a_file_instead_of_index_directory(tmp_path):
+    m=module();root=tmp_path/'model-runtime';root.mkdir()
+    for directory in ['blobs','manifests-v2']:(root/directory).mkdir()
+    (root/'manifests').write_text('not a directory')
+    with pytest.raises(ValueError):m.verify_model_runtime_layout(root)

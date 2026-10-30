@@ -8,7 +8,7 @@ import subprocess
 import time
 from uuid import UUID, uuid4
 
-from prepare_real_acceptance import ORIGIN, prepare, safe_path, verify_model_artifacts
+from prepare_real_acceptance import ORIGIN, prepare, safe_path, verify_model_artifacts, verify_model_runtime_layout
 
 HERE = Path(__file__).resolve().parent
 ROOT = Path('/home/ubuntu/chassis-preproduction')
@@ -133,6 +133,7 @@ def run(config, anon_key):
         report['gates']['runtime_capacity'] = 'passed'
         report['gates']['local_model_artifacts'] = 'blocked'
         report['model_artifacts'] = verify_model_artifacts(ROOT / 'models', config['model'])
+        report['model_runtime_layout'] = verify_model_runtime_layout(ROOT / 'models')
         report['gates']['local_model_artifacts'] = 'passed'
         for role, spec in specs.items():
             image = json.loads(docker(['image', 'inspect', spec['image']]).stdout)[0]

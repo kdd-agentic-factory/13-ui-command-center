@@ -50,6 +50,18 @@ def safe_path(value):
     return path.resolve(strict=True)
 
 
+def verify_model_runtime_layout(root):
+    """Require startup directories before mounting the cache read-only; no writes."""
+    root = safe_path(str(root))
+    directories = ['blobs', 'manifests', 'manifests-v2']
+    for name in directories:
+        path = safe_path(str(root / name))
+        if not path.is_dir():
+            raise ValueError('Precreated model runtime directory required')
+    return {'scope': 'model_runtime_directory_layout',
+            'directories': directories, 'verified': True}
+
+
 def verify_model_artifacts(root, model):
     """Read-only manifest and blob identity gate; never pulls or starts a model."""
     exact(model, {'name', 'digest', 'url'})

@@ -41,3 +41,8 @@ The transfer streamed only manifest-derived model blobs from the existing local 
 Ruling: keep the model candidate separate from the legacy runner's fixed `models` directory. Provisioning assets satisfies artifact availability only and must not silently switch the old file-based acceptance configuration or imply Postgres/Storage acceptance. The model is not yet connected to a running candidate service.
 
 This closes remaining gate1 above for artifact provisioning. Gates2–5 remain open, including image/source freeze, the current cloud-profile executor, real integrated inference/browser/Chief/substitute acceptance and latency measurement. No deployment, service restart, cloud changes, paid resources or ARGOS modifications occurred. Historical revocation remains pending.
+
+
+## Runtime-layout follow-up
+
+The native actual-model test found that an artifact-valid cache without the empty manifests directory fails under a read-only mount. The operator precreated that directory without changing weights; verify_model_runtime_layout now checks blobs/manifests/manifests-v2 with no writes, and the legacy runner invokes it before starting containers. Two RED→GREEN tests cover absence/no automatic creation and file substitution. Native layout and all model hashes were reverified. Full cold/warm/empty-preload evidence is in chassis-native-local-ai-acceptance-2026-10-30.md; actual provider cold timeout remains distinct from the successful preloaded synthetic contract.
