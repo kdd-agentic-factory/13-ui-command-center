@@ -1,0 +1,99 @@
+{
+  "scope": "synthetic_real_ai_and_public_human_workflows",
+  "candidate_acceptance": false,
+  "deployment": false,
+  "synthetic_only": true,
+  "measured_physics_validated": false,
+  "run_id": "7a55ecff-0d32-515b-a64f-2b0683775604",
+  "api_image": "sha256:7799b8696ebbd1eee21639d6b6180a5fb855037e821e165dfdc2bd8ac5421ce2",
+  "model_calls": 5,
+  "model_transport_seconds": [
+    19.38,
+    12.393,
+    12.409,
+    13.026,
+    38.365
+  ],
+  "worker_pass_seconds": 309.185,
+  "independence": "process_independent_same_model",
+  "task_states": [
+    {
+      "agent": "chassis",
+      "status": "succeeded",
+      "cause": null
+    },
+    {
+      "agent": "track",
+      "status": "blocked_missing_inputs",
+      "cause": "domain_context_not_projected"
+    },
+    {
+      "agent": "weather",
+      "status": "blocked_missing_inputs",
+      "cause": "domain_context_not_projected"
+    },
+    {
+      "agent": "physical",
+      "status": "unavailable",
+      "cause": "domain_context_not_projected"
+    },
+    {
+      "agent": "neuro",
+      "status": "unavailable",
+      "cause": "domain_context_not_projected"
+    },
+    {
+      "agent": "tires-powertrain",
+      "status": "blocked_missing_inputs",
+      "cause": "domain_context_not_projected"
+    },
+    {
+      "agent": "mechanical-check",
+      "status": "succeeded",
+      "cause": null
+    },
+    {
+      "agent": "evidence-quality",
+      "status": "succeeded",
+      "cause": null
+    },
+    {
+      "agent": "alternative-hypotheses",
+      "status": "succeeded",
+      "cause": null
+    }
+  ],
+  "browser_execution": "two separate runs, distinct synthetic proposals; first blocked after Chief completion; resume passed substitute and reader",
+  "reader_scope": "observed form lock and reload; not an exhaustive server authorization audit",
+  "human_receipts": {
+    "chief": {
+      "proposal_id": "c880d8b0-3754-417a-acf3-8203f2488eb2",
+      "decision_id": "0d6dda2c-fef2-4b02-b30f-fa264d7fbe29",
+      "approved_current": true
+    },
+    "substitute": {
+      "proposal_id": "15f680d7-da57-490c-80f9-a905a0b0abf2",
+      "decision_id": "6886bfef-2130-4c3c-8005-08001ea00cfa",
+      "approved_current": true
+    }
+  },
+  "remaining": [
+    "public_session_list_intermittent_500",
+    "full_immutable_candidate_browser_acceptance",
+    "domain_context_cloud_adapter",
+    "independent_AiM_2D_contrast",
+    "historical_key_revocation",
+    "public_node_candidate_upgrade_not_deployed"
+  ],
+  "artifact_sha256": {
+    "native-paired-chassis-fixture.json": "d011959e84b4c351cf5b213e5978daec519dc2251eab09aa5a6181195d3d6d8a",
+    "native-paired-chassis-worker.json": "240cb981cc04fc6742a6521ebbc081c3dec06e67fde7fd08d29bf06290be3b3e",
+    "native-paired-chassis-progress.json": "109fa5a96fd3b0a98a606cb6e4a9337cdda0cddfba46dd16819b3d9ef8da94a6",
+    "native-paired-proposal-validation.json": "3afb4b3fdfe85d869c062586a8790e6b33244624fccf2d0ef6a65f8449e79db4",
+    "native-public-chief-browser-acceptance.json": "a49f5a63ee6b7b7ac56776d55201a0560fad7681e6b7c22cba7fa8a220072d86",
+    "native-public-substitute-browser-resume.json": "41e75babf59019557c44ffa957d88169d9e662341b1cdb37b19f037dfec129a8",
+    "native-paired-post-browser-authority.json": "4692c82f8dfbf1d90424fc85f44aaeaa108d152eadfb3e975352d5dc7cadc9b4",
+    "native-old-post-browser-authority.json": "be1032cee0639b4bb5be72d1c00b61ce37a39cb0fd3bd6326d18a3b21166eb8e",
+    "native-public-role-session-list.json": "21f2da50c26f057daca2519d51adef23e149b2fa63e500df33a67c47e350e573"
+  }
+}
