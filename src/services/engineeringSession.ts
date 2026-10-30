@@ -101,3 +101,13 @@ export async function readWorkspaceAssociation(session:EngineeringSession, recor
       comparison:run?ref(run.id,run.version??1):null,setup_a:run?.setup_a?ref(run.setup_a.id,run.setup_a.version):bound?ref(bound.id,bound.version):null,
       setup_b:run?.setup_b?ref(run.setup_b.id,run.setup_b.version):null,binding:binding?.id?ref(binding.id,binding.version??1):null,calibration:null,validation:null,environment:null} };
 }
+
+export type DocumentaryFactorySources={factory:'bike'|'circuit'|'rider'|'championship';components:string[]};
+export async function prepareSnapshotSources(snapshotId:string,digest:string,factories:DocumentaryFactorySources[],operation_id:string,signal?:AbortSignal){
+ const identity=identitySnapshot();
+ if(identity.mode!=='authenticated'||!identity.user||!identity.team||!canonical(snapshotId)||!canonical(operation_id)||!/^[a-f0-9]{64}$/.test(digest))throw new Error('Contexto documental verificado requerido');
+ const plan=await post<{schema_version:string;snapshot_id:string;snapshot_digest:string;team_id:string;actor_id:string;operation_id:string;binding_ids:string[];review_version:number;on:string;factories:DocumentaryFactorySources[]}>('/knowledge/snapshot-plans',{snapshot_id:snapshotId,operation_id,factories},signal);
+ const normalized=(items:DocumentaryFactorySources[])=>JSON.stringify([...items].sort((a,b)=>a.factory.localeCompare(b.factory)));
+ if(plan.schema_version!=='1.0.0'||plan.snapshot_id!==snapshotId||plan.snapshot_digest!==digest||plan.team_id!==identity.team||plan.actor_id!==identity.user||plan.operation_id!==operation_id||!Array.isArray(plan.binding_ids)||plan.binding_ids.length!==factories.length||plan.binding_ids.some(id=>!canonical(id))||new Set(plan.binding_ids).size!==plan.binding_ids.length||!Number.isInteger(plan.review_version)||plan.review_version<1||!/^\d{4}-\d{2}-\d{2}$/.test(plan.on)||!Array.isArray(plan.factories)||normalized(plan.factories)!==normalized(factories))throw new Error('Plan documental de otro contexto o incompatible; inicio bloqueado');
+ return plan;
+}

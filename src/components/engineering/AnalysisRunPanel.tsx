@@ -1,7 +1,8 @@
+import bikeTopology from '../../domain/bikeTopology.json';
 import {DomainReportCoverage} from '../chassis/domains/DomainCoverage';
 import type {DomainReference} from '../../domain/domainEvidence';
 import {engineeringLabel as label,EngineeringIdentifier} from './engineeringPresentation';
-import {useEffect,useRef,useState} from 'react';
+import {useEffect,useRef,useState,type MutableRefObject} from 'react';
 import {useEngineeringSession} from '../../context/EngineeringSessionContext';
 import {useWorkspaceDraft} from '../../context/WorkspaceDraftContext';
 import type {AnalysisRun,CurrentValidity,EngineeringReference,EngineeringReport,HumanEvent,SynthesisProgress,StoredProposal} from '../../domain/engineeringSession';
@@ -15,16 +16,19 @@ import {HistoricalValidationPanel} from './HistoricalValidationPanel';
 import {ReportInputRequests} from './InputRequests';
 import {isReadingView,type WorkView,type AnalysisPresentation} from '../../domain/chassisWorkViews';
 import '../../styles/engineering.css';
+const documentaryNames={bike:'Moto',circuit:'Circuito',rider:'Piloto',championship:'Campeonato'};
+const documentaryComponents:Record<api.DocumentaryFactorySources['factory'],string[]>={bike:bikeTopology.sections.map(section=>section.id),circuit:['layout','surface','weather','racing-line','track-evidence'],rider:['riding-technique','ergonomics','rider-feedback','rider-evidence'],championship:['technical-regulations','sporting-regulations','homologation','amendments','interpretation-review']};
+const documentaryLabels:Record<string,string>={suspension:'Suspensión',engine:'Motor',electronics:'Electrónica',chassis:'Chasis',aerodynamics:'Aerodinámica',tires:'Neumáticos',brakes:'Frenos',clutch:'Embrague',ergonomics:'Ergonomía',layout:'Trazado',surface:'Asfalto',weather:'Meteorología','racing-line':'Trazada','track-evidence':'Evidencia de pista','riding-technique':'Técnica de pilotaje','rider-feedback':'Comentarios del piloto','rider-evidence':'Evidencia del piloto','technical-regulations':'Reglamento técnico','sporting-regulations':'Reglamento deportivo',homologation:'Homologación',amendments:'Enmiendas','interpretation-review':'Revisión de interpretación'};
 const message=(e:unknown)=>e instanceof Error?e.message:'No se pudo consultar el análisis';
-type StartAttempt={snapshotOperation:string;runOperation:string;snapshotId:string|null;retryOf:string|null};
+type StartAttempt={snapshotOperation:string;runOperation:string;snapshotId:string|null;retryOf:string|null;documentaryOperation:string;snapshotDigest:string;factories:api.DocumentaryFactorySources[];documentaryReady:boolean};
 interface PresentationProps {workView?:WorkView;contextKey?:string;onPresentation?:(state:AnalysisPresentation)=>void;suspensionAnalyses?:{id:string;revision:number;digest:string}[];domainContexts?:DomainReference[]}
 export function AnalysisRunPanel(props:PresentationProps={}){
-  const context=useEngineeringSession();const [generation,setGeneration]=useState(0);
+  const context=useEngineeringSession();const [generation,setGeneration]=useState(0);const preparationGuard=useRef<string|null>(null);
   useEffect(()=>{const reset=()=>setGeneration(g=>g+1);window.addEventListener('telemetry-scope-changed',reset);return()=>window.removeEventListener('telemetry-scope-changed',reset);},[]);
   const key=`${context.scope}:${generation}:${context.workspaceEpoch}:${context.session?.id}:${context.session?.revision}:${JSON.stringify(context.association?.selection??null)}:${JSON.stringify(props.suspensionAnalyses??null)}:${JSON.stringify(props.domainContexts??null)}`;
-  return <AnalysisWorkspace key={key} {...props}/>;
+  return <AnalysisWorkspace key={key} {...props} preparationKey={key} preparationGuard={preparationGuard}/>;
 }
-function AnalysisWorkspace({workView='engineer',contextKey='',onPresentation,suspensionAnalyses,domainContexts}:PresentationProps){
+function AnalysisWorkspace({workView='engineer',contextKey='',onPresentation,suspensionAnalyses,domainContexts,preparationKey,preparationGuard}:PresentationProps&{preparationKey:string;preparationGuard:MutableRefObject<string|null>}){
   const engineering=useEngineeringSession(),session=engineering.session,identity=identitySnapshot();
   const {isDirty}=useWorkspaceDraft();
   const prepared=!!session&&engineering.association?.session_id===session.id&&engineering.association.session_revision===session.revision&&!engineering.loading&&!engineering.busy&&!engineering.bridgeLoading&&!isDirty;
@@ -33,6 +37,8 @@ function AnalysisWorkspace({workView='engineer',contextKey='',onPresentation,sus
   const [snapshotInfo,setSnapshotInfo]=useState<{analyzable:boolean;blocked_reasons:string[]}|null>(null);
   const [events,setEvents]=useState<HumanEvent[]>([]),[cursor,setCursor]=useState<string|null>(null),[recovery,setRecovery]=useState(false),[eventsLoaded,setEventsLoaded]=useState(false),[pageCursor,setPageCursor]=useState<string|undefined>(undefined);
   const [report,setReport]=useState<EngineeringReport|null>(null),[loading,setLoading]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState(''),[eventError,setEventError]=useState(''),[reportError,setReportError]=useState(''),[ambiguousStart,setAmbiguousStart]=useState(false),[reconcileBlocked,setReconcileBlocked]=useState(false),[reconcileStatus,setReconcileStatus]=useState('');
+  const [priorPreparation,setPriorPreparation]=useState(!!preparationGuard.current&&preparationGuard.current!==preparationKey);
+  const [documentary,setDocumentary]=useState(false),[factory,setFactory]=useState<api.DocumentaryFactorySources['factory']>('bike'),[component,setComponent]=useState('suspension');
   const [resolutionNote,setResolutionNote]=useState(''),[resolutionEvidence,setResolutionEvidence]=useState('');
   const presentationReadOnly=isReadingView(workView);
   const presentationStatus:AnalysisPresentation['status']=loading?'unknown':error||snapshotInfo?.analyzable===false||(stored&&(!validity?.current||validity.reasons.length>0))?'blocked':run?.status==='running'?'running':stored?'review':'idle';
@@ -75,7 +81,7 @@ function AnalysisWorkspace({workView='engineer',contextKey='',onPresentation,sus
   useEffect(()=>{const update=()=>{if(document.visibilityState==='visible'&&active)void refresh();};const timer=window.setInterval(update,5000);document.addEventListener('visibilitychange',update);return()=>{window.clearInterval(timer);document.removeEventListener('visibilitychange',update);};},[active]);
   useEffect(()=>()=>{printFrame.current?.remove();printFrame.current=null;},[report]);
   async function start(retry=false){
-    if(!session||!engineering.association||!prepared||pending.current||!canWriteTelemetry()||run?.status==='running'||reconcileBlocked)return;
+    if(!session||!engineering.association||!prepared||pending.current||!canWriteTelemetry()||run?.status==='running'||reconcileBlocked||priorPreparation)return;
     pending.current=true;setBusy(true);setError('');const g=epoch.current,c=ownController();
     let creating=false;
     try{
@@ -89,14 +95,16 @@ function AnalysisWorkspace({workView='engineer',contextKey='',onPresentation,sus
         if(persistedStatus.current==='running')return;
       }
       creating=true;
-      if(!startAttempt.current)startAttempt.current={snapshotOperation:crypto.randomUUID(),runOperation:crypto.randomUUID(),snapshotId:null,retryOf:retry?run?.run_id??null:null};
+      if(!startAttempt.current)startAttempt.current={snapshotOperation:crypto.randomUUID(),runOperation:crypto.randomUUID(),snapshotId:null,retryOf:retry?run?.run_id??null:null,documentaryOperation:crypto.randomUUID(),snapshotDigest:'',factories:documentary?[{factory,components:[component]}]:[],documentaryReady:false};
       const attempt=startAttempt.current;
-      if(!attempt.snapshotId){const selection={...engineering.association.selection,...(domainContexts?.length?{domain_contexts:domainContexts}:{}),...(suspensionAnalyses?.length?{suspension_analyses:suspensionAnalyses}:{})};const snapshot=await api.createAnalysisSnapshot(session.id,session.revision,selection,attempt.snapshotOperation,c.signal);if(!same(g,c))return;attempt.snapshotId=snapshot.id;setSnapshotInfo({analyzable:snapshot.analyzable,blocked_reasons:snapshot.blocked_reasons});}
+      if(attempt.factories.length)preparationGuard.current=preparationKey;
+      if(!attempt.snapshotId){const selection={...engineering.association.selection,...(domainContexts?.length?{domain_contexts:domainContexts}:{}),...(suspensionAnalyses?.length?{suspension_analyses:suspensionAnalyses}:{})};const snapshot=await api.createAnalysisSnapshot(session.id,session.revision,selection,attempt.snapshotOperation,c.signal);if(!same(g,c))return;attempt.snapshotId=snapshot.id;attempt.snapshotDigest=snapshot.snapshot_digest;setSnapshotInfo({analyzable:snapshot.analyzable,blocked_reasons:snapshot.blocked_reasons});}
+      if(attempt.factories.length&&!attempt.documentaryReady){await api.prepareSnapshotSources(attempt.snapshotId,attempt.snapshotDigest,attempt.factories,attempt.documentaryOperation,c.signal);if(!same(g,c))return;attempt.documentaryReady=true;}
       const next=await api.startAnalysisRun(session.id,attempt.snapshotId,session.revision,attempt.runOperation,attempt.retryOf,c.signal);if(!same(g,c))return;
-      startAttempt.current=null;setAmbiguousStart(false);loadedRun.current=next.run_id;setRun(next);setProgress(null);setStored(null);setValidity(null);setReport(null);void refresh();
+      startAttempt.current=null;preparationGuard.current=null;setAmbiguousStart(false);loadedRun.current=next.run_id;setRun(next);setProgress(null);setStored(null);setValidity(null);setReport(null);void refresh();
     }catch(e){if(same(g,c)){
       setError(message(e));
-      if(creating){const conflict=e instanceof api.EngineeringRequestError&&e.status===409;const ambiguous=!(e instanceof api.EngineeringRequestError)||e.status>=500;setAmbiguousStart(ambiguous);if(!ambiguous)startAttempt.current=null;if(conflict){setReconcileBlocked(identity.mode==='authenticated');await refresh();engineering.reload();if(same(g,c))setError(message(e));}}
+      if(creating){const conflict=e instanceof api.EngineeringRequestError&&e.status===409;const ambiguous=!(e instanceof api.EngineeringRequestError)||e.status>=500;setAmbiguousStart(ambiguous);if(!ambiguous){startAttempt.current=null;preparationGuard.current=null;}if(conflict){setReconcileBlocked(identity.mode==='authenticated');await refresh();engineering.reload();if(same(g,c))setError(message(e));}}
       else setReconcileBlocked(true);
     }}finally{controllers.current.delete(c);if(same(g,c)){pending.current=false;setBusy(false);}}
   }
@@ -113,7 +121,7 @@ function AnalysisWorkspace({workView='engineer',contextKey='',onPresentation,sus
     finally{controllers.current.delete(c);if(same(g,c)){pending.current=false;setBusy(false);}}
   }
   async function cancel(){if(!run||pending.current||!canWriteTelemetry())return;pending.current=true;setBusy(true);setError('');readVersion.current++;readController.current?.abort();reading.current=false;setLoading(false);const g=epoch.current,c=ownController();
-    try{const next=await api.cancelAnalysisRun(run.run_id,c.signal);if(same(g,c)){setRun(next);setStored(null);setValidity(null);setProgress(null);setReport(null);startAttempt.current=null;setAmbiguousStart(false);}}
+    try{const next=await api.cancelAnalysisRun(run.run_id,c.signal);if(same(g,c)){setRun(next);setStored(null);setValidity(null);setProgress(null);setReport(null);startAttempt.current=null;preparationGuard.current=null;setAmbiguousStart(false);}}
     catch(e){if(same(g,c)){setError(message(e));setValidity(null);}}finally{controllers.current.delete(c);if(same(g,c)){pending.current=false;setBusy(false);}}
   }
   async function buildReport(){if(!session||pending.current)return;pending.current=true;setBusy(true);setReportError('');const g=epoch.current,c=ownController();
@@ -137,7 +145,15 @@ function AnalysisWorkspace({workView='engineer',contextKey='',onPresentation,sus
   }
   if(!session)return <section className="engineering-analysis"><h2>Análisis y decisión</h2><p>Selecciona una sesión de ingeniería guardada para iniciar o recuperar un análisis.</p></section>;
   return <section className="engineering-analysis" aria-label="Análisis y decisión"><div className="engineering-header"><div><h2>Análisis y decisión</h2><p>Snapshot persistido → especialistas y revisión → propuesta → decisión humana. La aplicación y validación se registran por separado.</p></div><span>{run?`Ejecución ${label(run.status)}`:'Sin ejecución persistida'}</span></div>
-    <div hidden={presentationReadOnly} className="engineering-actions"><button className="btn" disabled={busy||loading||!prepared||!canWriteTelemetry()||!!active||ambiguousStart||reconcileBlocked} onClick={()=>void start(false)}>Iniciar análisis</button><button className="btn" disabled={busy||loading} onClick={()=>{void refresh();void loadEvents(undefined,true);}}>Recargar análisis y autoridad</button>{run&&['running','sealed'].includes(run.status)&&<button className="btn" disabled={busy||!canWriteTelemetry()} onClick={()=>void cancel()}>Cancelar ejecución</button>}{run&&!['running','sealed'].includes(run.status)&&<button className="btn" disabled={busy||!prepared||!canWriteTelemetry()||ambiguousStart||reconcileBlocked} onClick={()=>void start(true)}>Reintentar como nueva ejecución</button>}{identity.mode==='authenticated'&&!ambiguousStart&&<button className="btn" disabled={busy||!canWriteTelemetry()} onClick={()=>void reconcile()}>Reconciliar inicios persistidos</button>}{ambiguousStart&&<button className="btn" disabled={busy||!prepared} onClick={()=>void start()}>Recuperar inicio pendiente</button>}</div>
+    {priorPreparation&&!presentationReadOnly&&<div role="status"><p>Hay una preparación documental sin confirmar de otro contexto. No se iniciará un análisis sin sus requisitos. Descártala explícitamente antes de preparar un nuevo snapshot; el servidor reconciliará cualquier ejecución existente.</p><button className="btn" disabled={busy} onClick={()=>{preparationGuard.current=null;setPriorPreparation(false);setDocumentary(true);}}>Descartar preparación del contexto anterior</button></div>}
+    {!presentationReadOnly&&<fieldset className="engineering-documentary" disabled={busy||!!active||ambiguousStart||priorPreparation||identity.mode!=='authenticated'||!canWriteTelemetry()}>
+      <legend>Fuentes para el próximo análisis</legend>
+      <label><input type="checkbox" checked={documentary} onChange={e=>setDocumentary(e.target.checked)}/> Exigir fuentes documentales revisadas</label>
+      <p>El servidor verifica la documentación antes de admitir el trabajo. Esta opción aún no incorpora textos a los prompts ni autoriza cambios mecánicos.</p>
+      {documentary&&<div className="engineering-actions"><label>Factoría documental<select value={factory} onChange={e=>{const next=e.target.value as api.DocumentaryFactorySources['factory'];setFactory(next);setComponent(documentaryComponents[next][0]);}}>{Object.entries(documentaryNames).map(([id,name])=><option key={id} value={id}>{name}</option>)}</select></label><label>Sección documental<select value={component} onChange={e=>setComponent(e.target.value)}>{documentaryComponents[factory].map(id=><option key={id} value={id}>{documentaryLabels[id]??id}</option>)}</select></label></div>}
+      {identity.mode!=='authenticated'&&<p>Requiere una sesión autenticada y un equipo activo.</p>}
+    </fieldset>}
+    <div hidden={presentationReadOnly} className="engineering-actions"><button className="btn" disabled={busy||loading||!prepared||!canWriteTelemetry()||!!active||ambiguousStart||reconcileBlocked||priorPreparation} onClick={()=>void start(false)}>Iniciar análisis</button><button className="btn" disabled={busy||loading} onClick={()=>{void refresh();void loadEvents(undefined,true);}}>Recargar análisis y autoridad</button>{run&&['running','sealed'].includes(run.status)&&<button className="btn" disabled={busy||!canWriteTelemetry()} onClick={()=>void cancel()}>Cancelar ejecución</button>}{run&&!['running','sealed'].includes(run.status)&&<button className="btn" disabled={busy||!prepared||!canWriteTelemetry()||ambiguousStart||reconcileBlocked||priorPreparation} onClick={()=>void start(true)}>Reintentar como nueva ejecución</button>}{identity.mode==='authenticated'&&!ambiguousStart&&<button className="btn" disabled={busy||!canWriteTelemetry()} onClick={()=>void reconcile()}>Reconciliar inicios persistidos</button>}{ambiguousStart&&<button className="btn" disabled={busy||!prepared} onClick={()=>void start()}>Recuperar inicio pendiente</button>}</div>
     {reconcileStatus&&<p role="status">{reconcileStatus}</p>}
     {isDirty&&<p>Guarda o descarta los cambios del workspace antes de iniciar un análisis sobre revisiones persistidas.</p>}
     {snapshotInfo&&<div><p>Snapshot: {snapshotInfo.analyzable?'entradas analizables según el servidor':'entradas bloqueadas; la ejecución no acredita un diagnóstico'}.</p><ul>{snapshotInfo.blocked_reasons.map(reason=><li key={reason}>{reason}</li>)}</ul></div>}

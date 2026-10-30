@@ -327,3 +327,42 @@ it('leaves request budget for human actions during a minute of active analysis',
  // Polling alone must leave at least 20 requests for reads and decisions.
  expect(fetcher.mock.calls.length).toBeLessThanOrEqual(40);
 });
+
+for(const failure of [0,422,503])it(`prepares documentary requirements before starting, preserving retries (${failure})`,async()=>{
+ state.context.association={session_id:ids.session,session_revision:1,selection:{recordings:[]}};
+ const writes:{path:string;body:any}[]=[];let plans=0,current:any=null;
+ vi.stubGlobal('fetch',vi.fn(async(input,init)=>{
+  const path=String(input);if(path.endsWith('/runs/reconcile'))return reply({session_id:ids.session,starts:[]});
+  if(init?.method==='POST'){
+   const body=JSON.parse(String(init.body));writes.push({path,body});
+   if(path.endsWith('/snapshots'))return reply({id:ids.comparison,session_id:ids.session,session_revision:1,snapshot_digest:'a'.repeat(64),analyzable:true,blocked_reasons:[]});
+   if(path.endsWith('/snapshot-plans')){plans++;if(failure&&plans===1)return reply({detail:'Documentary preparation unavailable'},failure);return reply({schema_version:'1.0.0',snapshot_id:ids.comparison,snapshot_digest:'a'.repeat(64),team_id:state.identity.team,actor_id:state.identity.user,operation_id:body.operation_id,binding_ids:[ids.b],review_version:1,on:'2026-10-30',factories:body.factories});}
+   if(path.endsWith('/runs')){current=run;return reply(run);}
+  }
+  if(path.endsWith('/runs/current'))return reply({run:current});if(path.endsWith('/synthesis'))return reply({status:'not_requested',proposal_id:null,report:null});return reply({items:[],next_cursor:null,recovery_unavailable:false});
+ }));
+ render(<AnalysisRunPanel/>);
+ fireEvent.click(screen.getByRole('checkbox',{name:'Exigir fuentes documentales revisadas'}));
+ await waitFor(()=>expect(screen.getByRole('button',{name:'Iniciar análisis'})).toBeEnabled());
+ fireEvent.click(screen.getByRole('button',{name:'Iniciar análisis'}));
+ if(failure){
+  await screen.findByRole('alert');expect(writes.some(w=>w.path.endsWith('/runs'))).toBe(false);
+  if(failure===422)return;
+  expect(screen.getByLabelText('Factoría documental')).toBeDisabled();
+  fireEvent.click(screen.getByRole('button',{name:'Recuperar inicio pendiente'}));
+ }
+ await waitFor(()=>expect(writes.some(w=>w.path.endsWith('/runs'))).toBe(true));
+ expect(writes[0].path).toMatch(/\/snapshots$/);expect(writes[1].path).toMatch(/\/snapshot-plans$/);
+ expect(writes[1].body.factories).toEqual([{factory:'bike',components:['suspension']}]);
+ expect(writes.filter(w=>w.path.endsWith('/snapshots'))).toHaveLength(1);
+ if(failure===503)expect(writes[2]).toEqual(writes[1]);
+});
+
+it('blocks a fresh legacy start after a documentary attempt loses its context',async()=>{
+ state.context.association={session_id:ids.session,session_revision:1,selection:{recordings:[]}};
+ const writes:string[]=[];
+ vi.stubGlobal('fetch',vi.fn(async(input,init)=>{const path=String(input);if(path.endsWith('/runs/reconcile'))return reply({session_id:ids.session,starts:[]});if(init?.method==='POST'){writes.push(path);if(path.endsWith('/snapshots'))return reply({id:ids.comparison,session_id:ids.session,session_revision:1,snapshot_digest:'a'.repeat(64),analyzable:true,blocked_reasons:[]});return reply({detail:'Ambiguous preparation'},503);}if(path.endsWith('/runs/current'))return reply({run:null});return reply({items:[],next_cursor:null,recovery_unavailable:false});}));
+ const app=render(<AnalysisRunPanel/>);fireEvent.click(screen.getByRole('checkbox',{name:'Exigir fuentes documentales revisadas'}));await waitFor(()=>expect(screen.getByRole('button',{name:'Iniciar análisis'})).toBeEnabled());fireEvent.click(screen.getByRole('button',{name:'Iniciar análisis'}));await screen.findByRole('button',{name:'Recuperar inicio pendiente'});
+ state.context={...state.context,workspaceEpoch:1};await act(async()=>{app.rerender(<AnalysisRunPanel/>);});
+ expect(screen.getByRole('button',{name:'Iniciar análisis'})).toBeDisabled();expect(screen.getByRole('button',{name:'Descartar preparación del contexto anterior'})).toBeEnabled();expect(writes.some(path=>path.endsWith('/runs'))).toBe(false);
+});
