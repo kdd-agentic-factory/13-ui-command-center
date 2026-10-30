@@ -90,3 +90,43 @@ def test_runtime_objects_fail_closed(tmp_path,kind):
     elif kind=='audit':entry['audit']['X-Actor-ID']='someone'
     elif kind=='duplicate':b['runs'].append(entry.copy())
     with pytest.raises(ValueError):m.validate_runtime_objects(cfg,d,b)
+
+def write_runtime_files(cfg):
+    import json
+    descriptor,bindings=runtime_objects(cfg)
+    for name,obj in [('descriptor',descriptor),('worker_bindings',bindings)]:
+        Path(cfg['cloud_files'][name]).write_text(json.dumps(obj),encoding='utf-8')
+
+
+def test_runtime_file_gate_reads_only_configuration_not_secrets(tmp_path,monkeypatch):
+    import os
+    m=module();cfg=cloud_config(tmp_path);write_runtime_files(cfg)
+    original=os.open;opened=[]
+    def checked(path,*args,**kwargs):
+        assert str(path) in {cfg['cloud_files']['descriptor'],cfg['cloud_files']['worker_bindings']}
+        opened.append(str(path));return original(path,*args,**kwargs)
+    monkeypatch.setattr(os,'open',checked)
+    result=m.verify_runtime_files(cfg)
+    assert len(opened)==2 and result['scope']=='configuration_files_only'
+    assert result['candidate_acceptance'] is False and result['worker_count']==1
+    assert 'PRIVATE_SENTINEL' not in str(result)
+
+
+@pytest.mark.parametrize('kind',['duplicate','nested_duplicate','oversize','encoding','constant','syntax','changed'])
+def test_runtime_file_gate_rejects_unsafe_json_and_mutation(tmp_path,monkeypatch,kind):
+    m=module();cfg=cloud_config(tmp_path);write_runtime_files(cfg)
+    path=Path(cfg['cloud_files']['descriptor'])
+    if kind=='duplicate':path.write_text('{"schema_version":"1.0.0","schema_version":"SENSITIVE_SENTINEL"}')
+    elif kind=='nested_duplicate':Path(cfg['cloud_files']['worker_bindings']).write_text('{"model":{"name":"a","name":"SENSITIVE_SENTINEL"}}')
+    elif kind=='oversize':path.write_bytes(b' '*65537)
+    elif kind=='encoding':path.write_bytes(b'\xffSENSITIVE_SENTINEL')
+    elif kind=='constant':path.write_text('{"x":NaN}')
+    elif kind=='syntax':path.write_text('SENSITIVE_SENTINEL')
+    else:
+        original=m.validate_runtime_objects
+        def mutate(*args):
+            result=original(*args);path.write_text('{}');return result
+        monkeypatch.setattr(m,'validate_runtime_objects',mutate)
+    with pytest.raises(ValueError) as error:m.verify_runtime_files(cfg)
+    assert str(error.value)=='Cloud runtime configuration rejected'
+    assert error.value.__suppress_context__

@@ -34,3 +34,16 @@ The configured worker principal must be a writable member of one of the two decl
 A failing test first exposed the absent validator. Fourteen additional cases cover a valid object pair and rejection of path/origin/field/CORS/region substitution, incorrect worker key paths/model/timeouts (including NaN), foreign identities, readers, audit mismatch and duplicate entries. Focused suites now pass68 Windows tests (5 POSIX skips) and70 isolated Linux tests (3 Node probe skips); container removed and no cloud calls or host ports.
 
 The function does not read files, parse the DSN or contact a provider. The executor must still perform bounded JSON parsing with duplicate-field rejection, verify private input identities around use, load restricted Postgres/Storage configuration inside the isolated runtime, and run the integrated gates. The object validator is not yet connected to a launcher. No acceptance or deployment is claimed.
+
+
+## Follow-up: bounded configuration-file gate
+
+`verify_runtime_files` connects the file paths to the object validator. After metadata validation it opens only the descriptor and worker-bindings JSON, using read-only/nonblocking descriptors and no-follow where supported. It reads at most65,537 bytes per file to enforce the64KiB limit, requires UTF-8, rejects duplicate fields at every depth and rejects nonfinite JSON constants. No DSN, token, Storage key or account payload is opened.
+
+Device/inode/size/modification time/owner/mode/link count are checked against the opened handle and again for all explicitly supplied base/cloud inputs after object validation; POSIX additionally checks change time. Windows path-stat and descriptor-stat report different ctime semantics on this runtime, so Windows does not compare that field. This was demonstrated with synthetic test files before correcting the cross-platform identity tuple. Native UID/mode checks remain POSIX-only.
+
+All errors are normalized to a fixed suppressed-context message, without parser excerpts or paths. The successful report contains no parsed bodies and remains `candidate_acceptance=false`. The gate is a preflight, not an atomic handoff: the eventual launcher must retain read-only mounts and recheck identities before use. Restricted DSN/TLS validation and live cloud calls remain separate.
+
+Eight additional tests first failed because the gate was absent, then passed: only the two JSON files opened; duplicate/nested duplicate fields; oversized input; invalid UTF-8; nonfinite constants; invalid syntax; and mutation after object validation. Focused suites: Windows76 passed/5 POSIX skips; Linux78 passed/3 Node probe skips. Linux container removed; no cloud calls or ports. These are controlled-file tests, not a real-credential acceptance run.
+
+No deployment or cloud modification was performed. Historical revocation remains pending.

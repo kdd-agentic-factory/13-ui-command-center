@@ -1,7 +1,8 @@
-"""Metadata-only cloud acceptance preparation; no credential reads or launcher.
+"""Cloud acceptance preflight; no launcher or network access.
 
-Descriptor contents and references must be checked in the isolated runtime before
-any cloud connection. This module never certifies those contents or source images.
+prepare_cloud is metadata-only. verify_runtime_files explicitly reads only the two
+configuration JSON files and checks references, without opening secret payloads.
+Neither function certifies live identity, persistence, inference or source images.
 """
 import os
 
@@ -131,3 +132,64 @@ def validate_runtime_objects(config, descriptor, bindings):
     return {'scope': 'configuration_objects_only', 'descriptor_references': 'verified',
             'worker_count': len(workers), 'live_identity_verified': False,
             'database_verified': False, 'candidate_acceptance': False}
+
+def verify_runtime_files(config):
+    """Read only the two explicit JSON configurations; return no private bodies.
+
+    This is a preflight, not an atomic handoff to the application. The launcher
+    must hold read-only mounts and recheck identities before use.
+    """
+    import json
+    import stat
+
+    def identity(meta):
+        return (meta.st_dev, meta.st_ino, meta.st_size, meta.st_mtime_ns,
+                meta.st_ctime_ns if os.name == "posix" else 0,
+                meta.st_uid, meta.st_mode, meta.st_nlink)
+
+    def unique(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError('Duplicate field')
+            result[key] = value
+        return result
+
+    def reject_constant(value):
+        raise ValueError('Nonfinite JSON constant')
+
+    try:
+        prepare_cloud(config)
+        paths = {('cloud', name): safe_path(path) for name, path in config['cloud_files'].items()}
+        paths.update({('base', name): safe_path(path) for name, path in config['base']['files'].items()})
+        before = {key: identity(path.stat()) for key, path in paths.items()}
+        parsed = {}
+        for name in ('descriptor', 'worker_bindings'):
+            key = ('cloud', name)
+            flags = os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0) | getattr(os, 'O_BINARY', 0)
+            fd = os.open(paths[key], flags)
+            try:
+                metadata = os.fstat(fd)
+                if identity(metadata) != before[key] or not stat.S_ISREG(metadata.st_mode):
+                    raise ValueError('Input changed before read')
+                # A fixed budget also bounds growth after the metadata check.
+                content = bytearray()
+                while len(content) < 65537:
+                    chunk = os.read(fd, min(8192, 65537 - len(content)))
+                    if not chunk:
+                        break
+                    content.extend(chunk)
+                if not 0 < len(content) <= 65536 or identity(os.fstat(fd)) != before[key]:
+                    raise ValueError('Input changed or exceeded bound')
+            finally:
+                os.close(fd)
+            parsed[name] = json.loads(content.decode('utf-8'), object_pairs_hook=unique,
+                                      parse_constant=reject_constant)
+        result = validate_runtime_objects(config, parsed['descriptor'], parsed['worker_bindings'])
+        if any(safe_path(str(path)) != path or identity(path.stat()) != before[key]
+               for key, path in paths.items()):
+            raise ValueError('Inputs changed during configuration verification')
+        return {**result, 'scope': 'configuration_files_only'}
+    except Exception:
+        # Never expose file content, parser excerpts or credential-bearing paths.
+        raise ValueError('Cloud runtime configuration rejected') from None
