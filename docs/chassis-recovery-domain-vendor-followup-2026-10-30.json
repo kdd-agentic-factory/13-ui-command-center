@@ -1,0 +1,82 @@
+{
+  "schema_version": "1.0.0",
+  "scope": "recovery_and_remaining_gap_observation",
+  "candidate_acceptance": false,
+  "deployment": false,
+  "historical_revocation": "pending",
+  "runtime_code_changed": false,
+  "new_test_commit": "5f87817",
+  "checks": {
+    "isolated_recovery_boundary_tests": 158,
+    "separate_process_loss_test": 1,
+    "host_vendor_clock_reference_tests": 41,
+    "public_session_reads": 6,
+    "public_session_500_seen": false,
+    "first_public_read_s": 11.186,
+    "full_process_restore_verified": false,
+    "independent_vendor_exports_verified": false,
+    "domain_cloud_adapter_implemented": false
+  },
+  "artifacts": [
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/chassis-pg-9758d4da43d04237a04a520c36f8d855-result.json",
+      "sha256": "e4ba66b769dd46ae94fa5f74352c529a609a28601c39d0c977af7c56f7770b44"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/chassis-pg-9758d4da43d04237a04a520c36f8d855.log",
+      "sha256": "bd0f5f02a502592dd130f8732609ad49162baf22c89d78fc68c97bea7b8c141d"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/chassis-pg-21cd204453984191a7dfd7f7636bd49a-result.json",
+      "sha256": "3a08068e65e9abeb064256eed0b418c72c04abc22b473ab4a3c62531d4ff0f87"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/chassis-pg-21cd204453984191a7dfd7f7636bd49a.log",
+      "sha256": "ed7a073051e9fc3dd7889c315f986f930017b1c42f6a7f57ad09126523f8584a"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/native-public-session-observation.json",
+      "sha256": "50ca439edee253ff8f689917099f60e24986e4f4260851e1b6ff693a8443a7f7"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/run_recovery_boundary_qa.py",
+      "sha256": "ae2ff4b64e672899f0d15214ccc7a5e9247b5688f5146db9655fbddc4abb9a77"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/run_process_crash_qa.py",
+      "sha256": "3cfc5c7f46973161bd66f682a8c0df616dc5b72c919eeffce681d4082264d6cc"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/public_session_observation_probe.py",
+      "sha256": "ca55f02d6bf34380b6bb6fc3e6a54b44ea4eb416a136f73da2cabe9e212ac862"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/run_public_session_observation.py",
+      "sha256": "c425fee3202bee0f319bdce47c7b0d1a0acee9aa37a0555568d3569a985c3997"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/vendor-comparison-regression-20261030.log",
+      "sha256": "0d2545ed5ff1801cd4eb7a1c53444e36a8ca0be2006371baa513588291aac695"
+    },
+    {
+      "path": "../18-telemetry-dataset/src/telemetry_dataset/chassis/domain_evidence/store.py",
+      "sha256": "941b70066c377dfd9aa6a4b935ae239cbf24974483e1cbc81dd7b18cd565d298"
+    },
+    {
+      "path": "../18-telemetry-dataset/src/telemetry_dataset/chassis/domain_evidence/service.py",
+      "sha256": "54ba6cbeb638ad3d215d2b2ee13fa68f4d1a8e964d11712d98dfcc85edbada4c"
+    },
+    {
+      "path": "../18-telemetry-dataset/src/telemetry_dataset/chassis/domain_evidence/projection.py",
+      "sha256": "22df0c6811f873f5f63f40348a3b2dffc33d7ccd58789d248fd6517e084ea2d1"
+    },
+    {
+      "path": "../18-telemetry-dataset/src/telemetry_dataset/persistence/runtime.py",
+      "sha256": "714e7714aca6452382183f4096a73db08481a9d9e7552efe628a227db0f5e0c7"
+    },
+    {
+      "path": "../18-telemetry-dataset/src/telemetry_dataset/chassis/engineering/snapshots.py",
+      "sha256": "806e3ae01d3062bc52e4b8de4c7985b2e4ca1aa07339a0833f91213f6e265fca"
+    }
+  ]
+}
