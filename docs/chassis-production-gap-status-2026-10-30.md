@@ -4,7 +4,7 @@ This is the current acceptance closure list, not a production-readiness declarat
 
 | Gap | Evidence / status | Required closure |
 | --- | --- | --- |
-| Native1.7b model assets | Verified native model/layout; real provider passes after empty preload; cold task times out | Wire readiness/preload and retention before admission; integrated real context acceptance |
+| Native1.7b model assets | Verified native model/layout; real provider passes after empty preload; cold task times out | Readiness helper and native retention check pass; wire full admission/restart handling and integrated real context acceptance |
 | Cloud descriptor references and safe JSON reads | Actual native configuration gate passed; two planned worker bindings | Current API network-none bootstrap passed; bind launcher inputs and perform live integrated acceptance |
 | Restricted database client/TLS | Actual read-only connection passed; restricted role and verified client TLS | Current application bootstrap, durability and isolation together |
 | Private Storage candidate integration | Current candidate real private-document recovery/hash and foreign-object404 pass | Current candidate upload/recovery roundtrip; integrate with actual agent evidence |
