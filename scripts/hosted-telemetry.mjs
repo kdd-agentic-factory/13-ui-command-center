@@ -51,6 +51,10 @@ export function createHostedTelemetry(manifest,origin,fetcher=fetch){
     finally{reader.releaseLock();}
    }
    // Do not propagate cookies, redirects, caching, or provider-internal headers.
+   const trace=upstream.headers.get('x-trace-id');
+   if(trace&&/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(trace))res.setHeader('X-Trace-ID',trace);
+   const retry=upstream.headers.get('retry-after');
+   if([429,503].includes(upstream.status)&&retry&&/^(0|[1-9][0-9]{0,3})$/.test(retry)&&Number(retry)<=3600)res.setHeader('Retry-After',retry);
    res.setHeader('Content-Type',upstream.headers.get('content-type')??'application/json');
    res.status(upstream.status).end(Buffer.concat(chunks));
   }catch(error){return end(error.status===413?413:502,error.status===413?'Request too large':'Telemetry upstream unavailable');}

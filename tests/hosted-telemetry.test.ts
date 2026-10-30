@@ -10,6 +10,17 @@ function request(path:string,method='GET',body=''){
  return Object.assign(Readable.from(body?[Buffer.from(body)]:[]),{url:path,method,headers:{authorization:'Bearer controlled', 'x-team-id':'controlled-team',cookie:'private-cookie','x-api-key':'forbidden'}});
 }
 describe('hosted telemetry perimeter',()=>{
+ it('preserves bounded diagnostic headers on upstream failure without leaking internal headers',async()=>{
+  const trace='a3a4c344-8558-4144-981a-c57061181983';
+  const fetcher=vi.fn(async()=>new Response('{"detail":"Unavailable"}',{status:503,headers:{'x-trace-id':trace,'retry-after':'1','set-cookie':'private','x-internal-node':'private'}}));
+  const res=response();await createHostedTelemetry(manifest,'https://api.example.test',fetcher)(request('/api/telemetry/api/v1/chassis/status'),res);
+  expect(res.code).toBe(503);expect(res.headers['X-Trace-ID']).toBe(trace);expect(res.headers['Retry-After']).toBe('1');
+  expect(res.headers).not.toHaveProperty('set-cookie');expect(res.headers).not.toHaveProperty('x-internal-node');expect(res.headers['Cache-Control']).toBe('no-store');
+ });
+ it.each(['-1','3601','tomorrow'])('drops invalid retry hints and non-UUID diagnostic IDs: %s',async(value)=>{
+  const res=response();await createHostedTelemetry(manifest,'https://api.example.test',async()=>new Response('{}',{status:503,headers:{'x-trace-id':'private-provider-id','retry-after':value}}))(request('/api/telemetry/api/v1/chassis/status'),res);
+  expect(res.headers).not.toHaveProperty('X-Trace-ID');expect(res.headers).not.toHaveProperty('Retry-After');
+ });
  it('routes nested API paths to a concrete function before SPA fallback',()=>{
   const config=JSON.parse(readFileSync('vercel.json','utf8'));
   expect(config.rewrites[0]).toEqual({source:'/api/telemetry/:path*',destination:'/api/chassis-proxy?__chassis_path=:path*'});
