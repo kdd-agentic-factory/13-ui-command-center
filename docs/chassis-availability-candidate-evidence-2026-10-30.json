@@ -1,0 +1,203 @@
+{
+  "scope": "candidate_preproduction_checks",
+  "image_id": "sha256:dce4db5ae23ee934285ba2adc46fcf03c6f3be6624aa6cabfc5d4f9fc3ec4874",
+  "candidate_acceptance": false,
+  "deployment": false,
+  "historical_key_revocation": "pending",
+  "remaining_gates": [
+    "immutable_candidate_full_browser_acceptance",
+    "public_intermittent_500_root_cause",
+    "durable_domain_context_projection",
+    "full_process_recovery",
+    "independent_AiM_2D_reference",
+    "historical_key_revocation",
+    "chief_actionable_measurement_or_abstention_for_unvalidated_source"
+  ],
+  "schema_version": "1.0.0",
+  "sources": {
+    "01": {
+      "git_ref": "7c2cce015bda1c5543e432a2595f49e023114421",
+      "tree_sha256": "34e9ab7b59eab5edc07d38e1dcf15b30e62e5d49fd82f3c59cca9f2a864a1eae",
+      "dirty": false
+    },
+    "02": {
+      "git_ref": "2178894fc647188fc4ab657761d8eaa7966a808c",
+      "tree_sha256": "eb802eadbd2d71c450775343ce969c5ef422e43d1e46f8041778a3592dc33d3b",
+      "dirty": false
+    },
+    "13": {
+      "git_ref": "b23879cb0f6672e3206e30396385d045fae383ec",
+      "tree_sha256": "d50889e26b5d3408488607cdc269e2bb4ef9db688b60200badcb02ab235711c9",
+      "dirty": false
+    },
+    "17": {
+      "git_ref": "cae3d4704805df058ab6bea647585d13762720d1",
+      "tree_sha256": "7fe574dd9cec17b23c2f74155f5fbbf1a891e22d0a2da90e2cefd6646ae34636",
+      "dirty": false
+    },
+    "18": {
+      "git_ref": "9046a788b662721e9854dd22cfcfaaad1919015a",
+      "tree_sha256": "4777c3540eebf131a0ff310aaf7231466d0b35fa96e9d8e29da8b075656109c6",
+      "dirty": false
+    }
+  },
+  "run_id": "b1e84977-dae1-5c7d-bebf-9267d18952da",
+  "proposal_id": "f47f54bf-9d74-42d4-8b92-4434df1230ab",
+  "model_calls": 5,
+  "transport_seconds": [
+    20.197,
+    11.416,
+    11.463,
+    12.103,
+    39.649
+  ],
+  "worker_pass_seconds": 307.862,
+  "task_states": [
+    {
+      "agent": "chassis",
+      "status": "succeeded",
+      "cause": null
+    },
+    {
+      "agent": "track",
+      "status": "blocked_missing_inputs",
+      "cause": "domain_context_not_projected"
+    },
+    {
+      "agent": "weather",
+      "status": "blocked_missing_inputs",
+      "cause": "domain_context_not_projected"
+    },
+    {
+      "agent": "physical",
+      "status": "unavailable",
+      "cause": "domain_context_not_projected"
+    },
+    {
+      "agent": "neuro",
+      "status": "unavailable",
+      "cause": "domain_context_not_projected"
+    },
+    {
+      "agent": "tires-powertrain",
+      "status": "blocked_missing_inputs",
+      "cause": "domain_context_not_projected"
+    },
+    {
+      "agent": "mechanical-check",
+      "status": "succeeded",
+      "cause": null
+    },
+    {
+      "agent": "evidence-quality",
+      "status": "succeeded",
+      "cause": null
+    },
+    {
+      "agent": "alternative-hypotheses",
+      "status": "succeeded",
+      "cause": null
+    }
+  ],
+  "synthesis_status": "succeeded",
+  "publication_status": "blocked_gates",
+  "item_kinds": [
+    "controlled_test"
+  ],
+  "eligibility": {
+    "inputs_valid": true,
+    "branches_sealed": true,
+    "independence_checked": true,
+    "conflicts_resolved": true,
+    "domain_valid": false,
+    "source_valid": false,
+    "blocked_reasons": [
+      {
+        "code": "domain_invalid",
+        "message": "Physical domain or persisted alternatives are not validated."
+      },
+      {
+        "code": "source_not_validated",
+        "message": "Experimental or unknown source cannot support a physical prescription."
+      }
+    ]
+  },
+  "designated_authority": {
+    "chief": {
+      "approvable": false,
+      "rejectable": true,
+      "revision_requestable": true,
+      "authority_available": true,
+      "current": true,
+      "approved_current": false,
+      "reasons": [
+        "proposal_gates_blocked"
+      ]
+    },
+    "substitute": {
+      "approvable": false,
+      "rejectable": true,
+      "revision_requestable": true,
+      "authority_available": true,
+      "current": true,
+      "approved_current": false,
+      "reasons": [
+        "proposal_gates_blocked"
+      ]
+    }
+  },
+  "human_approval": false,
+  "original_node_resumed": true,
+  "evidence": [
+    {
+      "file": "availability-api-candidate.json",
+      "sha256": "e769419088b95b65eaf26138efb10ba10b71966bca5eabe6f8260f2c803c5d2f"
+    },
+    {
+      "file": "native-availability-api-transfer.json",
+      "sha256": "bb9efb11f8513965a94543dff75f8e6f5a59966aa6f90f521283b471df95e32c"
+    },
+    {
+      "file": "native-availability-recovery.json",
+      "sha256": "ca6e1c114e6c934642846e72a2f6315b51e0c44b4817169a633458e96eb4fb92"
+    },
+    {
+      "file": "native-availability-public-reader.json",
+      "sha256": "8b28bb64df18fd6fbef036c4462066086b15c4d2cd0c2f6f6e53a884fc8f895b"
+    },
+    {
+      "file": "native-availability-chassis-fixture.json",
+      "sha256": "8ef37f130730a6fcdfe14969310bf29f82bbd1fbab4d5e2a5c9169ff39628a8c"
+    },
+    {
+      "file": "native-availability-chassis-worker.json",
+      "sha256": "cab2356739ef6f2c695f850ed25ff09df2a5fd04441d1ae4ff53c520c5be4b76"
+    },
+    {
+      "file": "native-availability-chassis-progress.json",
+      "sha256": "f2752bb44ed253519ec76fee8d0a46d51ea040e09d91871d2b91e7b4c1392e87"
+    },
+    {
+      "file": "native-availability-chassis-attempt.json",
+      "sha256": "3e1aae6d9287dd2f8afa9b56704ca00d6cfa775a238738b3e689400cd2d3af8a"
+    },
+    {
+      "file": "native-availability-proposal-validation.json",
+      "sha256": "d9fc5121a509ac97ca8f161bfad1221cc77298983e5d0eba22c2d5d91367622f"
+    },
+    {
+      "file": "native-availability-blocked-proposal-authority.json",
+      "sha256": "954f31b76371b8db9b693c343cd0b3140f23bb536fee26a7e5e45bf22b972a86"
+    },
+    {
+      "file": "insforge-public500-log-classification.json",
+      "sha256": "897aabc79328f9f4602457d301e8ebb216a9255f0749ab65f945d49b0e84e0ca"
+    }
+  ],
+  "interpretation": {
+    "fault_injection": "isolated candidate process only; real provider identity and restricted cloud database for recovery reads",
+    "browser": "published frontend reader login/reload only; not full immutable candidate acceptance",
+    "ai": "real model execution completed; positive measurement-only acceptance failed; blocked physical proposal safety verified separately",
+    "vendor_reference": "synthetic recording and assumed geometry; not independent AiM/2D validation"
+  }
+}
