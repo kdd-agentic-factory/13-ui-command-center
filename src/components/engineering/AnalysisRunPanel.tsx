@@ -149,7 +149,7 @@ function AnalysisWorkspace({workView='engineer',contextKey='',onPresentation,sus
     {!presentationReadOnly&&<fieldset className="engineering-documentary" disabled={busy||!!active||ambiguousStart||priorPreparation||identity.mode!=='authenticated'||!canWriteTelemetry()}>
       <legend>Fuentes para el próximo análisis</legend>
       <label><input type="checkbox" checked={documentary} onChange={e=>setDocumentary(e.target.checked)}/> Exigir fuentes documentales revisadas</label>
-      <p>El servidor verifica la documentación antes de admitir el trabajo. Esta opción aún no incorpora textos a los prompts ni autoriza cambios mecánicos.</p>
+      <p>Exige documentación revisada para el contexto seleccionado. El análisis sigue limitado a la evidencia disponible y no autoriza cambios mecánicos.</p>
       {documentary&&<div className="engineering-actions"><label>Factoría documental<select value={factory} onChange={e=>{const next=e.target.value as api.DocumentaryFactorySources['factory'];setFactory(next);setComponent(documentaryComponents[next][0]);}}>{Object.entries(documentaryNames).map(([id,name])=><option key={id} value={id}>{name}</option>)}</select></label><label>Sección documental<select value={component} onChange={e=>setComponent(e.target.value)}>{documentaryComponents[factory].map(id=><option key={id} value={id}>{documentaryLabels[id]??id}</option>)}</select></label></div>}
       {identity.mode!=='authenticated'&&<p>Requiere una sesión autenticada y un equipo activo.</p>}
     </fieldset>}

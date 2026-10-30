@@ -42,3 +42,11 @@ then rerun42/42 (39 panel +3 response checks),4.75s. Do not describe this as a f
 550-test run. Typecheck and perimeter generation passed; production build passed
 with existing dynamic/static import warnings. Final diff whitespace clean.
 No real inference, public browser identity or deployment acceptance claimed.
+
+
+Coordinated source update: candidate backend now prepares private documentary
+input before local inference and binds its digest to receipts. UI explanatory
+copy no longer states prompts cannot receive sources; describes reviewed context
+and unchanged physical limits. Focused panel/service42/42 passed8.63s. No frontend
+behavior/layout change or deployment. Actual integrated real-identity/source/
+model/Chief acceptance and cold-start latency remain pending in backend ledger.
