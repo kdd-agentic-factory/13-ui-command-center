@@ -95,9 +95,12 @@ def validate_runtime_objects(config, descriptor, bindings):
             or any(descriptor[key] != value for key, value in refs.items())):
         raise ValueError('Exact isolated descriptor references required')
     exact(bindings, {'schema_version', 'model', 'runs'})
-    exact(bindings['model'], {'name', 'timeout_seconds'})
+    version = bindings['schema_version']
+    exact(bindings['model'], {'name', 'timeout_seconds'} | ({'num_threads'} if version == '1.1.0' else set()))
+    if version == '1.1.0' and (type(bindings['model']['num_threads']) is not int or not 1 <= bindings['model']['num_threads'] <= 32):
+        raise ValueError('Explicit bounded private worker threads required')
     timeout = bindings['model']['timeout_seconds']
-    if (bindings['schema_version'] != '1.0.0'
+    if (version not in {'1.0.0', '1.1.0'}
             or bindings['model']['name'] != config['base']['model']['name']
             or type(timeout) not in (int, float) or not math.isfinite(timeout)
             or not 0 < timeout <= 60 or not isinstance(bindings['runs'], list)

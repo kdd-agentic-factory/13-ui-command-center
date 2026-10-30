@@ -11,7 +11,10 @@ def preload_model(model, request_json, *, budget_seconds=60, clock=time.monotoni
     normal requests can replace the preload request's keep_alive duration.
     """
     try:
-        exact(model, {'name', 'digest', 'url'})
+        exact(model, {'name', 'digest', 'url'} | ({'num_threads'} if isinstance(model, dict) and 'num_threads' in model else set()))
+        threads = model.get('num_threads')
+        if 'num_threads' in model and (type(threads) is not int or not 1 <= threads <= 32):
+            raise ValueError('Explicit bounded local thread count required')
         if (not isinstance(model['name'], str) or model['name'] not in MODEL_DIGESTS
                 or model['digest'] != MODEL_DIGESTS[model['name']]
                 or model['url'] != 'http://127.0.0.1:11434'
@@ -43,7 +46,10 @@ def preload_model(model, request_json, *, budget_seconds=60, clock=time.monotoni
                 raise ValueError('Exact model digest unavailable')
 
         exact_model(call('GET', '/api/tags'))
-        loaded = call('POST', '/api/generate', {'model': model['name'], 'stream': False, 'keep_alive': -1})
+        payload = {'model': model['name'], 'stream': False, 'keep_alive': -1}
+        if threads is not None:
+            payload['options'] = {'num_thread': threads}
+        loaded = call('POST', '/api/generate', payload)
         if (loaded.get('model') != model['name'] or loaded.get('done') is not True
                 or loaded.get('response', '') != '' or loaded.get('thinking', '') != ''):
             raise ValueError('Empty model preload required')

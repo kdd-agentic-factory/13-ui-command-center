@@ -110,3 +110,9 @@ The readiness-guarded authorized worker was then exercised. Its container was re
 The investigation also confirms that domain-evidence persistence still uses a local store protected by reject_local_in_cloud; it needs a proper durable cloud adapter, not just extra public route registration. Browser Chief/substitute decisions and full acceptance remain open. No deployment, ARGOS change or paid resource; historical revocation pending.
 
 Operator evidence correction: several throwaway runner copies initially retained the generic local report filename. Exact native run directories had preserved their individual result.json files. The distinct proposal/Storage reports were recovered from those explicit directories and runner output filenames corrected; the positive fixture now has its own native-positive-chassis-fixture.json. No business operations were repeated for that correction.
+
+## Local inference latency follow-up
+
+Frozen-context diagnostics retained all values, units, provenance and uncertainty through declared reversible tuples. Explicit six-thread generation with matching empty preload returned valid decisions in 25.146 and 12.200 seconds (27-second request budget). These were diagnostic source overrides, not immutable-image or integrated acceptance. The first call has limited margin. No worker state was reopened, no deadline extended and no human decision posted.
+
+Private worker model settings 1.1.0 require explicit bounded integer num_threads; legacy 1.0.0 remains closed. Review found no actionable defects. Fresh verification: 79 model/decision/grant tests; 122 isolated database/resource/route tests; 107 Linux readiness/executor tests with three browser probes skipped. The Windows grant subprocess tests passed after selecting the isolated interpreter and sibling source paths. Pending: rebuild immutable API, align versioned bindings and readiness, fresh governed run, then actual browser Chief/substitute acceptance. No deployment.

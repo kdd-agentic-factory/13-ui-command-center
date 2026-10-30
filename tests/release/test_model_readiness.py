@@ -83,3 +83,17 @@ def test_ready_gate_does_not_turn_no_work_into_successful_task():
     async def worker():return False
     result=asyncio.run(m.run_when_model_ready(model(),request,worker))
     assert result['worker_result'] is False and result['readiness']['admission_authorized'] is False
+
+
+def test_preload_uses_the_same_explicit_threads_as_inference():
+    m=module();selected=model()|{'num_threads':6};payloads=[]
+    def request(method,path,payload,timeout):
+        if path=='/api/generate':
+            payloads.append(payload)
+            return {'model':selected['name'],'done':True,'response':''}
+        return {'models':[{'name':selected['name'],'digest':selected['digest']}]}
+    m.preload_model(selected,request)
+    assert payloads==[{'model':selected['name'],'stream':False,'keep_alive':-1,'options':{'num_thread':6}}]
+    assert 'prompt' not in payloads[0]
+    for value in [True,0,33,6.0,'6']:
+        with pytest.raises(ValueError):m.preload_model(model()|{'num_threads':value},request)

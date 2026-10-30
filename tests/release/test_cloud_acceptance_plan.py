@@ -185,3 +185,15 @@ def test_runtime_image_metadata_fails_closed(tmp_path,kind):
         return data
     with pytest.raises(ValueError) as error:m.verify_runtime_images(cfg,browser,inspect)
     assert str(error.value)=='Cloud runtime image metadata rejected'
+
+
+def test_versioned_worker_threads_keep_legacy_contract_closed(tmp_path):
+    m=module();cfg=cloud_config(tmp_path);descriptor,bindings=runtime_objects(cfg)
+    bindings['schema_version']='1.1.0';bindings['model']['num_threads']=6
+    assert m.validate_runtime_objects(cfg,descriptor,bindings)['worker_count']==1
+    bindings['schema_version']='1.0.0'
+    with pytest.raises(ValueError):m.validate_runtime_objects(cfg,descriptor,bindings)
+    bindings['schema_version']='1.1.0'
+    for value in [True,0,33,6.0,'6']:
+        bindings['model']['num_threads']=value
+        with pytest.raises(ValueError):m.validate_runtime_objects(cfg,descriptor,bindings)
