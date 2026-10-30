@@ -60,3 +60,8 @@ A separate pinned-image container connected to the real designated Postgres usin
 Source inventory found01/02/17/18 clean at their current local revisions;13 contained this milestone's pending fixes before commit. No matching image rebuild or new source freeze was performed. Native candidate base-image metadata remains stale and the integrated acceptance stays blocked. The supplied credentials/configuration are not deployed.
 
 Focused verification after these fixes: Windows78 passed/5 POSIX skips; isolated Linux80 passed/3 Node probe skips, container removed. Actual native configuration-file gate passed; actual restricted database read-only gate passed. Neither gate claims private Storage recovery, live agent execution, browser approval or full acceptance.
+
+
+## Runtime compatibility correction
+
+Native loading exposed the HTTPS-only CORS requirement and the unique-control-capability invariant. This fixed-mount acceptance profile now permits exactly one run per process and requires `https://127.0.0.1:3000`; the previous multiple-run/HTTP contract was invalid for the runtime. The broader product dispatcher is unchanged. New one-binding native inputs passed file validation and actual image bootstrap (network none, ASGI health200/anonymous401, container removed). These observations supersede the earlier two-binding preflight as evidence of runtime compatibility. Windows80/Linux82 focused tests pass, with5POSIX/3Node skips respectively. Integrated cloud/model/human acceptance remains pending.

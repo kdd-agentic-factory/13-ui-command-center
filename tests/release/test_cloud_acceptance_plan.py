@@ -61,7 +61,7 @@ def test_cloud_plan_rejects_ambiguous_inputs(tmp_path,kind):
 def runtime_objects(cfg):
     from uuid import uuid4
     refs={name+'_file':'/run/cloud/'+name for name in ('database_dsn','identity_anon_key','authority_key','service_key','storage_key','worker_bindings')}
-    descriptor={'schema_version':'1.0.0','identity_url':cfg['base']['identity_url'],**refs,'identity_ca_file':'/run/cloud/identity_ca','storage_region':'us-east-2','cors_origins':['http://127.0.0.1:3000']}
+    descriptor={'schema_version':'1.0.0','identity_url':cfg['base']['identity_url'],**refs,'identity_ca_file':'/run/cloud/identity_ca','storage_region':'us-east-2','cors_origins':['https://127.0.0.1:3000']}
     team=cfg['base']['teams'][0];actor=team['members']['engineer']
     bindings={'schema_version':'1.0.0','model':{'name':'qwen3:1.7b','timeout_seconds':60},'runs':[{'worker_id':'acceptance-worker','run_id':str(uuid4()),'principal':{'team_id':team['team_id'],'subject_id':actor,'role':'engineer'},'audit':{'X-Actor-ID':actor,'X-Workflow-ID':'acceptance','X-Trace-ID':'acceptance'},'signing_key_file':'/run/cloud/signing_key','control_key_file':'/run/cloud/control_key'}]}
     return descriptor,bindings
@@ -140,3 +140,17 @@ def test_cloud_metadata_allows_bounded_public_ca_bundle(tmp_path):
     m=module();cfg=cloud_config(tmp_path)
     Path(cfg['cloud_files']['identity_ca']).write_bytes(b'PUBLIC_CA_DATA\n'*6000)
     assert m.prepare_cloud(cfg)['candidate_acceptance'] is False
+
+def test_shared_capability_cannot_bind_multiple_runs(tmp_path):
+    from uuid import uuid4
+    import copy
+    m=module();cfg=cloud_config(tmp_path);d,b=runtime_objects(cfg)
+    extra=copy.deepcopy(b['runs'][0]);extra['worker_id']='another-worker';extra['run_id']=str(uuid4());b['runs'].append(extra)
+    with pytest.raises(ValueError):m.validate_runtime_objects(cfg,d,b)
+
+def test_cloud_runtime_requires_https_browser_origin(tmp_path):
+    m=module();cfg=cloud_config(tmp_path);d,b=runtime_objects(cfg)
+    d['cors_origins']=['https://127.0.0.1:3000']
+    assert m.validate_runtime_objects(cfg,d,b)['descriptor_references']=='verified'
+    d['cors_origins']=['http://127.0.0.1:3000']
+    with pytest.raises(ValueError):m.validate_runtime_objects(cfg,d,b)

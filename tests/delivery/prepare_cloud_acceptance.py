@@ -91,7 +91,7 @@ def validate_runtime_objects(config, descriptor, bindings):
     if (descriptor['schema_version'] != '1.0.0'
             or descriptor['identity_url'] != config['base']['identity_url']
             or descriptor['storage_region'] != 'us-east-2'
-            or descriptor['cors_origins'] != ['http://127.0.0.1:3000']
+            or descriptor['cors_origins'] != ['https://127.0.0.1:3000']
             or any(descriptor[key] != value for key, value in refs.items())):
         raise ValueError('Exact isolated descriptor references required')
     exact(bindings, {'schema_version', 'model', 'runs'})
@@ -101,7 +101,7 @@ def validate_runtime_objects(config, descriptor, bindings):
             or bindings['model']['name'] != config['base']['model']['name']
             or type(timeout) not in (int, float) or not math.isfinite(timeout)
             or not 0 < timeout <= 60 or not isinstance(bindings['runs'], list)
-            or not 1 <= len(bindings['runs']) <= 32):
+            or len(bindings['runs']) != 1):
         raise ValueError('Bounded pinned worker configuration required')
     allowed = set()
     for team in config['base']['teams']:
