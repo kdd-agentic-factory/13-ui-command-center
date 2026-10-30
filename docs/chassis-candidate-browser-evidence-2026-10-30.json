@@ -1,0 +1,109 @@
+{
+  "schema_version": "1.0.0",
+  "scope": "immutable_candidate_partial_browser_acceptance",
+  "candidate_acceptance": false,
+  "deployment": false,
+  "historical_revocation": "pending",
+  "api_image": "sha256:f58033fa584e8de523d3283f5280cdec8d01adaa3df20c75b954f3188af3ec6a",
+  "facts": {
+    "readonly_browser_roles_passed": true,
+    "negative_real_identity_checks_passed": true,
+    "second_real_ai_measurement_proposal_published": true,
+    "chief_browser_approval_persisted": true,
+    "chief_decision_id": "96ce24d9-3854-40e2-8dde-02be6d06df17",
+    "substitute_browser_approval": "not_approved; first_attempt_not_reached; resume_attempt_unknown",
+    "browser_reload_acceptance": "blocked_timeout",
+    "workshop_application": false,
+    "resume_attempt": "blocked_without_structured_browser_result; subsequent authority read confirms substitute still pending"
+  },
+  "artifacts": [
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/native-candidate-browser-expired-test-tls.json",
+      "sha256": "beae98c46e2ffdc79166b85b3e5460184ec1d856728bcffd24047c6645447593"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/native-candidate-browser-readonly-pass.json",
+      "sha256": "2ca9d03ae04b2f370c92b49303dd77e1dbf6db2e589dd9b7842e871b50b60174"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/native-candidate-negative-authority-incomplete-request.json",
+      "sha256": "5be46186331501f791f116d45db59bee19cf94f63c38bfbfcd1ee19ff15f1dc1"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/native-candidate-negative-readback.json",
+      "sha256": "68bf1857785df990d9ec631a21aa206f98eb8d00224f2904b492a8ce91bb0e77"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/native-candidate-negative-authority.json",
+      "sha256": "0793399b75c593ba5aea35e3280a85def78d4b262c56e0d67d898f0a5d1efd2d"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/native-substitute-chassis-fixture.json",
+      "sha256": "3387aff6157fe9ac7861d51cb2754148b5062c50c6115d178e7a4e647e7664d7"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/native-substitute-chassis-worker.json",
+      "sha256": "da7c71e21f37dc8f04792510c15ba14142c4bb3538f2358317b1c0678632f42e"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/native-substitute-chassis-progress.json",
+      "sha256": "58a92e4d75410b00f819bd8fabed66886e7ce579542d6c49c5ce902fbadb2e84"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/native-substitute-proposal-validation.json",
+      "sha256": "1384fd9971129cbcd9b7f978cbba2de36064cfac6905d75b224466d56256b1b8"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/native-candidate-browser-approvals.json",
+      "sha256": "497afa23728bdfeb3df9f20eec927969f9b535b29c034fda23416866ded286c9"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/native-candidate-decision-readback.json",
+      "sha256": "7607bb199483253375af59fbede0986eed1ac7b794353ea546c3419ac7e7e142"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/candidate_browser_approval_native.py",
+      "sha256": "83fb3d4f060386a04829e538a127c9d11cbe0649f7b52feaa08628f644883227"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/candidate_approval_browser.cjs",
+      "sha256": "11c647f5a0211546efe5e98c11618007af4adc57c2ad91d2fd88af04f5d3100a"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/run_candidate_browser_approvals.py",
+      "sha256": "54836a7597c0ef08e4e0b551fbec8f6a0e60c5e8d3b8bd159840327c7cdbb0f7"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/candidate_negative_authority_probe.py",
+      "sha256": "6a253352fe3afd77e87978350913e54c365ff858ba5c3b80a0d8e0a22bca4276"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/run_candidate_negative_authority.py",
+      "sha256": "3b954cfa3149dbbc2a0b6d2dfbd8e7de4be01d24c46bd5ac275f191104c4641c"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/candidate_decision_readback_probe.py",
+      "sha256": "f319d7b9acf81f97ba908dff0d4d7c68ec845e704c09cd02dff79c683ecc5ec7"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/run_candidate_decision_readback.py",
+      "sha256": "b894319f5669a47ca34ce81e5eab4a6b4e3d3bd5cb2fc91ae612d416ed0da9df"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/native-candidate-browser-resume.json",
+      "sha256": "f35499381b1d8b3f6b1ff417a9c88a2d74926e1c86bb3fb6462f02a6cc3e656f"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/candidate_resume_browser.cjs",
+      "sha256": "611095a8a76fdf543cf3529ef1b999c86042160753e8fdbb0e5da6a0b85e20b3"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/candidate_browser_resume_native.py",
+      "sha256": "ccb3f35f4758d0be7ddb46457a8a2f0df566c7c49bd1ee51242634bba8e5563c"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/run_candidate_browser_resume.py",
+      "sha256": "45ab346b8cf60de31e17cfc90cbfd03926ed28c6397a9d487c955d7d5dde0a5b"
+    }
+  ]
+}
