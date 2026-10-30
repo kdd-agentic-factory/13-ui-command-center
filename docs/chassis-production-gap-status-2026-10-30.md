@@ -39,3 +39,12 @@ R18 commit2ac660d connects cloud comparison creation/report retrieval and enforc
 Actual positive-context setup passed18 gates through authenticated public routes and private Storage: synthetic context, assumed setups, hash-linked comparison/report and analyzable snapshot. Actual model-backed Chassis execution then timed out (model_deadline_exceeded, model_calls1); acceptance remains blocked on inference latency, not on those comparison routes. Track domain context remains unprojected. Domain-evidence requires a durable cloud adapter; current local store is deliberately blocked in cloud.
 
 Next: diagnose actual prompt/inference/control timings without widening deadlines; port domain-context persistence; complete browser decisions. No deployment. Historical revocation pending.
+
+
+### Bounded persistence availability correction (local candidate only)
+
+The intermittent public session-list500 remains unassigned: controlled candidate/public reads returned200, and a five-read candidate burst also returned200. A separate reproducible defect was confirmed: exhausted transaction slots returned500 for both GET and POST. The candidate now raises a specific persistence availability error for slot exhaustion or connection establishment failure and returns503 with no-store and Retry-After:1. No automatic retry, slot increase, timeout increase or authorization relaxation was introduced.
+
+Independent review found that inheriting ValueError would be intercepted as422 by existing Brain/knowledge/comparison validation wrappers. A regression reproduced the Brain422; the availability error now inherits RuntimeError. Controlled API/Postgres verification:131 passed, two pre-existing pytest configuration warnings, ephemeral Postgres only, no cloud calls or host ports. Tests cover GET/POST exhaustion, one attempt only, sanitized connection failure, capacity recovery, unauthenticated401 and validation-wrapper propagation. Reviewer found no remaining actionable delta issue.
+
+This code is not in the accepted API7799 image or the public deployment. Rebuild/reacceptance and root-cause evidence for the intermittent public500 remain pending. No deployment, human decision replay or historical key revocation.
