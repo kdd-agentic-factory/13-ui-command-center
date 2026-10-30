@@ -57,3 +57,36 @@ def test_cloud_plan_rejects_ambiguous_inputs(tmp_path,kind):
     elif kind=='unknown':cfg['execution_authorized']=True
     elif kind=='legacy_model':cfg['base']['model']['name']='qwen3:0.6b'
     with pytest.raises((ValueError, OSError)):m.prepare_cloud(cfg)
+
+def runtime_objects(cfg):
+    from uuid import uuid4
+    refs={name+'_file':'/run/cloud/'+name for name in ('database_dsn','identity_anon_key','authority_key','service_key','storage_key','worker_bindings')}
+    descriptor={'schema_version':'1.0.0','identity_url':cfg['base']['identity_url'],**refs,'identity_ca_file':'/run/cloud/identity_ca','storage_region':'eu-central-1','cors_origins':['http://127.0.0.1:3000']}
+    team=cfg['base']['teams'][0];actor=team['members']['engineer']
+    bindings={'schema_version':'1.0.0','model':{'name':'qwen3:1.7b','timeout_seconds':60},'runs':[{'worker_id':'acceptance-worker','run_id':str(uuid4()),'principal':{'team_id':team['team_id'],'subject_id':actor,'role':'engineer'},'audit':{'X-Actor-ID':actor,'X-Workflow-ID':'acceptance','X-Trace-ID':'acceptance'},'signing_key_file':'/run/cloud/signing_key','control_key_file':'/run/cloud/control_key'}]}
+    return descriptor,bindings
+
+
+def test_validate_cloud_runtime_references_without_connections(tmp_path):
+    m=module();cfg=cloud_config(tmp_path);descriptor,bindings=runtime_objects(cfg)
+    result=m.validate_runtime_objects(cfg,descriptor,bindings)
+    assert result=={'scope':'configuration_objects_only','descriptor_references':'verified','worker_count':1,'live_identity_verified':False,'database_verified':False,'candidate_acceptance':False}
+
+
+@pytest.mark.parametrize('kind',['path','origin','extra','cors','region','worker_path','model','timeout','foreign','reader','audit','duplicate','nan'])
+def test_runtime_objects_fail_closed(tmp_path,kind):
+    m=module();cfg=cloud_config(tmp_path);d,b=runtime_objects(cfg);entry=b['runs'][0]
+    if kind=='path':d['database_dsn_file']='/run/cloud/../admin'
+    elif kind=='origin':d['identity_url']='https://other.invalid'
+    elif kind=='extra':d['admin_dsn']='secret'
+    elif kind=='cors':d['cors_origins']=['*']
+    elif kind=='region':d['storage_region']='arbitrary'
+    elif kind=='worker_path':entry['control_key_file']='/run/secrets/authority_key'
+    elif kind=='model':b['model']['name']='qwen3:0.6b'
+    elif kind=='timeout':b['model']['timeout_seconds']=61
+    elif kind=='nan':b['model']['timeout_seconds']=float('nan')
+    elif kind=='foreign':entry['principal']['team_id']=cfg['base']['teams'][1]['team_id']
+    elif kind=='reader':entry['principal']['subject_id']=cfg['base']['teams'][0]['members']['reader']
+    elif kind=='audit':entry['audit']['X-Actor-ID']='someone'
+    elif kind=='duplicate':b['runs'].append(entry.copy())
+    with pytest.raises(ValueError):m.validate_runtime_objects(cfg,d,b)

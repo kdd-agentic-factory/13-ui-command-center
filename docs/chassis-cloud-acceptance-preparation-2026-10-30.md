@@ -23,3 +23,14 @@ A failing test first demonstrated the absent cloud contract. Nine new cases now 
 Focused suites: Windows54 passed/5 POSIX cases skipped; isolated Linux56 passed/3 Node browser contract probes skipped (Node absent from Python image). Linux container removed, no cloud calls or host ports. Existing legacy tests remain green.
 
 Historical credential revocation remains pending. No cloud mutation, model start, deployment, image publication or ARGOS modification occurred.
+
+
+## Follow-up: descriptor and worker object validation
+
+`validate_runtime_objects` now checks already bounded/parsed configuration objects before any connection. It requires the fixed identity origin, explicit isolated browser origin, designated Storage region and exact `/run/cloud/` descriptor references. Worker bindings must use the configured pinned model, finite positive timeouts of at most60 seconds, unique worker/run identities and the explicit signing/control mount paths.
+
+The configured worker principal must be a writable member of one of the two declared test teams, with its matching role; a reader, cross-team subject substitution or mismatched audit actor is rejected. These are comparisons against operator-supplied expected identities, not a live membership or authority verification. Agent bindings grant no human approval proof.
+
+A failing test first exposed the absent validator. Fourteen additional cases cover a valid object pair and rejection of path/origin/field/CORS/region substitution, incorrect worker key paths/model/timeouts (including NaN), foreign identities, readers, audit mismatch and duplicate entries. Focused suites now pass68 Windows tests (5 POSIX skips) and70 isolated Linux tests (3 Node probe skips); container removed and no cloud calls or host ports.
+
+The function does not read files, parse the DSN or contact a provider. The executor must still perform bounded JSON parsing with duplicate-field rejection, verify private input identities around use, load restricted Postgres/Storage configuration inside the isolated runtime, and run the integrated gates. The object validator is not yet connected to a launcher. No acceptance or deployment is claimed.

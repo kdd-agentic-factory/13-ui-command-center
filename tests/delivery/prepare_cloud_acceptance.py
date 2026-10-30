@@ -73,3 +73,61 @@ def prepare_cloud(config):
             'Historical credential revocation remains pending',
         ],
     }
+
+def validate_runtime_objects(config, descriptor, bindings):
+    """Check already bounded/parsed objects; no file reads, RPCs or authority grant."""
+    import math
+    import re
+    from uuid import UUID
+
+    prepare_cloud(config)
+    refs = {name + '_file': '/run/cloud/' + name for name in (
+        'database_dsn', 'identity_anon_key', 'authority_key', 'service_key',
+        'storage_key', 'worker_bindings',
+    )}
+    refs['identity_ca_file'] = '/run/cloud/identity_ca'
+    exact(descriptor, {'schema_version', 'identity_url', 'storage_region', 'cors_origins', *refs})
+    if (descriptor['schema_version'] != '1.0.0'
+            or descriptor['identity_url'] != config['base']['identity_url']
+            or descriptor['storage_region'] != 'eu-central-1'
+            or descriptor['cors_origins'] != ['http://127.0.0.1:3000']
+            or any(descriptor[key] != value for key, value in refs.items())):
+        raise ValueError('Exact isolated descriptor references required')
+    exact(bindings, {'schema_version', 'model', 'runs'})
+    exact(bindings['model'], {'name', 'timeout_seconds'})
+    timeout = bindings['model']['timeout_seconds']
+    if (bindings['schema_version'] != '1.0.0'
+            or bindings['model']['name'] != config['base']['model']['name']
+            or type(timeout) not in (int, float) or not math.isfinite(timeout)
+            or not 0 < timeout <= 60 or not isinstance(bindings['runs'], list)
+            or not 1 <= len(bindings['runs']) <= 32):
+        raise ValueError('Bounded pinned worker configuration required')
+    allowed = set()
+    for team in config['base']['teams']:
+        for member, role in [('chief', 'admin'), ('substitute', 'engineer'), ('engineer', 'engineer')]:
+            allowed.add((team['team_id'], team['members'][member], role))
+    workers, runs = set(), set()
+    for entry in bindings['runs']:
+        exact(entry, {'worker_id', 'run_id', 'principal', 'audit', 'signing_key_file', 'control_key_file'})
+        exact(entry['principal'], {'team_id', 'subject_id', 'role'})
+        principal = entry['principal']
+        if (not all(isinstance(principal[k], str) for k in principal)
+                or (principal['team_id'], principal['subject_id'], principal['role']) not in allowed):
+            raise ValueError('Explicit writable test identity required')
+        worker, run = entry['worker_id'], entry['run_id']
+        if (not isinstance(worker, str) or not re.fullmatch(r'[A-Za-z0-9_.:-]{1,128}', worker)
+                or not isinstance(run, str) or str(UUID(run)) != run
+                or worker in workers or run in runs):
+            raise ValueError('Unique canonical worker and run required')
+        workers.add(worker); runs.add(run)
+        exact(entry['audit'], {'X-Actor-ID', 'X-Workflow-ID', 'X-Trace-ID'})
+        if (entry['audit']['X-Actor-ID'] != principal['subject_id']
+                or any(not isinstance(v, str) or not 1 <= len(v) <= 128
+                       or any(ord(c) < 32 or ord(c) == 127 for c in v)
+                       for v in entry['audit'].values())
+                or entry['signing_key_file'] != '/run/cloud/signing_key'
+                or entry['control_key_file'] != '/run/cloud/control_key'):
+            raise ValueError('Exact worker audit and key references required')
+    return {'scope': 'configuration_objects_only', 'descriptor_references': 'verified',
+            'worker_count': len(workers), 'live_identity_verified': False,
+            'database_verified': False, 'candidate_acceptance': False}
