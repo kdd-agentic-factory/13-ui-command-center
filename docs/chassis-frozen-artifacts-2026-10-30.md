@@ -36,3 +36,14 @@ Two acceptance-preparation defects were found and corrected with failing-then-pa
 Focused suites: Windows80 passed/5 POSIX skips; isolated Linux82 passed/3 Node probe skips, QA container removed. The current native acceptance configuration is a fresh owner-only staging directory; previous inputs were not rewritten. Its inherited base-image metadata still needs a final explicit current-image/QA binding before a unified launcher may use it; this bootstrap used the separately verified exact API image.
 
 Remaining: exact browser/QA artifact, bound current-image launcher inputs, live Storage/identity/model flow, admission/generation checks, browser and human Chief/substitute approval, and independent vendor references. Historical key revocation remains explicitly deferred.
+
+
+## Follow-up: exact native browser base available
+
+The official MCR endpoint returned200 for the locked index digest, with amd64/arm64 entries. The amd64 child manifest hash was verified against its descriptor (`cf0daee9…`) and its four compressed layers total929,058,922 bytes; blob HEAD requests all returned200. The largest layer is791,266,357 bytes. These observations establish availability and size, not the cause of the earlier Docker Desktop timeout.
+
+Pulling the unchanged index with explicit linux/amd64 on Chassis-Preproduction succeeded. Native inspection reports the exact index ID/RepoDigest `sha256:5b8f294aff9041b7191c34a4bab3ac270157a28774d4b0660e9743297b697e48`, linux/amd64. The initial operational check incorrectly expected the image's configuration-blob digest as Docker ID; this daemon exposes the index ID. The check was corrected to the locked index/RepoDigest and architecture, without substituting a digest or image version.
+
+The exact base passed a no-network browser smoke with existing read-only Playwright/playwright-core1.61.1 mounts, operator UID1000, read-only root, capabilities dropped, reviewed seccomp hash, no-new-privileges and Chromium sandbox enabled. Chromium149.0.7827.55 successfully clicked a local DOM control and verified its result. No credential mount, host port, external request, trace or screenshot. Container removed. This closes the exact browser base availability and sandbox-start gates, not authenticated application acceptance.
+
+Dependency inventory found Nodev24.17.0 and no `/usr/bin/certutil` in this upstream base. The existing integrated browser script invokes certutil to create the test NSS trust database, so a reviewed derived QA image with a pinned NSS-tools package closure is still required. No certificate-check bypass, ignoreHTTPS option, no-sandbox fallback or borrowed QA version was used. No accounts or approvals were exercised.
