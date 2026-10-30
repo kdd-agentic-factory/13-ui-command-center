@@ -378,6 +378,11 @@
     },
     {
       "method": "POST",
+      "pattern": "/api/v1/engineering/knowledge/snapshot-plans",
+      "access": "team"
+    },
+    {
+      "method": "POST",
       "pattern": "/api/v1/engineering/proposals/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/applications",
       "access": "team"
     },
@@ -447,5 +452,5 @@
       "access": "team"
     }
   ],
-  "sha256": "071411c705fc126b352e0f61b01ac874090764b828b2c40103a4f657333f3f62"
+  "sha256": "5eae51b1e2d560bcfda922ec95dd76fb6c960d1763558a69607a59730cd32097"
 }
