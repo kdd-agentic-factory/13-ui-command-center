@@ -1,0 +1,356 @@
+{
+  "scope": "chief_selection_policy_acceptance",
+  "candidate_acceptance": false,
+  "deployment": false,
+  "policy_version": "1.0.0",
+  "internal_attempt_schema": "1.1.0",
+  "registry_version": "7.63.1",
+  "controlled_tests": {
+    "suite_passed": 63,
+    "focused_after_rebuild_regression_passed": 9,
+    "cloud_calls": false
+  },
+  "historical_selection_check": {
+    "status": "passed",
+    "run_id": "b1e84977-dae1-5c7d-bebf-9267d18952da",
+    "proposal_id": "f47f54bf-9d74-42d4-8b92-4434df1230ab",
+    "selection_check": {
+      "complete_catalog_count": 4,
+      "eligible_count": 2,
+      "eligible_kinds": [
+        "measurement",
+        "measurement"
+      ],
+      "historical_physical_candidates_retained": true
+    }
+  },
+  "first_model_repeat": {
+    "run_id": "8f97109c-ac90-5022-b91d-8dab40312f32",
+    "proposal_id": "1fbf5e6e-daf1-4b8c-8bf0-ffe6e6ab0f86",
+    "synthesis_status": "succeeded",
+    "publication_status": "stale",
+    "item_kinds": [
+      "measurement"
+    ],
+    "eligibility": {
+      "inputs_valid": true,
+      "branches_sealed": true,
+      "independence_checked": true,
+      "conflicts_resolved": true,
+      "domain_valid": true,
+      "source_valid": true,
+      "blocked_reasons": []
+    }
+  },
+  "current_image": {
+    "reference": "kdd-chassis-api:22c78fd8d66263071ad0f2a59183eeecf1ea678600821ea810c2b655db6c474b",
+    "digest": "sha256:f58033fa584e8de523d3283f5280cdec8d01adaa3df20c75b954f3188af3ec6a"
+  },
+  "current_run": "0abc48c8-5829-5602-b7e0-f4988a9cc648",
+  "historical_key_revocation": "pending",
+  "schema_version": "1.0.0",
+  "sources": {
+    "01": {
+      "git_ref": "7c2cce015bda1c5543e432a2595f49e023114421",
+      "tree_sha256": "34e9ab7b59eab5edc07d38e1dcf15b30e62e5d49fd82f3c59cca9f2a864a1eae",
+      "dirty": false
+    },
+    "02": {
+      "git_ref": "2178894fc647188fc4ab657761d8eaa7966a808c",
+      "tree_sha256": "eb802eadbd2d71c450775343ce969c5ef422e43d1e46f8041778a3592dc33d3b",
+      "dirty": false
+    },
+    "13": {
+      "git_ref": "05f810873b1b10b11705156f12980d9cd8c0a765",
+      "tree_sha256": "d50889e26b5d3408488607cdc269e2bb4ef9db688b60200badcb02ab235711c9",
+      "dirty": false
+    },
+    "17": {
+      "git_ref": "cae3d4704805df058ab6bea647585d13762720d1",
+      "tree_sha256": "7fe574dd9cec17b23c2f74155f5fbbf1a891e22d0a2da90e2cefd6646ae34636",
+      "dirty": false
+    },
+    "18": {
+      "git_ref": "f4ea77831173ef11a2d5fb82caf93c9abc065dec",
+      "tree_sha256": "589bbc924d576c192be16cdebd39fafb80a9d26e716627390e978fdbca2a1823",
+      "dirty": false
+    }
+  },
+  "final_validation": {
+    "status": "passed",
+    "run_id": "0abc48c8-5829-5602-b7e0-f4988a9cc648",
+    "proposal_id": "0c197f40-21a5-478d-bbd3-0f30fcb7aa64",
+    "publication_status": "published",
+    "eligibility": {
+      "inputs_valid": true,
+      "branches_sealed": true,
+      "independence_checked": true,
+      "conflicts_resolved": true,
+      "domain_valid": true,
+      "source_valid": true,
+      "blocked_reasons": []
+    },
+    "item_kinds": [
+      "measurement"
+    ],
+    "source_status": [
+      "unknown"
+    ],
+    "external_validation": false,
+    "selection_receipt": {
+      "schema_version": "1.1.0",
+      "policy_version": "1.0.0",
+      "candidate_digest": "56765282c72bcd5a67c57d70853b5502147e7a4759673ea83a48b35366574dd9",
+      "eligible_count": 2,
+      "eligible_kinds": [
+        "measurement",
+        "measurement"
+      ]
+    },
+    "designated_authority": {
+      "chief": {
+        "approvable": true,
+        "rejectable": true,
+        "revision_requestable": true,
+        "authority_available": true,
+        "current": true,
+        "reasons": []
+      },
+      "substitute": {
+        "approvable": true,
+        "rejectable": true,
+        "revision_requestable": true,
+        "authority_available": true,
+        "current": true,
+        "reasons": []
+      }
+    },
+    "task_states": [
+      {
+        "agent": "chassis",
+        "status": "succeeded",
+        "cause": null
+      },
+      {
+        "agent": "track",
+        "status": "blocked_missing_inputs",
+        "cause": "domain_context_not_projected"
+      },
+      {
+        "agent": "weather",
+        "status": "blocked_missing_inputs",
+        "cause": "domain_context_not_projected"
+      },
+      {
+        "agent": "physical",
+        "status": "unavailable",
+        "cause": "domain_context_not_projected"
+      },
+      {
+        "agent": "neuro",
+        "status": "unavailable",
+        "cause": "domain_context_not_projected"
+      },
+      {
+        "agent": "tires-powertrain",
+        "status": "blocked_missing_inputs",
+        "cause": "domain_context_not_projected"
+      },
+      {
+        "agent": "mechanical-check",
+        "status": "succeeded",
+        "cause": null
+      },
+      {
+        "agent": "evidence-quality",
+        "status": "succeeded",
+        "cause": null
+      },
+      {
+        "agent": "alternative-hypotheses",
+        "status": "succeeded",
+        "cause": null
+      }
+    ],
+    "gates": [
+      {
+        "name": "fixed_origin",
+        "passed": true
+      },
+      {
+        "name": "real_engineer_login",
+        "passed": true
+      },
+      {
+        "name": "existing_authorized_run_read",
+        "passed": true
+      },
+      {
+        "name": "fresh_run_has_tasks",
+        "passed": true
+      },
+      {
+        "name": "synthesis_progress_read",
+        "passed": true
+      },
+      {
+        "name": "proposal_read",
+        "passed": true
+      },
+      {
+        "name": "proposal_schema_valid",
+        "passed": true
+      },
+      {
+        "name": "same_run_snapshot",
+        "passed": true
+      },
+      {
+        "name": "proposal_digest_valid",
+        "passed": true
+      },
+      {
+        "name": "measurement_only",
+        "passed": true
+      },
+      {
+        "name": "external_validation_remains_false",
+        "passed": true
+      },
+      {
+        "name": "no_physical_prescription",
+        "passed": true
+      },
+      {
+        "name": "publication_complete",
+        "passed": true
+      },
+      {
+        "name": "all_six_eligibility_checks",
+        "passed": true
+      },
+      {
+        "name": "one_successful_chief_attempt",
+        "passed": true
+      },
+      {
+        "name": "original_source_status_preserved",
+        "passed": true
+      },
+      {
+        "name": "policy_receipt_version",
+        "passed": true
+      },
+      {
+        "name": "policy_receipt_matches",
+        "passed": true
+      },
+      {
+        "name": "authority_read",
+        "passed": true
+      },
+      {
+        "name": "real_chief_login",
+        "passed": true
+      },
+      {
+        "name": "chief_authority_read",
+        "passed": true
+      },
+      {
+        "name": "chief_approvable_for_measurement_only",
+        "passed": true
+      },
+      {
+        "name": "chief_designation_matches",
+        "passed": true
+      },
+      {
+        "name": "real_substitute_login",
+        "passed": true
+      },
+      {
+        "name": "substitute_authority_read",
+        "passed": true
+      },
+      {
+        "name": "substitute_approvable_for_measurement_only",
+        "passed": true
+      },
+      {
+        "name": "substitute_designation_matches",
+        "passed": true
+      }
+    ]
+  },
+  "model_calls": 5,
+  "transport_seconds": [
+    19.822,
+    11.46,
+    11.707,
+    12.172,
+    34.406
+  ],
+  "worker_pass_seconds": 298.839,
+  "human_approval": false,
+  "original_node_resumed": true,
+  "remaining_gates": [
+    "immutable_candidate_full_browser_acceptance",
+    "public_intermittent_500_root_cause",
+    "durable_domain_context_projection",
+    "full_process_recovery",
+    "independent_AiM_2D_reference",
+    "historical_key_revocation"
+  ],
+  "interpretation": "Real cloud-backed synthetic pipeline and remote designated-authority checks passed. No human decision, no physical prescription, no vendor certification, no deployment. A measurement-only proposal does not validate its source.",
+  "evidence": [
+    {
+      "file": "eligible-chief-api-candidate.json",
+      "sha256": "3bfdf999a659b842cdad4ad86889f309110aefbaee4362f551038b36e1154f46"
+    },
+    {
+      "file": "native-eligible-historical-selection-check.json",
+      "sha256": "65eacd89f85eda9a78e9d83a481ee8c9ecbb23d08f2df736186420317c12524d"
+    },
+    {
+      "file": "native-eligible-chassis-attempt.json",
+      "sha256": "6419de8d325fb100c0d2dc0843d98662aca5f61e8dc5508cf06138dac2d8e0d1"
+    },
+    {
+      "file": "native-eligible-chassis-worker.json",
+      "sha256": "f92bdf1c2b932741dd6e539ae549898fb9c381416372752196496f61da50a6ed"
+    },
+    {
+      "file": "native-eligible-proposal-validation.json",
+      "sha256": "360a19aaa3fadcd728c95fbbcf77ae34e82547f9cf9deae5f6dde7333f72291c"
+    },
+    {
+      "file": "reconciled-chief-api-candidate.json",
+      "sha256": "07c5c89ceec8fc6a1f8c7fd597c26c30ce232c2867293dab6c3bf7eb85d12d4e"
+    },
+    {
+      "file": "native-reconciled-chief-api-transfer.json",
+      "sha256": "155a3e64fc0d24adce0a48beef61453b2eeeec9a7f4365c1f7bbbbd6fe28ae4d"
+    },
+    {
+      "file": "native-reconciled-chassis-fixture.json",
+      "sha256": "299e6edc800715e1e8e2e26162007aba9069a89b5eab0d3f74a6f7f065fa9447"
+    },
+    {
+      "file": "native-reconciled-chassis-attempt.json",
+      "sha256": "3d4d43dc364a37e89558a45bbc60b4c8932380a4a82238fe97bf1f63e0ac319a"
+    },
+    {
+      "file": "native-reconciled-chassis-worker.json",
+      "sha256": "926622214759c6c11d25f970eecb33a6a2ca5cecc7edbbfdf240547d7d219103"
+    },
+    {
+      "file": "native-reconciled-chassis-progress.json",
+      "sha256": "ad82ddee8b0c53019adf57fbc3059e71ebe28f6efd31d1bccc5da9190298c3a3"
+    },
+    {
+      "file": "native-reconciled-proposal-validation.json",
+      "sha256": "56efd4df7fcfe468a0c9f8f71a848bcfc1d9e86fdb552200588e1d5fed24050d"
+    }
+  ]
+}
