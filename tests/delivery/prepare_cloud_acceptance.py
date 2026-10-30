@@ -193,3 +193,33 @@ def verify_runtime_files(config):
     except Exception:
         # Never expose file content, parser excerpts or credential-bearing paths.
         raise ValueError('Cloud runtime configuration rejected') from None
+
+def verify_runtime_images(config, browser_qa_image, inspect_image):
+    """Verify operator-selected immutable IDs via a trusted inspection callback.
+
+    Image metadata proves identity/platform/user, not source provenance, package
+    availability or successful application/identity/model/browser execution.
+    """
+    import re
+    try:
+        prepare_cloud(config)
+        if not isinstance(browser_qa_image, str) or not re.fullmatch(r'sha256:[a-f0-9]{64}', browser_qa_image):
+            raise ValueError('Immutable browser QA image required')
+        images = {**config['base']['images'], 'browser_qa': browser_qa_image}
+        if len(set(images.values())) != len(images):
+            raise ValueError('Distinct role images required')
+        verified = []
+        for role, image in images.items():
+            data = inspect_image(image)
+            user = '101:101' if role == 'frontend' else '1000:1000'
+            if (not isinstance(data, dict) or data.get('Id') != image
+                    or data.get('Os') != 'linux' or data.get('Architecture') != 'amd64'
+                    or not isinstance(data.get('Config'), dict)
+                    or data['Config'].get('User') != user):
+                raise ValueError('Exact image identity/platform/user required')
+            verified.append({'role': role, 'image_id': image, 'user': user})
+        return {'scope': 'image_metadata_only', 'verified_images': verified,
+                'python_qa_image': images['qa'], 'browser_qa_image': browser_qa_image,
+                'source_provenance_verified': False, 'candidate_acceptance': False}
+    except Exception:
+        raise ValueError('Cloud runtime image metadata rejected') from None

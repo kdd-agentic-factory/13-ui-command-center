@@ -154,3 +154,34 @@ def test_cloud_runtime_requires_https_browser_origin(tmp_path):
     assert m.validate_runtime_objects(cfg,d,b)['descriptor_references']=='verified'
     d['cors_origins']=['http://127.0.0.1:3000']
     with pytest.raises(ValueError):m.validate_runtime_objects(cfg,d,b)
+
+def test_runtime_image_roles_are_distinct_and_explicit(tmp_path):
+    m=module();cfg=cloud_config(tmp_path)
+    cfg['base']['images']={role:'sha256:'+str(index)*64 for index,role in enumerate(['api','gateway','worker','frontend','qa'],1)}
+    browser='sha256:'+'6'*64;observed=[]
+    def inspect(image):
+        observed.append(image)
+        return {'Id':image,'Os':'linux','Architecture':'amd64','Config':{'User':'101:101' if image==cfg['base']['images']['frontend'] else '1000:1000'}}
+    report=m.verify_runtime_images(cfg,browser,inspect)
+    assert len(observed)==6 and set(observed)=={*cfg['base']['images'].values(),browser}
+    assert report['python_qa_image']!=report['browser_qa_image']
+    assert report['candidate_acceptance'] is False and report['source_provenance_verified'] is False
+
+
+@pytest.mark.parametrize('kind',['browser_tag','shared_qa','id','user','os','architecture','inspect_failure'])
+def test_runtime_image_metadata_fails_closed(tmp_path,kind):
+    m=module();cfg=cloud_config(tmp_path)
+    cfg['base']['images']={role:'sha256:'+str(index)*64 for index,role in enumerate(['api','gateway','worker','frontend','qa'],1)}
+    browser='sha256:'+'6'*64
+    if kind=='browser_tag':browser='browser:latest'
+    elif kind=='shared_qa':browser=cfg['base']['images']['qa']
+    def inspect(image):
+        if kind=='inspect_failure':raise RuntimeError('SENSITIVE_SENTINEL')
+        data={'Id':image,'Os':'linux','Architecture':'amd64','Config':{'User':'101:101' if image==cfg['base']['images']['frontend'] else '1000:1000'}}
+        if kind=='id':data['Id']='sha256:'+'f'*64
+        elif kind=='user':data['Config']['User']='root'
+        elif kind=='os':data['Os']='windows'
+        elif kind=='architecture':data['Architecture']='arm64'
+        return data
+    with pytest.raises(ValueError) as error:m.verify_runtime_images(cfg,browser,inspect)
+    assert str(error.value)=='Cloud runtime image metadata rejected'
