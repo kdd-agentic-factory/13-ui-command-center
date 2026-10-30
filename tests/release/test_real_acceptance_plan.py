@@ -89,3 +89,78 @@ def test_private_inputs_reject_links_and_public_read_permissions(tmp_path,kind):
         target=path.with_suffix('.target');os.link(path,target)
     else:path.chmod(0o644)
     with pytest.raises(ValueError):m.prepare(cfg)
+
+
+def test_current_local_model_requires_the_observed_exact_digest(tmp_path):
+    m=module();cfg=config(tmp_path)
+    cfg['model'].update(name='qwen3:1.7b',digest='8f68893c685c3ddff2aa3fffce2aa60a30bb2da65ca488b61fff134a4d1730e7')
+    plan=m.prepare(cfg)
+    assert plan['model']==cfg['model']
+    assert plan['persistence_profile']=='legacy-file'
+    assert plan['candidate_acceptance'] is False
+    cfg['model']['digest']='0'*64
+    with pytest.raises(ValueError):m.prepare(cfg)
+
+
+def test_historical_model_name_cannot_relabel_an_unknown_digest(tmp_path):
+    m=module();cfg=config(tmp_path);cfg['model']['digest']='0'*64
+    with pytest.raises(ValueError):m.prepare(cfg)
+
+
+def test_model_cache_is_verified_before_runtime_use(tmp_path):
+    import hashlib,json
+    m=module();root=tmp_path/'models';blobdir=root/'blobs';blobdir.mkdir(parents=True)
+    descriptors=[]
+    for raw in (b'synthetic config',b'synthetic weights'):
+        checksum=hashlib.sha256(raw).hexdigest()
+        (blobdir/('sha256-'+checksum)).write_bytes(raw)
+        descriptors.append({'mediaType':'synthetic','digest':'sha256:'+checksum,'size':len(raw)})
+    raw=json.dumps({'schemaVersion':2,'mediaType':'synthetic','config':descriptors[0],'layers':descriptors[1:]}).encode()
+    checksum=hashlib.sha256(raw).hexdigest()
+    manifest=root/'manifests/registry.ollama.ai/library/qwen3/1.7b';manifest.parent.mkdir(parents=True);manifest.write_bytes(raw)
+    m.MODEL_DIGESTS['qwen3:1.7b']=checksum  # Synthetic test identity only.
+    model={'name':'qwen3:1.7b','digest':checksum,'url':'http://127.0.0.1:11434'}
+    identity=m.verify_model_artifacts(root,model)
+    assert identity['manifest_sha256']==checksum and identity['blob_count']==2
+    (blobdir/('sha256-'+descriptors[1]['digest'].split(':')[1])).write_bytes(b'corrupt')
+    with pytest.raises(ValueError):m.verify_model_artifacts(root,model)
+
+
+def test_absent_model_cache_does_not_get_created_or_fetched(tmp_path):
+    m=module();root=tmp_path/'absent'
+    with pytest.raises((ValueError,FileNotFoundError)):
+        m.verify_model_artifacts(root,{'name':'qwen3:1.7b','digest':m.MODEL_DIGESTS['qwen3:1.7b'],'url':'http://127.0.0.1:11434'})
+    assert not root.exists()
+
+
+def test_exact_v2_manifest_can_coexist_with_a_historical_legacy_copy(tmp_path):
+    import hashlib,json
+    m=module();root=tmp_path/'models';blobdir=root/'blobs';blobdir.mkdir(parents=True)
+    raw=b'synthetic weights';checksum=hashlib.sha256(raw).hexdigest()
+    (blobdir/('sha256-'+checksum)).write_bytes(raw)
+    descriptor={'mediaType':'synthetic','digest':'sha256:'+checksum,'size':len(raw)}
+    content=json.dumps({'schemaVersion':2,'mediaType':'synthetic','config':descriptor,'layers':[descriptor]}).encode()
+    checksum=hashlib.sha256(content).hexdigest();m.MODEL_DIGESTS['qwen3:1.7b']=checksum
+    legacy=root/'manifests/registry.ollama.ai/library/qwen3/1.7b';legacy.parent.mkdir(parents=True);legacy.write_bytes(b'old layout')
+    current=root/'manifests-v2/ollama.com/library/qwen3/1.7b';current.parent.mkdir(parents=True);current.write_bytes(content)
+    result=m.verify_model_artifacts(root,{'name':'qwen3:1.7b','digest':checksum,'url':'http://127.0.0.1:11434'})
+    assert result['manifest_layout']=='manifests-v2'
+
+
+@pytest.mark.skipif(__import__('os').name=='nt',reason='POSIX model manifest alias')
+@pytest.mark.parametrize('external',[False,True])
+def test_v2_alias_is_allowed_only_to_its_exact_content_blob(tmp_path,external):
+    import hashlib,json
+    m=module();root=tmp_path/'models';blobs=root/'blobs';blobs.mkdir(parents=True)
+    raw=b'synthetic weights';checksum=hashlib.sha256(raw).hexdigest();(blobs/('sha256-'+checksum)).write_bytes(raw)
+    item={'mediaType':'synthetic','digest':'sha256:'+checksum,'size':len(raw)}
+    content=json.dumps({'schemaVersion':2,'mediaType':'synthetic','config':item,'layers':[item]}).encode()
+    checksum=hashlib.sha256(content).hexdigest();m.MODEL_DIGESTS['qwen3:1.7b']=checksum
+    target=tmp_path/'outside' if external else blobs/('sha256-'+checksum)
+    target.write_bytes(content)
+    manifest=root/'manifests-v2/ollama.com/library/qwen3/1.7b';manifest.parent.mkdir(parents=True);manifest.symlink_to(target)
+    model={'name':'qwen3:1.7b','digest':checksum,'url':'http://127.0.0.1:11434'}
+    if external:
+        with pytest.raises(ValueError):m.verify_model_artifacts(root,model)
+    else:
+        assert m.verify_model_artifacts(root,model)['manifest_sha256']==checksum

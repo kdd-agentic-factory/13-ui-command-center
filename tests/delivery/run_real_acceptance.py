@@ -8,7 +8,7 @@ import subprocess
 import time
 from uuid import UUID, uuid4
 
-from prepare_real_acceptance import ORIGIN, prepare, safe_path
+from prepare_real_acceptance import ORIGIN, prepare, safe_path, verify_model_artifacts
 
 HERE = Path(__file__).resolve().parent
 ROOT = Path('/home/ubuntu/chassis-preproduction')
@@ -89,6 +89,7 @@ def run(config, anon_key):
            'DOCKER_CONFIG': str(cli)}
     owned = []; networks = []; deadline = time.monotonic() + 1500
     report = {'status': 'blocked', 'scope': 'real_preproduction_acceptance', 'publishable': False,
+              'persistence_profile': 'legacy-file', 'candidate_acceptance': False,
               'gates': {}, 'historical_key_revocation': 'pending', 'resources': prefix}
     def identity(path):
         meta = safe_path(path).stat()
@@ -130,6 +131,9 @@ def run(config, anon_key):
             raise ValueError('Wrong Docker destination')
         model_cpus = model_cpu_budget(info)
         report['gates']['runtime_capacity'] = 'passed'
+        report['gates']['local_model_artifacts'] = 'blocked'
+        report['model_artifacts'] = verify_model_artifacts(ROOT / 'models', config['model'])
+        report['gates']['local_model_artifacts'] = 'passed'
         for role, spec in specs.items():
             image = json.loads(docker(['image', 'inspect', spec['image']]).stdout)[0]
             if (image['Id'] != spec['image'] or image['Config'].get('User') != spec['user'] or

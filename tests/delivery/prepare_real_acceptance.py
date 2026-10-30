@@ -10,6 +10,11 @@ from uuid import UUID, uuid4
 
 PROJECT = "23afcca6-10d0-4bae-83d0-9999f4717a81"
 ORIGIN = "https://czdpamk9.eu-central.insforge.app"
+# Runtime-observed identities; adding a tag requires an explicit reviewed pin.
+MODEL_DIGESTS = {
+    'qwen3:0.6b': '7df6b6e09427a769808717c0a93cadc4ae99ed4eb8bf5ca557c90846becea435',
+    'qwen3:1.7b': '8f68893c685c3ddff2aa3fffce2aa60a30bb2da65ca488b61fff134a4d1730e7',
+}
 PUBLIC = {"api_cert", "api_ca", "identity_ca"}
 ACCESS = {
     "api": ("api_cert", "api_key", "identity_ca", "probe_key", "backend_key",
@@ -45,6 +50,82 @@ def safe_path(value):
     return path.resolve(strict=True)
 
 
+def verify_model_artifacts(root, model):
+    """Read-only manifest and blob identity gate; never pulls or starts a model."""
+    exact(model, {'name', 'digest', 'url'})
+    if not isinstance(model['name'], str) or model['name'] not in MODEL_DIGESTS or model['digest'] != MODEL_DIGESTS[model['name']]:
+        raise ValueError('Reviewed exact model identity required')
+    root = safe_path(str(root))
+    if not root.is_dir():
+        raise ValueError('Model cache directory required')
+    tag = model['name'].split(':')[1]
+    raw = None
+    layout = None
+    for directory, registry in [('manifests-v2', 'ollama.com'), ('manifests', 'registry.ollama.ai')]:
+        candidate = root / directory / registry / 'library' / 'qwen3' / tag
+        if candidate.is_symlink():
+            if directory != 'manifests-v2':
+                raise ValueError('Unexpected model manifest alias')
+            expected = root / 'blobs' / ('sha256-' + model['digest'])
+            try:
+                resolved = candidate.resolve(strict=True)
+            except (OSError, RuntimeError):
+                raise ValueError('Invalid model manifest alias') from None
+            if resolved != expected:
+                raise ValueError('Unexpected model manifest alias target')
+            manifest = safe_path(str(expected))
+        elif not candidate.exists():
+            continue
+        else:
+            manifest = safe_path(str(candidate))
+        if not manifest.is_file() or not 0 < manifest.stat().st_size <= 65536:
+            raise ValueError('Bounded regular model manifest required')
+        with manifest.open('rb') as stream:
+            content = stream.read(65537)
+        if not 0 < len(content) <= 65536:
+            raise ValueError('Model manifest exceeds bound')
+        if hashlib.sha256(content).hexdigest() == model['digest']:
+            raw, layout = content, directory
+            break
+    if raw is None:
+        raise ValueError('Reviewed model manifest missing or mismatched')
+    data = json.loads(raw)
+    if data.get('schemaVersion') != 2 or not isinstance(data.get('layers'), list) or not 1 <= len(data['layers']) <= 64:
+        raise ValueError('Bounded model layers required')
+    descriptors = [data.get('config'), *data['layers']]
+    blobs = {}
+    for item in descriptors:
+        exact(item, {'mediaType', 'digest', 'size'})
+        if not isinstance(item['digest'], str) or not re.fullmatch('sha256:[a-f0-9]{64}', item['digest']) or type(item['size']) is not int or not 0 < item['size'] <= 4 * 1024**3:
+            raise ValueError('Canonical bounded model blob required')
+        checksum = item['digest'].split(':')[1]
+        if checksum in blobs and blobs[checksum] != item['size']:
+            raise ValueError('Conflicting model blob sizes')
+        blobs[checksum] = item['size']
+    if sum(blobs.values()) > 4 * 1024**3:
+        raise ValueError('Model artifact budget exceeded')
+    for checksum, size in blobs.items():
+        path = safe_path(str(root / 'blobs' / ('sha256-' + checksum)))
+        before = path.stat()
+        if not stat.S_ISREG(before.st_mode) or before.st_size != size:
+            raise ValueError('Model blob size differs')
+        value = hashlib.sha256()
+        with path.open('rb') as stream:
+            remaining = size
+            while remaining:
+                chunk = stream.read(min(1048576, remaining))
+                if not chunk:
+                    raise ValueError('Model blob ended early')
+                value.update(chunk)
+                remaining -= len(chunk)
+            if stream.read(1):
+                raise ValueError('Model blob grew during verification')
+        after = path.stat()
+        if value.hexdigest() != checksum or (before.st_dev, before.st_ino, before.st_size, before.st_mtime_ns) != (after.st_dev, after.st_ino, after.st_size, after.st_mtime_ns):
+            raise ValueError('Model blob identity changed')
+    return {'name': model['name'], 'manifest_sha256': model['digest'], 'blob_count': len(blobs), 'total_bytes': sum(blobs.values()), 'manifest_layout': layout}
+
+
 def prepare(config):
     exact(config, FIELDS)
     if config["version"] != "1" or config["project_id"] != PROJECT or config["identity_url"] != ORIGIN:
@@ -53,7 +134,7 @@ def prepare(config):
     exact(config["images"], ACCESS)
     exact(config["model"], {"name", "digest", "url"})
     model = config["model"]
-    if model["name"] != "qwen3:0.6b" or not isinstance(model["digest"], str) or not re.fullmatch(r"[a-f0-9]{64}", model["digest"]):
+    if not isinstance(model["name"], str) or model["name"] not in MODEL_DIGESTS or model["digest"] != MODEL_DIGESTS[model["name"]]:
         raise ValueError("Explicit tested local model identity required")
     if model["url"] not in ("http://127.0.0.1:11434", "http://host.docker.internal:11434"):
         raise ValueError("Only the explicit local model endpoint is permitted")
@@ -110,9 +191,11 @@ def prepare(config):
     return {
         "format": "1", "status": "prepared_not_executed", "acceptance_status": "blocked",
         "execution_authorized": False, "publishable": False, "project_id": PROJECT,
+        "persistence_profile": "legacy-file", "candidate_acceptance": False,
         "configuration_sha256": hashlib.sha256(json.dumps(config, sort_keys=True).encode()).hexdigest(),
         "services": services, "model": dict(model), "gates": {gate: "blocked" for gate in GATES},
         "limits": [
+            "Legacy file persistence only; this runner cannot certify the current Postgres/Storage candidate",
             "Metadata-only preparation: no credential contents read or copied; no Docker or cloud calls",
             "Source paths remain in the private input; source_ref is not a runnable mount",
             "Runtime UID/ACL, TLS, exact image/source provenance and egress require separate verification",
