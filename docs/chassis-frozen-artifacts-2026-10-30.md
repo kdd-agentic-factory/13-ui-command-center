@@ -47,3 +47,14 @@ Pulling the unchanged index with explicit linux/amd64 on Chassis-Preproduction s
 The exact base passed a no-network browser smoke with existing read-only Playwright/playwright-core1.61.1 mounts, operator UID1000, read-only root, capabilities dropped, reviewed seccomp hash, no-new-privileges and Chromium sandbox enabled. Chromium149.0.7827.55 successfully clicked a local DOM control and verified its result. No credential mount, host port, external request, trace or screenshot. Container removed. This closes the exact browser base availability and sandbox-start gates, not authenticated application acceptance.
 
 Dependency inventory found Nodev24.17.0 and no `/usr/bin/certutil` in this upstream base. The existing integrated browser script invokes certutil to create the test NSS trust database, so a reviewed derived QA image with a pinned NSS-tools package closure is still required. No certificate-check bypass, ignoreHTTPS option, no-sandbox fallback or borrowed QA version was used. No accounts or approvals were exercised.
+
+
+## Follow-up: browser QA certutil closure accepted
+
+A derived QA image was built natively from the unchanged locked Playwright base, with a two-package signed-apt closure: libnss3 and libnss3-tools, both `2:3.98-1ubuntu0.3`, total2,060,038 bytes. Exact deb hashes are committed in `deploy/browser-qa/packages.sha256`; recipe in the adjacent Dockerfile. The native build used network none and checked both hashes before installing the local debs. Installed versions were independently queried from the resulting nonroot/read-only container and matched. No host package installation or image publication.
+
+QA image ID: `sha256:d27ebd350409ea79534fed43463b9e71fddbb1cabf51bf445342436c5e7a1b68`. Package-lock SHA256: `5d052f603fe5fe59219dd92612571f46cfee431a31780d4c867f5f573329f532`. Recipe SHA256: `df7a786c4f80a921c920338c402e039a4c6c761943ed25bbb242c5fb5c4afa6b`.
+
+Functional regression `tests/delivery/browser_tls_smoke.cjs`: base image blocked at missing certutil, derived image passed. It creates a temporary NSS trust database and two ephemeral local self-signed endpoints; Chromium accepts and interacts with the imported certificate endpoint and rejects the other specifically with ERR_CERT_AUTHORITY_INVALID. Chromium sandbox remains enabled with reviewed seccomp and no capabilities, UID1000, network none, read-only root/private tmpfs. Playwright1.61.1/Chromium149.0.7827.55 unchanged. No credentials or host ports; smoke containers removed. JS syntax and whitespace checks passed.
+
+This closes the certutil and local TLS/sandbox gates. This is a browser-only QA artifact, not the Python QA image. The unified launcher must bind both artifacts explicitly and still exercise the actual candidate, real identity/Storage/model and Chief/substitute decisions. No app deployment or acceptance claim; historical key revocation remains pending.
