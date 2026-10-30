@@ -30,3 +30,14 @@ The native cache verified qwen3:0.6b manifest `7df6b6e09427a769808717c0a93cadc4a
 5. Independent AiM/2D contrast remains separate. Historical credential revocation remains explicitly deferred.
 
 No deployment, publication, cloud configuration mutation or ARGOS modification was performed in this milestone. The integrated production acceptance has not passed.
+
+
+## Follow-up: native 1.7b candidate assets provisioned
+
+A dedicated cache was created at `/home/ubuntu/chassis-preproduction/model-candidates/qwen17-47be308f3f9b4a9087aafd7ee0417c64`. It contains the pinned qwen3:1.7b manifest and five verified blobs totaling 1,359,293,444 bytes. A second read-only verification independently rehashed all artifacts and checked UID1000, cache mode0700 and all six regular files mode0400.
+
+The transfer streamed only manifest-derived model blobs from the existing local AI-node cache into a newly created native directory. It did not download weights, change the source cache, replace the old native cache, copy secrets or start a model. Windows disks are not mounted in this distribution, so a bounded explicit byte stream was used rather than adding host mounts. An initial path-based attempt stopped before copying bytes because the Windows source was not mounted; its empty staging directory was left untouched.
+
+Ruling: keep the model candidate separate from the legacy runner's fixed `models` directory. Provisioning assets satisfies artifact availability only and must not silently switch the old file-based acceptance configuration or imply Postgres/Storage acceptance. The model is not yet connected to a running candidate service.
+
+This closes remaining gate1 above for artifact provisioning. Gates2–5 remain open, including image/source freeze, the current cloud-profile executor, real integrated inference/browser/Chief/substitute acceptance and latency measurement. No deployment, service restart, cloud changes, paid resources or ARGOS modifications occurred. Historical revocation remains pending.
