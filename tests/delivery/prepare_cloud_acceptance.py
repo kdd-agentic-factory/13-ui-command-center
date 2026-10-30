@@ -41,7 +41,7 @@ def prepare_cloud(config):
         identity = (meta.st_dev, meta.st_ino)
         if (not path.is_file() or not path.is_relative_to(private)
                 or path in used or identity in identities or meta.st_nlink != 1
-                or not 0 < meta.st_size <= 65536):
+                or not 0 < meta.st_size <= (1048576 if name == "identity_ca" else 65536)):
             raise ValueError('Distinct bounded cloud input required')
         # Windows metadata preparation cannot establish native UID/mode gates.
         if os.name == 'posix' and (meta.st_uid != 1000 or meta.st_mode & 0o077):
@@ -90,7 +90,7 @@ def validate_runtime_objects(config, descriptor, bindings):
     exact(descriptor, {'schema_version', 'identity_url', 'storage_region', 'cors_origins', *refs})
     if (descriptor['schema_version'] != '1.0.0'
             or descriptor['identity_url'] != config['base']['identity_url']
-            or descriptor['storage_region'] != 'eu-central-1'
+            or descriptor['storage_region'] != 'us-east-2'
             or descriptor['cors_origins'] != ['http://127.0.0.1:3000']
             or any(descriptor[key] != value for key, value in refs.items())):
         raise ValueError('Exact isolated descriptor references required')

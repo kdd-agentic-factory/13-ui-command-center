@@ -61,7 +61,7 @@ def test_cloud_plan_rejects_ambiguous_inputs(tmp_path,kind):
 def runtime_objects(cfg):
     from uuid import uuid4
     refs={name+'_file':'/run/cloud/'+name for name in ('database_dsn','identity_anon_key','authority_key','service_key','storage_key','worker_bindings')}
-    descriptor={'schema_version':'1.0.0','identity_url':cfg['base']['identity_url'],**refs,'identity_ca_file':'/run/cloud/identity_ca','storage_region':'eu-central-1','cors_origins':['http://127.0.0.1:3000']}
+    descriptor={'schema_version':'1.0.0','identity_url':cfg['base']['identity_url'],**refs,'identity_ca_file':'/run/cloud/identity_ca','storage_region':'us-east-2','cors_origins':['http://127.0.0.1:3000']}
     team=cfg['base']['teams'][0];actor=team['members']['engineer']
     bindings={'schema_version':'1.0.0','model':{'name':'qwen3:1.7b','timeout_seconds':60},'runs':[{'worker_id':'acceptance-worker','run_id':str(uuid4()),'principal':{'team_id':team['team_id'],'subject_id':actor,'role':'engineer'},'audit':{'X-Actor-ID':actor,'X-Workflow-ID':'acceptance','X-Trace-ID':'acceptance'},'signing_key_file':'/run/cloud/signing_key','control_key_file':'/run/cloud/control_key'}]}
     return descriptor,bindings
@@ -130,3 +130,13 @@ def test_runtime_file_gate_rejects_unsafe_json_and_mutation(tmp_path,monkeypatch
     with pytest.raises(ValueError) as error:m.verify_runtime_files(cfg)
     assert str(error.value)=='Cloud runtime configuration rejected'
     assert error.value.__suppress_context__
+
+def test_runtime_accepts_observed_storage_region(tmp_path):
+    m=module();cfg=cloud_config(tmp_path);d,b=runtime_objects(cfg)
+    d['storage_region']='us-east-2'
+    assert m.validate_runtime_objects(cfg,d,b)['descriptor_references']=='verified'
+
+def test_cloud_metadata_allows_bounded_public_ca_bundle(tmp_path):
+    m=module();cfg=cloud_config(tmp_path)
+    Path(cfg['cloud_files']['identity_ca']).write_bytes(b'PUBLIC_CA_DATA\n'*6000)
+    assert m.prepare_cloud(cfg)['candidate_acceptance'] is False

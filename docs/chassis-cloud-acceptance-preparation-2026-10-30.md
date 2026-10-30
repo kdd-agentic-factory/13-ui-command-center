@@ -47,3 +47,16 @@ All errors are normalized to a fixed suppressed-context message, without parser 
 Eight additional tests first failed because the gate was absent, then passed: only the two JSON files opened; duplicate/nested duplicate fields; oversized input; invalid UTF-8; nonfinite constants; invalid syntax; and mutation after object validation. Focused suites: Windows76 passed/5 POSIX skips; Linux78 passed/3 Node probe skips. Linux container removed; no cloud calls or ports. These are controlled-file tests, not a real-credential acceptance run.
 
 No deployment or cloud modification was performed. Historical revocation remains pending.
+
+
+## Follow-up: actual native configuration and restricted database
+
+Explicit candidate inputs were provisioned under a fresh native owner-only directory, using only the enumerated existing test-account/base inputs, restricted runtime DSN, designated Storage credentials and authority/CA files. New internal service/signing/control keys were generated for the isolated candidate. The prior inputs and published services were unchanged. Two planned worker bindings were prepared, not admitted; their random run IDs do not imply actual authorized runs.
+
+The actual configuration-file gate passed with two worker bindings. No secret values or parsed configuration bodies were printed. Two real-input incompatibilities were corrected with RED→GREEN regression tests: the existing S3 signing region is `us-east-2` (independent of the project's European hostname), and the public CA bundle needs the existing1MiB public-certificate limit rather than the64KiB JSON/private-token limit. JSON reading remains capped at64KiB.
+
+A separate pinned-image container connected to the real designated Postgres using the candidate restricted DSN. It used `verify-full`, checked the client libpq TLS flag, and ran only `BEGIN READ ONLY`, a catalog SELECT and ROLLBACK. The current role had `rolsuper=false`, `rolcreaterole=false`, `rolcreatedb=false`, `rolbypassrls=false`. The client TLS connection was active. `pg_stat_ssl` reported false for the server-observed backend leg; that observation is retained and is not represented as an end-to-end internal-provider encryption guarantee. The successful gate concerns the verified client connection and restricted role only. The container was removed; no ports or business writes.
+
+Source inventory found01/02/17/18 clean at their current local revisions;13 contained this milestone's pending fixes before commit. No matching image rebuild or new source freeze was performed. Native candidate base-image metadata remains stale and the integrated acceptance stays blocked. The supplied credentials/configuration are not deployed.
+
+Focused verification after these fixes: Windows78 passed/5 POSIX skips; isolated Linux80 passed/3 Node probe skips, container removed. Actual native configuration-file gate passed; actual restricted database read-only gate passed. Neither gate claims private Storage recovery, live agent execution, browser approval or full acceptance.
