@@ -16,3 +16,9 @@ This is the current acceptance closure list, not a production-readiness declarat
 | Publication | No deployment in this milestone | Accepted target, recoverable traffic switch and scoped retirement of old service |
 
 No ARGOS modifications or additional paid services. Component passes cannot be added together to claim an integrated pass. Remaining factory/Brain features and broader product scope also require their own final acceptance; this list focuses on the active delivery blockers.
+
+### Fresh run milestone
+
+New API45b7c8ab: actual test-engineer login, public-route synthetic session/snapshot/run creation200, durable server admission and readiness-guarded worker pass verified. Readiness10.721s; callbackTrue; container removed. Follow-up durable read reports zero model calls and missing-context blocks, so this is a negative control, not integrated AI acceptance. Continue with a properly eligible context through public APIs and actual Chief/browser verification. No deployment or ARGOS change; historical revocation pending.
+
+Follow-up on the same synthetic run: all nine specialist/reviewer tasks reached conservative terminal states, run sealed, model_calls1; public synthesis status succeeded with proposal ID. This proves a real recorded Chief synthesis in the governed cloud-backed flow, while specialist positive-context inference, proposal validation and browser Chief/substitute acceptance remain open. Native readiness4.690s and worker cleanup passed. No deployment.
