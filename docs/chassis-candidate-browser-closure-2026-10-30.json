@@ -1,0 +1,83 @@
+{
+  "schema_version": "1.0.0",
+  "scope": "two_distinct_synthetic_measurement_browser_decisions",
+  "candidate_acceptance": false,
+  "deployment": false,
+  "historical_revocation": "pending",
+  "browser_substitute_write_count": 1,
+  "prior_chief_replayed": false,
+  "durable_readback": [
+    {
+      "role": "chief",
+      "proposal_id": "0c197f40-21a5-478d-bbd3-0f30fcb7aa64",
+      "decision_id": "96ce24d9-3854-40e2-8dde-02be6d06df17",
+      "actual_actor_matches": true,
+      "approved_current": true
+    },
+    {
+      "role": "substitute",
+      "proposal_id": "40f69cd8-bdc7-4f41-a2f4-a1810299b9a3",
+      "decision_id": "5d7da1fb-4755-4a57-b2af-a24a9fbe124b",
+      "actual_actor_matches": true,
+      "approved_current": true
+    }
+  ],
+  "workshop_application": false,
+  "remaining_gaps": [
+    "durable_domain_projection",
+    "full_process_recovery",
+    "public_500_root_cause",
+    "independent_AiM_2D_validation",
+    "historical_key_revocation"
+  ],
+  "artifacts": [
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/native-candidate-browser-diagnostic.json",
+      "sha256": "147ae60dc7d49456a4c2fe2376a3b90659a3d4688c78f593b12246025292b6cf"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/native-candidate-browser-diagnostic-instrumented.json",
+      "sha256": "e47781e6e51fd95847e6ed135b0ee333a712903f20ac753a89f831e9cce9f1a9"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/native-candidate-browser-diagnostic-reveal.json",
+      "sha256": "8f968ac35e358e3fa140e0ad0b925f53222207c2e1d90bf2c056a58db61ac444"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/native-candidate-browser-diagnostic-pagination.json",
+      "sha256": "3420873c465bdfea9d6fd449f1da3b01e15e3fe10c26b3710db0f00973e24d8e"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/native-candidate-browser-substitute.json",
+      "sha256": "f795a5249c117e7a7a8d6f21612605d3ad06d81a8f8b7e371d55a43845ed626b"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/native-candidate-decision-readback.json",
+      "sha256": "24583ebd4a46bece941e07347b4bf2c5aa4a3e570873f183126f498b7f6ad27c"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/candidate_diagnostic_browser.cjs",
+      "sha256": "dedb0f2feeb396c816ab0d633526afaf98fa02b37891d9047ff58e3b625551bf"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/candidate_substitute_browser.cjs",
+      "sha256": "67f9fa5d882ec1a72e44962697bfdf140724d3438aef4f83438ae3f6d869e169"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/candidate_browser_resume_native.py",
+      "sha256": "ccb3f35f4758d0be7ddb46457a8a2f0df566c7c49bd1ee51242634bba8e5563c"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/run_candidate_browser_substitute.py",
+      "sha256": "e211d74d7256c2e8a51764303f6a1a094f11b795582c41f98ef21536dc3c525d"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/candidate_decision_readback_probe.py",
+      "sha256": "f319d7b9acf81f97ba908dff0d4d7c68ec845e704c09cd02dff79c683ecc5ec7"
+    },
+    {
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/run_candidate_decision_readback.py",
+      "sha256": "b894319f5669a47ca34ce81e5eab4a6b4e3d3bd5cb2fc91ae612d416ed0da9df"
+    }
+  ]
+}

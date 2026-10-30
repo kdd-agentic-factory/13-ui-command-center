@@ -58,7 +58,7 @@
       "sha256": "497afa23728bdfeb3df9f20eec927969f9b535b29c034fda23416866ded286c9"
     },
     {
-      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/native-candidate-decision-readback.json",
+      "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/native-candidate-decision-readback-before-substitute.json",
       "sha256": "7607bb199483253375af59fbede0986eed1ac7b794353ea546c3419ac7e7e142"
     },
     {
@@ -105,5 +105,6 @@
       "path": ".superpowers/sdd/2026-10-28-chassis-insforge-compute/run_candidate_browser_resume.py",
       "sha256": "45ab346b8cf60de31e17cfc90cbfd03926ed28c6397a9d487c955d7d5dde0a5b"
     }
-  ]
+  ],
+  "superseded_by": "docs/chassis-candidate-browser-closure-2026-10-30.json"
 }
