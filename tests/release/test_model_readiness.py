@@ -51,3 +51,35 @@ def test_exhausted_readiness_budget_does_not_load_or_admit():
         return {'models':[{'name':model()['name'],'digest':model()['digest']}]}
     with pytest.raises(TimeoutError):m.preload_model(model(),request,clock=lambda:now[0])
     assert calls==['/api/tags']
+
+def test_worker_pass_is_not_called_when_readiness_fails():
+    import asyncio
+    m=module();called=[]
+    async def worker():called.append('worker')
+    def unavailable(*args):return {'models':[]}
+    with pytest.raises(ValueError):asyncio.run(m.run_when_model_ready(model(),unavailable,worker))
+    assert called==[]
+
+
+def test_readiness_precedes_worker_and_preserves_authority_denial():
+    import asyncio
+    m=module();events=[]
+    def request(method,path,payload,timeout):
+        events.append(path)
+        if path=='/api/generate':return {'model':model()['name'],'done':True,'response':''}
+        return {'models':[{'name':model()['name'],'digest':model()['digest']}]}
+    async def denied_worker():
+        events.append('authority_check');raise PermissionError('Existing authority rejects run')
+    with pytest.raises(PermissionError):asyncio.run(m.run_when_model_ready(model(),request,denied_worker))
+    assert events[-1]=='authority_check' and '/api/ps' in events[:-1]
+
+
+def test_ready_gate_does_not_turn_no_work_into_successful_task():
+    import asyncio
+    m=module()
+    def request(method,path,payload,timeout):
+        if path=='/api/generate':return {'model':model()['name'],'done':True,'response':''}
+        return {'models':[{'name':model()['name'],'digest':model()['digest']}]}
+    async def worker():return False
+    result=asyncio.run(m.run_when_model_ready(model(),request,worker))
+    assert result['worker_result'] is False and result['readiness']['admission_authorized'] is False

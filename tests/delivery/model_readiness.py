@@ -57,3 +57,17 @@ def preload_model(model, request_json, *, budget_seconds=60, clock=time.monotoni
         raise TimeoutError('Local model readiness deadline exceeded') from None
     except Exception:
         raise ValueError('Local model readiness rejected') from None
+
+async def run_when_model_ready(model, request_json, worker_pass, *, budget_seconds=60):
+    """Operator launcher guard; worker_pass retains every authorization check.
+
+    A prepared model never grants admission. The trusted async callback must use
+    the normal dispatcher/worker path, not mutate run state directly. No worker
+    callback is invoked until readiness succeeds; its exceptions/result survive.
+    """
+    import asyncio
+    readiness = await asyncio.to_thread(
+        preload_model, model, request_json, budget_seconds=budget_seconds,
+    )
+    worker_result = await worker_pass()
+    return {'readiness': readiness, 'worker_result': worker_result}

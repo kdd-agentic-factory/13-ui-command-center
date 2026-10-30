@@ -38,3 +38,10 @@ Ten tests first failed for the absent helper and now pass, including no-load-bef
 The helper was then exercised inside the dedicated native model executor before actual LocalModelProvider calls. The server explicitly set `OLLAMA_KEEP_ALIVE=-1` as well as the empty preload parameter, because subsequent normal requests otherwise may reset retention to the server default. Real readiness took5.964s. Two synthetic decision-contract requests at the unchanged27s budget took8.626s and3.979s, both valid review_supported decisions. After those ordinary requests, `/api/ps` still reported the exact digest loaded and an expiry more than24h away. This checks the advertised post-request retention, not an actual24h idle soak or restart recovery.
 
 The run used the same6CPU/4GiB, read-only verified model/runtime mounts, network none and no secrets or host ports. Model container removed. The local native executor has exercised the gate; the full cloud/worker/browser/human approval launcher is still to be completed and must place readiness before any run admission, including after restart. No public node/server settings or task timeout changed, no deployment/ARGOS modification, historical revocation still pending.
+
+
+## Worker-pass guard
+
+`run_when_model_ready` now wraps an operator-owned async worker pass: it completes the bounded model preparation in a thread before invoking the normal worker/dispatcher callback. It does not replace admission authorization. Three RED→GREEN tests prove that failed readiness never calls the worker, an existing authority denial propagates, and a no-work result remains false rather than becoming a successful task. This guard is an acceptance-launcher component, not a new product endpoint or a completed cloud worker deployment.
+
+Inspection of the current built API image independently found that `orchestrator` was absent, although cloud `worker_runtime` imports the repository01 consumer. Repository18 commit54c324a adds that package to the offline API-image recipe before the final pip check. A freshly built image must pass the actual import check before any integrated worker execution; the previous image remains unchanged.
