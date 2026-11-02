@@ -17,13 +17,19 @@ export interface PreviewOptions {mode:PreviewMode;acceleration_g?:number;at_s?:n
 export const emptyMechanical=():MechanicalSetup=>({schema_version:'1.0.0',frame:'body_x_forward_z_up',points:{}});
 export const emptyConfiguration=():ComponentConfiguration=>({settings:{},shim_stack:[],source:''});
 export function draftInput(draft:Draft,bike:string,label:string,parent?:string,operation='preview'):SetupInput {
- const values=Object.fromEntries(setupFields.map(f=>[f.key,{value:draft.values[f.key]?.trim()?Number(draft.values[f.key])*f.factor:null,unit:f.unit,provenance:draft.assumed[f.key]?'assumed' as const:'measured' as const}]));
+ const values=Object.fromEntries(setupFields.map(f=>{
+  const original=draft.originalMeasurements?.bikeId===bike.trim()?draft.originalMeasurements.fields[f.key]:undefined;
+  const provenance=draft.assumed[f.key]?'assumed' as const:'measured' as const;
+  if(original&&original.display===draft.values[f.key]&&original.measurement.unit===f.unit&&original.measurement.provenance===provenance)return [f.key,{...original.measurement}];
+  return [f.key,{value:draft.values[f.key]?.trim()?Number(draft.values[f.key])*f.factor:null,unit:f.unit,provenance}];
+ }));
  return {bike_id:bike.trim(),label,operation_id:operation,parent_id:parent??null,values,linkage_curve:draft.curveEnabled===false?null:draft.curve??null,
   ...(draft.mechanical?{mechanical:draft.mechanical}:{}),...(draft.configuration?{component_configuration:draft.configuration}:{}),...(draft.specificationRefs?{specification_refs:draft.specificationRefs}:{})};
 }
 export function draftFromRevision(setup?:SetupRevision):Draft {
  if(!setup)return {values:{},assumed:{}};
- return {values:Object.fromEntries(setupFields.map(f=>[f.key,setup.values[f.key]?.value==null||setup.values[f.key]?.unit!==f.unit?'':String(Number((Number(setup.values[f.key].value)/f.factor).toPrecision(12)))])),assumed:Object.fromEntries(setupFields.map(f=>[f.key,setup.values[f.key]?.provenance==='assumed'])),curve:setup.linkage_curve??null,
+ const values=Object.fromEntries(setupFields.map(f=>[f.key,setup.values[f.key]?.value==null||setup.values[f.key]?.unit!==f.unit?'':String(Number((Number(setup.values[f.key].value)/f.factor).toPrecision(12)))]));
+ return {values,originalMeasurements:{bikeId:setup.bike_id,fields:Object.fromEntries(setupFields.filter(f=>setup.values[f.key]&&setup.values[f.key].unit===f.unit).map(f=>[f.key,{display:values[f.key],measurement:{...setup.values[f.key]}}]))},assumed:Object.fromEntries(setupFields.map(f=>[f.key,setup.values[f.key]?.provenance==='assumed'])),curve:setup.linkage_curve??null,
   ...(setup.mechanical?{mechanical:structuredClone(setup.mechanical)}:{}),...(setup.component_configuration?{configuration:structuredClone(setup.component_configuration)}:{}),...(setup.specification_refs?{specificationRefs:structuredClone(setup.specification_refs)}:{})};
 }
 export const previewIsCurrent=(requested:string,current:string)=>requested===current;
