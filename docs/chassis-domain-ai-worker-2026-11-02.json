@@ -1,0 +1,203 @@
+{
+  "status": "passed",
+  "scope": "current_image_real_local_model_worker",
+  "candidate_acceptance": false,
+  "human_approval": false,
+  "deployment": false,
+  "model_transport": [
+    {
+      "timeout_seconds": 40.407,
+      "num_threads": 6,
+      "prompt_chars": 2887,
+      "server_metrics": {
+        "total_duration": 16844291674,
+        "load_duration": 33835301,
+        "prompt_eval_count": 895,
+        "prompt_eval_duration": 7055848000,
+        "eval_count": 181,
+        "eval_duration": 9742653000
+      },
+      "elapsed_seconds": 16.85
+    },
+    {
+      "timeout_seconds": 33.03,
+      "num_threads": 6,
+      "prompt_chars": 1534,
+      "server_metrics": {
+        "total_duration": 5231203011,
+        "load_duration": 32999354,
+        "prompt_eval_count": 422,
+        "prompt_eval_duration": 3096407000,
+        "eval_count": 38,
+        "eval_duration": 1905735000
+      },
+      "elapsed_seconds": 5.235
+    },
+    {
+      "timeout_seconds": 49.46,
+      "num_threads": 6,
+      "prompt_chars": 1521,
+      "server_metrics": {
+        "total_duration": 5879187338,
+        "load_duration": 39697223,
+        "prompt_eval_count": 424,
+        "prompt_eval_duration": 3288044000,
+        "eval_count": 47,
+        "eval_duration": 2463178000
+      },
+      "elapsed_seconds": 5.883
+    },
+    {
+      "timeout_seconds": 52.41,
+      "num_threads": 6,
+      "prompt_chars": 1578,
+      "server_metrics": {
+        "total_duration": 5274198337,
+        "load_duration": 31788829,
+        "prompt_eval_count": 443,
+        "prompt_eval_duration": 3358572000,
+        "eval_count": 36,
+        "eval_duration": 1797994000
+      },
+      "elapsed_seconds": 5.278
+    },
+    {
+      "timeout_seconds": 51.54,
+      "num_threads": 6,
+      "prompt_chars": 5396,
+      "server_metrics": {
+        "total_duration": 30957358124,
+        "load_duration": 33001819,
+        "prompt_eval_count": 1706,
+        "prompt_eval_duration": 15681338000,
+        "eval_count": 229,
+        "eval_duration": 15148888000
+      },
+      "elapsed_seconds": 30.963
+    },
+    {
+      "timeout_seconds": 29.373,
+      "num_threads": 6,
+      "prompt_chars": 5396,
+      "server_metrics": {
+        "total_duration": 16214253917,
+        "load_duration": 33550538,
+        "prompt_eval_count": 1705,
+        "prompt_eval_duration": 979413000,
+        "eval_count": 231,
+        "eval_duration": 15186953000
+      },
+      "elapsed_seconds": 16.224
+    },
+    {
+      "timeout_seconds": 50.721,
+      "num_threads": 6,
+      "prompt_chars": 5402,
+      "server_metrics": {
+        "total_duration": 21245556721,
+        "load_duration": 31931052,
+        "prompt_eval_count": 1706,
+        "prompt_eval_duration": 853251000,
+        "eval_count": 348,
+        "eval_duration": 20348981000
+      },
+      "elapsed_seconds": 21.252
+    },
+    {
+      "timeout_seconds": 59.939,
+      "num_threads": 6,
+      "prompt_chars": 9085,
+      "server_metrics": {
+        "total_duration": 38590880197,
+        "load_duration": 31440571,
+        "prompt_eval_count": 3377,
+        "prompt_eval_duration": 32346514000,
+        "eval_count": 79,
+        "eval_duration": 5919710000
+      },
+      "elapsed_seconds": 38.602
+    }
+  ],
+  "passes": [
+    {
+      "index": 0,
+      "worked": true,
+      "elapsed_seconds": 51.997
+    },
+    {
+      "index": 1,
+      "worked": true,
+      "elapsed_seconds": 42.384
+    },
+    {
+      "index": 2,
+      "worked": true,
+      "elapsed_seconds": 49.266
+    },
+    {
+      "index": 3,
+      "worked": true,
+      "elapsed_seconds": 24.006
+    },
+    {
+      "index": 4,
+      "worked": true,
+      "elapsed_seconds": 17.212
+    },
+    {
+      "index": 5,
+      "worked": true,
+      "elapsed_seconds": 49.633
+    },
+    {
+      "index": 6,
+      "worked": true,
+      "elapsed_seconds": 70.333
+    },
+    {
+      "index": 7,
+      "worked": true,
+      "elapsed_seconds": 55.453
+    },
+    {
+      "index": 8,
+      "worked": true,
+      "elapsed_seconds": 58.82
+    },
+    {
+      "index": 9,
+      "worked": true,
+      "elapsed_seconds": 65.677
+    },
+    {
+      "index": 10,
+      "worked": false,
+      "elapsed_seconds": 3.75
+    }
+  ],
+  "worked": {
+    "readiness": {
+      "scope": "local_model_readiness_preflight",
+      "loaded": true,
+      "model_digest_verified": true,
+      "prompt_supplied": false,
+      "elapsed_s": 4.165,
+      "admission_authorized": false,
+      "candidate_acceptance": false
+    },
+    "worker_result": true
+  },
+  "container_removed": true,
+  "image_id": "sha256:41b8a2e8a164f84deb6bb10fac8f0322a81ca692472362171d1a2c902c0d166f",
+  "run_id": "21829dfc-86e8-5bca-93cb-909fbd58203a",
+  "session_id": "b59a0814-b4d1-40d1-a079-81edb44bddc6",
+  "model_artifacts": {
+    "name": "qwen3:1.7b",
+    "manifest_sha256": "8f68893c685c3ddff2aa3fffce2aa60a30bb2da65ca488b61fff134a4d1730e7",
+    "blob_count": 5,
+    "total_bytes": 1359293444,
+    "manifest_layout": "manifests-v2"
+  },
+  "host_ports": false,
+  "native_evidence_directory": "/home/ubuntu/chassis-preproduction/runs/current-image-worker-e98ffcbbef5944a4b55a98f64c1203b4"
+}

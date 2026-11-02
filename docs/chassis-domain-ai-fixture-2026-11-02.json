@@ -1,0 +1,152 @@
+{
+  "status": "passed",
+  "scope": "current_image_synthetic_domain_ai_fixture",
+  "model_executed": false,
+  "human_approval": false,
+  "candidate_acceptance": false,
+  "deployment": false,
+  "gates": [
+    {
+      "name": "fixed_origin",
+      "passed": true
+    },
+    {
+      "name": "unique_designated_qa_engineer",
+      "passed": true
+    },
+    {
+      "name": "real_login",
+      "passed": true
+    },
+    {
+      "name": "GET_engineering",
+      "passed": true
+    },
+    {
+      "name": "GET_engineering",
+      "passed": true
+    },
+    {
+      "name": "owned_synthetic_source",
+      "passed": true
+    },
+    {
+      "name": "single_explicit_recording",
+      "passed": true
+    },
+    {
+      "name": "GET_recorded",
+      "passed": true
+    },
+    {
+      "name": "synthetic_recording_only",
+      "passed": true
+    },
+    {
+      "name": "POST_engineering",
+      "passed": true
+    },
+    {
+      "name": "source_has_no_domain_selection",
+      "passed": true
+    },
+    {
+      "name": "explicit_setup_for_tire_observation",
+      "passed": true
+    },
+    {
+      "name": "POST_chassis",
+      "passed": true
+    },
+    {
+      "name": "track_contribution_not_physical_validation",
+      "passed": true
+    },
+    {
+      "name": "POST_chassis",
+      "passed": true
+    },
+    {
+      "name": "track_observation_only",
+      "passed": true
+    },
+    {
+      "name": "POST_chassis",
+      "passed": true
+    },
+    {
+      "name": "weather_contribution_not_physical_validation",
+      "passed": true
+    },
+    {
+      "name": "POST_chassis",
+      "passed": true
+    },
+    {
+      "name": "weather_observation_only",
+      "passed": true
+    },
+    {
+      "name": "POST_chassis",
+      "passed": true
+    },
+    {
+      "name": "tires-powertrain_contribution_not_physical_validation",
+      "passed": true
+    },
+    {
+      "name": "POST_chassis",
+      "passed": true
+    },
+    {
+      "name": "tires-powertrain_observation_only",
+      "passed": true
+    },
+    {
+      "name": "POST_engineering",
+      "passed": true
+    },
+    {
+      "name": "three_domains_frozen",
+      "passed": true
+    },
+    {
+      "name": "native_recordings_and_setup_refs_unchanged",
+      "passed": true
+    },
+    {
+      "name": "new_snapshot_analyzable",
+      "passed": true
+    },
+    {
+      "name": "POST_engineering",
+      "passed": true
+    }
+  ],
+  "last_http_status": 200,
+  "session_id": "b59a0814-b4d1-40d1-a079-81edb44bddc6",
+  "domain_refs": [
+    {
+      "id": "807e866a-9769-5cbf-890a-1e3608a70172",
+      "revision": 2,
+      "domain": "track",
+      "digest": "e2df7ef47bd61debcf5ae6fff905a084e29eb3cd43cb23a0116458abfb50041f"
+    },
+    {
+      "id": "2546b13b-0be6-5ea0-afeb-c2eb6fd84d3f",
+      "revision": 2,
+      "domain": "weather",
+      "digest": "b680bb7b2f567e65a6b2d9793d4027214d237346f33acc871b640fd9a91cdf26"
+    },
+    {
+      "id": "8be4cbd0-fc71-5360-9e29-50f63eb2d12e",
+      "revision": 2,
+      "domain": "tires-powertrain",
+      "digest": "4b85eb60e8826ce7d3e4e1e854693a41308f6eba5eb0ad404bb4e3fbe1202796"
+    }
+  ],
+  "synthetic_observations_only": true,
+  "snapshot_id": "f0dff879-2923-4805-9797-e4e1aa283b75",
+  "run_id": "21829dfc-86e8-5bca-93cb-909fbd58203a",
+  "run_status": "running"
+}

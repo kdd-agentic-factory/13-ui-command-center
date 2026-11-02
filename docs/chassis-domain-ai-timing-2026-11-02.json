@@ -1,0 +1,10 @@
+{
+  "scope": "three_domain_synthetic_QA_local_model_timing",
+  "model": "qwen3:1.7b",
+  "model_calls": 8,
+  "sum_worker_pass_seconds": 488.531,
+  "sum_model_transport_seconds": 140.287,
+  "unattributed_pass_seconds": 348.244,
+  "interpretation": "Sums of measured synchronous passes, not a production SLA or full startup wall-clock. Remaining pass time has no causal attribution; profile before optimizing.",
+  "deployment": false
+}
