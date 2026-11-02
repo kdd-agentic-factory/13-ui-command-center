@@ -7,6 +7,7 @@ No migrations, deployment, agents, clinical claims or cleanup deletes.
 import asyncio
 import hashlib
 import json
+import os
 import ssl
 from pathlib import Path
 from uuid import UUID, uuid5
@@ -30,6 +31,10 @@ def gate(name, passed):
 
 
 async def main():
+    if os.environ.get('CHASSIS_REQUIRE_INSTALLED_PACKAGES') == '1':
+        import telemetry_dataset
+        import digital_twin_lab
+        gate('installed_application_packages', all(str(Path(module.__file__).resolve()).startswith('/opt/python/lib/') for module in (telemetry_dataset, digital_twin_lab)))
     run = UUID(Path('/qa-output/run-id').read_text().strip())
     report['run_id'] = str(run)
     descriptor = json.loads(Path('/run/cloud/descriptor').read_text())
@@ -64,7 +69,10 @@ async def main():
             gate('reader_cannot_import', (await upload(headers[('A', 'reader')])).status_code == 403)
             route = ROOT + '/acquisitions/' + source['id']
             gate('other_team_cannot_read_bench', (await api.get(route, headers=headers[('B', 'engineer')])).status_code == 404)
-            body = {'operation_id': str(uuid5(run, 'welch')), 'source': {k: source[k] for k in ('kind', 'id', 'digest')}, 'channel_index': 1, 'interval_s': [0, 10], 'method': 'welch'}
+            image_identity = os.environ.get('CHASSIS_QA_IMAGE_ID', '')
+            if image_identity:
+                report['image_identity'] = image_identity
+            body = {'operation_id': str(uuid5(run, 'welch-image:' + image_identity if image_identity else 'welch')), 'source': {k: source[k] for k in ('kind', 'id', 'digest')}, 'channel_index': 1, 'interval_s': [0, 10], 'method': 'welch'}
             result = await api.post(ROOT + '/analyses', headers=own, json=body)
             gate('real_worker_private_result', result.status_code == 200)
             analysis = result.json()

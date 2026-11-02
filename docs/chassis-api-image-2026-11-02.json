@@ -1,0 +1,51 @@
+{
+  "format": "api-image-candidate-1",
+  "publishable": false,
+  "sources": {
+    "01": {
+      "git_ref": "7c2cce015bda1c5543e432a2595f49e023114421",
+      "tree_sha256": "2aabbf5b0f125dcb61e85c68ca1e1ab82abe3e64e006d070808db9b68b78b0f7",
+      "archive_sha256": "b6f4ea616757793c6250bdaa3ece0a0b46918b929ab56075d2f59e2675664379",
+      "dirty": false
+    },
+    "17": {
+      "git_ref": "cae3d4704805df058ab6bea647585d13762720d1",
+      "tree_sha256": "7fe574dd9cec17b23c2f74155f5fbbf1a891e22d0a2da90e2cefd6646ae34636",
+      "archive_sha256": "df06c981a02cdcd5d6a0480ed817c78894306e6852457a64c849b343898a3777",
+      "dirty": false
+    },
+    "18": {
+      "git_ref": "133aecf044444e4c1f060f97334bcd97a3a10447",
+      "tree_sha256": "9379fb48134361a0de2878a77947e7af24a56c4f5a0a4b01db2ff25d0d1e6fa4",
+      "archive_sha256": "02182266b628fccb05df90649830e4af140d9e92b35e15407c827ec5bc64fa18",
+      "dirty": false
+    }
+  },
+  "runtime_lock_sha256": "4eb59652ceff9ff2f3663cb517654daa779eb433598b61d2a3c842cca6754893",
+  "os_lock_sha256": "ceeb67d90e880d33884061eeabc9e66b88fe5f421ff5ddf5ad8a3f2a026c3d8d",
+  "base": {
+    "reference": "ubuntu:24.04",
+    "digest": "sha256:24737cef17f4e22b1977df7d9a05e77c4e28b7da5b8911f8d8ccda136bf3573c"
+  },
+  "identity_sha256": "a9217c450cb1ef2b5ba2283a4be3ae4d3a5cd7ded4efec697a957257a4c5b91d",
+  "image": {
+    "installed_code_hash_parity": "passed",
+    "application_source_mounts_during_acceptance": false,
+    "pip_check": "passed",
+    "user": "1000:1000",
+    "image_id": "sha256:d801af2b9fa41bbc3f408c481f3089f1f73a52f307aa2b6b1c0d4f8b7d73df85",
+    "reference": "kdd-chassis-api:a9217c450cb1ef2b5ba2283a4be3ae4d3a5cd7ded4efec697a957257a4c5b91d",
+    "platform": "linux/amd64",
+    "network_during_build": "none"
+  },
+  "acceptance": {
+    "browser": false,
+    "file": "chassis-api-image-cloud-acceptance-2026-11-02.json",
+    "full_platform": false,
+    "deployed": false,
+    "human_approval": false,
+    "passed": 22,
+    "scope": "suspension with real identity, PostgreSQL and private Storage; synthetic input",
+    "ai_agents": false
+  }
+}
