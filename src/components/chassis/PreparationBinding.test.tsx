@@ -1,0 +1,33 @@
+import {render,screen,fireEvent,act} from '@testing-library/react';
+import {it,expect,vi} from 'vitest';
+const m=vi.hoisted(()=>({list:vi.fn(),bind:vi.fn(),leave:vi.fn((fn:()=>void)=>fn())}));
+vi.mock('../../services/bikeTechnicalProfiles',()=>({listBikePreparations:m.list}));
+vi.mock('../../services/chassisTelemetry',()=>({bindSetup:m.bind}));
+vi.mock('../../services/telemetryIdentity',()=>({canWriteTelemetry:()=>true}));
+vi.mock('../../context/WorkspaceDraftContext',()=>({useWorkspaceDraft:()=>({requestLeave:m.leave})}));
+import {PreparationBinding} from './PreparationBinding';
+it('requires explicit confirmation before binding a preparation to recording',async()=>{
+ const changed=vi.fn();m.list.mockResolvedValue([{id:'setup-1',label:'Preparación',version:2}]);m.bind.mockResolvedValue({});
+ render(<PreparationBinding bike={{id:'bike-1',revision:1}} recordingId="recording-1" onBound={changed}/>);
+ await screen.findByRole('option',{name:'Preparación · versión 2'});
+ fireEvent.change(screen.getByLabelText('Setup utilizado'),{target:{value:'setup-1'}});
+ const button=screen.getByRole('button',{name:'Asociar setup a esta grabación'});expect(button).toBeDisabled();
+ fireEvent.click(screen.getByRole('checkbox'));fireEvent.click(button);
+ await screen.findByText('Setup asociado a la grabación');
+ expect(m.bind).toHaveBeenCalledWith({session_id:'recording-1',setup_id:'setup-1',bike_id:'bike-1'});
+ expect(m.leave).toHaveBeenCalled();expect(changed).toHaveBeenCalled();
+});
+it('does not apply an old confirmation after the recording changes',async()=>{
+ m.bind.mockClear();let confirm!:(()=>void);
+ m.leave.mockImplementationOnce(action=>{confirm=action;});
+ m.list.mockResolvedValue([{id:'setup-1',label:'Preparación',version:2}]);
+ const bike={id:'bike-1',revision:1};
+ const view=render(<PreparationBinding bike={bike} recordingId="old-recording" onBound={vi.fn()}/>);
+ await screen.findByRole('option',{name:'Preparación · versión 2'});
+ fireEvent.change(screen.getByLabelText('Setup utilizado'),{target:{value:'setup-1'}});
+ fireEvent.click(screen.getByRole('checkbox'));
+ fireEvent.click(screen.getByRole('button',{name:'Asociar setup a esta grabación'}));
+ view.rerender(<PreparationBinding bike={bike} recordingId="new-recording" onBound={vi.fn()}/>);
+ await act(async()=>confirm());
+ expect(m.bind).not.toHaveBeenCalled();
+});
