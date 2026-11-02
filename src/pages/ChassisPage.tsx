@@ -7,7 +7,7 @@ import {nextWorkStep,type ComparisonPresentation,type AnalysisPresentation} from
 import '../styles/chassis-workviews.css';
 import '../styles/recorded.css';
 import '../styles/chassis-workshop.css';
-import { ChassisWorkshop } from '../components/chassis/workshop/ChassisWorkshop';
+import {PreparedChassis} from '../components/chassis/PreparedChassis';
 import { useNavigate } from '../context/NavContext';
 import { activeRecording, clearRecording, calculateTrail, type RecordedSession, type RecordedSignal } from '../domain/recordedSession';
 import { getRecording, getRecordedSignal, saveRecordedGeometry } from '../services/recordedTelemetry';
@@ -93,7 +93,7 @@ export function ChassisPage() {
     <section className="chassis-work-area" data-area="analysis" ref={e=>{areas.current.analysis=e;}} tabIndex={-1}><AnalysisRunPanel workView={view} contextKey={contextKey} onPresentation={setAnalysisPresentation} domainContexts={domainAttachment?.context===contextKey?domainAttachment.references:undefined} suspensionAnalyses={labAttachment?.context===contextKey?[labAttachment.reference]:undefined}/></section>
     <p className="page-subtitle">Geometría medida y señales grabadas · ninguna recomendación de setup sin evidencia.</p>
     {error && <p role="alert">{error}</p>}
-    {restoring ? <p role="status">Cargando sesión guardada…</p> : !session ? <><div className="card"><h2>Sin sesión grabada</h2><p>Importa una sesión para inspeccionar sus señales. Puedes explorar las piezas del esquema; no hay un diagnóstico ni cambios mecánicos disponibles.</p></div><div className="chassis-work-area" data-area="workshop" ref={e=>{areas.current.workshop=e;}} tabIndex={-1} hidden={view!=="engineer"&&view!=="mechanic"}><ChassisWorkshop workView={view} draft={{values:{},assumed:{}}} onChange={()=>{}} onCalculate={()=>{}} bike="" recordingId={null} preview={null} busy={false} error=""/></div></> : <>
+    {restoring ? <p role="status">Cargando sesión guardada…</p> : !session ? <><div className="card"><h2>Sin sesión grabada</h2><p>Importa una sesión para inspeccionar sus señales. Puedes explorar las piezas del esquema; no hay un diagnóstico ni cambios mecánicos disponibles.</p></div><div className="chassis-work-area" data-area="workshop" ref={e=>{areas.current.workshop=e;}} tabIndex={-1} hidden={view!=="engineer"&&view!=="mechanic"}>{engineering.session?.bike?<PreparedChassis key={JSON.stringify([engineering.scope,engineering.session.bike])} bikeId={engineering.session.bike.id} workView={view}/>:<p>Selecciona una moto en la preparación de sesión para abrir su borrador de Chassis.</p>}</div></> : <>
       <section className="chassis-work-area chassis-source-brief" data-area="source" ref={e=>{areas.current.source=e;}} tabIndex={-1}><h2>{session.filename}</h2><p>{session.source.toUpperCase()} · {session.channels.length} canales · {session.laps.length} marcadores de vuelta.</p><details><summary>Fuente y trazabilidad</summary><p>Lector {session.reader} {session.reader_version}. Sesión guardada: {session.id} · clasificación: {session.classification}</p></details></section>
       {session.validation?.status==='experimental'&&<section className="chassis-source-warning"><h2>Fuente 2D pendiente de validar</h2><p>Escala y reloj experimentales: contrasta con 2D Analyzer antes de fundamentar decisiones mecánicas.</p><details><summary>Canales excluidos ({session.excluded_channels?.length??0})</summary>{session.excluded_channels?.map((c,i)=><p key={i}>{c.name}: {c.reason}</p>)}</details></section>}
       <section className="chassis-work-area" data-area="comparison" ref={e=>{areas.current.comparison=e;}} tabIndex={-1} hidden={!visible("comparison")}><ChassisComparison workView={view} contextKey={contextKey} onPresentation={setComparisonPresentation} key={`${session.id}:${engineering.workspaceEpoch}`} sessionId={session.id} engineeringSessionId={engineering.session?.id} channels={session.channels} geometry={session.geometry} onPersistedChange={engineering.workspaceChanged} /></section>
@@ -117,4 +117,3 @@ export function ChassisPage() {
   </div></div>;
 }
 export default function ProtectedChassisPage(){ return <TelemetryGate><ChassisPage/></TelemetryGate>; }
-
