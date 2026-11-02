@@ -223,6 +223,11 @@
     },
     {
       "method": "GET",
+      "pattern": "/api/v1/engineering/sessions/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/workboard",
+      "access": "team"
+    },
+    {
+      "method": "GET",
       "pattern": "/api/v1/engineering/settings/crew-chief",
       "access": "team"
     },
@@ -234,6 +239,11 @@
     {
       "method": "GET",
       "pattern": "/api/v1/engineering/snapshots/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+      "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/engineering/workboard/tasks/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
       "access": "team"
     },
     {
@@ -443,6 +453,16 @@
     },
     {
       "method": "POST",
+      "pattern": "/api/v1/engineering/sessions/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/workboard/tasks",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/engineering/workboard/tasks/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/transitions",
+      "access": "team"
+    },
+    {
+      "method": "POST",
       "pattern": "/api/v1/recorded/(import|inspect-2d)",
       "access": "team"
     },
@@ -468,9 +488,14 @@
     },
     {
       "method": "PUT",
+      "pattern": "/api/v1/engineering/workboard/tasks/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/assignee",
+      "access": "team"
+    },
+    {
+      "method": "PUT",
       "pattern": "/api/v1/recorded/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/geometry",
       "access": "team"
     }
   ],
-  "sha256": "6f30b2ec35aef23a1e441f78768f133fc2659817f50a29577276995d89c41dd2"
+  "sha256": "ae5934070cc68df455dfb75a3eda9a0400556573ed7b69e9ff9c21eda103e694"
 }

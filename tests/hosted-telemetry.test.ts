@@ -28,7 +28,7 @@ describe('hosted telemetry perimeter',()=>{
   for(const capture of [undefined,['api/v1/chassis/status'],'https://evil.test','/api/v1/chassis/status'])expect(()=>hostedRequestUrl('/api/chassis-proxy',capture)).toThrow();
  });
  it('preserves raw bodies restored by Vercel on an already consumed request',async()=>{
-  const raw='{"operation_id":"controlled","unicode":"á"}';
+  const raw='{"operation_id":"controlled","unicode":"Ã¡"}';
   const req=request('/api/telemetry/api/v1/chassis/setups','POST');
   for await(const ignored of req){void ignored;}
   const restored=Readable.from([Buffer.from(raw)]);
@@ -79,4 +79,25 @@ it('allows the reviewed championship catalog route without opening private worke
  const denied=response();
  await handle(request('/api/telemetry/api/v1/engineering/internal/championship','POST','{}'),denied);
  expect(denied.code).toBe(404);expect(fetcher).toHaveBeenCalledTimes(1);
+});
+
+
+it.each([
+ ['GET','/sessions/11111111-1111-4111-8111-111111111111/workboard'],
+ ['POST','/sessions/11111111-1111-4111-8111-111111111111/workboard/tasks'],
+ ['GET','/workboard/tasks/22222222-2222-4222-8222-222222222222'],
+ ['POST','/workboard/tasks/22222222-2222-4222-8222-222222222222/transitions'],
+ ['PUT','/workboard/tasks/22222222-2222-4222-8222-222222222222/assignee'],
+])('forwards authenticated workboard %s %s without opening approvals',async(method,path)=>{
+ const fetcher=vi.fn(async()=>new Response('{}'));
+ const handle=createHostedTelemetry(manifest,'https://api.example.test',fetcher);
+ const result=response();
+ await handle(request('/api/telemetry/api/v1/engineering'+path,method,method==='GET'?'':'{}'),result);
+ expect(result.code).toBe(200);expect(fetcher).toHaveBeenCalledTimes(1);
+ expect(result.headers['Cache-Control']).toBe('no-store');
+ for(const suffix of ['approve','apply','internal']){
+  const denied=response();await handle(request('/api/telemetry/api/v1/engineering/workboard/tasks/22222222-2222-4222-8222-222222222222/'+suffix,'POST','{}'),denied);
+  expect(denied.code).toBe(404);
+ }
+ expect(fetcher).toHaveBeenCalledTimes(1);
 });
