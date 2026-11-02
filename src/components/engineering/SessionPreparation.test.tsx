@@ -8,6 +8,38 @@ import { entity, ids, session, transport } from '../../../tests/engineeringTrans
 function view(){return render(<WorkspaceDraftProvider><EngineeringSessionProvider><SessionPreparation /></EngineeringSessionProvider></WorkspaceDraftProvider>);}
 beforeEach(()=>{localStorage.clear();vi.restoreAllMocks();});
 describe('engineering preparation over strict human transport',()=>{
+  it('keeps available context when only the championship catalog is denied',async()=>{
+    const {state,fetch}=transport();state.sessions=[session()];
+    const original=fetch.getMockImplementation()!;
+    fetch.mockImplementation(async(input,init)=>String(input).includes('/catalog/championship')
+      ?new Response(JSON.stringify({detail:'Route or role not authorized'}),{status:403,headers:{'Content-Type':'application/json'}})
+      :original(input,init));
+    view();
+    expect(await screen.findByRole('option',{name:'Circuito medido · r1'})).toBeInTheDocument();
+    expect(screen.getByRole('option',{name:'Moto taller · r1'})).toBeInTheDocument();
+    expect(screen.getByRole('option',{name:'Piloto titular · r1'})).toBeInTheDocument();
+    expect(screen.getByRole('option',{name:'Tanda guardada · r1'})).toBeInTheDocument();
+    expect(screen.getByText(/Catálogo de campeonato no disponible/)).toBeInTheDocument();
+    expect(screen.getByLabelText('Campeonato')).toBeDisabled();
+    expect(screen.getByLabelText('Moto')).toBeEnabled();
+    fetch.mockImplementation(original);
+    fireEvent.click(screen.getByRole('button',{name:'Recargar contexto'}));
+    await waitFor(()=>expect(screen.getByLabelText('Campeonato')).toBeEnabled());
+    expect(screen.queryByText(/Catálogo de campeonato no disponible/)).not.toBeInTheDocument();
+    expect(screen.getByText(/Catálogo de campeonato vacío/)).toBeInTheDocument();
+  });
+  it('distinguishes a successfully loaded empty catalog from an inaccessible one',async()=>{
+    const {state,fetch}=transport();state.catalog.circuit=[];
+    const original=fetch.getMockImplementation()!;
+    fetch.mockImplementation(async(input,init)=>String(input).includes('/catalog/championship')
+      ?new Response(JSON.stringify({detail:'Route or role not authorized'}),{status:403,headers:{'Content-Type':'application/json'}})
+      :original(input,init));
+    view();
+    expect(await screen.findByText(/Catálogo de circuito vacío/)).toBeInTheDocument();
+    expect(screen.getByText(/Catálogo de campeonato no disponible/)).toBeInTheDocument();
+    expect(screen.getByLabelText('Nombre de nuevo campeonato')).toBeDisabled();
+    expect(screen.getByLabelText('Nombre de nuevo circuito')).toBeEnabled();
+  });
   it('does not describe inaccessible catalogs as empty after a failed context load',async()=>{
     vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({detail:'Route or role not authorized'}),{status:403,headers:{'Content-Type':'application/json'}})));
     view();

@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-02",
+  "scope": "Existing InsForge project; QA team A engineer; authenticated read-only requests through the localhost cloud proxy",
+  "credentials": "Existing private QA credentials; fresh login; no credentials or bearer tokens recorded",
+  "remote_image_digest": "sha256:ce9506707123575f80d43a41fd764183c7482638087a9e1b95c4b4c59ee7cd78",
+  "observations": [
+    {"path": "/api/v1/teams", "status": 200},
+    {"path": "/api/v1/engineering/sessions?limit=100", "status": 200, "items": 19},
+    {"path": "/api/v1/engineering/catalog/circuit?limit=100", "status": 200, "items": 42},
+    {"path": "/api/v1/engineering/catalog/bike?limit=100", "status": 200, "items": 28},
+    {"path": "/api/v1/engineering/catalog/rider?limit=100", "status": 200, "items": 13},
+    {"path": "/api/v1/engineering/catalog/championship?limit=100", "status": 403, "detail": "Route or role not authorized"},
+    {"path": "/api/v1/engineering/knowledge/documents", "status": 403, "detail": "Route or role not authorized"},
+    {"path": "/api/v1/chassis/suspension-lab/acquisitions", "status": 503, "detail": "Cloud route is not connected"}
+  ],
+  "root_cause": "The client used Promise.all for sessions and four independent catalogs; a rejected championship catalog discarded all successful reads.",
+  "local_fix": "Settled results per resource; scoped catalog errors and disabled unavailable catalog controls; retry all catalogs even with a selected session. Identity, revision and team checks unchanged.",
+  "verification": {"regression_initially_failed": true, "directed_tests_passed": 28, "after_reload_adjustment_tests_passed": 25, "typecheck": "passed", "lint_errors": 0, "existing_context_hook_warnings": 3, "build": "passed in 11.96s"},
+  "limits": ["No remote deployment, migration or business-data writes", "Fresh QA login was performed; existing saved bearer was expired", "Browser control unavailable during final verification; updated UI not visually accepted", "Remote championship/library authorization and suspension cloud adapter remain pending", "Historical key revocation remains pending"]
+}

@@ -13,6 +13,7 @@ interface SessionContext {
   scope:string; workspaceEpoch:number; session:EngineeringSession|null; sessions:EngineeringSession[]; catalog:Catalog; historical:Partial<Record<CatalogKind,CatalogRevision>>;
   loading:boolean; busy:boolean; error:string; conflict:boolean; sessionCursor:string|null; catalogCursors:Record<CatalogKind,string|null>;
   association:WorkspaceAssociation|null; bridgeLoading:boolean;
+  catalogErrors:Partial<Record<CatalogKind,string>>;
   choose:(id:string|null)=>void; reload:()=>void; loadMoreSessions:()=>Promise<void>; loadMoreCatalog:(kind:CatalogKind)=>Promise<void>;
   save:(body:EngineeringSessionInput)=>Promise<EngineeringSession|null>; createCatalog:(kind:CatalogKind,name:string)=>Promise<CatalogRevision|null>;
   associateWorkspace:(recordingId:string)=>Promise<void>; clearAssociation:()=>void; workspaceChanged:()=>void;
@@ -26,6 +27,7 @@ export function EngineeringSessionProvider({children}:{children:ReactNode}) {
   const [scope,setScope]=useState(telemetryScope),[session,setSession]=useState<EngineeringSession|null>(null),[sessions,setSessions]=useState<EngineeringSession[]>([]),[catalog,setCatalog]=useState<Catalog>(blankCatalog),[historical,setHistorical]=useState<SessionContext['historical']>({});
   const [loading,setLoading]=useState(true),[busy,setBusy]=useState(false),[error,setError]=useState(''),[conflict,setConflict]=useState(false),[association,setAssociation]=useState<WorkspaceAssociation|null>(null),[bridgeLoading,setBridgeLoading]=useState(false);
   const [workspaceEpoch,setWorkspaceEpoch]=useState(0);
+  const [catalogErrors,setCatalogErrors]=useState<Partial<Record<CatalogKind,string>>>({});
   const [sessionCursor,setSessionCursor]=useState<string|null>(null),[catalogCursors,setCatalogCursors]=useState<Record<CatalogKind,string|null>>({circuit:null,bike:null,rider:null,championship:null});
   const epoch=useRef(0),selectionEpoch=useRef(0),sourceEpoch=useRef(0),current=useRef<EngineeringSession|null>(null),controllers=useRef(new Set<AbortController>()),bridgeController=useRef<AbortController|null>(null);
   const selectionControllers=useRef(new Set<AbortController>());
@@ -66,18 +68,28 @@ export function EngineeringSessionProvider({children}:{children:ReactNode}) {
   async function refresh(restore:boolean) {
     const g=epoch.current,c=controller();setLoading(true);setError('');
     try {
-      const [list,...pages]=await Promise.all([api.listEngineeringSessions({signal:c.signal}),...kinds.map(kind=>api.listCatalog(kind,{signal:c.signal}))]);
-      if(epoch.current!==g)return;
-      setSessions(list.items as EngineeringSession[]);setSessionCursor(list.next_cursor);
-      setCatalog(Object.fromEntries(kinds.map((kind,i)=>[kind,pages[i].items])) as Catalog);
-      setCatalogCursors(Object.fromEntries(kinds.map((kind,i)=>[kind,pages[i].next_cursor])) as Record<CatalogKind,string|null>);
+      const [[list],pages]=await Promise.all([
+        Promise.allSettled([api.listEngineeringSessions({signal:c.signal})]),
+        Promise.allSettled(kinds.map(kind=>api.listCatalog(kind,{signal:c.signal}))),
+      ]);
+      if(epoch.current!==g||c.signal.aborted)return;
+      if(list.status==='fulfilled'){setSessions(list.value.items);setSessionCursor(list.value.next_cursor);}
+      else{setSessions([]);setSessionCursor(null);}
+      const failures:Partial<Record<CatalogKind,string>>={};
+      const nextCatalog=blankCatalog(),cursors:Record<CatalogKind,string|null>={circuit:null,bike:null,rider:null,championship:null};
+      kinds.forEach((kind,i)=>{const result=pages[i];if(result.status==='fulfilled'){nextCatalog[kind]=result.value.items;cursors[kind]=result.value.next_cursor;}else failures[kind]=message(result.reason);});
+      setCatalog(nextCatalog);setCatalogCursors(cursors);setCatalogErrors(failures);
       const id=restore?localStorage.getItem(selectedKey(telemetryScope())):null;
       if(id)await open(id,true);
+      if(epoch.current===g){
+        const errors=[...(list.status==='rejected'?['Sesiones: '+message(list.reason)]:[]),...Object.entries(failures).map(([kind,detail])=>`${kind}: ${detail}`)];
+        if(errors.length)setError(errors.join(' · '));
+      }
     }catch(e){if(epoch.current===g&&!c.signal.aborted)report(e);}
     finally{controllers.current.delete(c);if(epoch.current===g)setLoading(false);}
   }
   useEffect(()=>{
-    const reset=()=>{epoch.current++;selectionEpoch.current++;sourceEpoch.current++;controllers.current.forEach(c=>c.abort());controllers.current.clear();current.current=null;setSession(null);setSessions([]);setCatalog(blankCatalog());setHistorical({});setAssociation(null);setBusy(false);setBridgeLoading(false);setConflict(false);createAttempt.current=null;catalogAttempts.current.clear();pendingSave.current=null;pendingCatalog.current.clear();setScope(telemetryScope());void refresh(false);};
+    const reset=()=>{epoch.current++;selectionEpoch.current++;sourceEpoch.current++;controllers.current.forEach(c=>c.abort());controllers.current.clear();current.current=null;setSession(null);setSessions([]);setCatalog(blankCatalog());setCatalogErrors({});setHistorical({});setAssociation(null);setBusy(false);setBridgeLoading(false);setConflict(false);createAttempt.current=null;catalogAttempts.current.clear();pendingSave.current=null;pendingCatalog.current.clear();setScope(telemetryScope());void refresh(false);};
     const recordingChanged=()=>clearAssociation();
     window.addEventListener('telemetry-scope-changed',reset);window.addEventListener('recorded-session-changed',recordingChanged);
     void refresh(true);
@@ -134,6 +146,6 @@ export function EngineeringSessionProvider({children}:{children:ReactNode}) {
     }catch(e){if(epoch.current===g&&selectionEpoch.current===s&&sourceEpoch.current===source&&!c.signal.aborted)report(e);}
     finally{release(c);if(epoch.current===g&&selectionEpoch.current===s&&sourceEpoch.current===source)setBridgeLoading(false);}
   }
-  return <Context.Provider value={{scope,workspaceEpoch,session,sessions,catalog,historical,loading,busy,error,conflict,sessionCursor,catalogCursors,association,bridgeLoading,choose,reload:()=>requestLeave(()=>{const id=current.current?.id??null;void open(id).then(()=>{if(!id)void refresh(false);});}),loadMoreSessions:()=>loadMore(),loadMoreCatalog:kind=>loadMore(kind),save,createCatalog,associateWorkspace,clearAssociation,workspaceChanged}}>{children}</Context.Provider>;
+  return <Context.Provider value={{scope,workspaceEpoch,session,sessions,catalog,historical,loading,busy,error,conflict,sessionCursor,catalogCursors,catalogErrors,association,bridgeLoading,choose,reload:()=>requestLeave(()=>{const id=current.current?.id??null;void open(id).then(()=>void refresh(false));}),loadMoreSessions:()=>loadMore(),loadMoreCatalog:kind=>loadMore(kind),save,createCatalog,associateWorkspace,clearAssociation,workspaceChanged}}>{children}</Context.Provider>;
 }
 export function useEngineeringSession(){const context=useContext(Context);if(!context)throw new Error('EngineeringSessionProvider requerido');return context;}
