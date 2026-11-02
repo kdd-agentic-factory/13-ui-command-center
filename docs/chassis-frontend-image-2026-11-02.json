@@ -1,0 +1,16 @@
+{
+  "scope": "committed_frontend_candidate",
+  "git_ref": "86adb62611e276b274946731e0ad40f155ee550a",
+  "working_tree_dirty": true,
+  "uncommitted_changes_included": false,
+  "tree_sha256": "3971e33d8ba2378defb929eca1c7e49fdea035d1b4cbfcb7032c74b5dc949803",
+  "archive_sha256": "9371490a3f6795f49d800f57bee9bca0a9681a1ecdee38bfe9eceb802c3f9e20",
+  "publishable": false,
+  "image": {
+    "user": "101:101",
+    "dependency_network": "Pinned Node/nginx bases, npm lock integrity and exact Alpine versions; downloads inside containers only",
+    "platform": "linux/amd64",
+    "reference": "kdd-chassis-frontend:a400e20a81e9f6ba55c56bda92aab4159931c04b871e627e7e155015a2f1977b",
+    "image_id": "sha256:f83632ecdba22407bf42a4d095a2b0b8ae56d95fe231ce7caa026e598fc3f554"
+  }
+}

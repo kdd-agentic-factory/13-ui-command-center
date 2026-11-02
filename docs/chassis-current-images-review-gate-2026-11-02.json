@@ -1,0 +1,82 @@
+{
+  "scope": "immutable_candidate_browser_readonly",
+  "status": "blocked",
+  "candidate_acceptance": false,
+  "deployment": false,
+  "human_decisions_written": 0,
+  "admin_credentials_in_browser": false,
+  "host_ports": false,
+  "images": {
+    "api": "sha256:d801af2b9fa41bbc3f408c481f3089f1f73a52f307aa2b6b1c0d4f8b7d73df85",
+    "frontend": "sha256:f83632ecdba22407bf42a4d095a2b0b8ae56d95fe231ce7caa026e598fc3f554",
+    "browser": "sha256:d27ebd350409ea79534fed43463b9e71fddbb1cabf51bf445342436c5e7a1b68"
+  },
+  "test_tls": "fresh_local_ca_separate_api_ui_keys; provider_trust_unchanged",
+  "browser_internal_only": true,
+  "phase": "readonly_browser",
+  "error_type": "CalledProcessError",
+  "browser": {
+    "status": "blocked",
+    "phase": "A_chief_review_pending",
+    "error_type": "Error",
+    "checks": [],
+    "http_statuses": [
+      {
+        "endpoint": "refresh",
+        "status": 401
+      },
+      {
+        "endpoint": "refresh",
+        "status": 200,
+        "has_user": true,
+        "has_access_token": true
+      },
+      {
+        "endpoint": "sessions",
+        "status": 403
+      },
+      {
+        "endpoint": "teams",
+        "status": 200
+      },
+      {
+        "endpoint": "sessions",
+        "status": 200
+      },
+      {
+        "endpoint": "current_run",
+        "status": 200
+      },
+      {
+        "endpoint": "synthesis",
+        "status": 200
+      },
+      {
+        "endpoint": "proposal",
+        "status": 200
+      },
+      {
+        "endpoint": "authority",
+        "status": 200
+      }
+    ],
+    "ui_flags": {
+      "dialog_count": 0,
+      "unsaved": false,
+      "approval_visible": true,
+      "approval_disabled": true,
+      "error_boundary": false,
+      "restoring": false,
+      "loading_session": false,
+      "login_visible": false,
+      "team_visible": true,
+      "form_count": 38,
+      "profile": "founding-node"
+    },
+    "gates": {
+      "authenticated_browser": "blocked"
+    }
+  },
+  "owned_runtime_removed": true,
+  "native_evidence_directory": "/home/ubuntu/chassis-preproduction/runs/chassis-candidate-browser-75a8be213de545a199110319fbdff1f8"
+}
