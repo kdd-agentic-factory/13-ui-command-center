@@ -1,0 +1,151 @@
+{
+  "status": "passed",
+  "scope": "synthetic_qa_readonly_database_phase_profile",
+  "business_writes": false,
+  "model_calls": 0,
+  "deployment": false,
+  "operations": [
+    {
+      "name": "authority",
+      "iteration": 0,
+      "status": 200,
+      "total_s": 14.3606,
+      "connections": 2,
+      "connect_s": 2.5684,
+      "exit_s": 0.3058,
+      "role_check_queries": 2,
+      "role_check_s": 0.6721,
+      "context_queries": 2,
+      "context_s": 0.3393,
+      "business_queries": 50,
+      "business_s": 9.2273,
+      "object_reads": [
+        {
+          "namespace": "catalog",
+          "kind": "engineering_session",
+          "calls": 3,
+          "unique_refs": 1
+        },
+        {
+          "namespace": "objects",
+          "kind": "chassis_comparison",
+          "calls": 1,
+          "unique_refs": 1
+        },
+        {
+          "namespace": "objects",
+          "kind": "engineering_chief_context",
+          "calls": 2,
+          "unique_refs": 1
+        },
+        {
+          "namespace": "objects",
+          "kind": "engineering_chief_proposal",
+          "calls": 1,
+          "unique_refs": 1
+        },
+        {
+          "namespace": "objects",
+          "kind": "engineering_decision_context",
+          "calls": 9,
+          "unique_refs": 9
+        },
+        {
+          "namespace": "objects",
+          "kind": "engineering_decision_receipt",
+          "calls": 9,
+          "unique_refs": 9
+        },
+        {
+          "namespace": "objects",
+          "kind": "engineering_snapshot",
+          "calls": 5,
+          "unique_refs": 1
+        },
+        {
+          "namespace": "objects",
+          "kind": "knowledge_run_requirements",
+          "calls": 8,
+          "unique_refs": 1
+        },
+        {
+          "namespace": "objects",
+          "kind": "knowledge_snapshot_plan",
+          "calls": 1,
+          "unique_refs": 1
+        }
+      ]
+    },
+    {
+      "name": "authority",
+      "iteration": 1,
+      "status": 200,
+      "total_s": 4.2263,
+      "connections": 2,
+      "connect_s": 0.7172,
+      "exit_s": 0.0911,
+      "role_check_queries": 2,
+      "role_check_s": 0.205,
+      "context_queries": 2,
+      "context_s": 0.0694,
+      "business_queries": 50,
+      "business_s": 2.2864,
+      "object_reads": [
+        {
+          "namespace": "catalog",
+          "kind": "engineering_session",
+          "calls": 3,
+          "unique_refs": 1
+        },
+        {
+          "namespace": "objects",
+          "kind": "chassis_comparison",
+          "calls": 1,
+          "unique_refs": 1
+        },
+        {
+          "namespace": "objects",
+          "kind": "engineering_chief_context",
+          "calls": 2,
+          "unique_refs": 1
+        },
+        {
+          "namespace": "objects",
+          "kind": "engineering_chief_proposal",
+          "calls": 1,
+          "unique_refs": 1
+        },
+        {
+          "namespace": "objects",
+          "kind": "engineering_decision_context",
+          "calls": 9,
+          "unique_refs": 9
+        },
+        {
+          "namespace": "objects",
+          "kind": "engineering_decision_receipt",
+          "calls": 9,
+          "unique_refs": 9
+        },
+        {
+          "namespace": "objects",
+          "kind": "engineering_snapshot",
+          "calls": 5,
+          "unique_refs": 1
+        },
+        {
+          "namespace": "objects",
+          "kind": "knowledge_run_requirements",
+          "calls": 8,
+          "unique_refs": 1
+        },
+        {
+          "namespace": "objects",
+          "kind": "knowledge_snapshot_plan",
+          "calls": 1,
+          "unique_refs": 1
+        }
+      ]
+    }
+  ]
+}
