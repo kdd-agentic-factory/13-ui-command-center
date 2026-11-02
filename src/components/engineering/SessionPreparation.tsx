@@ -39,7 +39,7 @@ export function SessionPreparation({recordingId=null}:{recordingId?:string|null}
           const choices=catalog[kind].filter(item=>!item.retired);
           const needsHistorical=past&&selected&&past.id===selected.id&&past.revision===selected.revision&&!choices.some(item=>referenceValue(item)===referenceValue(selected));
           return <div className="engineering-catalog-field" key={kind}><label>{labels[kind]} <select aria-label={labels[kind]} value={referenceValue(selected)} onChange={e=>{const item=[...choices,...past?[past]:[]].find(ref=>referenceValue(ref)===e.target.value);edit({[kind]:item?{id:item.id,revision:item.revision}:null});}}><option value="">Sin definir</option>{needsHistorical&&<option value={referenceValue(past)}>{past.name} · r{past.revision} · referencia guardada</option>}{choices.map(item=><option key={referenceValue(item)} value={referenceValue(item)}>{item.name} · r{item.revision}</option>)}</select></label>
-            {!choices.length&&<p className="engineering-field-hint">Catálogo de {nouns[kind]} vacío. Puedes guardar la sesión o crear una entrada.</p>}
+            {!choices.length&&!loading&&<p className="engineering-field-hint">{context.error?<>Catálogo de {nouns[kind]} no disponible. Recarga el contexto para comprobar sus entradas.</>:<>Catálogo de {nouns[kind]} vacío. Puedes guardar la sesión o crear una entrada.</>}</p>}
             {context.catalogCursors[kind]&&<button type="button" className="btn" onClick={()=>void context.loadMoreCatalog(kind)}>Más {nouns[kind]}s</button>}
           </div>;
         })}

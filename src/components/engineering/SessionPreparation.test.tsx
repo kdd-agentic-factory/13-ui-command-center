@@ -8,6 +8,14 @@ import { entity, ids, session, transport } from '../../../tests/engineeringTrans
 function view(){return render(<WorkspaceDraftProvider><EngineeringSessionProvider><SessionPreparation /></EngineeringSessionProvider></WorkspaceDraftProvider>);}
 beforeEach(()=>{localStorage.clear();vi.restoreAllMocks();});
 describe('engineering preparation over strict human transport',()=>{
+  it('does not describe inaccessible catalogs as empty after a failed context load',async()=>{
+    vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({detail:'Route or role not authorized'}),{status:403,headers:{'Content-Type':'application/json'}})));
+    view();
+    await screen.findByRole('alert');
+    expect(screen.queryByText(/Catálogo de circuito vacío/)).not.toBeInTheDocument();
+    expect(screen.getByText(/Catálogo de circuito no disponible/)).toBeInTheDocument();
+    expect(screen.getByRole('button',{name:'Recargar contexto'})).toBeEnabled();
+  });
   it('discards a new form on reload and rearms its guard after editing again',async()=>{
     transport();view();await screen.findByRole('option',{name:'Circuito medido · r1'});
     fireEvent.change(screen.getByLabelText('Nombre de sesión'),{target:{value:'Descartar nombre'}});

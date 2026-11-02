@@ -1,6 +1,6 @@
 /// <reference types="vitest" />
-import { defineConfig, loadEnv, type Plugin } from 'vite';
-import {readFileSync} from 'node:fs';
+import { defineConfig, loadEnv, searchForWorkspaceRoot, type Plugin } from 'vite';
+import {readFileSync,realpathSync} from 'node:fs';
 import {resolve} from 'node:path';
 import react from '@vitejs/plugin-react';
 import {applyCommercialCsp} from './scripts/commercial-csp.mjs';
@@ -26,6 +26,7 @@ export default defineConfig(({ mode, command }) => {
   resolve:{alias:{'@delivery/settings':resolve('src/pages',profile==='chassis'?'SettingsCommercialPage.tsx':'SettingsDevelopmentPage.tsx')}},
   base: '/pit-wall/',
   server: {
+    fs:{allow:[searchForWorkspaceRoot(process.cwd()),realpathSync(resolve('node_modules/@fontsource'))]},
     proxy: {
       '/api/telemetry': { target: telemetryProxyTarget(serverEnv), changeOrigin: true, secure: true,
         headers: { 'X-API-Key': serverEnv.TDS_API_KEY ?? '' },
