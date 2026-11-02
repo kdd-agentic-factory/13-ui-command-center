@@ -1,0 +1,486 @@
+{
+  "status": "passed",
+  "scope": "optimized_cycle_real_model_and_matched_inputs",
+  "candidate_acceptance": false,
+  "agents_executed_by_this_readonly_probe": false,
+  "human_approval": false,
+  "deployment": false,
+  "gates": [
+    {
+      "name": "fixed_origin",
+      "passed": true
+    },
+    {
+      "name": "real_engineer_login",
+      "passed": true
+    },
+    {
+      "name": "current_fixture_passed",
+      "passed": true
+    },
+    {
+      "name": "existing_authorized_run_read",
+      "passed": true
+    },
+    {
+      "name": "fresh_run_has_tasks",
+      "passed": true
+    },
+    {
+      "name": "seven_specialist_and_independent_results_succeeded",
+      "passed": true
+    },
+    {
+      "name": "physical_neuro_not_enabled",
+      "passed": true
+    },
+    {
+      "name": "eight_real_model_calls",
+      "passed": true
+    },
+    {
+      "name": "frozen_snapshot_read",
+      "passed": true
+    },
+    {
+      "name": "three_domain_refs_preserved",
+      "passed": true
+    },
+    {
+      "name": "baseline_snapshot_read",
+      "passed": true
+    },
+    {
+      "name": "matched_recording_setup_and_analysis_selection",
+      "passed": true
+    },
+    {
+      "name": "matched_non_domain_evidence",
+      "passed": true
+    },
+    {
+      "name": "matched_domain_facts_units_uncertainties_and_point_times",
+      "passed": true
+    },
+    {
+      "name": "domain_projection_complete",
+      "passed": true
+    },
+    {
+      "name": "track_sees_only_own_domain",
+      "passed": true
+    },
+    {
+      "name": "track_si_value_unit_uncertainty_preserved",
+      "passed": true
+    },
+    {
+      "name": "weather_sees_only_own_domain",
+      "passed": true
+    },
+    {
+      "name": "weather_si_value_unit_uncertainty_preserved",
+      "passed": true
+    },
+    {
+      "name": "tires-powertrain_sees_only_own_domain",
+      "passed": true
+    },
+    {
+      "name": "tires-powertrain_si_value_unit_uncertainty_preserved",
+      "passed": true
+    },
+    {
+      "name": "chassis_does_not_receive_unrelated_domain_facts",
+      "passed": true
+    },
+    {
+      "name": "independent_reviewers_receive_all_three_domains",
+      "passed": true
+    },
+    {
+      "name": "private_source_and_attestation_text_not_projected",
+      "passed": true
+    },
+    {
+      "name": "synthesis_progress_read",
+      "passed": true
+    },
+    {
+      "name": "proposal_read",
+      "passed": true
+    },
+    {
+      "name": "proposal_schema_valid",
+      "passed": true
+    },
+    {
+      "name": "same_run_snapshot",
+      "passed": true
+    },
+    {
+      "name": "proposal_digest_valid",
+      "passed": true
+    },
+    {
+      "name": "measurement_only",
+      "passed": true
+    },
+    {
+      "name": "external_validation_remains_false",
+      "passed": true
+    },
+    {
+      "name": "no_physical_prescription",
+      "passed": true
+    },
+    {
+      "name": "publication_complete",
+      "passed": true
+    },
+    {
+      "name": "all_six_eligibility_checks",
+      "passed": true
+    },
+    {
+      "name": "track_durable_inference_evidence_scoped",
+      "passed": true
+    },
+    {
+      "name": "track_one_authorized_model_call",
+      "passed": true
+    },
+    {
+      "name": "weather_durable_inference_evidence_scoped",
+      "passed": true
+    },
+    {
+      "name": "weather_one_authorized_model_call",
+      "passed": true
+    },
+    {
+      "name": "tires-powertrain_durable_inference_evidence_scoped",
+      "passed": true
+    },
+    {
+      "name": "tires-powertrain_one_authorized_model_call",
+      "passed": true
+    },
+    {
+      "name": "one_successful_chief_attempt",
+      "passed": true
+    },
+    {
+      "name": "original_source_status_preserved",
+      "passed": true
+    },
+    {
+      "name": "policy_receipt_version",
+      "passed": true
+    },
+    {
+      "name": "policy_receipt_matches",
+      "passed": true
+    },
+    {
+      "name": "authority_read",
+      "passed": true
+    },
+    {
+      "name": "real_chief_login",
+      "passed": true
+    },
+    {
+      "name": "chief_authority_read",
+      "passed": true
+    },
+    {
+      "name": "chief_approvable_for_measurement_only",
+      "passed": true
+    },
+    {
+      "name": "chief_designation_matches",
+      "passed": true
+    },
+    {
+      "name": "real_substitute_login",
+      "passed": true
+    },
+    {
+      "name": "substitute_authority_read",
+      "passed": true
+    },
+    {
+      "name": "substitute_approvable_for_measurement_only",
+      "passed": true
+    },
+    {
+      "name": "substitute_designation_matches",
+      "passed": true
+    },
+    {
+      "name": "own_private_domain_packet_read",
+      "passed": true
+    },
+    {
+      "name": "B_engineer_actual_login",
+      "passed": true
+    },
+    {
+      "name": "foreign_domain_packet_hidden",
+      "passed": true
+    },
+    {
+      "name": "foreign_snapshot_hidden",
+      "passed": true
+    },
+    {
+      "name": "A_reader_actual_login",
+      "passed": true
+    },
+    {
+      "name": "reader_can_read_own_domain_packet",
+      "passed": true
+    },
+    {
+      "name": "reader_cannot_publish_valid_domain_packet",
+      "passed": true
+    }
+  ],
+  "fixtures": [],
+  "public_run_keys": [
+    "created_at",
+    "deadline",
+    "model_calls",
+    "revealed",
+    "review_mode",
+    "run_id",
+    "session_id",
+    "snapshot_digest",
+    "snapshot_id",
+    "status",
+    "tasks",
+    "workflow_id"
+  ],
+  "run_id": "20f2fc25-aee4-5f4e-b10d-bdf1886ed22e",
+  "run_status": "sealed",
+  "model_calls": 8,
+  "task_field_names": [
+    [
+      "agent_id",
+      "branch",
+      "cause",
+      "result_hash",
+      "status",
+      "task_id"
+    ],
+    [
+      "agent_id",
+      "branch",
+      "cause",
+      "result_hash",
+      "status",
+      "task_id"
+    ],
+    [
+      "agent_id",
+      "branch",
+      "cause",
+      "result_hash",
+      "status",
+      "task_id"
+    ],
+    [
+      "agent_id",
+      "branch",
+      "cause",
+      "result_hash",
+      "status",
+      "task_id"
+    ],
+    [
+      "agent_id",
+      "branch",
+      "cause",
+      "result_hash",
+      "status",
+      "task_id"
+    ],
+    [
+      "agent_id",
+      "branch",
+      "cause",
+      "result_hash",
+      "status",
+      "task_id"
+    ],
+    [
+      "agent_id",
+      "branch",
+      "cause",
+      "result_hash",
+      "status",
+      "task_id"
+    ],
+    [
+      "agent_id",
+      "branch",
+      "cause",
+      "result_hash",
+      "status",
+      "task_id"
+    ],
+    [
+      "agent_id",
+      "branch",
+      "cause",
+      "result_hash",
+      "status",
+      "task_id"
+    ]
+  ],
+  "task_states": [
+    {
+      "agent": "chassis",
+      "status": "succeeded",
+      "cause": null
+    },
+    {
+      "agent": "track",
+      "status": "succeeded",
+      "cause": null
+    },
+    {
+      "agent": "weather",
+      "status": "succeeded",
+      "cause": null
+    },
+    {
+      "agent": "physical",
+      "status": "unavailable",
+      "cause": "domain_context_not_projected"
+    },
+    {
+      "agent": "neuro",
+      "status": "unavailable",
+      "cause": "domain_context_not_projected"
+    },
+    {
+      "agent": "tires-powertrain",
+      "status": "succeeded",
+      "cause": null
+    },
+    {
+      "agent": "mechanical-check",
+      "status": "succeeded",
+      "cause": null
+    },
+    {
+      "agent": "evidence-quality",
+      "status": "succeeded",
+      "cause": null
+    },
+    {
+      "agent": "alternative-hypotheses",
+      "status": "succeeded",
+      "cause": null
+    }
+  ],
+  "synthetic_observations_only": true,
+  "synthesis_field_names": [
+    "cause",
+    "operation_id",
+    "proposal_id",
+    "publication_status",
+    "report",
+    "report_digest",
+    "status"
+  ],
+  "synthesis_status": "succeeded",
+  "synthesis_stage": null,
+  "synthesis_cause": null,
+  "proposal_present": true,
+  "proposal_field_names": [
+    "external_validation",
+    "items",
+    "limitations",
+    "matrix",
+    "model_metadata",
+    "resolution",
+    "result_hashes",
+    "revision",
+    "run_id",
+    "schema_version",
+    "section_summaries",
+    "snapshot_digest",
+    "source_status"
+  ],
+  "publication_status": "published",
+  "proposal_id": "c599151a-e1b0-4683-8c61-d3d45fd49436",
+  "eligibility": {
+    "inputs_valid": true,
+    "branches_sealed": true,
+    "independence_checked": true,
+    "conflicts_resolved": true,
+    "domain_valid": true,
+    "source_valid": true,
+    "blocked_reasons": []
+  },
+  "item_kinds": [
+    "measurement"
+  ],
+  "item_count": 1,
+  "source_status": [
+    "unknown"
+  ],
+  "external_validation": false,
+  "selection_receipt": {
+    "schema_version": "1.1.0",
+    "policy_version": "1.0.0",
+    "candidate_digest": "918981dc5e2c87bf88604ac84b2992a18db5d992700156e33c82c2047d87f185",
+    "eligible_count": 2,
+    "eligible_kinds": [
+      "measurement",
+      "measurement"
+    ]
+  },
+  "authority_field_names": [
+    "approvable",
+    "approved_current",
+    "authority_available",
+    "authority_proposal_id",
+    "current",
+    "decision_action",
+    "decision_id",
+    "designation_revision",
+    "generation",
+    "primary_id",
+    "proposal_id",
+    "proposal_revision",
+    "reasons",
+    "rejectable",
+    "revision_requestable",
+    "schema_version",
+    "substitute_id"
+  ],
+  "approvable": false,
+  "authority_blockers": [],
+  "designated_authority": {
+    "chief": {
+      "approvable": true,
+      "rejectable": true,
+      "revision_requestable": true,
+      "authority_available": true,
+      "current": true,
+      "reasons": []
+    },
+    "substitute": {
+      "approvable": true,
+      "rejectable": true,
+      "revision_requestable": true,
+      "authority_available": true,
+      "current": true,
+      "reasons": []
+    }
+  }
+}

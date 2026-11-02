@@ -1,0 +1,36 @@
+{
+  "scope": "immutable_candidate_browser_readonly",
+  "status": "passed",
+  "candidate_acceptance": false,
+  "deployment": false,
+  "human_decisions_written": 0,
+  "admin_credentials_in_browser": false,
+  "host_ports": false,
+  "images": {
+    "api": "sha256:ebac5d1eb4aa704e153502bf822c7ec9d9847ed7c31e0d3cb619ef9d80189214",
+    "frontend": "sha256:f83632ecdba22407bf42a4d095a2b0b8ae56d95fe231ce7caa026e598fc3f554",
+    "browser": "sha256:d27ebd350409ea79534fed43463b9e71fddbb1cabf51bf445342436c5e7a1b68"
+  },
+  "test_tls": "fresh_local_ca_separate_api_ui_keys; provider_trust_unchanged",
+  "browser_internal_only": true,
+  "browser": {
+    "status": "passed",
+    "scope": "pending_measurement_review_readonly",
+    "gates": {
+      "candidate_browser_identity_readonly": "passed"
+    },
+    "candidate_acceptance": false,
+    "synthetic_only": true,
+    "checks": [
+      "A_chief_pending_measurement_approval_visible_no_decision",
+      "A_chief_real_login_scope_and_reload",
+      "A_substitute_pending_measurement_approval_visible_no_decision",
+      "A_substitute_real_login_scope_and_reload",
+      "A_reader_real_login_scope_and_reload"
+    ],
+    "human_decisions_written": 0
+  },
+  "input_identity_unchanged": true,
+  "owned_runtime_removed": true,
+  "native_evidence_directory": "/home/ubuntu/chassis-preproduction/runs/chassis-candidate-browser-9408861974db47a4ab3322d41e8f89d5"
+}
