@@ -118,6 +118,11 @@
     },
     {
       "method": "GET",
+      "pattern": "/api/v1/engineering/bikes/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/technical-profile/projection",
+      "access": "team"
+    },
+    {
+      "method": "GET",
       "pattern": "/api/v1/engineering/brain/notes",
       "access": "team"
     },
@@ -462,5 +467,5 @@
       "access": "team"
     }
   ],
-  "sha256": "d6f1b3fb80f3b9bf31b2d2044b470a1ebe88f98e8f3bfc24ea7b8cea4f65d8f0"
+  "sha256": "939436c96011985f7136602ae13372c63087eae5434a6040854f7d862a9418f9"
 }
