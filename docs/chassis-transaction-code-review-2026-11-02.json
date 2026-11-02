@@ -1,0 +1,15 @@
+{
+  "scope": "transaction_round_trip_batching",
+  "source_commit": "77995c9642fef70fb1244a738bbeb17d965cb13e",
+  "important_or_critical_findings": [],
+  "reviewer_cloud_access": false,
+  "reviewer_independent_test_execution": false,
+  "reviewer_test_collection_limitation": "Default reviewer environment lacked psycopg; provided isolated-container results were not independently rerun.",
+  "verified_by_implementer": {
+    "unit_tests": 8,
+    "isolated_postgres_and_worker_tests": 28,
+    "deselected": 127,
+    "seconds": 37.14
+  },
+  "assessment": "Fresh per-transaction role checks, all six rejection booleans, transaction-local parameter-bound settings, TLS, semaphore and timeouts retained."
+}

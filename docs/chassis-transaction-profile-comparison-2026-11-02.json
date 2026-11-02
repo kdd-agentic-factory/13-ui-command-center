@@ -1,0 +1,14 @@
+{
+  "scope": "same_QA_six_read_operations",
+  "setup_queries_before": 72,
+  "setup_queries_after": 16,
+  "total_read_seconds_before": 25.7751,
+  "total_read_seconds_after": 23.2735,
+  "warm_iteration_seconds_before": 7.8368,
+  "warm_iteration_seconds_after": 6.8646,
+  "connections_unchanged": true,
+  "business_query_counts_unchanged": true,
+  "model_calls": 0,
+  "deployment": false,
+  "limitation": "Small non-concurrent network samples. Not an SLA, full eight-call worker replay, or causal latency percentage. Authority still needs50 business queries per read."
+}
