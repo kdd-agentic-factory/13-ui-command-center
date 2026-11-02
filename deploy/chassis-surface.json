@@ -113,6 +113,11 @@
     },
     {
       "method": "GET",
+      "pattern": "/api/v1/engineering/bikes/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/preparations",
+      "access": "team"
+    },
+    {
+      "method": "GET",
       "pattern": "/api/v1/engineering/bikes/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/technical-profile",
       "access": "team"
     },
@@ -467,5 +472,5 @@
       "access": "team"
     }
   ],
-  "sha256": "939436c96011985f7136602ae13372c63087eae5434a6040854f7d862a9418f9"
+  "sha256": "6f30b2ec35aef23a1e441f78768f133fc2659817f50a29577276995d89c41dd2"
 }

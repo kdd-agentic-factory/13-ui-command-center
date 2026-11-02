@@ -24,3 +24,11 @@ export async function readProfileGeometry(bike:EngineeringReference,signal?:Abor
  if(identitySnapshot().generation!==before.generation||value.schema_version!=='1.0.0'||value.bike_reference?.id!==bike.id||value.bike_reference?.revision!==bike.revision||!value.values||!Number.isInteger(value.profile_revision)||value.profile_revision<1||!/^[a-f0-9]{64}$/.test(value.profile_digest))throw new Error('Geometría incompatible con el contexto actual');
  return value;
 }
+export async function listBikePreparations(bike:EngineeringReference):Promise<import('../domain/chassisComparison').SetupRevision[]>{
+ const identity=identitySnapshot();
+ const response=await telemetryFetch(base+encodeURIComponent(bike.id)+'/preparations?bike_revision='+bike.revision,{signal:AbortSignal.timeout(30000)});
+ if(!response.ok)throw new Error(`No se pudieron recuperar preparaciones (${response.status})`);
+ const data=await response.json();
+ if(identity.generation!==identitySnapshot().generation||!Array.isArray(data.items)||data.items.some((row:{bike_id:string;team_id:string})=>row.bike_id!==bike.id||row.team_id!==identity.team))throw new Error('Preparaciones incompatibles con la moto o equipo');
+ return data.items;
+}
