@@ -16,3 +16,11 @@ export async function saveBikeProfile(bike:EngineeringReference,expected:number,
  const result=await request(bike,{method:'PUT',signal,body:JSON.stringify({bike_revision:bike.revision,expected_profile_revision:expected,body,operation_id:operation})},'');
  if(!result)throw new Error('El servidor no confirmó el guardado');return result;
 }
+export async function readProfileGeometry(bike:EngineeringReference,signal?:AbortSignal):Promise<import('../domain/bikeProfileImport').ProfileGeometryProjection>{
+ const before=identitySnapshot();
+ const response=await telemetryFetch(base+encodeURIComponent(bike.id)+'/technical-profile/projection?bike_revision='+bike.revision,{signal:signal??AbortSignal.timeout(30000)});
+ if(!response.ok)throw new Error(`No se pudo consultar la geometría de la ficha (${response.status})`);
+ const value=await response.json();
+ if(identitySnapshot().generation!==before.generation||value.schema_version!=='1.0.0'||value.bike_reference?.id!==bike.id||value.bike_reference?.revision!==bike.revision||!value.values||!Number.isInteger(value.profile_revision)||value.profile_revision<1||!/^[a-f0-9]{64}$/.test(value.profile_digest))throw new Error('Geometría incompatible con el contexto actual');
+ return value;
+}
