@@ -1,0 +1,161 @@
+{
+  "status": "passed",
+  "scope": "current_image_real_local_model_worker",
+  "candidate_acceptance": false,
+  "human_approval": false,
+  "deployment": false,
+  "model_transport": [
+    {
+      "timeout_seconds": 51.979,
+      "num_threads": 6,
+      "prompt_chars": 2887,
+      "server_metrics": {
+        "total_duration": 16993241289,
+        "load_duration": 31445114,
+        "prompt_eval_count": 895,
+        "prompt_eval_duration": 6523265000,
+        "eval_count": 199,
+        "eval_duration": 10428740000
+      },
+      "elapsed_seconds": 16.999
+    },
+    {
+      "timeout_seconds": 36.844,
+      "num_threads": 6,
+      "prompt_chars": 2896,
+      "server_metrics": {
+        "total_duration": 9672725620,
+        "load_duration": 31607028,
+        "prompt_eval_count": 897,
+        "prompt_eval_duration": 580354000,
+        "eval_count": 181,
+        "eval_duration": 9054552000
+      },
+      "elapsed_seconds": 9.677
+    },
+    {
+      "timeout_seconds": 27.106,
+      "num_threads": 6,
+      "prompt_chars": 2896,
+      "server_metrics": {
+        "total_duration": 9707643126,
+        "load_duration": 31791764,
+        "prompt_eval_count": 896,
+        "prompt_eval_duration": 618847000,
+        "eval_count": 181,
+        "eval_duration": 9050435000
+      },
+      "elapsed_seconds": 9.712
+    },
+    {
+      "timeout_seconds": 31.496,
+      "num_threads": 6,
+      "prompt_chars": 2902,
+      "server_metrics": {
+        "total_duration": 10547770200,
+        "load_duration": 31950287,
+        "prompt_eval_count": 897,
+        "prompt_eval_duration": 526023000,
+        "eval_count": 199,
+        "eval_duration": 9983442000
+      },
+      "elapsed_seconds": 10.553
+    },
+    {
+      "timeout_seconds": 59.964,
+      "num_threads": 6,
+      "prompt_chars": 7517,
+      "server_metrics": {
+        "total_duration": 28089101906,
+        "load_duration": 33167318,
+        "prompt_eval_count": 2790,
+        "prompt_eval_duration": 22715839000,
+        "eval_count": 79,
+        "eval_duration": 5193531000
+      },
+      "elapsed_seconds": 28.101
+    }
+  ],
+  "passes": [
+    {
+      "index": 0,
+      "worked": true,
+      "elapsed_seconds": 64.155
+    },
+    {
+      "index": 1,
+      "worked": true,
+      "elapsed_seconds": 13.195
+    },
+    {
+      "index": 2,
+      "worked": true,
+      "elapsed_seconds": 22.106
+    },
+    {
+      "index": 3,
+      "worked": true,
+      "elapsed_seconds": 12.939
+    },
+    {
+      "index": 4,
+      "worked": true,
+      "elapsed_seconds": 21.585
+    },
+    {
+      "index": 5,
+      "worked": true,
+      "elapsed_seconds": 13.544
+    },
+    {
+      "index": 6,
+      "worked": true,
+      "elapsed_seconds": 42.705
+    },
+    {
+      "index": 7,
+      "worked": true,
+      "elapsed_seconds": 64.959
+    },
+    {
+      "index": 8,
+      "worked": true,
+      "elapsed_seconds": 47.951
+    },
+    {
+      "index": 9,
+      "worked": true,
+      "elapsed_seconds": 51.225
+    },
+    {
+      "index": 10,
+      "worked": false,
+      "elapsed_seconds": 3.55
+    }
+  ],
+  "worked": {
+    "readiness": {
+      "scope": "local_model_readiness_preflight",
+      "loaded": true,
+      "model_digest_verified": true,
+      "prompt_supplied": false,
+      "elapsed_s": 3.658,
+      "admission_authorized": false,
+      "candidate_acceptance": false
+    },
+    "worker_result": true
+  },
+  "container_removed": true,
+  "image_id": "sha256:d801af2b9fa41bbc3f408c481f3089f1f73a52f307aa2b6b1c0d4f8b7d73df85",
+  "run_id": "cea2702b-d00d-587f-a9a7-a04e51cc432a",
+  "session_id": "a9afbb22-ece1-477b-b77a-0a7d57c513ab",
+  "model_artifacts": {
+    "name": "qwen3:1.7b",
+    "manifest_sha256": "8f68893c685c3ddff2aa3fffce2aa60a30bb2da65ca488b61fff134a4d1730e7",
+    "blob_count": 5,
+    "total_bytes": 1359293444,
+    "manifest_layout": "manifests-v2"
+  },
+  "host_ports": false,
+  "native_evidence_directory": "/home/ubuntu/chassis-preproduction/runs/current-image-worker-62cd2176dd6949e18b7e34e3ce8ed36a"
+}
