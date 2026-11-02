@@ -1,0 +1,23 @@
+{
+  "date": "2026-11-02",
+  "scope": "Current candidate source mounted readonly in reviewed Chassis-Preproduction executor",
+  "status": "passed",
+  "checks_passed": 46,
+  "real_services": ["InsForge identity", "Restricted PostgreSQL with TLS", "Private InsForge Storage", "Crew Chief designation authority"],
+  "qa_accounts": 8,
+  "qa_teams": 2,
+  "verified": ["Real login and subject for each designated QA account", "Own session access and foreign team rejection for every account", "Primary and substitute designations for both teams", "Private document list and SHA-256/length/no-store validation for both teams", "Foreign documents hidden with 404"],
+  "business_writes": false,
+  "model_executed": false,
+  "browser_tested": false,
+  "human_approval_tested": false,
+  "candidate_acceptance": false,
+  "deployment_performed": false,
+  "credentials": "Explicit private files, UID1000/mode0600 verified and mounted readonly; tokens kept only in memory",
+  "source_sha256": {
+    "persistence/cloud_app.py": "797d7d42da6caf3410f7a4fd3144858614d039d2901010c3db03b864746926b5",
+    "persistence/http_runtime.py": "aa39aacf6a5b4f0069e344c5208aef5eec19d81a0faa60667850e027b279c799",
+    "routers/suspension_lab.py": "603c3fd14b48a52a486888ef3a8a49c259f0fc1c8977453ec5edcfcd521a38fe"
+  },
+  "limits": ["Authenticated designations are not human approvals", "Running with candidate source overlay is not release image acceptance", "Historical credential revocation pending"]
+}
