@@ -1,0 +1,57 @@
+{
+  "status": "blocked",
+  "scope": "two_synthetic_qa_rejection_reconciliations",
+  "deployment": false,
+  "human_decisions_written": 0,
+  "originals_modified": false,
+  "gates": [
+    {
+      "name": "explicit_two_absent_receipt_candidates",
+      "passed": true
+    },
+    {
+      "name": "real_original_actor_login",
+      "passed": true
+    },
+    {
+      "name": "explicit_original_intent_0",
+      "passed": true
+    },
+    {
+      "name": "rejection_without_human_event_1",
+      "passed": true
+    },
+    {
+      "name": "same_reconciliation_idempotent_1",
+      "passed": true
+    },
+    {
+      "name": "explicit_original_intent_1",
+      "passed": true
+    },
+    {
+      "name": "rejection_without_human_event_2",
+      "passed": true
+    },
+    {
+      "name": "same_reconciliation_idempotent_2",
+      "passed": true
+    },
+    {
+      "name": "all_original_intents_receipts_bindings_identical",
+      "passed": true
+    }
+  ],
+  "outcomes": [
+    {
+      "intent_id": "249673bb-1c5b-5d7b-b80f-6eecb77ebbc7",
+      "outcome": "rejected_not_designated"
+    },
+    {
+      "intent_id": "d9aef01a-9927-5660-9fc3-4f764da2d2fc",
+      "outcome": "rejected_not_designated"
+    }
+  ],
+  "original_rows_unchanged": 22,
+  "error_type": "TypeError"
+}

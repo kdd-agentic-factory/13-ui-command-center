@@ -1,0 +1,9 @@
+{
+  "scope": "focused_security_concurrency_review",
+  "commit": "6d28d5ea429827d512e8cb936a6b748629023814",
+  "important_or_critical_findings": [],
+  "independent_readonly_reviewer": true,
+  "tests_independently_rerun": false,
+  "cloud_access_by_reviewer": false,
+  "assessment": "Safe for exact two synthetic QA repairs if all original-proof, unchanged-designation, current-context and absent-receipt gates hold."
+}

@@ -1,0 +1,55 @@
+{
+  "scope": "current_image_denial_creates_no_intent",
+  "status": "passed",
+  "checks": [
+    {
+      "name": "actual_A_engineer_login",
+      "passed": true
+    },
+    {
+      "name": "existing_owned_approval_before_negative_checks",
+      "passed": true
+    },
+    {
+      "name": "A_engineer_valid_approval_request_denied",
+      "passed": true
+    },
+    {
+      "name": "actual_A_reader_login",
+      "passed": true
+    },
+    {
+      "name": "A_reader_valid_approval_request_denied",
+      "passed": true
+    },
+    {
+      "name": "spoofed_actor_header_does_not_grant_chief",
+      "passed": true
+    },
+    {
+      "name": "actual_B_engineer_login",
+      "passed": true
+    },
+    {
+      "name": "B_cannot_read_A_proposal",
+      "passed": true
+    },
+    {
+      "name": "B_cannot_select_A_team",
+      "passed": true
+    },
+    {
+      "name": "existing_approval_unchanged",
+      "passed": true
+    },
+    {
+      "name": "no_new_or_modified_durable_human_intent_or_receipt",
+      "passed": true
+    }
+  ],
+  "deployment": false,
+  "human_decisions_written": 0,
+  "durable_rows_before": 16,
+  "last_http_status": 403,
+  "durable_rows_after": 16
+}

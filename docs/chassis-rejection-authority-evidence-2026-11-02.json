@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "scope": "historical_qa_rejection_evidence",
+  "business_writes": false,
+  "deployment": false,
+  "intents": [
+    {
+      "intent_id": "249673bb-1c5b-5d7b-b80f-6eecb77ebbc7",
+      "intent_fingerprint": "b4bc67f447e7150c7474c39ad5df5aa58d5339a407363f3776679e62a8eab079",
+      "remote_receipt_absent": true,
+      "current_context": true,
+      "authority_available": true,
+      "expected_designation_revision": 1,
+      "current_designation_revision": 1,
+      "actor_designated": false,
+      "kind": "decision"
+    },
+    {
+      "intent_id": "d9aef01a-9927-5660-9fc3-4f764da2d2fc",
+      "intent_fingerprint": "cdd7de7ca319f94058c2e98fc2157471dcec9377793d1e03df9372bf9417dbc3",
+      "remote_receipt_absent": true,
+      "current_context": true,
+      "authority_available": true,
+      "expected_designation_revision": 1,
+      "current_designation_revision": 1,
+      "actor_designated": false,
+      "kind": "decision"
+    }
+  ]
+}

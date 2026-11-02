@@ -1,0 +1,108 @@
+{
+  "status": "passed",
+  "scope": "reconciled_qa_history_fresh_process",
+  "business_writes": false,
+  "workshop_application": false,
+  "candidate_acceptance": false,
+  "deployment": false,
+  "gates": [
+    {
+      "name": "two_explicit_targets",
+      "passed": true
+    },
+    {
+      "name": "real_engineer_read_login",
+      "passed": true
+    },
+    {
+      "name": "chief_authority_read",
+      "passed": true
+    },
+    {
+      "name": "chief_approved_current",
+      "passed": true
+    },
+    {
+      "name": "chief_events_read",
+      "passed": true
+    },
+    {
+      "name": "chief_complete_recovered_history",
+      "passed": true
+    },
+    {
+      "name": "chief_exact_rejection_count",
+      "passed": true
+    },
+    {
+      "name": "chief_exact_designated_event",
+      "passed": true
+    },
+    {
+      "name": "chief_no_mechanical_event",
+      "passed": true
+    },
+    {
+      "name": "substitute_authority_read",
+      "passed": true
+    },
+    {
+      "name": "substitute_approved_current",
+      "passed": true
+    },
+    {
+      "name": "substitute_events_read",
+      "passed": true
+    },
+    {
+      "name": "substitute_complete_recovered_history",
+      "passed": true
+    },
+    {
+      "name": "substitute_exact_rejection_count",
+      "passed": true
+    },
+    {
+      "name": "substitute_exact_designated_event",
+      "passed": true
+    },
+    {
+      "name": "substitute_no_mechanical_event",
+      "passed": true
+    }
+  ],
+  "decisions": {
+    "chief": {
+      "proposal_id": "ac4b4136-30d4-4d19-a3de-909823591732",
+      "decision_id": "b0f4a3e2-9708-4b14-ad1b-dca0ab1c51f4",
+      "action": "approve"
+    },
+    "substitute": {
+      "proposal_id": "d40d1b20-3eb6-4fd3-bce6-a3244f7dcd5d",
+      "decision_id": "c4e36367-2dc2-4172-97d5-d178df848157",
+      "action": "approve"
+    }
+  },
+  "http_statuses": [
+    {
+      "endpoint": "chief_events",
+      "status": 200
+    },
+    {
+      "endpoint": "substitute_events",
+      "status": 200
+    }
+  ],
+  "history_summary": {
+    "chief": {
+      "rejected_intents_count": 2,
+      "recovery_unavailable": false,
+      "event_count": 1
+    },
+    "substitute": {
+      "rejected_intents_count": 0,
+      "recovery_unavailable": false,
+      "event_count": 1
+    }
+  }
+}
