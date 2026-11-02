@@ -4,6 +4,7 @@ import type {BikeProfileInput} from '../../domain/bikeTechnicalProfile';
 import {readBikeProfile,saveBikeProfile} from '../../services/bikeTechnicalProfiles';
 import {identitySnapshot} from '../../services/telemetryIdentity';
 import {useWorkspaceDraft} from '../../context/WorkspaceDraftContext';
+import {BikeProfileDetails} from './BikeProfileDetails';
 
 const empty=():BikeProfileInput=>({schema_version:'1.0.0',identity:{make:null,model:null,variant:null,year:null,preparation:null,source:null},architecture:{value:'unknown',source:null},components:[],measurements:{},base_setup_reference:null});
 export function BikeTechnicalProfile({bike,name}:{bike:EngineeringReference;name:string}){
@@ -39,6 +40,7 @@ export function BikeTechnicalProfile({bike,name}:{bike:EngineeringReference;name
    <fieldset disabled={!writable||busy||!!error}><legend>Identidad del montaje</legend>
     {(['make','model','variant','year','preparation'] as const).map((field,i)=><label key={field}>{['Marca','Modelo','Versión','Año','Preparación'][i]}<input type={field==='year'?'number':'text'} min={field==='year'?1900:undefined} max={field==='year'?2200:undefined} value={body.identity[field]??''} onChange={e=>change(field,e.target.value)}/></label>)}
    </fieldset>
+   <BikeProfileDetails body={body} author={identity.user??''} disabled={!writable||busy||!!error} onChange={value=>{setBody(value);setNotice('');markDirty(true,'bike-profile');}}/>
    <p>Arquitectura: {body.architecture.value==='unknown'?'pendiente de confirmar':body.architecture.value}. Componentes registrados: {body.components.length}. Medidas registradas: {Object.keys(body.measurements).length}.</p>
    <p>Esta ficha conserva lo conocido. No asigna componentes ni dimensiones de serie automáticamente.</p>
    {!writable&&<p>Se requiere un miembro autorizado del equipo para editar.</p>}
