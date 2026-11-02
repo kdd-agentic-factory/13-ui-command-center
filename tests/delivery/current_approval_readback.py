@@ -40,6 +40,7 @@ async def main():
                 authority = response.json()
                 gate(role + '_approved_current', authority['current'] is True and authority['approved_current'] is True and authority['decision_action'] == 'approve' and bool(authority['decision_id']))
                 events = await api.get('sessions/' + target['session_id'] + '/events')
+                report.setdefault('http_statuses', []).append({'endpoint': role + '_events', 'status': events.status_code})
                 gate(role + '_events_read', events.status_code == 200)
                 report['gates'].append({'name': role + '_complete_recovered_history', 'passed': events.json()['next_cursor'] is None and events.json()['recovery_unavailable'] is False})
                 rows = events.json()['items']

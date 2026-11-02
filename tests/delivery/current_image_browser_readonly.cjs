@@ -10,6 +10,7 @@ const {execFileSync}=require('node:child_process');
 let phase='initialize';const checks=[];const httpStatuses=[];
 let uiFlags=null;
 const identityOnly=process.argv?.includes('--identity-preflight')??false;
+const approvedReadback=process.argv?.includes('--approved-readback')??false;
 (async()=>{
  const input=JSON.parse(fs.readFileSync('/qa-private/accounts.json','utf8'));
  const expected=JSON.parse(fs.readFileSync('/expected.json','utf8'));
@@ -81,22 +82,33 @@ const identityOnly=process.argv?.includes('--identity-preflight')??false;
    await authorizedWorkspace('workspace');
    if(role!=='reader'&&!identityOnly){
     phase=team+'_'+role+'_review_pending';
-    const pending=expected.pending;
+    const pending=approvedReadback?expected.pending_approvals[role]:expected.pending;
     const authorityReply=page.waitForResponse(response=>new URL(response.url()).pathname.endsWith('/engineering/proposals/'+pending.proposal_id+'/authority')&&response.request().method()==='GET');
     await page.getByRole('combobox',{name:'Reabrir sesión',exact:true}).selectOption(pending.session_id);
     const authorityResponse=await authorityReply;const authority=await authorityResponse.json();
-    if(authorityResponse.status()!==200||authority.approvable!==true||authority.current!==true||authority.approved_current!==false||authority[role==='chief'?'primary_id':'substitute_id']!==account.id)throw Error('Designated pending measurement authority unavailable');
-    await page.waitForFunction(()=>[...document.querySelectorAll('button')].some(button=>button.textContent==='Aprobar propuesta'&&!button.disabled));
-    checks.push(team+'_'+role+'_pending_measurement_approval_visible_no_decision');
+    if(approvedReadback){
+     if(authorityResponse.status()!==200||authority.current!==true||authority.approved_current!==true||!authority.decision_id||authority[role==='chief'?'primary_id':'substitute_id']!==account.id)throw Error('Existing designated approval unavailable');
+     await page.getByText('Estado: Aprobada y vigente.',{exact:true}).waitFor();
+     checks.push(team+'_'+role+'_existing_approval_visible_no_write');
+    }else{
+     if(authorityResponse.status()!==200||authority.approvable!==true||authority.current!==true||authority.approved_current!==false||authority[role==='chief'?'primary_id':'substitute_id']!==account.id)throw Error('Designated pending measurement authority unavailable');
+     await page.waitForFunction(()=>[...document.querySelectorAll('button')].some(button=>button.textContent==='Aprobar propuesta'&&!button.disabled));
+     checks.push(team+'_'+role+'_pending_measurement_approval_visible_no_decision');
+    }
    }
    phase=team+'_'+role+'_reload';
    await page.reload({waitUntil:'networkidle'});
    await authorizedWorkspace('reload');
+   if(approvedReadback&&role!=='reader'){
+    await page.getByRole('combobox',{name:'Reabrir sesión',exact:true}).selectOption(expected.pending_approvals[role].session_id);
+    await page.getByText('Estado: Aprobada y vigente.',{exact:true}).waitFor();
+    checks.push(team+'_'+role+'_existing_approval_survives_reload_no_write');
+   }
    if(errors.length)throw Error('Browser runtime error');
    checks.push(team+'_'+role+'_real_login_scope_and_reload');
    await context.close();
   }
-  console.log(JSON.stringify({status:'passed',scope:identityOnly?'identity_and_role_reload':'pending_measurement_review_readonly',gates:{candidate_browser_identity_readonly:'passed'},candidate_acceptance:false,synthetic_only:true,checks,human_decisions_written:0}));
+  console.log(JSON.stringify({status:'passed',scope:identityOnly?'identity_and_role_reload':approvedReadback?'approved_measurement_readback':'pending_measurement_review_readonly',gates:{candidate_browser_identity_readonly:'passed'},candidate_acceptance:false,synthetic_only:true,checks,human_decisions_written:0}));
  }catch(error){
   if(lastPage)try{uiFlags=await lastPage.evaluate(()=>({
    dialog_count:document.querySelectorAll('[role=dialog]').length,

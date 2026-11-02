@@ -1,0 +1,32 @@
+{
+  "status": "blocked",
+  "scope": "two_qa_measurement_decisions_readback",
+  "business_writes": false,
+  "workshop_application": false,
+  "candidate_acceptance": false,
+  "deployment": false,
+  "gates": [
+    {
+      "name": "two_explicit_targets",
+      "passed": true
+    },
+    {
+      "name": "real_engineer_read_login",
+      "passed": true
+    },
+    {
+      "name": "chief_authority_read",
+      "passed": true
+    },
+    {
+      "name": "chief_approved_current",
+      "passed": true
+    },
+    {
+      "name": "chief_events_read",
+      "passed": false
+    }
+  ],
+  "decisions": {},
+  "error_type": "ValueError"
+}

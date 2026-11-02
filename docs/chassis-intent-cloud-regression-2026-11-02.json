@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "scope": "current_image_denial_creates_no_intent",
+  "execution": "real InsForge QA identities, current installed immutable API; no application source mount",
+  "image_id": "sha256:927b450517d40534af352083b55e7864fc056ea378eca84fa572ba7df6528882",
+  "checks_passed": 11,
+  "human_decisions_written": 0,
+  "durable_rows_before": 16,
+  "durable_rows_after": 16,
+  "row_ids_and_fingerprints_identical": true,
+  "existing_approval_unchanged": true,
+  "last_http_status": 403,
+  "deployment": false,
+  "historical_reconciliation": false,
+  "probe_sha256": "f3afb173d298219be8e9255aeefb8b990b24a1779e5e334bca68521e8eeb4471"
+}

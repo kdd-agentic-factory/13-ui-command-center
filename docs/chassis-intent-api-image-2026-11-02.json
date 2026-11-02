@@ -1,0 +1,47 @@
+{
+  "format": "api-image-intent-candidate-2",
+  "publishable": false,
+  "sources": {
+    "01": {
+      "git_ref": "7c2cce015bda1c5543e432a2595f49e023114421",
+      "tree_sha256": "2aabbf5b0f125dcb61e85c68ca1e1ab82abe3e64e006d070808db9b68b78b0f7",
+      "archive_sha256": "b6f4ea616757793c6250bdaa3ece0a0b46918b929ab56075d2f59e2675664379",
+      "dirty": false
+    },
+    "17": {
+      "git_ref": "cae3d4704805df058ab6bea647585d13762720d1",
+      "tree_sha256": "7fe574dd9cec17b23c2f74155f5fbbf1a891e22d0a2da90e2cefd6646ae34636",
+      "archive_sha256": "df06c981a02cdcd5d6a0480ed817c78894306e6852457a64c849b343898a3777",
+      "dirty": false
+    },
+    "18": {
+      "git_ref": "bd32b1885fea975f938acdab8bc81e829bd36afa",
+      "archive_sha256": "cad80058cd873b07b311b01ffdcc373d3c4d3fcc31df46dfe51f100051ce508f",
+      "tree_sha256": "ba7316e55d419a581456f8191b2facada5accd4544ec3a03d300b7eef18ea7e7",
+      "tree_algorithm": "sha256(canonical ordered [relative_path,sha256(file)] array)",
+      "dirty": false
+    }
+  },
+  "runtime_lock_sha256": "4eb59652ceff9ff2f3663cb517654daa779eb433598b61d2a3c842cca6754893",
+  "os_lock_sha256": "ceeb67d90e880d33884061eeabc9e66b88fe5f421ff5ddf5ad8a3f2a026c3d8d",
+  "base": {
+    "reference": "ubuntu:24.04",
+    "digest": "sha256:24737cef17f4e22b1977df7d9a05e77c4e28b7da5b8911f8d8ccda136bf3573c"
+  },
+  "identity_sha256": "c96799d31990b18ed92313c09fecf609b5685370f626e135279e6af9ea21bd89",
+  "runtime_image": {
+    "reference": "kdd-chassis-python-runtime:a9217c450cb1ef2b5ba2283a4be3ae4d3a5cd7ded4efec697a957257a4c5b91d",
+    "id": "sha256:f65a9b35dde04cbf310e6bbeb8eacc0cb79b1031e7626d4f3bfb13d44189d540"
+  },
+  "image_id": "sha256:927b450517d40534af352083b55e7864fc056ea378eca84fa572ba7df6528882",
+  "image_tag": "kdd-chassis-api:c96799d31990b18ed92313c09fecf609b5685370f626e135279e6af9ea21bd89",
+  "user": "1000:1000",
+  "network": "none",
+  "deployment": false,
+  "smoke": {
+    "installed_decisions_sha256": "0f7d6f2f54d343c9f622c54ab855be12d0fa0918dd826ba934e7dcafbfec9c55",
+    "matches_frozen_source": true,
+    "installed_site_packages": true,
+    "pip_check": "passed"
+  }
+}
