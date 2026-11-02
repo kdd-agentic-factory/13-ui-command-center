@@ -113,6 +113,11 @@
     },
     {
       "method": "GET",
+      "pattern": "/api/v1/engineering/bikes/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/technical-profile",
+      "access": "team"
+    },
+    {
+      "method": "GET",
       "pattern": "/api/v1/engineering/brain/notes",
       "access": "team"
     },
@@ -433,6 +438,11 @@
     },
     {
       "method": "PUT",
+      "pattern": "/api/v1/engineering/bikes/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/technical-profile",
+      "access": "team"
+    },
+    {
+      "method": "PUT",
       "pattern": "/api/v1/engineering/catalog/(circuit|bike|rider|championship)/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
       "access": "team"
     },
@@ -452,5 +462,5 @@
       "access": "team"
     }
   ],
-  "sha256": "5eae51b1e2d560bcfda922ec95dd76fb6c960d1763558a69607a59730cd32097"
+  "sha256": "d6f1b3fb80f3b9bf31b2d2044b470a1ebe88f98e8f3bfc24ea7b8cea4f65d8f0"
 }
