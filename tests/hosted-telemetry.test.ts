@@ -88,7 +88,11 @@ it.each([
  ['GET','/workboard/tasks/22222222-2222-4222-8222-222222222222'],
  ['POST','/workboard/tasks/22222222-2222-4222-8222-222222222222/transitions'],
  ['PUT','/workboard/tasks/22222222-2222-4222-8222-222222222222/assignee'],
-])('forwards authenticated workboard %s %s without opening approvals',async(method,path)=>{
+ ['POST','/workboard/tasks/22222222-2222-4222-8222-222222222222/submissions'],
+ ['GET','/workboard/reviews/22222222-2222-4222-8222-222222222222'],
+ ['GET','/workboard/reviews/22222222-2222-4222-8222-222222222222/decision'],
+ ['POST','/workboard/reviews/22222222-2222-4222-8222-222222222222/decisions'],
+])('forwards authenticated workboard %s %s without mechanical approval routes',async(method,path)=>{
  const fetcher=vi.fn(async()=>new Response('{}'));
  const handle=createHostedTelemetry(manifest,'https://api.example.test',fetcher);
  const result=response();
