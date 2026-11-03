@@ -1,0 +1,10 @@
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/600.css';
+import React from 'react';
+import {createRoot} from 'react-dom/client';
+import {SessionWorkboard} from '../../src/components/engineering/workboard/SessionWorkboard';
+import {WorkspaceDraftProvider} from '../../src/context/WorkspaceDraftContext';
+import {sessionId,teamId,userId} from '../workboardFixtures';
+import '../../src/styles/global.css';
+const session={schema_version:'1.0.0' as const,id:sessionId,revision:1,name:'DR7 · Tanda de comprobación',session_type:'practice' as const,provenance:'synthetic' as const,other_label:null,circuit:null,bike:null,rider:null,notes:'',team_id:teamId,created_by:userId,created_at:'2026-11-03T10:00:00Z'};
+createRoot(document.getElementById('root')!).render(<main className="page"><h1>Trabajo de pista</h1><p>Ensayo de interfaz · datos sintéticos, sin identidad ni aprobación reales.</p><WorkspaceDraftProvider><SessionWorkboard session={session} scope="synthetic-browser-fixture"/></WorkspaceDraftProvider></main>);

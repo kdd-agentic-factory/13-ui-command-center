@@ -13,7 +13,7 @@ describe('same comparison across work views',()=>{
   const app=render(draw('engineer'));
   await waitFor(()=>expect(mocks.state).toHaveBeenCalledTimes(1));
   fireEvent.click(screen.getByRole('button',{name:'B · Alternativa'}));
-  fireEvent.change(screen.getByLabelText('Offset de dirección mm'),{target:{value:'31'}});
+  fireEvent.change(screen.getByRole('spinbutton',{name:'Offset de dirección mm'}),{target:{value:'31'}});
   fireEvent.click(screen.getByRole('tab',{name:'Dinámica en curva'}));
   fireEvent.change(screen.getByLabelText('Velocidad en curva'),{target:{value:'185'}});
   const reads=mocks.request.mock.calls.length;
@@ -22,7 +22,7 @@ describe('same comparison across work views',()=>{
   expect(screen.getByRole('alertdialog')).toBeInTheDocument();expect(leave).not.toHaveBeenCalled();
   fireEvent.click(screen.getByRole('button',{name:'Seguir editando'}));
   app.rerender(draw('engineer'));
-  expect(screen.getByLabelText('Offset de dirección mm')).toHaveValue(31);
+  expect(screen.getByRole('spinbutton',{name:'Offset de dirección mm'})).toHaveValue(31);
   expect(screen.getByLabelText('Velocidad en curva')).toHaveValue(185);
   expect(mocks.state).toHaveBeenCalledTimes(1);
   expect(mocks.request).toHaveBeenCalledTimes(reads);

@@ -20,6 +20,7 @@ export function nextWorkStep(facts:WorkFacts):WorkStep {
  if(facts.workspaceDirty){
   const destinations=[
    ['engineering-session','context','Revisar cambios del contexto'],
+   ['session-workboard','workboard','Revisar tareas sin guardar'],
    ['legacy-geometry','legacy','Revisar cambios sin guardar'],
    ['comparison','comparison','Revisar cambios sin guardar'],
    ['domain-evidence','domains','Revisar el contexto medido sin guardar'],

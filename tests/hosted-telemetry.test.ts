@@ -86,6 +86,7 @@ it.each([
  ['GET','/sessions/11111111-1111-4111-8111-111111111111/workboard'],
  ['POST','/sessions/11111111-1111-4111-8111-111111111111/workboard/tasks'],
  ['GET','/workboard/tasks/22222222-2222-4222-8222-222222222222'],
+ ['GET','/workboard/tasks/22222222-2222-4222-8222-222222222222/latest-review'],
  ['POST','/workboard/tasks/22222222-2222-4222-8222-222222222222/transitions'],
  ['PUT','/workboard/tasks/22222222-2222-4222-8222-222222222222/assignee'],
  ['POST','/workboard/tasks/22222222-2222-4222-8222-222222222222/submissions'],

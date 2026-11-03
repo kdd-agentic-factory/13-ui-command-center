@@ -14,6 +14,7 @@ describe('shared Chassis work views',()=>{
 
 
 it.each([
+ ['session-workboard','workboard','Revisar tareas sin guardar'],
  ['domain-evidence','domains','Revisar el contexto medido sin guardar'],
  ['suspension-lab','lab','Revisar el laboratorio sin guardar'],
  ['cornering-workshop','cornering','Revisar el escenario de curva sin guardar'],

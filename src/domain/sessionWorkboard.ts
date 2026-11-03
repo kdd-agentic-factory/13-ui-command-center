@@ -30,6 +30,20 @@ export interface WorkReview extends SessionRecord {
   task_id: string; task_revision: number; task_digest: string;
   evidence: string[]; summary: string; limitations: string; submitted_by: string;
 }
+export interface WorkSnapshotProof {
+  id:string; revision:number; snapshot_digest:string; content_digest:string;
+  analyzable:boolean; blocked_reasons:string[];
+}
+export interface WorkDelivery {
+  schema_version:'1.0.0'; base_task_revision:number; review:WorkReview; task:WorkTask;
+  snapshots:WorkSnapshotProof[]; digest:string;
+}
+export type WorkDecisionAction='accept'|'request_changes'|'reject';
+export interface WorkReviewDecision {
+  schema_version:'1.0.0'; id:string; team_id:string; review_id:string; delivery_digest:string;
+  actor_id:string; designation_role:'primary'|'substitute'; designation_revision:number;
+  action:WorkDecisionAction; note:string; created_at:string; task:WorkTask; digest:string;
+}
 export interface GuideTurn extends SessionRecord {
   created_by: string; message: string;
   status: 'pending' | 'running' | 'completed' | 'failed' | 'interrupted';

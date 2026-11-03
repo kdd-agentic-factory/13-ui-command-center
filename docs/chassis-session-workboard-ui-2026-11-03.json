@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0.0",
+  "date": "2026-11-03",
+  "scope": "session_workboard_ui_source_acceptance",
+  "status": "passed",
+  "backend_tests": 104,
+  "client_integration_proxy_tests": 67,
+  "playwright_synthetic_cases": 2,
+  "independent_reviewer_tests": 14,
+  "typecheck": "passed",
+  "targeted_lint": "passed",
+  "build": "passed_worktree_not_frozen_release",
+  "browser_real_identity_acceptance": false,
+  "immutable_image_acceptance": false,
+  "deployment": false,
+  "cloud_changes": false,
+  "historical_revocation": "pending",
+  "client_source_sha256": {
+    "src/services/sessionWorkboard.ts": "d9c67cb423e4be8a3648d7a20b3c636418b7ff1cc383e0c155919e8c37bc4087",
+    "src/services/sessionWorkboard.test.ts": "d5f7fae458153847065119d7e1def1dccd0d3e43264297ea0aab525cc0d2f375",
+    "src/domain/sessionWorkboard.ts": "56e3a59cecf1e7d4726833040ac45f83093eebc388a6ef65917ab6987da3ed65",
+    "src/components/engineering/workboard/SessionWorkboard.tsx": "b118ba59eeaae63c212ca23aac821ede71983334ed9a2d11414762c62d125572",
+    "src/components/engineering/workboard/SessionWorkboard.test.tsx": "8e0f2f165dac8500cdc689bb327e12346b24bf5f62305f51f924024d7ea794a0",
+    "src/styles/session-workboard.css": "0d558a4bc231b487633a2c29cf62045533fe10f2f1961e1b848428320251dbe7",
+    "src/pages/ChassisPage.tsx": "d2da50c151b4fcddc79fa1a27fd2d7e4e282d9cb791029b08e895b82ba297d11",
+    "src/domain/chassisWorkViews.ts": "5b00c23bd9e6a7cc8cf1f49c85107597270e8d22e49dd26ed47d9ba5366ccdd4",
+    "tests/hosted-telemetry.test.ts": "4029889eff5a415f96cc156af32dc0d9a0207de0acfaaf57e4239268d75c46cb",
+    "deploy/chassis-surface.json": "f3f470e350cbddf7b16d4a104965c6d79b2a8f38b4c8ec5f385f3d4b1a48bd51",
+    "deploy/chassis-surface.map.conf": "ab18813bb8e25f8c1eca66ee59bb1d2cafe98045a2e39bb808640896457adc5a"
+  },
+  "backend_source_sha256": {
+    "src/telemetry_dataset/persistence/postgres/workboard.py": "82654b01c8c217cb5cdd843b6cc6216cbabd10353fd6ae1c3c355389afd92db4",
+    "src/telemetry_dataset/persistence/work_reviews.py": "6d5095eb5369c98acfc2eae5c9b32f434eadb5bf95b021a944332ee35d1380be",
+    "src/telemetry_dataset/persistence/workboard_http.py": "1fb51dd45e31dd06b5449479719233196acf3de138ec961ce185b0b710b75d29",
+    "src/telemetry_dataset/persistence/http_runtime.py": "d22131133c561ade18f7b5c6d43fe56bc199c3fc352477f50c0600701e37936c",
+    "src/telemetry_dataset/identity/policy.py": "a20080c8b6ec477ced3cb33dd3ba4d7c13c36a74dcf399694846978302e59b33",
+    "tests/test_work_review_http.py": "dd17d8d16bdbaed0401cb71b141da094c227e462109288f589db0a85d36dc59f"
+  },
+  "synthetic_screenshot_sha256": {
+    "workboard-desktop-2026-11-03.png": "2ecd1799a9f699522a223c7465279bd900733f960691c2aa3f09c8441f42973e",
+    "workboard-mobile-2026-11-03.png": "6e236d56d8756f9aa6b778c45fc63a76d58ed6096f93a9f8c1544dd9a0233852"
+  }
+}
