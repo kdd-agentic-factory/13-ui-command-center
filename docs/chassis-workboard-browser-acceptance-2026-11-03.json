@@ -1,0 +1,114 @@
+{
+  "scope": "immutable_workboard_browser_with_authoritative_reconciliation",
+  "status": "passed",
+  "deployment": false,
+  "source_overlay": false,
+  "expected_sha256": "4d2ea21481eb7ca0cf5f1089677e97e128691c4dbcfcca22bec34fc9e3bbe121",
+  "readback_before": {
+    "scope": "immutable_api_browser_decision_readback",
+    "status": "passed",
+    "deployment": false,
+    "source_overlay": false,
+    "host_ports": false,
+    "decision_writes": 0,
+    "exit_code": 0,
+    "probe": {
+      "scope": "browser_fixture_authoritative_readback",
+      "status": "passed",
+      "decision_writes": 0,
+      "records": {
+        "chief": {
+          "state": "absent"
+        },
+        "substitute": {
+          "state": "absent"
+        }
+      },
+      "deployment": false,
+      "accepted_fixture_count": 0
+    },
+    "inputs_unchanged": true,
+    "container_removed": true
+  },
+  "browser_execution": {
+    "scope": "immutable_workboard_browser_delivery",
+    "status": "passed",
+    "candidate_acceptance": false,
+    "deployment": false,
+    "human_decisions_written": 2,
+    "admin_credentials_in_browser": false,
+    "host_ports": false,
+    "images": {
+      "api": "sha256:d3f274905df6fe0c361fb2a144245b9815966b453b715c09d121e67096654392",
+      "frontend": "sha256:6b254e7f33f32482e6c2af3f2026e367cfe5102aef7747264f5ba10b5b137052",
+      "browser": "sha256:d27ebd350409ea79534fed43463b9e71fddbb1cabf51bf445342436c5e7a1b68"
+    },
+    "test_tls": "fresh_local_ca_separate_api_ui_keys; provider_trust_unchanged",
+    "browser_internal_only": true,
+    "browser": {
+      "decision_ids": {
+        "chief": "c2445eee-7337-598d-9a91-67bd0410ea51",
+        "substitute": "f68f47de-2646-5f67-8785-8e3e364ec23c"
+      },
+      "accept_attempts": {
+        "chief": 1,
+        "substitute": 1
+      },
+      "scope": "immutable_workboard_authenticated_browser",
+      "status": "passed",
+      "deployment": false,
+      "source_overlay": false,
+      "admin_credentials_in_browser": false,
+      "mechanical_authorizations": 0,
+      "human_decisions_written": 2,
+      "checks": [
+        "engineer_human_acceptance_not_exposed",
+        "A_engineer_compiled_ui_without_page_error",
+        "chief_accepts_exact_synthetic_delivery",
+        "chief_decision_recovers_after_browser_reload",
+        "A_chief_compiled_ui_without_page_error",
+        "substitute_accepts_exact_synthetic_delivery",
+        "substitute_decision_recovers_after_browser_reload",
+        "A_substitute_compiled_ui_without_page_error",
+        "reader_human_acceptance_not_exposed",
+        "A_reader_compiled_ui_without_page_error",
+        "B_engineer_foreign_session_not_listed_all_pages"
+      ],
+      "accepted_fixture_count": 2
+    },
+    "input_identity_unchanged": true,
+    "owned_runtime_removed": true,
+    "native_evidence_directory": "/home/ubuntu/chassis-preproduction/runs/chassis-candidate-browser-5978ada46efb48c5b9ea4a8a52329250"
+  },
+  "readback_after": {
+    "scope": "immutable_api_browser_decision_readback",
+    "status": "passed",
+    "deployment": false,
+    "source_overlay": false,
+    "host_ports": false,
+    "decision_writes": 0,
+    "exit_code": 0,
+    "probe": {
+      "scope": "browser_fixture_authoritative_readback",
+      "status": "passed",
+      "decision_writes": 0,
+      "records": {
+        "chief": {
+          "state": "accepted",
+          "id": "c2445eee-7337-598d-9a91-67bd0410ea51",
+          "task_revision": 5
+        },
+        "substitute": {
+          "state": "accepted",
+          "id": "f68f47de-2646-5f67-8785-8e3e364ec23c",
+          "task_revision": 5
+        }
+      },
+      "deployment": false,
+      "accepted_fixture_count": 2
+    },
+    "inputs_unchanged": true,
+    "container_removed": true
+  },
+  "authoritative_accepted_fixture_count": 2
+}
