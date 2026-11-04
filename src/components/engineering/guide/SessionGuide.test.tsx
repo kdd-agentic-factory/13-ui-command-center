@@ -1,0 +1,59 @@
+import { act, fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, expect, it, vi } from 'vitest';
+import { sessionId, teamId, userId } from '../../../../tests/workboardFixtures';
+import type { EngineeringSession } from '../../../domain/engineeringSession';
+import { getGuide, sendGuideTurn, type GuideItem } from '../../../services/sessionGuide';
+import { SessionGuide } from './SessionGuide';
+
+const identity = vi.hoisted(() => ({
+  mode: 'authenticated', team: '', user: '', role: 'engineer', generation: 1,
+}));
+vi.mock('../../../services/telemetryIdentity', () => ({ identitySnapshot: () => ({ ...identity }) }));
+vi.mock('../../../services/sessionGuide', () => ({ getGuide: vi.fn(), sendGuideTurn: vi.fn() }));
+
+const session: EngineeringSession = {
+  schema_version: '1.0.0', id: sessionId, revision: 1, name: 'Tanda de pruebas',
+  session_type: 'practice', provenance: 'synthetic', other_label: null,
+  circuit: null, bike: null, rider: null, notes: '', team_id: teamId,
+  created_by: userId, created_at: '2026-11-04T10:00:00Z',
+};
+const item: GuideItem = {
+  revision: 1, reply: null,
+  turn: { id: crypto.randomUUID(), session_id: sessionId, team_id: teamId, session_revision: 1,
+    message: '¿Qué falta medir?', status: 'pending', error: null, snapshot_id: null, model: null },
+};
+beforeEach(() => {
+  vi.resetAllMocks();
+  Object.assign(identity, { team: teamId, user: userId, role: 'engineer', generation: 1 });
+  vi.mocked(getGuide).mockResolvedValue([]);
+});
+
+it('keeps the same operation on retry and displays the server status', async () => {
+  vi.mocked(sendGuideTurn).mockRejectedValueOnce(new Error('Se perdió la respuesta')).mockResolvedValueOnce(item);
+  render(<SessionGuide session={session} scope="qa" />);
+  await screen.findByText('Todavía no hay preguntas en esta sesión.');
+  fireEvent.change(screen.getByLabelText('Pregunta para Cicerone'), { target: { value: item.turn.message } });
+  fireEvent.click(screen.getByRole('button', { name: 'Guardar pregunta' }));
+  expect(await screen.findByRole('alert')).toHaveTextContent('Se perdió la respuesta');
+  fireEvent.click(screen.getByRole('button', { name: 'Guardar pregunta' }));
+  expect(await screen.findByText('Pendiente de ejecución')).toBeVisible();
+  expect(vi.mocked(sendGuideTurn).mock.calls[0].slice(0, 4)).toEqual(vi.mocked(sendGuideTurn).mock.calls[1].slice(0, 4));
+});
+
+it('displays persisted replies to readers and clears them on a team switch', async () => {
+  identity.role = 'reader';
+  vi.mocked(getGuide).mockResolvedValue([{
+    ...item,
+    turn: { ...item.turn, status: 'completed', model: 'qa-model' },
+    reply: { facts: [], calculations: [], hypotheses: [], limitations: ['Datos insuficientes'], next_step: 'Registra el recorrido' },
+  }]);
+  render(<SessionGuide session={session} scope="qa" />);
+  expect(await screen.findByText(/Registra el recorrido/)).toBeVisible();
+  expect(screen.queryByLabelText('Pregunta para Cicerone')).not.toBeInTheDocument();
+  act(() => {
+    identity.team = crypto.randomUUID();
+    identity.generation++;
+    window.dispatchEvent(new Event('telemetry-scope-changed'));
+  });
+  expect(screen.queryByText(/Registra el recorrido/)).not.toBeInTheDocument();
+});

@@ -1,0 +1,29 @@
+.chassis-guide-layout {
+  display: grid;
+  gap: 20px;
+  align-items: start;
+}
+
+.session-guide {
+  min-width: 0;
+  padding: 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow-wrap: anywhere;
+}
+
+.session-guide h2 { margin: 0 0 8px; font-size: 1.05rem; }
+.session-guide-context, .session-guide small { color: var(--color-text-muted); font-size: .82rem; }
+.session-guide-history { max-height: 24rem; overflow: auto; list-style: none; padding: 0; }
+.session-guide-history > li { border-top: 1px solid var(--color-border); padding: 12px 0; }
+.session-guide-question { white-space: pre-wrap; font-weight: 600; margin-top: 0; }
+.session-guide small, .session-guide textarea { display: block; }
+.session-guide textarea { width: 100%; box-sizing: border-box; resize: vertical; margin: 6px 0 10px; }
+.session-guide form small { margin-top: 8px; }
+
+@media (min-width: 1200px) {
+  .chassis-guide-layout { grid-template-columns: minmax(0, 1fr) minmax(270px, 320px); }
+  .chassis-guide-layout > .session-guide { grid-area: 1 / 2; }
+  .chassis-guide-layout > .chassis-work-layout { grid-area: 1 / 1; min-width: 0; }
+}

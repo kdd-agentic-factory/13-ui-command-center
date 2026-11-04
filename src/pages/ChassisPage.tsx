@@ -22,6 +22,7 @@ import {BrainMemoryPanel} from '../components/chassis/BrainMemoryPanel';
 import { SessionPreparation } from '../components/engineering/SessionPreparation';
 import {BikeTechnicalProfile} from '../components/engineering/BikeTechnicalProfile';
 import { AnalysisRunPanel } from '../components/engineering/AnalysisRunPanel';
+import { SessionGuide } from '../components/engineering/guide/SessionGuide';
 import {SessionWorkboard} from '../components/engineering/workboard/SessionWorkboard';
 import {SuspensionLabPanel} from '../components/chassis/suspension/SuspensionLabPanel';
 import type {LabReference} from '../domain/suspensionLab';
@@ -88,7 +89,7 @@ export function ChassisPage() {
   }
   return <div className="page recorded-workspace">
     <div className="flex items-center justify-between mb-4"><h1 className="page-title">Chassis Tool</h1><div>{activeRecording() && <button className="btn" disabled={saving} onClick={() => requestLeave(() => { clearRecording(); setSession(null); setSelected(null); setSignal(null); setError(''); setSaved(''); setDimensions({ radius: '', rake: '', offset: '' }); })}>Cerrar sesión grabada</button>} <button className="btn" onClick={() => navigate('data')}>Importar AiM / 2D</button></div></div>
-    <ChassisProductStatus /><ChassisWorkHeader view={view} onView={v=>{setView(v);setRevealed(null);}} contextLabel={contextLabel} nextStep={nextStep} onNext={next} dirty={isDirty}/><section className="chassis-work-area" data-area="workboard" ref={e=>{areas.current.workboard=e;}} tabIndex={-1}><SessionWorkboard session={engineering.session} scope={engineering.scope} profile={({rider:'pilot',mechanic:'mechanic',engineer:'engineer',analyst:'analyst','crew-chief':'crew_chief',management:'observer'} as const)[view]}/></section><div className="chassis-work-layout" data-view={view} data-context-ready={!!engineering.session}>
+    <ChassisProductStatus /><ChassisWorkHeader view={view} onView={v=>{setView(v);setRevealed(null);}} contextLabel={contextLabel} nextStep={nextStep} onNext={next} dirty={isDirty}/><section className="chassis-work-area" data-area="workboard" ref={e=>{areas.current.workboard=e;}} tabIndex={-1}><SessionWorkboard session={engineering.session} scope={engineering.scope} profile={({rider:'pilot',mechanic:'mechanic',engineer:'engineer',analyst:'analyst','crew-chief':'crew_chief',management:'observer'} as const)[view]}/></section><div className="chassis-guide-layout"><SessionGuide session={engineering.session} scope={engineering.scope}/><div className="chassis-work-layout" data-view={view} data-context-ready={!!engineering.session}>
     <section className="chassis-work-area" data-area="context" ref={e=>{areas.current.context=e;}} tabIndex={-1} hidden={!visible("context")}><SessionPreparation recordingId={session?.id ?? null} />{engineering.session?.bike&&<BikeTechnicalProfile key={JSON.stringify([engineering.scope,engineering.session.bike])} bike={engineering.session.bike} name={engineering.historical.bike?.name??'Moto seleccionada'}/>}{session&&engineering.session?.bike&&<PreparationBinding key={JSON.stringify([engineering.scope,engineering.session.bike,session.id])} bike={engineering.session.bike} recordingId={session.id} onBound={()=>{engineering.workspaceChanged();setBindingEpoch(value=>value+1);}}/>}<BrainMemoryPanel session={engineering.session}/><KnowledgeReviewPanel/></section>
     <div className="chassis-work-area" data-area="domains" ref={e=>{areas.current.domains=e;}} tabIndex={-1}><DomainEvidencePanel contextKey={contextKey} session={engineering.session} recordingId={session?.id??null} setup={engineering.association?.selection.setup_b??engineering.association?.selection.setup_a??undefined} selection={domainAttachment?.context===contextKey?domainAttachment.references:[]} onSelection={references=>setDomainAttachment({context:contextKey,references})}/></div>
     <div className="chassis-work-area" data-area="lab" ref={e=>{areas.current.lab=e;}} tabIndex={-1}><SuspensionLabPanel contextKey={contextKey} recordingId={session?.id??null} comparisonId={comparisonPresentation?.contextKey===contextKey&&!comparisonPresentation.dirty?comparisonPresentation.comparisonId??undefined:undefined} onEvidenceSaved={reference=>requestLeave(()=>setLabAttachment({context:contextKey,reference}))}/></div>
@@ -117,6 +118,6 @@ export function ChassisPage() {
       {saved && <p role="status">{saved}</p>}
       <p>Avance geométrico: {trail === null ? 'pendiente de dimensiones válidas' : `${trail.toFixed(2)} mm`}. Cálculo estático; no incluye deformación del neumático ni dinámica de suspensión.</p>
     </details>
-  </div></div>;
+  </div></div></div>;
 }
 export default function ProtectedChassisPage(){ return <TelemetryGate><ChassisPage/></TelemetryGate>; }
