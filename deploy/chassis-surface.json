@@ -218,6 +218,11 @@
     },
     {
       "method": "GET",
+      "pattern": "/api/v1/engineering/sessions/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/guide",
+      "access": "team"
+    },
+    {
+      "method": "GET",
       "pattern": "/api/v1/engineering/sessions/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/runs/current",
       "access": "team"
     },
@@ -403,6 +408,11 @@
     },
     {
       "method": "POST",
+      "pattern": "/api/v1/engineering/guide/turns",
+      "access": "team"
+    },
+    {
+      "method": "POST",
       "pattern": "/api/v1/engineering/knowledge/documents",
       "access": "team"
     },
@@ -522,5 +532,5 @@
       "access": "team"
     }
   ],
-  "sha256": "20a3de5635667c7abd759b31d4af3eafea41f47640ed0e1beb8147c114852aee"
+  "sha256": "fe3e434dc2611fceffa52169dd6a40976c24b63c75a573c501116110c8d4e360"
 }
