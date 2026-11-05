@@ -36,11 +36,16 @@ export function createHostedTelemetry(manifest,origin,fetcher=fetch){
   if(!routes.some(route=>route.method===req.method&&route.pattern.test(path)))return end(404,'Not Found');
   const headers={};
   for(const name of FORWARD){const value=req.headers[name];if(typeof value==='string')headers[name]=value;}
-  const abort=new AbortController();const timer=setTimeout(()=>abort.abort(),20000);
+  const abort=new AbortController();let timer=setTimeout(()=>abort.abort(),20000);
   try{
    let body;
    if(!['GET','HEAD'].includes(req.method)){
     body=await requestBody(req,abort.signal);
+   }
+   // Keep uploads bounded at 20s. Only model execution may wait for the
+   // server's 60s inference deadline plus transport and persistence overhead.
+   if(req.method==='POST'&&path==='/api/v1/engineering/guide/executions'){
+    clearTimeout(timer);timer=setTimeout(()=>abort.abort(),75000);
    }
    const upstream=await fetcher(target.origin+path+url.search,{method:req.method,headers,body,redirect:'manual',signal:abort.signal});
    if(upstream.status>=300&&upstream.status<400){await upstream.body?.cancel();return end(502,'Upstream redirect refused');}

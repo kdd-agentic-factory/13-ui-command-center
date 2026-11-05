@@ -10,6 +10,24 @@ function request(path:string,method='GET',body=''){
  return Object.assign(Readable.from(body?[Buffer.from(body)]:[]),{url:path,method,headers:{authorization:'Bearer controlled', 'x-team-id':'controlled-team',cookie:'private-cookie','x-api-key':'forbidden'}});
 }
 describe('hosted telemetry perimeter',()=>{
+ it.each([
+  ['/api/telemetry/api/v1/engineering/guide/executions','POST',200],
+  ['/api/telemetry/api/v1/engineering/guide/turns','POST',502],
+ ])('bounds slow upstream calls independently for %s',async(path,method,status)=>{
+  vi.useFakeTimers();
+  try{
+   const fetcher=vi.fn((_url:string,options:RequestInit)=>new Promise<Response>((resolve,reject)=>{
+    const timer=setTimeout(()=>resolve(new Response('{}')),30000);
+    options.signal?.addEventListener('abort',()=>{clearTimeout(timer);reject(new Error('Deadline'));},{once:true});
+   }));
+   const res=response();
+   const running=createHostedTelemetry(manifest,'https://api.example.test',fetcher)(request(path,method,'{}'),res);
+   await vi.waitFor(()=>expect(fetcher).toHaveBeenCalledOnce());
+   await vi.advanceTimersByTimeAsync(30000);
+   await running;
+   expect(res.code).toBe(status);
+  }finally{vi.useRealTimers();}
+ });
  it('preserves bounded diagnostic headers on upstream failure without leaking internal headers',async()=>{
   const trace='a3a4c344-8558-4144-981a-c57061181983';
   const fetcher=vi.fn(async()=>new Response('{"detail":"Unavailable"}',{status:503,headers:{'x-trace-id':trace,'retry-after':'1','set-cookie':'private','x-internal-node':'private'}}));
