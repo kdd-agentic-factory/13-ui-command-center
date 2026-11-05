@@ -16,9 +16,9 @@ describe('hosted telemetry perimeter',()=>{
  ])('bounds slow upstream calls independently for %s',async(path,method,status)=>{
   vi.useFakeTimers();
   try{
-   const fetcher=vi.fn((_url:string,options:RequestInit)=>new Promise<Response>((resolve,reject)=>{
+   const fetcher=vi.fn<typeof fetch>((_url,options)=>new Promise<Response>((resolve,reject)=>{
     const timer=setTimeout(()=>resolve(new Response('{}')),30000);
-    options.signal?.addEventListener('abort',()=>{clearTimeout(timer);reject(new Error('Deadline'));},{once:true});
+    options?.signal?.addEventListener('abort',()=>{clearTimeout(timer);reject(new Error('Deadline'));},{once:true});
    }));
    const res=response();
    const running=createHostedTelemetry(manifest,'https://api.example.test',fetcher)(request(path,method,'{}'),res);
