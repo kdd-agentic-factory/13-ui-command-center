@@ -26,7 +26,10 @@ async function request(path: string, signal: AbortSignal, body?: object) {
   const controller = new AbortController();
   const cancel = () => controller.abort(signal.reason);
   signal.addEventListener('abort', cancel, { once: true });
-  const timer = setTimeout(() => controller.abort(new Error('Cicerone tardó demasiado en responder.')), 30000);
+  const deadline = path === '/guide/executions' ? 90000 : 30000;
+  const timer = setTimeout(() => controller.abort(new Error(
+    'Cicerone tardó demasiado en responder. Actualiza la conversación para comprobar el resultado.',
+  )), deadline);
   let response: Response;
   let result: unknown;
   try {
@@ -44,6 +47,9 @@ async function request(path: string, signal: AbortSignal, body?: object) {
     throw new Error('La identidad cambió durante la consulta.');
   }
   if (!response.ok) {
+    if (response.status === 503 && path === '/guide/executions') {
+      throw new Error('La IA no está disponible. La pregunta sigue guardada; actualiza su estado antes de reintentar.');
+    }
     if (response.status === 409) throw new Error('La sesión o la operación cambió. Recarga el contexto de la sesión.');
     if (response.status === 403) throw new Error('Tu perfil no tiene permiso para esta operación.');
     throw new Error('No se pudo completar la operación. Puedes volver a intentarlo.');
@@ -96,6 +102,20 @@ export async function sendGuideTurn(session: string, revision: number, message: 
   const item = parse(result, team, session);
   if (item.turn.session_revision !== revision || item.turn.message !== message) {
     throw new Error('El turno guardado no coincide con el envío.');
+  }
+  return item;
+}
+
+export async function executeGuideTurn(expected: GuideItem, snapshot: string, signal: AbortSignal) {
+  if (!canonicalWorkId(expected.turn.id) || !canonicalWorkId(snapshot)) throw new Error('Referencia incompatible.');
+  const { result, team } = await request('/guide/executions', signal, {
+    turn_id: expected.turn.id, snapshot_id: snapshot,
+  });
+  const item = parse(result, team, expected.turn.session_id);
+  if (item.turn.id !== expected.turn.id || item.turn.session_revision !== expected.turn.session_revision ||
+      item.turn.snapshot_id !== snapshot || item.turn.message !== expected.turn.message ||
+      item.revision < expected.revision) {
+    throw new Error('La ejecución no coincide con la pregunta y sus datos.');
   }
   return item;
 }

@@ -2,14 +2,16 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, expect, it, vi } from 'vitest';
 import { sessionId, teamId, userId } from '../../../../tests/workboardFixtures';
 import type { EngineeringSession } from '../../../domain/engineeringSession';
-import { getGuide, sendGuideTurn, type GuideItem } from '../../../services/sessionGuide';
+import { executeGuideTurn, getGuide, sendGuideTurn, type GuideItem } from '../../../services/sessionGuide';
+import { createAnalysisSnapshot } from '../../../services/engineeringSession';
 import { SessionGuide } from './SessionGuide';
 
 const identity = vi.hoisted(() => ({
   mode: 'authenticated', team: '', user: '', role: 'engineer', generation: 1,
 }));
 vi.mock('../../../services/telemetryIdentity', () => ({ identitySnapshot: () => ({ ...identity }) }));
-vi.mock('../../../services/sessionGuide', () => ({ getGuide: vi.fn(), sendGuideTurn: vi.fn() }));
+vi.mock('../../../services/sessionGuide', () => ({ getGuide: vi.fn(), sendGuideTurn: vi.fn(), executeGuideTurn: vi.fn() }));
+vi.mock('../../../services/engineeringSession', () => ({ createAnalysisSnapshot: vi.fn() }));
 
 const session: EngineeringSession = {
   schema_version: '1.0.0', id: sessionId, revision: 1, name: 'Tanda de pruebas',
@@ -56,4 +58,21 @@ it('displays persisted replies to readers and clears them on a team switch', asy
     window.dispatchEvent(new Event('telemetry-scope-changed'));
   });
   expect(screen.queryByText(/Registra el recorrido/)).not.toBeInTheDocument();
+});
+
+it('executes a saved question with one stable snapshot across uncertain retries', async () => {
+  vi.mocked(getGuide).mockResolvedValue([item]);
+  const snapshot = crypto.randomUUID();
+  vi.mocked(createAnalysisSnapshot).mockResolvedValue({ id: snapshot } as Awaited<ReturnType<typeof createAnalysisSnapshot>>);
+  vi.mocked(executeGuideTurn).mockRejectedValueOnce(new Error('Respuesta perdida')).mockResolvedValueOnce({
+    ...item, revision: 3, turn: { ...item.turn, status: 'completed', snapshot_id: snapshot, model: 'qa' },
+    reply: { facts: [], calculations: [], hypotheses: [], limitations: ['Sin telemetría'], next_step: 'Importa una grabación' },
+  });
+  render(<SessionGuide session={session} scope="qa" />);
+  fireEvent.click(await screen.findByRole('button', { name: 'Consultar con datos actuales' }));
+  expect(await screen.findByRole('alert')).toHaveTextContent('Respuesta perdida');
+  fireEvent.click(screen.getByRole('button', { name: 'Consultar con datos actuales' }));
+  expect(await screen.findByText(/Importa una grabación/)).toBeVisible();
+  expect(createAnalysisSnapshot).toHaveBeenCalledTimes(1);
+  expect(vi.mocked(executeGuideTurn).mock.calls.every(call => call[1] === snapshot)).toBe(true);
 });

@@ -530,7 +530,12 @@
       "method": "PUT",
       "pattern": "/api/v1/recorded/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/geometry",
       "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/engineering/guide/executions",
+      "access": "team"
     }
   ],
-  "sha256": "fe3e434dc2611fceffa52169dd6a40976c24b63c75a573c501116110c8d4e360"
+  "sha256": "87e08a317a3b75fc960033ee2e9b85b9f6433eb94b3c92dbd4b05330787cbd03"
 }
