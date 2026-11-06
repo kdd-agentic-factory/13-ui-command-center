@@ -167,6 +167,9 @@ function Conversation({ session, writable, selection, blockedReason }: { session
 
 function GuideExchange({ item, revision }: { item: GuideItem; revision: number }) {
   const { turn, reply } = item;
+  const needsBenchValidation = Array.isArray(reply?.actions) && reply.actions.some(
+    action => action?.kind === 'request_data' && action.request_id === 'bench_source_validation',
+  );
   return <>
     <p className="session-guide-question">{turn.message}</p>
     <p className="session-guide-context">{labels[turn.status]}{turn.session_revision !== revision && ` · Revisión anterior (${turn.session_revision})`}</p>
@@ -174,6 +177,10 @@ function GuideExchange({ item, revision }: { item: GuideItem; revision: number }
       ? failures[turn.error] : 'No se pudo completar la ejecución.'}</p>}
     {reply && <>
       <p><strong>Siguiente paso</strong> {reply.next_step}</p>
+      {needsBenchValidation && <p>
+        <strong>Validar la fuente del ensayo de banco</strong>
+        {' · Comprueba su procedencia, calibración y sincronización antes de utilizar las cifras.'}
+      </p>}
       {([['Hechos', reply.facts], ['Cálculos', reply.calculations], ['Hipótesis', reply.hypotheses]] as const).map(([label, entries]) =>
         entries.length > 0 && <details key={label}><summary>{label} ({entries.length})</summary>
           <ul>{entries.map((entry, index) => <li key={index}>{entry.text}

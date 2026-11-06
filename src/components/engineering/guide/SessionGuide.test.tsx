@@ -47,10 +47,12 @@ it('displays persisted replies to readers and clears them on a team switch', asy
   vi.mocked(getGuide).mockResolvedValue([{
     ...item,
     turn: { ...item.turn, status: 'completed', model: 'qa-model' },
-    reply: { facts: [], calculations: [], hypotheses: [], limitations: ['Datos insuficientes'], next_step: 'Registra el recorrido' },
+    reply: { facts: [], calculations: [], hypotheses: [], limitations: ['Datos insuficientes'], next_step: 'Registra el recorrido',
+      actions: [{ kind: 'request_data', request_id: 'bench_source_validation' }] },
   }]);
   render(<SessionGuide session={session} scope="qa" />);
   expect(await screen.findByText(/Registra el recorrido/)).toBeVisible();
+  expect(screen.getByText('Validar la fuente del ensayo de banco')).toBeVisible();
   expect(screen.queryByLabelText('Pregunta para Cicerone')).not.toBeInTheDocument();
   act(() => {
     identity.team = crypto.randomUUID();

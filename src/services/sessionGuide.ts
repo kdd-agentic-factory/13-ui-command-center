@@ -14,6 +14,7 @@ export type GuideItem = {
   reply: {
     facts: Statement[]; calculations: Statement[]; hypotheses: Statement[];
     limitations: string[]; next_step: string;
+    actions?: { kind: string; request_id?: string }[];
   } | null;
 };
 
