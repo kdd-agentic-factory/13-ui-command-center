@@ -7,4 +7,8 @@ it('does not label different or unknown conditions an improvement',()=>{
  render(<BenchComparison reference={a} candidate={{...a,id:'b'}}/>);
  expect(screen.getByText(/Condiciones incompletas o diferentes/)).toBeInTheDocument();
  expect(screen.queryByText(/^Mejora/)).not.toBeInTheDocument();
+ expect(screen.getByRole('rowheader',{name:'Calibración declarada'})).toBeInTheDocument();
+ expect(screen.getByRole('rowheader',{name:'Origen del reloj'})).toBeInTheDocument();
+ expect(screen.getByRole('rowheader',{name:'Sincronización declarada'})).toBeInTheDocument();
+ expect(screen.getByText(/contraste físico independiente/)).toBeInTheDocument();
 });
