@@ -33,4 +33,4 @@ export const getRecording = (id: string) => telemetryFetch(`${base}/${encodeURIC
 export const saveRecordedGeometry = (id: string, geometry: { radius: number; rake: number; offset: number }) => telemetryFetch(`${base}/${encodeURIComponent(id)}/geometry`, {
   method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Actor-ID': 'local-operator', 'X-Workflow-ID': 'chassis-measurements', 'X-Trace-ID': crypto.randomUUID() }, body: JSON.stringify(geometry),
 }).then(response<RecordedSession>);
-export const getRecordedSignal = (id: string, index: number) => telemetryFetch(`${base}/${encodeURIComponent(id)}/channels/${index}`).then(response<RecordedSignal>);
+export const getRecordedSignal = (id: string, index: number, options?: { full?: boolean }) => telemetryFetch(`${base}/${encodeURIComponent(id)}/channels/${index}${options?.full ? '?full=true' : ''}`).then(response<RecordedSignal>);

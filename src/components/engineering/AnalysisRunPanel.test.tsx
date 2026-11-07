@@ -144,6 +144,7 @@ it('exports and prints only the report read back from persistence, then clears p
   const {rerender}=render(<AnalysisRunPanel/>);expect(screen.queryByRole('button',{name:'Descargar informe de ingeniería JSON'})).not.toBeInTheDocument();
   fireEvent.click(screen.getByRole('button',{name:'Guardar nueva versión del informe'}));
   await screen.findByRole('button',{name:'Descargar informe de ingeniería JSON'});expect(writes).toEqual([{revision:1}]);expect(screen.queryByText('unconfirmed-create-reply')).not.toBeInTheDocument();
+  expect(screen.queryByText(/Evidencia de suspensión/)).not.toBeInTheDocument();
   const url=vi.fn((_blob:Blob)=> 'blob:report-test'),revoke=vi.fn();Object.defineProperty(URL,'createObjectURL',{configurable:true,value:url});Object.defineProperty(URL,'revokeObjectURL',{configurable:true,value:revoke});vi.spyOn(HTMLAnchorElement.prototype,'click').mockImplementation(()=>{});
   fireEvent.click(screen.getByRole('button',{name:'Descargar informe de ingeniería JSON'}));const blob=url.mock.calls[0][0] as Blob;const contents=await new Promise<string>(resolve=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result));reader.readAsText(blob);});expect(JSON.parse(contents)).toEqual(saved);expect(revoke).toHaveBeenCalledWith('blob:report-test');
   const getWindow=Object.getOwnPropertyDescriptor(HTMLIFrameElement.prototype,'contentWindow')!.get!;
@@ -365,4 +366,37 @@ it('blocks a fresh legacy start after a documentary attempt loses its context',a
  const app=render(<AnalysisRunPanel/>);fireEvent.click(screen.getByRole('checkbox',{name:'Exigir fuentes documentales revisadas'}));await waitFor(()=>expect(screen.getByRole('button',{name:'Iniciar análisis'})).toBeEnabled());fireEvent.click(screen.getByRole('button',{name:'Iniciar análisis'}));await screen.findByRole('button',{name:'Recuperar inicio pendiente'});
  state.context={...state.context,workspaceEpoch:1};await act(async()=>{app.rerender(<AnalysisRunPanel/>);});
  expect(screen.getByRole('button',{name:'Iniciar análisis'})).toBeDisabled();expect(screen.getByRole('button',{name:'Descartar preparación del contexto anterior'})).toBeEnabled();expect(writes.some(path=>path.endsWith('/runs'))).toBe(false);
+});
+
+
+it('shows saved suspension citation scope and skips malformed rows', async () => {
+  const saved = {
+    schema_version: '1.0.0', id: ids.rider, session_id: ids.session, session_revision: 1,
+    created_at: '2026-10-25T10:00:00Z', limitations: [], branches: [],
+    snapshot: {evidence: {suspension_evidence: [
+      null,
+      {evidence_id: ids.a, metric: 'lab_suspension_displacement', eligibility: 'eligible_for_review',
+        analysis_reference: {revision: 2},
+        selected_signal_scope: {source_id: ids.recording, interval_s: ['2', '8.5'], selected_sensor_id: 'suspension_front'}},
+      {evidence_id: ids.b, metric: 'bench_force_n', eligibility: 'exploratory',
+        analysis_reference: {revision: 1}, selected_signal_scope: {interval_s: ['9', '2'], selected_sensor_id: {}}},
+    ]}},
+  };
+  vi.stubGlobal('fetch', vi.fn(async input => {
+    const path = String(input);
+    if (path.endsWith('/reports') || path.endsWith('/reports/' + ids.rider)) return reply(saved);
+    if (path.endsWith('/runs/current')) return reply({run: null});
+    return reply({items: [], next_cursor: null, recovery_unavailable: false});
+  }));
+  render(<AnalysisRunPanel />);
+  fireEvent.click(screen.getByRole('button', {name: 'Guardar nueva versión del informe'}));
+  const summary = await screen.findByText('Evidencia de suspensión (2)');
+  fireEvent.click(summary);
+  const index = within(summary.parentElement!);
+  expect(index.getByText('Desplazamiento de suspensión')).toBeInTheDocument();
+  expect(index.getByText(/Intervalo 2–8\.5 s/)).toBeInTheDocument();
+  expect(index.getByText('suspension_front')).toBeInTheDocument();
+  expect(index.getByText(/Exploratoria/)).toBeInTheDocument();
+  expect(index.getByText(/Intervalo sin registrar/)).toBeInTheDocument();
+  expect(index.getByText(ids.a)).toBeInTheDocument();
 });

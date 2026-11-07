@@ -13,6 +13,7 @@ import { useNavigate } from '../context/NavContext';
 import { activeRecording, clearRecording, calculateTrail, type RecordedSession, type RecordedSignal } from '../domain/recordedSession';
 import { getRecording, getRecordedSignal, saveRecordedGeometry } from '../services/recordedTelemetry';
 import { ChassisComparison } from '../components/chassis/ChassisComparison';
+import { RecordedLapComparison } from '../components/chassis/RecordedLapComparison';
 import { ProductCoverage } from '../components/chassis/ProductCoverage';
 import { ChassisProductStatus } from '../components/chassis/ChassisProductStatus';
 import { useWorkspaceDraft } from '../context/WorkspaceDraftContext';
@@ -102,6 +103,7 @@ export function ChassisPage() {
       <section className="chassis-work-area chassis-source-brief" data-area="source" ref={e=>{areas.current.source=e;}} tabIndex={-1}><h2>{session.filename}</h2><p>{session.source.toUpperCase()} · {session.channels.length} canales · {session.laps.length} marcadores de vuelta.</p><details><summary>Fuente y trazabilidad</summary><p>Lector {session.reader} {session.reader_version}. Sesión guardada: {session.id} · clasificación: {session.classification}</p></details></section>
       {session.validation?.status==='experimental'&&<section className="chassis-source-warning"><h2>Fuente 2D pendiente de validar</h2><p>Escala y reloj experimentales: contrasta con 2D Analyzer antes de fundamentar decisiones mecánicas.</p><details><summary>Canales excluidos ({session.excluded_channels?.length??0})</summary>{session.excluded_channels?.map((c,i)=><p key={i}>{c.name}: {c.reason}</p>)}</details></section>}
       <section className="chassis-work-area" data-area="comparison" ref={e=>{areas.current.comparison=e;}} tabIndex={-1} hidden={!visible("comparison")}><ChassisComparison workView={view} contextKey={contextKey} onPresentation={setComparisonPresentation} key={`${session.id}:${engineering.workspaceEpoch}:${bindingEpoch}`} sessionId={session.id} engineeringSessionId={engineering.session?.id} channels={session.channels} geometry={session.geometry} onPersistedChange={engineering.workspaceChanged} /></section>
+      {["analyst", "engineer"].includes(view) && <RecordedLapComparison key={session.id} session={session}/>}
       <div hidden={view!=="analyst"&&view!=="engineer"} className="card mb-4"><h2>Suspensión registrada</h2>
         {suspension.length ? suspension.map(c => <p key={c.index}>{c.name}: {c.min.toFixed(2)}–{c.max.toFixed(2)} {c.unit || '(unidad no informada)'} · {c.sample_count} muestras. Contrasta el cero del sensor con su calibración.</p>) : <p>No se han identificado canales de suspensión. No se puede calcular su recorrido ni diagnosticar su comportamiento.</p>}
         <p>Balance, agarre y cambios de clics: sin determinar. Requieren geometría, calibración y un modelo contrastado.</p>

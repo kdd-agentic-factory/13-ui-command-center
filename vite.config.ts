@@ -55,7 +55,7 @@ export default defineConfig(({ mode, command }) => {
     pool: 'threads',
     minWorkers: 1,
     maxWorkers: 1,
-    exclude: ['tests/e2e/**', 'node_modules/**', '**/.superpowers/**']
+    exclude: ['tests/e2e/**', 'tests/visual-workshop/**', 'tests/workboard-ui/**', 'node_modules/**', '**/.superpowers/**']
   }
 });
 });

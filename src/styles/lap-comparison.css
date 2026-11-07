@@ -1,0 +1,9 @@
+.lap-comparison > summary { cursor: pointer; font-weight: 600; }
+.lap-comparison__controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.lap-comparison__cursor { display: grid; max-width: 48rem; gap: 4px; margin-top: 12px; }
+.lap-comparison__cursor input { width: 100%; }
+.lap-comparison__plots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.lap-comparison__plots figure { min-width: 0; margin: 0; border-top: 1px solid var(--border); padding-top: 12px; }
+.lap-comparison__plots svg { width: 100%; cursor: crosshair; }
+.lap-comparison__plots text { fill: currentColor; font-size: 12px; }
+@media (max-width: 760px) { .lap-comparison__plots { grid-template-columns: 1fr; } }
