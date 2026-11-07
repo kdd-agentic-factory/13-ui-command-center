@@ -10,7 +10,7 @@ const source={id:'source',kind:'recording',digest:'a'.repeat(64),channel_catalog
 describe('suspension context fences',()=>{
  it('prevents an old result action from cancelling the calculation in progress',async()=>{
   mock.recording.mockResolvedValueOnce(source);
-  mock.create.mockReset().mockResolvedValueOnce({id:'previous',digest:'b'.repeat(64),revision:1,request:{method:'movement'},result:{},reasons:[],observation_eligibility:'exploratory'}).mockReturnValueOnce(new Promise(()=>{}));
+  mock.create.mockReset().mockResolvedValueOnce({id:'previous',digest:'b'.repeat(64),revision:1,request:{method:'movement'},source_manifest:{kind:'recording'},result:{},reasons:[],observation_eligibility:'exploratory'}).mockReturnValueOnce(new Promise(()=>{}));
   render(<SuspensionLabPanel contextKey="busy-result" recordingId="recording"/>);
   fireEvent.click(screen.getByRole('button',{name:'Usar grabación actual'}));
   fireEvent.change(await screen.findByLabelText('Referencia de calibración del canal'),{target:{value:'fixture calibration'}});
@@ -24,6 +24,8 @@ describe('suspension context fences',()=>{
   mock.import.mockResolvedValueOnce({...source,id:'bench',kind:'suspension_bench',metadata:{}});
   const ui=render(<WorkspaceDraftProvider><SuspensionLabPanel contextKey="import" recordingId={null}/></WorkspaceDraftProvider>);
   fireEvent.click(screen.getByText('Importar un ensayo medido',{exact:true}));
+  expect(screen.getByText('Documentación para el contraste físico')).toBeInTheDocument();
+  expect(screen.getByText(/curva fuerza–desplazamiento del mismo intervalo/)).toBeInTheDocument();
   fireEvent.change(screen.getByLabelText('Archivo CSV'),{target:{files:[new File(['t;f;x\n'],'fixture.csv',{type:'text/csv'})]}});
   fireEvent.change(screen.getByLabelText('Modelo del componente'),{target:{value:'controlled fixture'}});
   fireEvent.submit(ui.container.querySelector('form')!);
@@ -33,7 +35,7 @@ describe('suspension context fences',()=>{
  });
  it('cannot attach an observation with no comparison to an undefined active comparison',async()=>{
   mock.recording.mockResolvedValueOnce(source);
-  mock.create.mockReset().mockResolvedValueOnce({id:'unbound',digest:'b'.repeat(64),revision:1,request:{method:'movement'},result:{},reasons:[],observation_eligibility:'exploratory'});
+  mock.create.mockReset().mockResolvedValueOnce({id:'unbound',digest:'b'.repeat(64),revision:1,request:{method:'movement'},source_manifest:{kind:'recording'},result:{},reasons:[],observation_eligibility:'exploratory'});
   render(<SuspensionLabPanel contextKey="unbound" recordingId="recording" onEvidenceSaved={vi.fn()}/>);
   fireEvent.click(screen.getByRole('button',{name:'Usar grabación actual'}));
   fireEvent.change(await screen.findByLabelText('Referencia de calibración del canal'),{target:{value:'fixture calibration'}});
