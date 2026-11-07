@@ -400,3 +400,58 @@ it('shows saved suspension citation scope and skips malformed rows', async () =>
   expect(index.getByText(/Intervalo sin registrar/)).toBeInTheDocument();
   expect(index.getByText(ids.a)).toBeInTheDocument();
 });
+
+it('opens the exact saved suspension scope from a report conclusion', async () => {
+  const analysis = {id: ids.comparison, revision: 3, digest: 'a'.repeat(64), result: {values: [0.04]}};
+  const analysisRequest = vi.fn()
+    .mockImplementationOnce(() => reply({...analysis, revision: 4}))
+    .mockImplementationOnce(() => reply(analysis));
+  const createObjectURL = vi.fn(() => 'blob:saved-analysis');
+  const revokeObjectURL = vi.fn();
+  vi.stubGlobal('URL', class extends URL {
+    static createObjectURL = createObjectURL;
+    static revokeObjectURL = revokeObjectURL;
+  });
+  const clicked = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (this: HTMLAnchorElement) {
+    expect(this.download).toBe(`suspension-${ids.comparison}-r3.json`);
+  });
+  const saved = {
+    id: ids.rider, session_id: ids.session, session_revision: 1,
+    limitations: [], branches: [],
+    proposal: {...stored, proposal: {...stored.proposal, items: [{
+      candidate_id: ids.b, kind: 'controlled_test', reason: 'Repeat travel check',
+      evidence_ids: [ids.a], parameters: [], evaluation: {
+        description: 'Repite el mismo tramo', criterion: 'Compara el recorrido máximo',
+        conditions: [], limits: [], measurements: [],
+      },
+    }]}},
+    snapshot: {evidence: {suspension_evidence: [{
+      evidence_id: ids.a, metric: 'lab_suspension_displacement', eligibility: 'eligible_for_review',
+      analysis_reference: {id: ids.comparison, revision: 3, digest: 'a'.repeat(64)},
+      selected_signal_scope: {interval_s: ['2', '8'], selected_sensor_id: 'suspension_front'},
+      unit: 'm', measurements: [{name: 'max', value_si: '0.04'}], sample_count: 60,
+    }]}},
+  };
+  vi.stubGlobal('fetch', vi.fn(async input => {
+    const path = String(input);
+    if (path.endsWith('/reports') || path.endsWith('/reports/' + ids.rider)) return reply(saved);
+    if (path.endsWith('/analyses/' + ids.comparison)) return analysisRequest();
+    if (path.endsWith('/runs/current')) return reply({run: null});
+    return reply({items: [], next_cursor: null, recovery_unavailable: false});
+  }));
+  render(<AnalysisRunPanel />);
+  fireEvent.click(screen.getByRole('button', {name: 'Guardar nueva versión del informe'}));
+  const conclusion = await screen.findByText('Repite el mismo tramo');
+  const card = within(conclusion.closest('li')!);
+  fireEvent.click(card.getByText('Ver evidencia congelada'));
+  expect(card.getByText(/Análisis r3/)).toBeVisible();
+  expect(card.getByText('suspension_front')).toBeVisible();
+  expect(card.getByText(/60 muestras/)).toBeVisible();
+  fireEvent.click(card.getByRole('button', {name: 'Descargar análisis guardado'}));
+  expect(await card.findByRole('alert')).toHaveTextContent('La revisión o la huella del análisis difiere de la cita.');
+  expect(createObjectURL).not.toHaveBeenCalled();
+  fireEvent.click(card.getByRole('button', {name: 'Descargar análisis guardado'}));
+  await waitFor(() => expect(clicked).toHaveBeenCalledOnce());
+  expect(analysisRequest).toHaveBeenCalledTimes(2);
+  expect(revokeObjectURL).toHaveBeenCalledWith('blob:saved-analysis');
+});

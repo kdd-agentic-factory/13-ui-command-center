@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import type { EngineeringSession, SnapshotSelection } from '../../../domain/engineeringSession';
+import { suspensionEvidence } from '../../../domain/chassisReport';
 import { executeGuideTurn, getGuide, sendGuideTurn, type GuideItem } from '../../../services/sessionGuide';
 import { createAnalysisSnapshot } from '../../../services/engineeringSession';
 import { identitySnapshot } from '../../../services/telemetryIdentity';
+import { FrozenSuspensionEvidence } from '../FrozenSuspensionEvidence';
 import '../../../styles/session-guide.css';
 
 const labels = {
@@ -167,6 +169,7 @@ function Conversation({ session, writable, selection, blockedReason }: { session
 
 function GuideExchange({ item, revision }: { item: GuideItem; revision: number }) {
   const { turn, reply } = item;
+  const measurements = new Map(suspensionEvidence(item.cited_measurements, 'guide').map(row => [row.id, row]));
   const needsBenchValidation = Array.isArray(reply?.actions) && reply.actions.some(
     action => action?.kind === 'request_data' && action.request_id === 'bench_source_validation',
   );
@@ -176,7 +179,7 @@ function GuideExchange({ item, revision }: { item: GuideItem; revision: number }
     {turn.error && <p>{Object.prototype.hasOwnProperty.call(failures, turn.error)
       ? failures[turn.error] : 'No se pudo completar la ejecución.'}</p>}
     {reply && <>
-      <p><strong>Siguiente paso</strong> {reply.next_step}</p>
+      <p><strong>Próxima comprobación del piloto</strong> {reply.next_step}</p>
       {needsBenchValidation && <p>
         <strong>Validar la fuente del ensayo de banco</strong>
         {' · Comprueba su procedencia, calibración y sincronización antes de utilizar las cifras.'}
@@ -184,7 +187,18 @@ function GuideExchange({ item, revision }: { item: GuideItem; revision: number }
       {([['Hechos', reply.facts], ['Cálculos', reply.calculations], ['Hipótesis', reply.hypotheses]] as const).map(([label, entries]) =>
         entries.length > 0 && <details key={label}><summary>{label} ({entries.length})</summary>
           <ul>{entries.map((entry, index) => <li key={index}>{entry.text}
-            <small>{entry.evidence.join(' · ')}</small></li>)}</ul>
+            {entry.evidence.length > 0 && <details><summary>Ver evidencia congelada</summary>
+              <p>Reproducción para ingeniería · sesión r{turn.session_revision}</p>
+              {turn.snapshot_id && <small>Snapshot {turn.snapshot_id}{turn.snapshot_digest && ` · SHA-256 ${turn.snapshot_digest}`}</small>}
+              <ul>{entry.evidence.map(id => {
+                const row = measurements.get(id);
+                return <li key={id}>{row ? <FrozenSuspensionEvidence row={row} /> :
+                  <small>{id.startsWith(`snapshot:${turn.snapshot_id}@`)
+                    ? 'Referencia al manifiesto de disponibilidad del snapshot'
+                    : 'Detalle de esta cita sin registrar en la respuesta'} · {id}</small>}</li>;
+              })}</ul>
+            </details>}
+          </li>)}</ul>
         </details>)}
       {reply.limitations.length > 0 && <details><summary>Limitaciones</summary>
         <ul>{reply.limitations.map((value, index) => <li key={index}>{value}</li>)}</ul>

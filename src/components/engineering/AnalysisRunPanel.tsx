@@ -8,7 +8,8 @@ import {useWorkspaceDraft} from '../../context/WorkspaceDraftContext';
 import type {AnalysisRun,CurrentValidity,EngineeringReference,EngineeringReport,HumanEvent,SynthesisProgress,StoredProposal} from '../../domain/engineeringSession';
 import * as api from '../../services/engineeringSession';
 import {canWriteTelemetry,identitySnapshot} from '../../services/telemetryIdentity';
-import {reportSuspensionEvidence,serializeEngineeringReport} from '../../domain/chassisReport';
+import {serializeEngineeringReport} from '../../domain/chassisReport';
+import {ReportSuspensionEvidence} from './ReportSuspensionEvidence';
 import {CrewChiefProposal} from './CrewChiefProposal';
 import {ContrastPanel} from './ContrastPanel';
 import {HumanDecisionPanel} from './HumanDecisionPanel';
@@ -166,30 +167,7 @@ function AnalysisWorkspace({workView='engineer',contextKey='',onPresentation,sus
     {identity.mode==='authenticated'&&<div hidden={presentationReadOnly}><HistoricalValidationPanel sessionId={session.id} events={events} onRefresh={refreshHuman}/></div>}
     <details open={!presentationReadOnly}><summary>Historial y trazabilidad</summary><section className="engineering-human-events"><h3>Eventos humanos persistidos</h3>{identity.mode==='local'?<p>Sin historial de autoridad humana en modo local.</p>:<><p>{events.length} eventos cargados. {cursor?'Hay más páginas.':'Sin cursor adicional en la respuesta actual.'} El orden de paginación no implica orden cronológico.</p>{!eventsLoaded&&<p>Historial aún sin confirmar.</p>}{events.map(e=><details key={e.id}><summary>{e.kind} · {e.action??'registro'} · {e.created_at}</summary><p>Actor {e.actor_id} · designación r{e.designation_revision} · propuesta {e.proposal_id} r{e.proposal_revision}</p><pre>{JSON.stringify(e,null,2)}</pre></details>)}{recovery&&<p role="alert">Recuperación de recibos no disponible. Puede haber eventos pendientes; reintenta esta página.</p>}{eventError&&<p role="alert">{eventError}</p>}{(recovery||eventError)&&<button className="btn" onClick={()=>void loadEvents(pageCursor,false)}>Reintentar página de eventos</button>}{cursor&&<button className="btn" onClick={()=>void loadEvents(cursor,false)}>Cargar más eventos</button>}</>}
     </section>
-    </details><section className="engineering-saved-report"><h3>Informe de ingeniería persistido</h3><p>Crea una nueva versión del informe desde las revisiones guardadas. La vigencia que captura corresponde a su fecha de creación.</p><button hidden={presentationReadOnly} className="btn" disabled={busy||!canWriteTelemetry()} onClick={()=>void buildReport()}>Guardar nueva versión del informe</button>{reportError&&<p role="alert">{reportError}</p>}{report&&<><p>Informe {report.id} · sesión r{report.session_revision} · {report.created_at} · digest <code>{report.content_digest}</code></p><p>Autoridad al crear: {report.current_validity?.approved_current?'aprobada vigente':report.current_validity?.current?'contexto vigente':'no confirmada'}. No constituye autorización actual.</p><div className="engineering-actions"><button className="btn" onClick={download}>Descargar informe de ingeniería JSON</button><button className="btn" onClick={printReport}>Imprimir informe de ingeniería</button></div><ul>{report.limitations.map((l,i)=><li key={i}>{l}</li>)}</ul>{report.domain_coverage&&<DomainReportCoverage coverage={report.domain_coverage}/>}<ReportInputRequests branches={report.branches}/><ReportSuspensionEvidence snapshot={report.snapshot}/><details><summary>Documento persistido completo</summary><pre>{serializeEngineeringReport(report)}</pre></details></>}
+    </details><section className="engineering-saved-report"><h3>Informe de ingeniería persistido</h3><p>Crea una nueva versión del informe desde las revisiones guardadas. La vigencia que captura corresponde a su fecha de creación.</p><button hidden={presentationReadOnly} className="btn" disabled={busy||!canWriteTelemetry()} onClick={()=>void buildReport()}>Guardar nueva versión del informe</button>{reportError&&<p role="alert">{reportError}</p>}{report&&<><p>Informe {report.id} · sesión r{report.session_revision} · {report.created_at} · digest <code>{report.content_digest}</code></p><p>Autoridad al crear: {report.current_validity?.approved_current?'aprobada vigente':report.current_validity?.current?'contexto vigente':'no confirmada'}. No constituye autorización actual.</p><div className="engineering-actions"><button className="btn" onClick={download}>Descargar informe de ingeniería JSON</button><button className="btn" onClick={printReport}>Imprimir informe de ingeniería</button></div><ul>{report.limitations.map((l,i)=><li key={i}>{l}</li>)}</ul>{report.domain_coverage&&<DomainReportCoverage coverage={report.domain_coverage}/>}<ReportInputRequests branches={report.branches}/><ReportSuspensionEvidence report={report}/><details><summary>Documento persistido completo</summary><pre>{serializeEngineeringReport(report)}</pre></details></>}
     </section>
   </section>;
-}
-
-function ReportSuspensionEvidence({snapshot}: {snapshot: EngineeringReport['snapshot']}) {
-  const evidence = reportSuspensionEvidence(snapshot);
-  if (!evidence.length) return null;
-  const eligibility = {eligible_for_review: 'Disponible para revisión', exploratory: 'Exploratoria', blocked: 'Bloqueada'};
-  const metrics = new Map([
-    ['lab_suspension_displacement', 'Desplazamiento de suspensión'],
-    ['lab_suspension_velocity', 'Velocidad de suspensión'],
-    ['bench_force_n', 'Fuerza de banco'],
-    ['cycle_work_j', 'Trabajo por ciclo'],
-    ['dominant_frequency_hz', 'Frecuencia dominante'],
-  ]);
-  return <details>
-    <summary>Evidencia de suspensión ({evidence.length})</summary>
-    <ul>{evidence.map(row => <li key={row.id}>
-      <strong>{metrics.get(row.metric) ?? row.metric}</strong> · {eligibility[row.eligibility]} · Análisis r{row.revision}
-      <br />{row.interval ? `Intervalo ${row.interval[0]}–${row.interval[1]} s` : 'Intervalo sin registrar'}
-      {' · '}{row.sensor ? <>Canal seleccionado <code>{row.sensor}</code></> : 'Canal seleccionado sin registrar'}
-      <EngineeringIdentifier value={row.id} label="Referencia de evidencia" />
-      {row.source && <EngineeringIdentifier value={row.source} label="Fuente" />}
-    </li>)}</ul>
-  </details>;
 }

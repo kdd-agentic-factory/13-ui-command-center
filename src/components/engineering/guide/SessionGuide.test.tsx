@@ -78,3 +78,32 @@ it('executes a saved question with one stable snapshot across uncertain retries'
   expect(createAnalysisSnapshot).toHaveBeenCalledTimes(1);
   expect(vi.mocked(executeGuideTurn).mock.calls.every(call => call[1] === snapshot)).toBe(true);
 });
+
+it('opens the frozen citation from a conclusion separately from the rider check', async () => {
+  const analysis = crypto.randomUUID();
+  const digest = 'a'.repeat(64);
+  const citation = `suspension:${analysis}@4:${digest}:lab_suspension_displacement`;
+  const saved = {
+    ...item,
+    turn: { ...item.turn, status: 'completed' as const, snapshot_id: crypto.randomUUID(), snapshot_digest: digest },
+    reply: {
+      facts: [{ text: 'Recorrido máximo observado', evidence: [citation] }], calculations: [], hypotheses: [],
+      next_step: 'Repite el mismo tramo y comprueba el recorrido', limitations: ['Datos parciales'],
+    },
+    cited_measurements: [{
+      evidence_id: citation, metric: 'lab_suspension_displacement', method: 'movement', unit: 'm',
+      analysis_reference: { id: analysis, revision: 4, digest },
+      selected_signal_scope: { interval_s: ['2', '8'], selected_sensor_id: 'suspension_front' },
+      measurements: [{ name: 'max', value_si: '0.04' }],
+    }],
+  };
+  vi.mocked(getGuide).mockResolvedValue([saved]);
+  render(<SessionGuide session={{...session, revision: 2}} scope="qa" />);
+  expect(await screen.findByText('Próxima comprobación del piloto')).toBeVisible();
+  fireEvent.click(screen.getByText('Hechos (1)'));
+  fireEvent.click(screen.getByText('Ver evidencia congelada'));
+  expect(screen.getByText(/Análisis r4/)).toBeVisible();
+  expect(screen.getByText(/Intervalo 2–8 s/)).toBeVisible();
+  expect(screen.getByText('suspension_front')).toBeVisible();
+  expect(screen.getByText(/0\.04 m/)).toBeVisible();
+});

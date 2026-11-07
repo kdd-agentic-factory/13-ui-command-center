@@ -9,8 +9,9 @@ export type GuideItem = {
   turn: {
     id: string; session_id: string; team_id: string; session_revision: number;
     message: string; status: typeof states[number]; model: string | null;
-    snapshot_id: string | null; error: string | null;
+    snapshot_id: string | null; snapshot_digest?: string | null; error: string | null;
   };
+  cited_measurements?: unknown;
   reply: {
     facts: Statement[]; calculations: Statement[]; hypotheses: Statement[];
     limitations: string[]; next_step: string;
