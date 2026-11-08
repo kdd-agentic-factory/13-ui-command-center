@@ -7,6 +7,7 @@ import { createAnalysisSnapshot } from '../../../services/engineeringSession';
 import { identitySnapshot } from '../../../services/telemetryIdentity';
 import { FrozenSuspensionEvidence } from '../FrozenSuspensionEvidence';
 import { GuideVoice } from './GuideVoice';
+import type { WorkStep } from '../../../domain/chassisWorkViews';
 import '../../../styles/session-guide.css';
 
 const labels = {
@@ -20,7 +21,7 @@ const failures: Record<string, string> = {
   context_changed: 'El contexto cambió durante la ejecución.',
 };
 
-export function SessionGuide({ session, scope, selection, blockedReason }: { session: EngineeringSession | null; scope: string; selection?: SnapshotSelection; blockedReason?: string }) {
+export function SessionGuide({ session, scope, selection, blockedReason, nextStep, onNext }: { session: EngineeringSession | null; scope: string; selection?: SnapshotSelection; blockedReason?: string; nextStep?: WorkStep; onNext?: (target: string) => void }) {
   const [identity, setIdentity] = useState(identitySnapshot);
   useEffect(() => {
     const update = () => setIdentity(identitySnapshot());
@@ -28,12 +29,19 @@ export function SessionGuide({ session, scope, selection, blockedReason }: { ses
     return () => window.removeEventListener('telemetry-scope-changed', update);
   }, []);
   const ready = session && identity.mode === 'authenticated' && identity.user && identity.team === session.team_id;
-  return <aside className="session-guide" aria-label="Cicerone">
+  return <aside className="session-guide" id="cicerone-guide" tabIndex={-1} aria-label="Cicerone">
     <h2>Cicerone</h2>
+    <p className="session-guide-context">Tu asistente de sesión</p>
+    {nextStep && <div className="session-guide-next">
+      <span>Siguiente paso</span>
+      <button type="button" className="btn" onClick={() => onNext?.(nextStep.target)}>{nextStep.label}</button>
+    </div>}
     {ready
       ? <Conversation key={JSON.stringify([scope, identity.generation, session.id, session.revision])}
           session={session} selection={selection} blockedReason={blockedReason} writable={identity.role === 'engineer' || identity.role === 'admin'} />
-      : <p>{session ? 'Selecciona el equipo de la sesión con una identidad verificada.' : 'Abre o prepara una sesión para consultar su conversación.'}</p>}
+      : <p>{session ? 'Selecciona el equipo de la sesión con una identidad verificada.' : nextStep
+        ? 'Abre una sesión guardada o prepara una nueva con circuito, moto y piloto. Después podrás consultar su evidencia y dictar preguntas.'
+        : 'Inicia sesión y elige tu equipo en el panel superior. Te guiaré desde la preparación de la tanda hasta la revisión de los resultados.'}</p>}
   </aside>;
 }
 

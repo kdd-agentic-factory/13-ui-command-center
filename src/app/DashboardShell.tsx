@@ -417,10 +417,28 @@ function DashboardShellContent() {
     setSessionContext(withDashboardTab(getSessionContext(), activeTab));
   }, [activeTab]);
 
-  const navigateTo = useCallback((newTab: TabId) => {
+  const [guideRequested, setGuideRequested] = useState(false);
+  useEffect(() => {
+    if (!guideRequested || activeTab !== 'chassis') return;
+    const focusGuide = () => {
+      const guide = document.getElementById('cicerone-guide');
+      if (!guide) return;
+      guide.focus();
+      setGuideRequested(false);
+    };
+    const observer = new MutationObserver(focusGuide);
+    observer.observe(document.body, { childList: true, subtree: true });
+    focusGuide();
+    return () => observer.disconnect();
+  }, [activeTab, guideRequested]);
+
+  const navigateTo = useCallback((newTab: TabId, openGuide = false) => {
     if (!allowedTabIds.includes(newTab)) return;
-    if (newTab === activeTab) return;
-    requestLeave(()=>{setTransitioning(true);
+    if (newTab === activeTab) {
+      if (openGuide) setGuideRequested(true);
+      return;
+    }
+    requestLeave(()=>{setGuideRequested(openGuide);setTransitioning(true);
     window.setTimeout(() => {
       prevTabRef.current = newTab;
       setTab(newTab);
@@ -553,6 +571,16 @@ function DashboardShellContent() {
         </div>
 
         <nav className="sidebar-nav" id="sidebar-nav">
+          {allowedTabIds.includes('chassis') && (
+            <button type="button" className="sidebar-item sidebar-guide" onClick={() => {
+              navigateTo('chassis', true);
+              setDrawerOpen(false);
+            }}>
+              <span className="sidebar-item-icon"><MessagesSquare size={16} aria-hidden="true" /></span>
+              <span className="sidebar-item-label">Cicerone</span>
+              <ChevronRight size={14} aria-hidden="true" />
+            </button>
+          )}
           {primarySections.map(({ section, items }) => (
             <div key={section} className="sidebar-section">
               <div className="sidebar-section-title">{t(section)}</div>
