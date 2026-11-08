@@ -535,7 +535,17 @@
       "method": "POST",
       "pattern": "/api/v1/engineering/guide/executions",
       "access": "team"
+    },
+    {
+      "method": "GET",
+      "pattern": "/api/v1/engineering/guide/voices",
+      "access": "team"
+    },
+    {
+      "method": "POST",
+      "pattern": "/api/v1/engineering/guide/voice-preview",
+      "access": "team"
     }
   ],
-  "sha256": "87e08a317a3b75fc960033ee2e9b85b9f6433eb94b3c92dbd4b05330787cbd03"
+  "sha256": "9b4a7de5ce1d001bde7b3b8e7b3bfcedbd81a93925690ab01d33e0d8f69da85b"
 }

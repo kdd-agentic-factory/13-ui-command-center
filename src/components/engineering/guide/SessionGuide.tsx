@@ -6,6 +6,7 @@ import { executeGuideTurn, getGuide, sendGuideTurn, type GuideItem } from '../..
 import { createAnalysisSnapshot } from '../../../services/engineeringSession';
 import { identitySnapshot } from '../../../services/telemetryIdentity';
 import { FrozenSuspensionEvidence } from '../FrozenSuspensionEvidence';
+import { GuideVoice } from './GuideVoice';
 import '../../../styles/session-guide.css';
 
 const labels = {
@@ -37,6 +38,7 @@ export function SessionGuide({ session, scope, selection, blockedReason }: { ses
 }
 
 function Conversation({ session, writable, selection, blockedReason }: { session: EngineeringSession; writable: boolean; selection?: SnapshotSelection; blockedReason?: string }) {
+  const voiceScope = JSON.stringify([identitySnapshot().user, session.team_id]);
   const [items, setItems] = useState<GuideItem[]>([]);
   const [draft, setDraft] = useState('');
   const [busy, setBusy] = useState<'loading' | 'sending' | 'executing' | null>(null);
@@ -143,8 +145,18 @@ function Conversation({ session, writable, selection, blockedReason }: { session
     }
   }
 
+  const reply = [...items].reverse().find(item => item.reply)?.reply;
+  const spokenAnswer = reply && [
+    ...([['Hechos', reply.facts], ['Cálculos', reply.calculations], ['Hipótesis', reply.hypotheses]] as const)
+      .flatMap(([label, entries]) => entries.length ? [label, ...entries.map(entry => entry.text)] : []),
+    ...(reply.limitations.length ? ['Limitaciones', ...reply.limitations] : []),
+    'Próximo paso', reply.next_step,
+  ].join('. ');
+
   return <>
     <p className="session-guide-context">{session.name} · Revisión {session.revision}</p>
+    <GuideVoice scope={voiceScope} answer={spokenAnswer}
+      onDictation={writable && !busy ? text => setDraft(previous => [previous, text].filter(Boolean).join(' ').slice(0, 8000)) : undefined} />
     {blockedReason && <p>{blockedReason}</p>}
     <button type="button" className="btn" onClick={() => void refresh()} disabled={!!busy}>Actualizar conversación</button>
     {error && <p role="alert">{error}</p>}
